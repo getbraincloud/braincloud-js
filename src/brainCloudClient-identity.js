@@ -11,6 +11,21 @@ brainCloudClient.identity.OPERATION_SWITCH_TO_PARENT_PROFILE = "SWITCH_TO_PARENT
 brainCloudClient.identity.OPERATION_GET_CHILD_PROFILES = "GET_CHILD_PROFILES";
 brainCloudClient.identity.OPERATION_GET_IDENTITIES = "GET_IDENTITIES";
 brainCloudClient.identity.OPERATION_GET_EXPIRED_IDENTITIES = "GET_EXPIRED_IDENTITIES";
+brainCloudClient.identity.OPERATION_REFRESH_IDENTITY = "REFRESH_IDENTITY";
+
+brainCloudClient.identity.authenticationType = Object.freeze({ 
+    anonymous : "Anonymous",
+    universal : "Universal",
+    email : "Email",
+    facebook : "Facebook",
+    gameCenter : "GameCenter",
+    steam : "Steam",
+    google : "Google",
+    twitter : "Twitter",
+    parse : "Parse",
+    external : "External",
+    unknown : "UNKNOWN"
+});
 
 /**
  * Attach the user's Facebook credentials to the current profile.
@@ -548,6 +563,30 @@ brainCloudClient.identity.getExpiredIdentities = function(callback) {
         callback: callback
     });
 };
+
+/**
+ * Refreshes an identity for this player
+ *
+ * Service Name - identity
+ * Service Operation - REFRESH_IDENTITY
+ *
+ * @param externalId User ID
+ * @param authenticationToken Password or client side token
+ * @param authenticationType Type of authentication
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.identity.refreshIdentity = function(externalId, authenticationToken, authenticationType, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_IDENTITY,
+        operation: brainCloudClient.identity.OPERATION_REFRESH_IDENTITY,
+        data: {
+            externalId : externalId,
+            authenticationType : authenticationType,
+            authenticationToken : authenticationToken
+        },
+        callback: callback
+    });
+}
 
 brainCloudClient.identity.attachIdentity = function(externalId, authenticationToken, authenticationType, callback) {
     brainCloudManager.sendRequest({
