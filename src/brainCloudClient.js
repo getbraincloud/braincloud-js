@@ -3,7 +3,7 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-brainCloudClient.version = "2.24.0";
+brainCloudClient.version = "2.25.0";
 
 /**
  * Initializes the brainCloud client with your game information. This method
