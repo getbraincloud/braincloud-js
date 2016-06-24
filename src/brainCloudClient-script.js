@@ -2,11 +2,11 @@
 brainCloudClient.script = {};
 
 brainCloudClient.SERVICE_SCRIPT = "script";
-    
+
 brainCloudClient.script.OPERATION_RUN = "RUN";
 brainCloudClient.script.OPERATION_SCHEDULE_CLOUD_SCRIPT = "SCHEDULE_CLOUD_SCRIPT";
 brainCloudClient.script.OPERATION_RUN_PARENT_SCRIPT = "RUN_PARENT_SCRIPT";
-
+brainCloudClient.script.OPERATION_CANCEL_SCHEDULED_SCRIPT = "CANCEL_SCHEDULED_SCRIPT";
 
 /**
  * Executes a script on the server.
@@ -106,3 +106,22 @@ brainCloudClient.script.runParentScript = function(scriptName, scriptData, paren
     });
 };
 
+/**
+ * Cancels a scheduled cloud code script
+ *
+ * Service Name - Script
+ * Service Operation - CANCEL_SCHEDULED_SCRIPT
+ *
+ * @param jobId The scheduled script job to cancel
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.script.cancelScheduledScript = function(jobId, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_SCRIPT,
+        operation: brainCloudClient.script.OPERATION_CANCEL_SCHEDULED_SCRIPT,
+        data: {
+            jobId: jobId
+        },
+        callback: callback
+    });
+};

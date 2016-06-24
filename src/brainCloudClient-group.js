@@ -5,6 +5,7 @@ brainCloudClient.SERVICE_GROUP = "group";
 brainCloudClient.group.OPERATION_ACCEPT_GROUP_INVITATION = "ACCEPT_GROUP_INVITATION";
 brainCloudClient.group.OPERATION_ADD_GROUP_MEMBER = "ADD_GROUP_MEMBER";
 brainCloudClient.group.OPERATION_APPROVE_GROUP_JOIN_REQUEST = "APPROVE_GROUP_JOIN_REQUEST";
+brainCloudClient.group.OPERATION_AUTO_JOIN_GROUP = "AUTO_JOIN_GROUP";
 brainCloudClient.group.OPERATION_CANCEL_GROUP_INVITATION = "CANCEL_GROUP_INVITATION";
 brainCloudClient.group.OPERATION_CREATE_GROUP = "CREATE_GROUP";
 brainCloudClient.group.OPERATION_CREATE_GROUP_ENTITY = "CREATE_GROUP_ENTITY";
@@ -21,6 +22,7 @@ brainCloudClient.group.OPERATION_LIST_GROUPS_PAGE = "LIST_GROUPS_PAGE";
 brainCloudClient.group.OPERATION_LIST_GROUPS_PAGE_BY_OFFSET = "LIST_GROUPS_PAGE_BY_OFFSET";
 brainCloudClient.group.OPERATION_LIST_GROUPS_WITH_MEMBER = "LIST_GROUPS_WITH_MEMBER";
 brainCloudClient.group.OPERATION_READ_GROUP = "READ_GROUP";
+brainCloudClient.group.OPERATION_READ_GROUP_DATA = "READ_GROUP_DATA";
 brainCloudClient.group.OPERATION_READ_GROUP_ENTITIES_PAGE = "READ_GROUP_ENTITIES_PAGE";
 brainCloudClient.group.OPERATION_READ_GROUP_ENTITIES_PAGE_BY_OFFSET = "READ_GROUP_ENTITIES_PAGE_BY_OFFSET";
 brainCloudClient.group.OPERATION_READ_GROUP_ENTITY = "READ_GROUP_ENTITY";
@@ -35,6 +37,7 @@ brainCloudClient.group.OPERATION_UPDATE_GROUP_NAME = "UPDATE_GROUP_NAME";
 
 // Constant helper values
 brainCloudClient.group.role = Object.freeze({ owner : "OWNER", admin : "ADMIN", member : "MEMBER", other : "OTHER"});
+brainCloudClient.group.autoJoinStrategy = Object.freeze({ joinFirstGroup : "JoinFirstGroup", joinRandomGroup : "JoinRandomGroup" });
 
 /**
  * Accept an outstanding invitation to join the group.
@@ -111,6 +114,33 @@ brainCloudClient.group.approveGroupJoinRequest = function(groupId, profileId, ro
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_GROUP,
         operation : brainCloudClient.group.OPERATION_APPROVE_GROUP_JOIN_REQUEST,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * Automatically join an open group that matches the search criteria and has space available.
+ *
+ * Service Name - group
+ * Service Operation - AUTO_JOIN_GROUP
+ *
+ * @param groupType Name of the associated group type.
+ * @param autoJoinStrategy Selection strategy to employ when there are multiple matches
+ * @param dataQueryJson Query parameters (optional)
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.group.autoJoinGroup = function(groupType, autoJoinStrategy, dataQueryJson, callback) {
+    var message = {
+        groupType : groupType,
+        autoJoinStrategy : autoJoinStrategy
+    };
+
+    if(dataQueryJson) message.dataQueryJson = dataQueryJson;
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_GROUP,
+        operation : brainCloudClient.group.OPERATION_AUTO_JOIN_GROUP,
         data : message,
         callback : callback
     });
@@ -295,15 +325,12 @@ brainCloudClient.group.getMyGroups = function(callback) {
  * @param groupId ID of the group.
  * @param data Partial data map with incremental values.
  * @param callback The method to be invoked when the server response is received
- * @param returnData Should the group data be returned in the response?
  */
-brainCloudClient.group.incrementGroupData = function(groupId, data, returnData, callback) {
+brainCloudClient.group.incrementGroupData = function(groupId, data, callback) {
     var message = {
-        groupId : groupId
+        groupId : groupId,
+        data : data
     };
-
-    if(data) message.data = data;
-    if(returnData) message.returnData = returnData;
 
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_GROUP,
@@ -322,17 +349,14 @@ brainCloudClient.group.incrementGroupData = function(groupId, data, returnData, 
  * @param groupId ID of the group.
  * @param entityId ID of the entity.
  * @param data Partial data map with incremental values.
- * @param returnData Should the group entity be returned in the response?
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.group.incrementGroupEntityData = function(groupId, entityId, data, returnData, callback) {
+brainCloudClient.group.incrementGroupEntityData = function(groupId, entityId, data, callback) {
     var message = {
         groupId : groupId,
-        entityId : entityId
+        entityId : entityId,
+        data : data
     };
-
-    if(data) message.data = data;
-    if(returnData) message.returnData = returnData;
 
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_GROUP,
@@ -500,6 +524,28 @@ brainCloudClient.group.readGroup = function(groupId, callback) {
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_GROUP,
         operation : brainCloudClient.group.OPERATION_READ_GROUP,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * Read the data of the specified group.
+ *
+ * Service Name - group
+ * Service Operation - READ_GROUP_DATA
+ *
+ * @param groupId ID of the group.
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.group.readGroupData = function(groupId, callback) {
+    var message = {
+        groupId : groupId
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_GROUP,
+        operation : brainCloudClient.group.OPERATION_READ_GROUP_DATA,
         data : message,
         callback : callback
     });

@@ -15,6 +15,7 @@ brainCloudClient.friend.OPERATION_FIND_PLAYER_BY_UNIVERSAL_ID = "FIND_PLAYER_BY_
 brainCloudClient.friend.OPERATION_LIST_FRIENDS = "LIST_FRIENDS";
 brainCloudClient.friend.OPERATION_ADD_FRIENDS = "ADD_FRIENDS";
 brainCloudClient.friend.OPERATION_REMOVE_FRIENDS = "REMOVE_FRIENDS";
+brainCloudClient.friend.OPERATION_GET_SUMMARY_DATA_FOR_PROFILE_ID = "GET_SUMMARY_DATA_FOR_PROFILE_ID";
 
 brainCloudClient.friend.friendPlatform = Object.freeze({ All : "All",  BrainCloud : "brainCloud",  Facebook : "Facebook" });
 
@@ -237,6 +238,23 @@ brainCloudClient.friend.removeFriends = function(profileIds, callback) {
         operation: brainCloudClient.friend.OPERATION_REMOVE_FRIENDS,
         data: {
             profileIds: profileIds
+        },
+        callback: callback
+    });
+};
+
+/**
+ * Returns player state of a particular user.
+ *
+ * @param profileId Profile Id of player to retrieve player state for.
+ * @param callback Method to be invoked when the server response is received.
+ */
+brainCloudClient.friend.getSummaryDataForProfileId = function(profileId, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_FRIEND,
+        operation: brainCloudClient.friend.OPERATION_GET_SUMMARY_DATA_FOR_PROFILE_ID,
+        data: {
+            profileId: profileId
         },
         callback: callback
     });

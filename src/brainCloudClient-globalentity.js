@@ -359,17 +359,14 @@ brainCloudClient.globalEntity.getPageOffset = function(context, pageOffset,
 *
 * @param entityId The id of the entity to update
 * @param data The entity's data object
-* @param returnData Should the entity be returned in the response?
 * @param callback The callback object
 */
-brainCloudClient.globalEntity.incrementGlobalEntityData = function(entityId, data, returnData, callback)
+brainCloudClient.globalEntity.incrementGlobalEntityData = function(entityId, data, callback)
 {
     var message = {
-        entityId : entityId
+        entityId : entityId,
+        data : data
     };
-
-    if(data) message.data = data;
-    if(returnData) message.returnData = returnData;
 
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_GLOBAL_ENTITY,

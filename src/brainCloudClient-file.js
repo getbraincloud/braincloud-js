@@ -6,6 +6,7 @@ brainCloudClient.SERVICE_FILE = "file";
 brainCloudClient.file.OPERATION_PREPARE_USER_UPLOAD = "PREPARE_USER_UPLOAD";
 brainCloudClient.file.OPERATION_LIST_USER_FILES = "LIST_USER_FILES";
 brainCloudClient.file.OPERATION_DELETE_USER_FILES = "DELETE_USER_FILES";
+brainCloudClient.file.OPERATION_GET_CDN_URL = "GET_CDN_URL";
 
 /**
  * Prepares a user file upload. On success an uploadId will be returned which
@@ -19,12 +20,12 @@ brainCloudClient.file.OPERATION_DELETE_USER_FILES = "DELETE_USER_FILES";
  * @param callback The method to be invoked when the server response is received
  *
  * Significant error codes:
- * 
+ *
  * 40429 - File maximum file size exceeded
  * 40430 - File exists, replaceIfExists not set
  */
 brainCloudClient.file.prepareFileUpload = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, callback) {
-    
+
     var message = {
         cloudPath : cloudPath,
         cloudFilename : cloudFilename,
@@ -33,7 +34,7 @@ brainCloudClient.file.prepareFileUpload = function(cloudPath, cloudFilename, sha
         fileSize : fileSize
         // not used in js -- localPath : localPath
     };
-    
+
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_FILE,
         operation : brainCloudClient.file.OPERATION_PREPARE_USER_UPLOAD,
@@ -48,14 +49,14 @@ brainCloudClient.file.prepareFileUpload = function(cloudPath, cloudFilename, sha
  * It is assumed that any methods required to monitor the file upload including
  * progress, and completion are attached to the XMLHttpRequest xhr object's
  * events such as:
- * 
+ *
  * xhr.upload.addEventListener("progress", uploadProgress);
  * xhr.addEventListener("load", transferComplete);
  * xhr.addEventListener("error", transferFailed);
  * xhr.addEventListener("abort", transferCanceled);
- * 
- * @param xhr The XMLHttpRequest object that the brainCloud client will 
- * use to upload the file. 
+ *
+ * @param xhr The XMLHttpRequest object that the brainCloud client will
+ * use to upload the file.
  * @param file The file object
  * @param uploadId The upload id obtained via prepareFileUpload()
  */
@@ -64,7 +65,7 @@ brainCloudClient.file.uploadFile = function(xhr, file, uploadId) {
     var url = brainCloudManager.getFileUploadUrl();
     var fd = new FormData();
     var fileSize = file.size;
-    
+
     xhr.open("POST", url, true);
     fd.append("sessionId", brainCloudManager.getSessionId());
     fd.append("uploadId", uploadId);
@@ -83,14 +84,14 @@ brainCloudClient.file.uploadFile = function(xhr, file, uploadId) {
 brainCloudClient.file.listUserFiles = function(cloudPath, recurse, callback) {
 
     var message = {};
-    
+
     if (cloudPath != null) {
         message.cloudPath = cloudPath;
     }
     if (recurse != null) {
         message.recurse = recurse;
     }
-    
+
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_FILE,
         operation : brainCloudClient.file.OPERATION_LIST_USER_FILES,
@@ -118,7 +119,7 @@ brainCloudClient.file.deleteUserFile = function(cloudPath, cloudFilename, callba
         cloudPath : cloudPath,
         cloudFilename : cloudFilename
     };
-    
+
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_FILE,
         operation : brainCloudClient.file.OPERATION_DELETE_USER_FILES,
@@ -139,10 +140,31 @@ brainCloudClient.file.deleteUserFiles = function(cloudPath, recurse, callback) {
         cloudPath : cloudPath,
         recurse : recurse
     };
-    
+
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_FILE,
         operation : brainCloudClient.file.OPERATION_DELETE_USER_FILES,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+* Returns the CDN url for a file object
+*
+* @param cloudPath File path
+* @param cloudFileName File name
+* @param callback The method to be invoked when the server response is received
+*/
+brainCloudClient.file.getCDNUrl = function(cloudPath, cloudFilename, callback) {
+    var message = {
+        cloudPath : cloudPath,
+        cloudFilename : cloudFilename
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_FILE,
+        operation : brainCloudClient.file.OPERATION_GET_CDN_URL,
         data : message,
         callback : callback
     });

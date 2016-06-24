@@ -21,6 +21,7 @@ brainCloudClient.entity.OPERATION_GET_PAGE = "GET_PAGE";
 brainCloudClient.entity.OPERATION_GET_PAGE_BY_OFFSET = "GET_PAGE_BY_OFFSET";
 brainCloudClient.entity.OPERATION_READ_SHARED_ENTITIES_LIST = "READ_SHARED_ENTITIES_LIST";
 brainCloudClient.entity.OPERATION_INCREMENT_USER_ENTITY_DATA = "INCREMENT_USER_ENTITY_DATA";
+brainCloudClient.entity.OPERATION_INCREMENT_SHARED_USER_ENTITY_DATA = "INCREMENT_SHARED_USER_ENTITY_DATA";
 
 /**
  * Method creates a new entity on the server.
@@ -487,24 +488,46 @@ brainCloudClient.entity.getPageOffset = function(context, pageOffset, callback)
 * Service Operation - INCREMENT_USER_ENTITY_DATA
 *
 * @param entityId The id of the entity to update
-* @param targetPlayerId Profile ID of the entity owner
 * @param data The entity's data object
-* @param returnData Should the entity be returned in the response?
 * @param callback The callback object
 */
-brainCloudClient.entity.incrementUserEntityData = function(entityId, targetPlayerId, data, returnData, callback)
+brainCloudClient.entity.incrementUserEntityData = function(entityId, data, callback)
 {
     var message = {
         entityId : entityId,
-        targetPlayerId : targetPlayerId
+        data : data
     };
-
-    if(data) message.data = data;
-    if(returnData) message.returnData = returnData;
 
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_ENTITY,
         operation : brainCloudClient.entity.OPERATION_INCREMENT_USER_ENTITY_DATA,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+* Partial increment of entity data field items. Partial set of items incremented as specified.
+*
+* Service Name - entity
+* Service Operation - INCREMENT_SHARED_USER_ENTITY_DATA
+*
+* @param entityId The id of the entity to update
+* @param targetPlayerId Profile ID of the entity owner
+* @param data The entity's data object
+* @param callback The callback object
+*/
+brainCloudClient.entity.incrementSharedUserEntityData = function(entityId, targetPlayerId, data, callback)
+{
+    var message = {
+        entityId : entityId,
+        targetPlayerId : targetPlayerId,
+        data : data
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_ENTITY,
+        operation : brainCloudClient.entity.OPERATION_INCREMENT_SHARED_USER_ENTITY_DATA,
         data : message,
         callback : callback
     });
