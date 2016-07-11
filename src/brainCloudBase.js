@@ -275,8 +275,28 @@ var abTestData;
 
     function processQueue() {
         if (_sendQueue.length > 0) {
-            _inProgressQueue = _sendQueue;
-            _sendQueue = [];
+            _inProgressQueue = [];
+            var itemsProcessed;
+            for(itemsProcessed = 0; itemsProcessed < _sendQueue.length; ++itemsProcessed) {
+                var message = _sendQueue[itemsProcessed];
+                if (message.operation == "END_BUNDLE_MARKER") {
+                    if (_inProgressQueue.length == 0) {
+                        // ignore bundle markers at the beginning of the bundle
+                        continue;
+                    }
+                    else {
+                        // end the message bundle
+                        ++itemsProcessed;
+                        break;
+                    }
+                }
+                _inProgressQueue.push(message);
+            }
+            _sendQueue.splice(0, itemsProcessed);
+            if (_inProgressQueue.length <= 0) {
+                return;
+            }
+
             _jsonedQueue = JSON.stringify({
                 messages : _inProgressQueue,
                 gameId : _gameId,

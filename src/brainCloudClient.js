@@ -160,7 +160,28 @@ brainCloudClient.isAuthenticated = function() {
 
 brainCloudClient.resetCommunication = function() {
     brainCloudManager.resetCommunication();
-}
+};
+
+/**
+ * Inserts a marker which will tell the brainCloud comms layer
+ * to close the message bundle off at this point. Any messages queued
+ * before this method was called will likely be bundled together in
+ * the next send to the server.
+ *
+ * To ensure that only a single message is sent to the server you would
+ * do something like this:
+ *
+ * InsertEndOfMessageBundleMarker()
+ * SomeApiCall()
+ * InsertEndOfMessageBundleMarker()
+ *
+ */
+brainCloudClient.insertEndOfMessageBundleMarker = function() {
+    var message = {
+        "operation": "END_BUNDLE_MARKER"
+    };
+    brainCloudManager.sendRequest(message);
+};
 
 brainCloudClient.heartbeat = function(callback) {
     brainCloudManager.sendRequest({
