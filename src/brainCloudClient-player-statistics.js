@@ -15,6 +15,7 @@ brainCloudClient.playerStatistics.UPDATE = "UPDATE";
 brainCloudClient.playerStatistics.UPDATE_INCREMENT = "UPDATE_INCREMENT";
 brainCloudClient.playerStatistics.UPDATE_SET_MINIMUM = "UPDATE_SET_MINIMUM";
 brainCloudClient.playerStatistics.UPDATE_INCREMENT_TO_MAXIMUM = "UPDATE_INCREMENT_TO_MAXIMUM";
+brainCloudClient.playerStatistics.OPERATION_PROCESS_STATISTICS = "PROCESS_STATISTICS";
 
 brainCloudClient.playerStatistics.OPERATION_READ_NEXT_XPLEVEL = "READ_NEXT_XPLEVEL";
 
@@ -119,22 +120,22 @@ brainCloudClient.playerStatistics.readAllPlayerStats = function(callback) {
 
 /**
  * Reads a subset of player statistics as defined by the input JSON.
- *          
+ *
  * Service Name - PlayerStatistics
  * Service Operation - ReadSubset
  *
  * @param subset The json data containing the subset of statistics to read:
  *        ex. [ "pantaloons", "minions" ]
  * @param in_callback The method to be invoked when the server response is received
- * 
+ *
  * @return JSON with the subset of global statistics:
  * {
- *   "status":200,   
- *   "data":{      
- *     "statistics":{         
- *       "wood":11,         
+ *   "status":200,
+ *   "data":{
+ *     "statistics":{
+ *       "wood":11,
  *       "minions":1
- *     }   
+ *     }
  *   }
  * }
  */
@@ -209,6 +210,33 @@ brainCloudClient.playerStatistics.setExperiencePoints = function(xp,
         operation : brainCloudClient.playerStatistics.OPERATION_SET_XPPOINTS,
         data : {
             xp_points : xp
+        },
+        callback : callback
+    });
+};
+
+/**
+* Apply statistics grammar to a partial set of statistics.
+*
+* Service Name - PlayerStatistics
+* Service Operation - PROCESS_STATISTICS
+*
+* @param jsonData The JSON format is as follows:
+* {
+*     "DEAD_CATS": "RESET",
+*     "LIVES_LEFT": "SET#9",
+*     "MICE_KILLED": "INC#2",
+*     "DOG_SCARE_BONUS_POINTS": "INC#10",
+*     "TREES_CLIMBED": 1
+* }
+* @param callback Method to be invoked when the server response is received.
+*/
+brainCloudClient.playerStatistics.processStatistics = function(stats, callback) {
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
+        operation : brainCloudClient.globalStatistics.OPERATION_PROCESS_STATISTICS,
+        data : {
+            statistics : stats
         },
         callback : callback
     });
