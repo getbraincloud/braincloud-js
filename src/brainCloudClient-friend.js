@@ -16,7 +16,7 @@ brainCloudClient.friend.OPERATION_LIST_FRIENDS = "LIST_FRIENDS";
 brainCloudClient.friend.OPERATION_ADD_FRIENDS = "ADD_FRIENDS";
 brainCloudClient.friend.OPERATION_REMOVE_FRIENDS = "REMOVE_FRIENDS";
 brainCloudClient.friend.OPERATION_GET_SUMMARY_DATA_FOR_PROFILE_ID = "GET_SUMMARY_DATA_FOR_PROFILE_ID";
-brainCloudClient.friend.OPERATION_GET_PLAYERS_ONLINE_STATUS = "GET_PLAYERS_ONLINE_STATUS";
+brainCloudClient.friend.OPERATION_GET_USERS_ONLINE_STATUS = "GET_USERS_ONLINE_STATUS";
 
 brainCloudClient.friend.friendPlatform = Object.freeze({ All : "All",  BrainCloud : "brainCloud",  Facebook : "Facebook" });
 
@@ -265,15 +265,15 @@ brainCloudClient.friend.getSummaryDataForProfileId = function(profileId, callbac
 * Get players online status
 *
 * Service Name - Friend
-* Service Operation - GET_PLAYERS_ONLINE_STATUS
+* Service Operation - GET_USERS_ONLINE_STATUS
 *
 * @param profileIds Collection of player IDs.
 * @param callback Method to be invoked when the server response is received.
 */
-brainCloudClient.friend.getPlayersOnlineStatus  = function(profileIds, callback) {
+brainCloudClient.friend.getUsersOnlineStatus  = function(profileIds, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_FRIEND,
-        operation: brainCloudClient.friend.OPERATION_GET_PLAYERS_ONLINE_STATUS,
+        operation: brainCloudClient.friend.OPERATION_GET_USERS_ONLINE_STATUS,
         data: {
             profileIds: profileIds
         },
