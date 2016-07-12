@@ -262,12 +262,12 @@ brainCloudClient.friend.getSummaryDataForProfileId = function(profileId, callbac
 };
 
 /**
-* Get players online status
+* Get users online status
 *
 * Service Name - Friend
 * Service Operation - GET_USERS_ONLINE_STATUS
 *
-* @param profileIds Collection of player IDs.
+* @param profileIds Collection of profile IDs.
 * @param callback Method to be invoked when the server response is received.
 */
 brainCloudClient.friend.getUsersOnlineStatus  = function(profileIds, callback) {
