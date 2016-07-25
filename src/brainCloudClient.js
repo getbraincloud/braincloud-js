@@ -3,7 +3,7 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-brainCloudClient.version = "2.25.0";
+brainCloudClient.version = "3.0.0";
 
 /**
  * Initializes the brainCloud client with your game information. This method
@@ -22,7 +22,7 @@ brainCloudClient.initialize = function(gameId, secret, gameVersion) {
 
 /**
  * Initializes the identity service with the most recently
- * used profile id and saved anonymous installation id 
+ * used profile id and saved anonymous installation id
  *
  * @param profileId The id of the profile id that was most recently used by the app (on this device)
  * @param anonymousId  The anonymous installation id that was generated for this device
