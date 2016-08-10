@@ -364,8 +364,8 @@ brainCloudClient.authentication.authenticate = function(externalId, authenticati
 
     var _navLangCode = window.navigator.userLanguage || window.navigator.language;
     _navLangCode = _navLangCode.split("-");
-    var languageCode = _navLangCode[0];
-    var countryCode = _navLangCode[1];
+    var languageCode =  brainCloudClient.languageCode == null ? _navLangCode[0] : brainCloudClient.languageCode;
+    var countryCode = brainCloudClient.countryCode == null ? _navLangCode[1] : brainCloudClient.countryCode;
 
     var now = new Date();
     var timeZoneOffset = -now.getTimezoneOffset() / 60.0;

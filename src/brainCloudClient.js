@@ -4,6 +4,8 @@
 //----------------------------------------------------
 
 brainCloudClient.version = "3.0.0";
+brainCloudClient.countryCode;
+brainCloudClient.languageCode;
 
 /**
  * Initializes the brainCloud client with your game information. This method
@@ -182,6 +184,25 @@ brainCloudClient.insertEndOfMessageBundleMarker = function() {
     };
     brainCloudManager.sendRequest(message);
 };
+
+/**
+ * Sets the country code sent to brainCloud when a user authenticates.
+ * Will override any auto detected country.
+ * @param countryCode ISO 3166-1 two-letter country code
+ */
+brainCloudClient.overrideCountryCode = function(countryCode) {
+    brainCloudClient.countryCode = countryCode;
+} 
+
+/**
+ * Sets the language code sent to brainCloud when a user authenticates.
+ * If the language is set to a non-ISO 639-1 standard value the game default will be used instead.
+ * Will override any auto detected language.
+ * @param languageCode ISO 639-1 two-letter language code
+ */
+brainCloudClient.overrideLanguageCode = function(languageCode) {
+    brainCloudClient.languageCode = languageCode;
+} 
 
 brainCloudClient.heartbeat = function(callback) {
     brainCloudManager.sendRequest({
