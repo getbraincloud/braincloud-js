@@ -9,6 +9,8 @@ brainCloudClient.pushNotification.OPERATION_SEND_RICH = "SEND_RICH";
 brainCloudClient.pushNotification.OPERATION_REGISTER = "REGISTER";
 brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_TO_GROUP = "SEND_NORMALIZED_TO_GROUP";
 brainCloudClient.pushNotification.OPERATION_SEND_TEMPLATED_TO_GROUP = "SEND_TEMPLATED_TO_GROUP";
+brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED = "SEND_NORMALIZED";
+brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_BATCH = "SEND_NORMALIZED_BATCH";
 
 /**
 * Deregisters all device tokens currently registered to the player.
@@ -176,3 +178,52 @@ brainCloudClient.pushNotification.sendNormalizedPushNotificationToGroup = functi
         callback: callback
     });
 }
+
+/**
+* Sends a notification to a user consisting of alert content and custom data.
+*
+* @param toPlayerId The playerId of the user to receive the notification
+* @param alertContent Body and title of alert
+* @param customData Optional custom data
+* @param callback The method to be invoked when the server response is received
+*/
+brainCloudClient.pushNotification.sendNormalizedPushNotification = function(toPlayerId, alertContent, customData, callback) {
+    var data = {
+        toPlayerId: toPlayerId,
+        alertContent: alertContent
+    };
+
+    if (customData) data.customData = customData;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED,
+        data: data,
+        callback: callback
+    });
+}
+
+/**
+* Sends a notification to multiple users consisting of alert content and custom data.
+*
+* @param profileIds Collection of profile IDs to send the notification to
+* @param alertContent Body and title of alert
+* @param customData Optional custom data
+* @param callback The method to be invoked when the server response is received
+*/
+brainCloudClient.pushNotification.sendNormalizedPushNotificationBatch = function(profileIds, alertContent, customData, callback) {
+    var data = {
+        profileIds: profileIds,
+        alertContent: alertContent
+    };
+
+    if (customData) data.customData = customData;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_BATCH,
+        data: data,
+        callback: callback
+    });
+}
+

@@ -17,6 +17,7 @@ brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_VERSIONS = "
 brainCloudClient.socialLeaderboard.OPERATION_GET_COMPLETED_TOURNAMENT = "GET_COMPLETED_TOURNAMENT";
 brainCloudClient.socialLeaderboard.OPERATION_REWARD_TOURNAMENT = "REWARD_TOURNAMENT";
 brainCloudClient.socialLeaderboard.OPERATION_GET_GROUP_SOCIAL_LEADERBOARD = "GET_GROUP_SOCIAL_LEADERBOARD";
+brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD = "GET_PLAYERS_SOCIAL_LEADERBOARD";
 
 // Constant helper values
 brainCloudClient.socialLeaderboard.leaderboardType = Object.freeze({ HIGH_VALUE : "HIGH_VALUE", CUMULATIVE : "CUMULATIVE", LAST_VALUE : "LAST_VALUE", LOW_VALUE : "LOW_VALUE"});
@@ -434,6 +435,30 @@ brainCloudClient.socialLeaderboard.getGroupSocialLeaderboard = function(leaderbo
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
         operation : brainCloudClient.socialLeaderboard.OPERATION_GET_GROUP_SOCIAL_LEADERBOARD,
+        data : message,
+        callback : callback
+    });
+}
+
+/**
+* Retrieve the social leaderboard for a group.
+*
+* Service Name - leaderboard
+* Service Operation - GET_GROUP_SOCIAL_LEADERBOARD
+*
+* @param leaderboardId The leaderboard to retrieve
+* @param profileIds The IDs of the players
+* @param callback The method to be invoked when the server response is received
+*/
+brainCloudClient.socialLeaderboard.getPlayersSocialLeaderboard = function(leaderboardId, profileIds, callback) {
+    var message = {
+        leaderboardId : leaderboardId,
+        profileIds : profileIds
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+        operation : brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD,
         data : message,
         callback : callback
     });
