@@ -332,7 +332,7 @@ brainCloudClient.socialLeaderboard.postScoreToDynamicLeaderboard = function(lead
     var d = ("0" + (rotationReset.getDate())).slice(-2);
     var m = ("0" + (rotationReset.getMonth() + 1)).slice(-2);
     var y = rotationReset.getFullYear().toString();
-    var hh = (rotationReset.getHours() + 1).toString();
+    var hh = ("0" + (rotationReset.getHours() + 1)).slice(-2);
     var mm = (rotationReset.getMinutes() + 1).toString();
     var dateStr = d +"-"+m+"-"+y+" "+hh+":"+mm;
 
