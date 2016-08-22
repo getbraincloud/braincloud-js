@@ -329,14 +329,6 @@ brainCloudClient.socialLeaderboard.postScoreToLeaderboard = function(leaderboard
  */
 brainCloudClient.socialLeaderboard.postScoreToDynamicLeaderboard = function(leaderboardName, score,
         data, leaderboardType, rotationType, rotationReset, retainedCount, callback ) {
-
-    var d = ("0" + (rotationReset.getDate())).slice(-2);
-    var m = ("0" + (rotationReset.getMonth() + 1)).slice(-2);
-    var y = rotationReset.getFullYear().toString();
-    var hh = ("0" + (rotationReset.getHours() + 1)).slice(-2);
-    var mm = ("0" + (rotationReset.getMinutes() + 1)).slice(-2);
-    var dateStr = d +"-"+m+"-"+y+" "+hh+":"+mm;
-
     brainCloudManager
             .sendRequest({
                 service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
@@ -347,7 +339,7 @@ brainCloudClient.socialLeaderboard.postScoreToDynamicLeaderboard = function(lead
                     data : data,
                     leaderboardType : leaderboardType,
                     rotationType : rotationType,
-                    rotationReset : dateStr,
+                    rotationResetTime : rotationReset.getTime().toFixed(0),
                     retainedCount : retainedCount
                 },
                 callback : callback
