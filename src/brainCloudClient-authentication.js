@@ -389,7 +389,8 @@ brainCloudClient.authentication.authenticate = function(externalId, authenticati
         profileId: brainCloudClient.authentication.profileId,
         timeZoneOffset: timeZoneOffset,
         languageCode: languageCode,
-        countryCode: countryCode
+        countryCode: countryCode,
+        clientLib: "js"
     };
 
     if (externalAuthName) {

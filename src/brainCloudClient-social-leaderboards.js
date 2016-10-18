@@ -18,6 +18,7 @@ brainCloudClient.socialLeaderboard.OPERATION_GET_COMPLETED_TOURNAMENT = "GET_COM
 brainCloudClient.socialLeaderboard.OPERATION_REWARD_TOURNAMENT = "REWARD_TOURNAMENT";
 brainCloudClient.socialLeaderboard.OPERATION_GET_GROUP_SOCIAL_LEADERBOARD = "GET_GROUP_SOCIAL_LEADERBOARD";
 brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD = "GET_PLAYERS_SOCIAL_LEADERBOARD";
+brainCloudClient.socialLeaderboard.OPERATION_LIST_ALL_LEADERBOARDS = "LIST_ALL_LEADERBOARDS";
 
 // Constant helper values
 brainCloudClient.socialLeaderboard.leaderboardType = Object.freeze({ HIGH_VALUE : "HIGH_VALUE", CUMULATIVE : "CUMULATIVE", LAST_VALUE : "LAST_VALUE", LOW_VALUE : "LOW_VALUE"});
@@ -452,6 +453,23 @@ brainCloudClient.socialLeaderboard.getPlayersSocialLeaderboard = function(leader
         service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
         operation : brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD,
         data : message,
+        callback : callback
+    });
+}
+
+/**
+ * Retrieve a list of all leaderboards
+ *
+ * Service Name - leaderboard
+ * Service Operation - LIST_ALL_LEADERBOARDS
+ *
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.socialLeaderboard.listAllLeaderboards = function(callback) {
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+        operation : brainCloudClient.socialLeaderboard.OPERATION_LIST_ALL_LEADERBOARDS,
+        data : null,
         callback : callback
     });
 }

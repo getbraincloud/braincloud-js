@@ -328,5 +328,13 @@
                 responseHandler(result);
             });
     };
+
+    /** Method authenticates the user using universal credentials
+     * 
+     * @param responseHandler {function} - The user callback method
+     */
+    brainCloudWrapper.reconnect = function(responseHandler) {
+        brainCloudWrapper.authenticateAnonymous(responseHandler); 
+    };
     
 }(window.brainCloudWrapper = window.brainCloudWrapper || {}));
