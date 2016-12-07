@@ -10,11 +10,6 @@ brainCloudClient.product.OPERATION_GET_PLAYER_VC = "GET_PLAYER_VC";
 brainCloudClient.product.OPERATION_RESET_PLAYER_VC = "RESET_PLAYER_VC";
 brainCloudClient.product.OPERATION_CONSUME_PLAYER_VC = "CONSUME_VC";
 
-brainCloudClient.product.OPERATION_AWARD_PARENT_VC = "AWARD_PARENT_VC";
-brainCloudClient.product.OPERATION_GET_PARENT_VC = "GET_PARENT_VC";
-brainCloudClient.product.OPERATION_RESET_PARENT_VC = "RESET_PARENT_VC";
-brainCloudClient.product.OPERATION_CONSUME_PARENT_VC = "CONSUME_PARENT_VC";
-
 brainCloudClient.product.OPERATION_START_STEAM_TRANSACTION = "START_STEAM_TRANSACTION";
 brainCloudClient.product.OPERATION_FINALIZE_STEAM_TRANSACTION = "FINALIZE_STEAM_TRANSACTION";
 brainCloudClient.product.OPERATION_VERIFY_MICROSOFT_RECEIPT = "VERIFY_MICROSOFT_RECEIPT";
@@ -142,15 +137,7 @@ brainCloudClient.product.confirmGooglePlayPurchase = function(productId, token, 
 };
 
 /**
- * Award player the passed-in amount of currency. Returns
- * JSON representing the new currency values.
- *
- * Service Name - Product
- * Service Operation - AwardVC
- *
- * @param currencyType The currency type to award
- * @param amount The amount of currency to award
- * @param callback The method to be invoked when the server response is received
+ * @deprecated Method is now available in Cloud Code only for security - removal after March 22 2016
  */
 brainCloudClient.product.awardCurrency = function(currencyType, amount, callback) {
     var message = {
@@ -189,12 +176,7 @@ brainCloudClient.product.getCurrency = function(currencyType, callback) {
 };
 
 /**
- * Resets the player's currency back to zero.
- *
- * Service Name - Product
- * Service Operation - ResetPlayerVC
- *
- * @param callback The method to be invoked when the server response is received
+ * @deprecated Method is now available in Cloud Code only for security - removal after March 22 2016
  */
 brainCloudClient.product.resetCurrency = function(callback) {
     brainCloudManager.sendRequest({
@@ -221,14 +203,7 @@ brainCloudClient.product.getEligiblePromotions = function(callback) {
 };
 
 /**
- * Consume the passed-in amount of currency from the player.
- *
- * Service Name - Product
- * Service Operation - ConsumePlayerVC
- *
- * @param currencyType The currency type to consume.
- * @param amount The amount of currency to consume.
- * @param callback The method to be invoked when the server response is received
+ * @deprecated Method is now available in Cloud Code only for security - removal after March 22 2016
  */
 brainCloudClient.product.consumeCurrency = function(vcId, amount, callback) {
     brainCloudManager.sendRequest({
@@ -323,106 +298,6 @@ brainCloudClient.product.confirmFacebookPurchase = function(signedRequest, callb
         data: {
             signed_request: signedRequest
         },
-        callback: callback
-    });
-};
-
-/**
- * Awards currency in a parent app.
- *
- * Service Name - Product
- * Service Operation - AWARD_PARENT_VC
- *
- * @param currencyType The ID of the parent currency
- * @param amount The amount of currency to award
- * @param parentLevel The level of the parent containing the currency
- * @param callback The method to be invoked when the server response is received
- */
-brainCloudClient.product.awardParentCurrency = function(currencyType, amount, parentLevel, callback) {
-    var message = {
-            vc_id: currencyType,
-            vc_amount: amount,
-            levelName:parentLevel
-    };
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_PRODUCT,
-        operation: brainCloudClient.product.OPERATION_AWARD_PARENT_VC,
-        data: message,
-        callback: callback
-    });
-};
-
-/**
- * Consumes currency in a parent app.
- *
- * Service Name - Product
- * Service Operation - CONSUME_PARENT_VC
- *
- * @param currencyType The ID of the parent currency
- * @param amount The amount of currency to consume
- * @param parentLevel The level of the parent containing the currency
- * @param callback The method to be invoked when the server response is received
- */
-brainCloudClient.product.consumeParentCurrency = function(currencyType, amount, parentLevel, callback) {
-    var message = {
-            vc_id: currencyType,
-            vc_amount: amount,
-            levelName:parentLevel
-    };
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_PRODUCT,
-        operation: brainCloudClient.product.OPERATION_CONSUME_PARENT_VC,
-        data: message,
-        callback: callback
-    });
-};
-
-/**
- * Gets information on a single currency in a parent app
- * or all currency types if a null type is passed in.
- *
- * Service Name - Product
- * Service Operation - GET_PARENT_VC
- *
- * @param currencyType The ID of the parent currency or null to get all currencies
- * @param parentLevel The level of the parent containing the currency
- * @param callback The method to be invoked when the server response is received
- */
-brainCloudClient.product.getParentCurrency = function(currencyType, parentLevel, callback) {
-    var message = {
-            levelName:parentLevel
-    };
-
-    if(currencyType)
-    {
-        message.vc_id = currencyType;
-    }
-
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_PRODUCT,
-        operation: brainCloudClient.product.OPERATION_GET_PARENT_VC,
-        data: message,
-        callback: callback
-    });
-};
-
-/**
- * Resets all currencies in a parent app.
- *
- * Service Name - Product
- * Service Operation - RESET_PARENT_VC
- *
- * @param parentLevel The level of the parent containing the currencies
- * @param callback The method to be invoked when the server response is received
- */
-brainCloudClient.product.resetParentCurrency = function(parentLevel, callback) {
-    var message = {
-            levelName:parentLevel
-    };
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_PRODUCT,
-        operation: brainCloudClient.product.OPERATION_RESET_PARENT_VC,
-        data: message,
         callback: callback
     });
 };
