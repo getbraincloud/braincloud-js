@@ -12,6 +12,11 @@ brainCloudClient.identity.OPERATION_GET_CHILD_PROFILES = "GET_CHILD_PROFILES";
 brainCloudClient.identity.OPERATION_GET_IDENTITIES = "GET_IDENTITIES";
 brainCloudClient.identity.OPERATION_GET_EXPIRED_IDENTITIES = "GET_EXPIRED_IDENTITIES";
 brainCloudClient.identity.OPERATION_REFRESH_IDENTITY = "REFRESH_IDENTITY";
+brainCloudClient.identity.OPERATION_ATTACH_PARENT_WITH_IDENTITY = "ATTACH_PARENT_WITH_IDENTITY";
+brainCloudClient.identity.OPERATION_DETACH_PARENT = "DETACH_PARENT";
+brainCloudClient.identity.OPERATION_ATTACH_PEER_PROFILE = "ATTACH_PEER_PROFILE";
+brainCloudClient.identity.OPERATION_DETACH_PEER = "DETACH_PEER";
+brainCloudClient.identity.OPERATION_GET_PEER_PROFILES = "GET_PEER_PROFILES";
 
 brainCloudClient.identity.authenticationType = Object.freeze({ 
     anonymous : "Anonymous",
@@ -587,6 +592,131 @@ brainCloudClient.identity.refreshIdentity = function(externalId, authenticationT
         callback: callback
     });
 }
+
+/**
+ * Attach a new identity to a parent app
+ *
+ * Service Name - identity
+ * Service Operation - ATTACH_PARENT_WITH_IDENTITY
+ *
+ * @param externalId The users id for the new credentials
+ * @param authenticationToken The password/token
+ * @param authenticationType Type of identity
+ * @param forceCreate Should a new profile be created if it does not exist?
+ * @param externalAuthName Optional - if attaching an external identity
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.identity.attachParentWithIdentity = function(externalId, authenticationToken, authenticationType, forceCreate, externalAuthName, callback) {
+    var data = {
+        externalId : externalId,
+        authenticationToken : authenticationToken,
+        authenticationType : authenticationType,
+        forceCreate : forceCreate
+    };
+
+    if(externalAuthName)
+        data.externalAuthName = externalAuthName;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_IDENTITY,
+        operation: brainCloudClient.identity.OPERATION_ATTACH_PARENT_WITH_IDENTITY,
+        data,
+        callback: callback
+    });
+}
+
+/**
+ * Detaches parent from this player's profile
+ *
+ * Service Name - identity
+ * Service Operation - DETACH_PARENT
+ *
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.identity.detachParent = function(callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_IDENTITY,
+        operation: brainCloudClient.identity.OPERATION_DETACH_PARENT,
+        null,
+        callback: callback
+    });
+}
+
+/**
+ * Attaches a peer identity to this player's profile
+ *
+ * Service Name - identity
+ * Service Operation - ATTACH_PEER_PROFILE
+ *
+ * @param externalId The users id for the new credentials
+ * @param authenticationToken The password/token
+ * @param authenticationType Type of identity
+ * @param forceCreate Should a new profile be created if it does not exist?
+ * @param externalAuthName Optional - if attaching an external identity
+ * @param peer Name of the peer to connect to
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.identity.attachPeerProfile = function(externalId, authenticationToken, authenticationType, forceCreate, externalAuthName, peer, callback) {
+    var data = {
+        externalId : externalId,
+        authenticationToken : authenticationToken,
+        authenticationType : authenticationType,
+        forceCreate : forceCreate,
+        peer: peer
+    };
+
+    if(externalAuthName)
+        data.externalAuthName = externalAuthName;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_IDENTITY,
+        operation: brainCloudClient.identity.OPERATION_ATTACH_PEER_PROFILE,
+        data,
+        callback: callback
+    });
+}
+
+/**
+ * Detaches a peer identity from this player's profile
+ *
+ * Service Name - identity
+ * Service Operation - DETACH_PEER
+ *
+ * @param peer Name of the peer to connect to
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.identity.detachPeer = function(peer, callback) {
+    var data = {
+        peer: peer
+    };
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_IDENTITY,
+        operation: brainCloudClient.identity.OPERATION_DETACH_PEER,
+        data,
+        callback: callback
+    });
+}
+
+/**
+ * Returns a list of peer profiles attached to this user
+ *
+ * Service Name - identity
+ * Service Operation - GET_PEER_PROFILES
+ *
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.identity.getPeerProfiles = function(callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_IDENTITY,
+        operation: brainCloudClient.identity.OPERATION_GET_PEER_PROFILES,
+        null,
+        callback: callback
+    });
+}
+
+
+//internal methods
 
 brainCloudClient.identity.attachIdentity = function(externalId, authenticationToken, authenticationType, callback) {
     brainCloudManager.sendRequest({
