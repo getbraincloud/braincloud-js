@@ -620,7 +620,7 @@ brainCloudClient.identity.attachParentWithIdentity = function(externalId, authen
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_IDENTITY,
         operation: brainCloudClient.identity.OPERATION_ATTACH_PARENT_WITH_IDENTITY,
-        data,
+        data: data,
         callback: callback
     });
 }
@@ -637,7 +637,7 @@ brainCloudClient.identity.detachParent = function(callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_IDENTITY,
         operation: brainCloudClient.identity.OPERATION_DETACH_PARENT,
-        null,
+        data: null,
         callback: callback
     });
 }
@@ -671,7 +671,7 @@ brainCloudClient.identity.attachPeerProfile = function(externalId, authenticatio
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_IDENTITY,
         operation: brainCloudClient.identity.OPERATION_ATTACH_PEER_PROFILE,
-        data,
+        data: data,
         callback: callback
     });
 }
@@ -693,7 +693,7 @@ brainCloudClient.identity.detachPeer = function(peer, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_IDENTITY,
         operation: brainCloudClient.identity.OPERATION_DETACH_PEER,
-        data,
+        data: data,
         callback: callback
     });
 }
@@ -710,7 +710,7 @@ brainCloudClient.identity.getPeerProfiles = function(callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_IDENTITY,
         operation: brainCloudClient.identity.OPERATION_GET_PEER_PROFILES,
-        null,
+        data: null,
         callback: callback
     });
 }

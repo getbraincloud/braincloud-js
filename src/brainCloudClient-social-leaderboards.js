@@ -119,7 +119,7 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardPageByVersion = function(
  * @see brainCloudClient.socialLeaderboard.SortOrder
  */
 brainCloudClient.socialLeaderboard.getGlobalLeaderboardView = function(
-        leaderboardId, sortOrder, beforeCount, afterCount, includeLeaderboardSize, callback) {
+        leaderboardId, sortOrder, beforeCount, afterCount, callback) {
     brainCloudManager
             .sendRequest({
                 service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
