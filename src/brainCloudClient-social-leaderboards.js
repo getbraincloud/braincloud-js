@@ -41,13 +41,12 @@ brainCloudClient.socialLeaderboard.sortOrder = Object.freeze({ HIGH_TO_LOW : "HI
  * @param sortOrder {string} Sort key Sort order of page.
  * @param startRank {int} The rank at which to start the page.
  * @param endRank {int} The rank at which to end the page.
- * @param includeLeaderboardSize Whether to return the leaderboard size
  * @param callback The method to be invoked when the server response is received
  *
  * @see brainCloudClient.socialLeaderboard.SortOrder
  */
 brainCloudClient.socialLeaderboard.getGlobalLeaderboardPage = function(
-        leaderboardId, sortOrder, startIndex, endIndex, includeLeaderboardSize, callback) {
+        leaderboardId, sortOrder, startIndex, endIndex, callback) {
     brainCloudManager
             .sendRequest({
                 service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
@@ -56,8 +55,7 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardPage = function(
                     leaderboardId : leaderboardId,
                     sort : sortOrder,
                     startIndex : startIndex,
-                    endIndex : endIndex,
-                    includeLeaderboardSize : includeLeaderboardSize
+                    endIndex : endIndex
                 },
                 callback : callback
             });
@@ -75,14 +73,13 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardPage = function(
  * @param sortOrder {string} Sort key Sort order of page.
  * @param startRank {int} The rank at which to start the page.
  * @param endRank {int} The rank at which to end the page.
- * @param includeLeaderboardSize Whether to return the leaderboard size
  * @param versionId The historical version to retrieve
  * @param callback The method to be invoked when the server response is received
  *
  * @see brainCloudClient.socialLeaderboard.SortOrder
  */
 brainCloudClient.socialLeaderboard.getGlobalLeaderboardPageByVersion = function(
-        leaderboardId, sortOrder, startIndex, endIndex, includeLeaderboardSize, versionId, callback) {
+        leaderboardId, sortOrder, startIndex, endIndex, versionId, callback) {
     brainCloudManager
             .sendRequest({
                 service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
@@ -92,7 +89,6 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardPageByVersion = function(
                     sort : sortOrder,
                     startIndex : startIndex,
                     endIndex : endIndex,
-                    includeLeaderboardSize : includeLeaderboardSize,
                     versionId : versionId
                 },
                 callback : callback
@@ -358,6 +354,46 @@ brainCloudClient.socialLeaderboard.postScoreToDynamicLeaderboard = function(lead
                     rotationType : rotationType,
                     rotationResetTime : rotationReset.getTime().toFixed(0),
                     retainedCount : retainedCount
+                },
+                callback : callback
+            });
+};
+
+/**
+ * Post the players score to the given social leaderboard.
+ * Pass leaderboard config data to dynamically create if necessary.
+ * You can optionally send a user-defined json string of data
+ * with the posted score. This string could include information
+ * relevant to the posted score.
+ *
+ * Service Name - SocialLeaderboard
+ * Service Operation - PostScoreDynamic
+ *
+ * @param leaderboardName The leaderboard to post to
+ * @param score The score to post
+ * @param data Optional user-defined data to post with the score
+ * @param leaderboardType leaderboard type
+ * @param rotationType Type of rotation
+ * @param rotationReset A date Object representing the time and date to start rotation
+ * @param retainedCount How many rotations to keep
+ * @param numDaysToRotate How many days between each rotation
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.socialLeaderboard.postScoreToDynamicLeaderboardDays = function(leaderboardName, score,
+        data, leaderboardType, rotationReset, retainedCount, numDaysToRotate, callback ) {
+    brainCloudManager
+            .sendRequest({
+                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                operation : brainCloudClient.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
+                data : {
+                    leaderboardId : leaderboardName,
+                    score : score,
+                    data : data,
+                    leaderboardType : leaderboardType,
+                    rotationType : "DAYS",
+                    rotationResetTime : rotationReset.getTime().toFixed(0),
+                    retainedCount : retainedCount,
+                    numDaysToRotate : numDaysToRotate
                 },
                 callback : callback
             });
