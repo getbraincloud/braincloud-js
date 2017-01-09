@@ -24,10 +24,8 @@ brainCloudClient.initialize = function(gameId, secret, gameVersion) {
     };
 
     var error = null;
-    if (isBlank(serverUrl))
-        error = "serverUrl was null or empty";
-    else if (isBlank(secretKey))
-        error = "secretKey was null or empty";
+    if (isBlank(secret))
+        error = "secret was null or empty";
     else if (isBlank(gameId))
         error = "gameId was null or empty";
     else if (isBlank(gameVersion))
