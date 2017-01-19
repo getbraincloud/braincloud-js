@@ -8,6 +8,7 @@ brainCloudClient.tournament.OPERATION_GET_TOURNAMENT_STATUS = "GET_TOURNAMENT_ST
 brainCloudClient.tournament.OPERATION_JOIN_TOURNAMENT = "JOIN_TOURNAMENT";
 brainCloudClient.tournament.OPERATION_LEAVE_TOURNAMENT = "LEAVE_TOURNAMENT";
 brainCloudClient.tournament.OPERATION_POST_TOURNAMENT_SCORE = "POST_TOURNAMENT_SCORE";
+brainCloudClient.tournament.OPERATION_POST_TOURNAMENT_SCORE_WITH_RESULTS = "POST_TOURNAMENT_SCORE_WITH_RESULTS";
 brainCloudClient.tournament.OPERATION_VIEW_CURRENT_REWARD = "VIEW_CURRENT_REWARD";
 brainCloudClient.tournament.OPERATION_VIEW_REWARD = "VIEW_REWARD";
 
@@ -132,6 +133,53 @@ brainCloudClient.tournament.postTournamentScore = function(leaderboardId, score,
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_TOURNAMENT,
         operation : brainCloudClient.tournament.OPERATION_POST_TOURNAMENT_SCORE,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * Post the users score to the leaderboard
+ *
+ * Service Name - tournament
+ * Service Operation - POST_TOURNAMENT_SCORE_WITH_RESULTS
+ *
+ * @param leaderboardId The leaderboard for the tournament
+ * @param score The score to post
+ * @param data Optional data attached to the leaderboard entry
+ * @param roundStartedTime Time the user started the match resulting in the score being posted in UTC.
+ * @param sort Sort key Sort order of page.
+ * @param beforeCount The count of number of players before the current player to include.
+ * @param afterCount The count of number of players after the current player to include.
+ * @param initialScore The initial score for players first joining a tournament
+ *						  Usually 0, unless leaderboard is LOW_VALUE
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.tournament.postTournamentScoreWithResults = function(
+    leaderboardId,
+    score,
+    data,
+    roundStartedTime,
+    sort,
+    beforeCount,
+    afterCount,
+    initialScore,
+    callback) {
+    var message = {
+        leaderboardId : leaderboardId,
+        score : score,
+        roundStartedEpoch: roundStartedTime.getTime(),
+        sort: sort,
+        beforeCount : beforeCount,
+        afterCount : afterCount,
+        initialScore : initialScore
+    };
+
+    if(data) message.data = data;
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_TOURNAMENT,
+        operation : brainCloudClient.tournament.OPERATION_POST_TOURNAMENT_SCORE_WITH_RESULTS,
         data : message,
         callback : callback
     });
