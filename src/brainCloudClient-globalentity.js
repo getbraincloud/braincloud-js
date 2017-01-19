@@ -16,6 +16,8 @@ brainCloudClient.globalEntity.OPERATION_GET_LIST_COUNT = "GET_LIST_COUNT";
 brainCloudClient.globalEntity.OPERATION_GET_PAGE = "GET_PAGE";
 brainCloudClient.globalEntity.OPERATION_GET_PAGE_BY_OFFSET = "GET_PAGE_BY_OFFSET";
 brainCloudClient.globalEntity.OPERATION_INCREMENT_GLOBAL_ENTITY_DATA = "INCREMENT_GLOBAL_ENTITY_DATA";
+brainCloudClient.globalEntity.OPERATION_UPDATE_ENTITY_OWNER_AND_ACL = "UPDATE_ENTITY_OWNER_AND_ACL";
+brainCloudClient.globalEntity.OPERATION_MAKE_SYSTEM_ENTITY = "MAKE_SYSTEM_ENTITY";
 
 /**
 * Method creates a new entity on the server.
@@ -377,6 +379,62 @@ brainCloudClient.globalEntity.incrementGlobalEntityData = function(entityId, dat
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_GLOBAL_ENTITY,
         operation : brainCloudClient.globalEntity.OPERATION_INCREMENT_GLOBAL_ENTITY_DATA,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * Method updates an existing entity's Owner and ACL on the server.
+ *
+ * Service Name - globalEntity
+ * Service Operation - UPDATE_ENTITY_OWNER_AND_ACL
+ *
+ * @param entityId The entity ID
+ * @param version The version of the entity to update
+ * @param ownerId The owner ID
+ * @param acl The entity's access control list
+ * @param callback The callback object
+ */
+ brainCloudClient.globalEntity.updateEntityOwnerAndAcl = function(entityId, version, ownerId, acl, callback)
+ {
+     var message = {
+         entityId : entityId,
+         version : version,
+         ownerId: ownerId,
+         acl : acl
+     };
+
+     brainCloudManager.sendRequest({
+         service : brainCloudClient.SERVICE_GLOBAL_ENTITY,
+         operation : brainCloudClient.globalEntity.OPERATION_UPDATE_ENTITY_OWNER_AND_ACL,
+         data : message,
+         callback : callback
+     });
+ };
+
+/**
+ * Method clears the owner id of an existing entity and sets the ACL on the server.
+ *
+ * Service Name - globalEntity
+ * Service Operation - MAKE_SYSTEM_ENTITY
+ *
+ * @param entityId The entity ID
+ * @param version The version of the entity to update
+ * @param acl The entity's access control list
+ * @param callback The callback object
+ */
+brainCloudClient.globalEntity.makeSystemEntity = function(entityId, version, acl, callback)
+{
+    var message = {
+        entityId : entityId,
+        version : version,
+        acl : acl
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_GLOBAL_ENTITY,
+        operation : brainCloudClient.globalEntity.OPERATION_MAKE_SYSTEM_ENTITY,
         data : message,
         callback : callback
     });
