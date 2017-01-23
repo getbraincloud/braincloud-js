@@ -18,7 +18,7 @@ brainCloudClient.identity.OPERATION_ATTACH_PEER_PROFILE = "ATTACH_PEER_PROFILE";
 brainCloudClient.identity.OPERATION_DETACH_PEER = "DETACH_PEER";
 brainCloudClient.identity.OPERATION_GET_PEER_PROFILES = "GET_PEER_PROFILES";
 
-brainCloudClient.identity.authenticationType = Object.freeze({ 
+brainCloudClient.identity.authenticationType = Object.freeze({
     anonymous : "Anonymous",
     universal : "Universal",
     email : "Email",
@@ -602,11 +602,11 @@ brainCloudClient.identity.refreshIdentity = function(externalId, authenticationT
  * @param externalId The users id for the new credentials
  * @param authenticationToken The password/token
  * @param authenticationType Type of identity
- * @param forceCreate Should a new profile be created if it does not exist?
  * @param externalAuthName Optional - if attaching an external identity
+ * @param forceCreate Should a new profile be created if it does not exist?
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.identity.attachParentWithIdentity = function(externalId, authenticationToken, authenticationType, forceCreate, externalAuthName, callback) {
+brainCloudClient.identity.attachParentWithIdentity = function(externalId, authenticationToken, authenticationType, externalAuthName, forceCreate, callback) {
     var data = {
         externalId : externalId,
         authenticationToken : authenticationToken,
@@ -648,21 +648,21 @@ brainCloudClient.identity.detachParent = function(callback) {
  * Service Name - identity
  * Service Operation - ATTACH_PEER_PROFILE
  *
+ * @param peer Name of the peer to connect to
  * @param externalId The users id for the new credentials
  * @param authenticationToken The password/token
  * @param authenticationType Type of identity
- * @param forceCreate Should a new profile be created if it does not exist?
  * @param externalAuthName Optional - if attaching an external identity
- * @param peer Name of the peer to connect to
+ * @param forceCreate Should a new profile be created if it does not exist?
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.identity.attachPeerProfile = function(externalId, authenticationToken, authenticationType, forceCreate, externalAuthName, peer, callback) {
+brainCloudClient.identity.attachPeerProfile = function(peer, externalId, authenticationToken, authenticationType, externalAuthName, forceCreate, callback) {
     var data = {
+        peer: peer,
         externalId : externalId,
         authenticationToken : authenticationToken,
         authenticationType : authenticationType,
-        forceCreate : forceCreate,
-        peer: peer
+        forceCreate : forceCreate
     };
 
     if(externalAuthName)
