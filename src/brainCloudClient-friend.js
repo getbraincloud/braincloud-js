@@ -4,6 +4,8 @@ brainCloudClient.friend = {};
 brainCloudClient.SERVICE_FRIEND = "friend";
 
 brainCloudClient.friend.OPERATION_GET_FRIEND_PROFILE_INFO_FOR_EXTERNAL_ID = "GET_FRIEND_PROFILE_INFO_FOR_EXTERNAL_ID";
+brainCloudClient.friend.OPERATION_GET_PROFILE_INFO_FOR_CREDENTIAL = "GET_PROFILE_INFO_FOR_CREDENTIAL";
+brainCloudClient.friend.OPERATION_GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID = "GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID";
 brainCloudClient.friend.OPERATION_GET_EXTERNAL_ID_FOR_PROFILE_ID = "GET_EXTERNAL_ID_FOR_PROFILE_ID";
 brainCloudClient.friend.OPERATION_READ_FRIENDS = "READ_FRIENDS";
 brainCloudClient.friend.OPERATION_READ_FRIEND_ENTITY = "READ_FRIEND_ENTITY";
@@ -23,21 +25,60 @@ brainCloudClient.friend.OPERATION_FIND_USERS_BY_SUBSTR_NAME = "FIND_USERS_BY_SUB
 brainCloudClient.friend.friendPlatform = Object.freeze({ All : "All",  BrainCloud : "brainCloud",  Facebook : "Facebook" });
 
 /**
-* Retrieves profile information for the specified user.
-*
-* Service Name - friend
-* Service Operation - GetFriendProfileInfoForExternalId
-*
-* @param externalId The friend's external id e.g. Facebook id
-* @param authenticationType The authentication type of the friend's external id e.g. Facebook
+* @deprecated Use getProfileInfoForCredential instead - removal after March 22 2017
 */
 brainCloudClient.friend.getFriendProfileInfoForExternalId = function(externalId, authenticationType, callback) {
+    console.console.log("getFriendProfileInfoForExternalId is deprecated - Use getProfileInfoForCredential instead - removal after March 22 2017");
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_FRIEND,
         operation: brainCloudClient.friend.OPERATION_GET_FRIEND_PROFILE_INFO_FOR_EXTERNAL_ID,
         data : {
             externalId : externalId,
             authenticationType : authenticationType
+        },
+        callback: callback
+    });
+};
+
+/**
+ * Retrieves profile information for the specified user.
+ *
+ * Service Name - friend
+ * Service Operation - GET_PROFILE_INFO_FOR_CREDENTIAL
+ *
+ * @param externalId The users's external ID
+ * @param authenticationType The authentication type of the user ID
+ * @param callback Method to be invoked when the server response is received.
+ */
+brainCloudClient.friend.getProfileInfoForCredential = function(externalId, authenticationType, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_FRIEND,
+        operation: brainCloudClient.friend.OPERATION_GET_PROFILE_INFO_FOR_CREDENTIAL,
+        data : {
+            externalId : externalId,
+            authenticationType : authenticationType
+        },
+        callback: callback
+    });
+};
+
+/**
+ * Retrieves profile information for the specified external auth user.
+ *
+ * Service Name - friend
+ * Service Operation - GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID
+ *
+ * @param externalId External ID of the friend to find
+ * @param externalAuthType The external authentication type used for this friend's external ID
+ * @param callback Method to be invoked when the server response is received.
+ */
+brainCloudClient.friend.getProfileInfoForExternalAuthId = function(externalId, externalAuthType, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_FRIEND,
+        operation: brainCloudClient.friend.OPERATION_GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID,
+        data : {
+            externalId : externalId,
+            externalAuthType : externalAuthType
         },
         callback: callback
     });
@@ -56,21 +97,6 @@ brainCloudClient.friend.getExternalIdForProfileId = function(profileId, authenti
         data : {
             profileId : profileId,
             authenticationType : authenticationType
-        },
-        callback: callback
-    });
-};
-
-/**
-* @deprecated Use listFriends method instead - Removal after June 21 2016
-*/
-brainCloudClient.friend.readFriendsWithApplication = function(includeSummaryData, callback) {
-    console.log('This function is deprecated.');
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_FRIEND,
-        operation: brainCloudClient.friend.OPERATION_READ_FRIENDS_WITH_APPLICATION,
-        data : {
-            includeSummaryData : includeSummaryData
         },
         callback: callback
     });

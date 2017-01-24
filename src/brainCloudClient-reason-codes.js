@@ -250,6 +250,11 @@ brainCloudClient.reasonCodes.UNEXPECTED_ERROR_DELETING_TOURNAMENT_LEADERBOARD_SC
 brainCloudClient.reasonCodes.INVALID_RUN_STATE = 40527;
 brainCloudClient.reasonCodes.LEADERBOARD_SCORE_DOESNOT_EXIST = 40528;
 brainCloudClient.reasonCodes.INITIAL_SCORE_NULL = 40529;
+brainCloudClient.reasonCodes.TOURNAMENT_NOTIFICATIONS_PROCESSING_FAILED = 40530;
+brainCloudClient.reasonCodes.ACL_NOT_READABLE = 40531;
+brainCloudClient.reasonCodes.INVALID_OWNER_ID = 40532;
+brainCloudClient.reasonCodes.IMPORT_MISSING_PEERS_DATA = 40533;
+brainCloudClient.reasonCodes.INVALID_CREDENTIAL = 40534;
 
 brainCloudClient.reasonCodes.NO_TWITTER_CONSUMER_KEY = 500001;
 brainCloudClient.reasonCodes.NO_TWITTER_CONSUMER_SECRET = 500002;
