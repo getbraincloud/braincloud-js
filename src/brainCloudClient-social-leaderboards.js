@@ -3,22 +3,23 @@
  */
 brainCloudClient.socialLeaderboard = {};
 
-brainCloudClient.SERVICE_SOCIAL_LEADERBOARD = "socialLeaderboard";
+brainCloudClient.SERVICE_LEADERBOARD = "leaderboard";
 
 brainCloudClient.socialLeaderboard.OPERATION_POST_SCORE = "POST_SCORE";
 brainCloudClient.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC = "POST_SCORE_DYNAMIC";
 brainCloudClient.socialLeaderboard.OPERATION_RESET = "RESET";
-
 brainCloudClient.socialLeaderboard.OPERATION_GET_SOCIAL_LEADERBOARD = "GET_SOCIAL_LEADERBOARD";
 brainCloudClient.socialLeaderboard.OPERATION_GET_MULTI_SOCIAL_LEADERBOARD = "GET_MULTI_SOCIAL_LEADERBOARD";
 brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_PAGE = "GET_GLOBAL_LEADERBOARD_PAGE";
 brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_VIEW = "GET_GLOBAL_LEADERBOARD_VIEW";
 brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_VERSIONS = "GET_GLOBAL_LEADERBOARD_VERSIONS";
-brainCloudClient.socialLeaderboard.OPERATION_GET_COMPLETED_TOURNAMENT = "GET_COMPLETED_TOURNAMENT";
-brainCloudClient.socialLeaderboard.OPERATION_REWARD_TOURNAMENT = "REWARD_TOURNAMENT";
 brainCloudClient.socialLeaderboard.OPERATION_GET_GROUP_SOCIAL_LEADERBOARD = "GET_GROUP_SOCIAL_LEADERBOARD";
 brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD = "GET_PLAYERS_SOCIAL_LEADERBOARD";
 brainCloudClient.socialLeaderboard.OPERATION_LIST_ALL_LEADERBOARDS = "LIST_ALL_LEADERBOARDS";
+brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_ENTRY_COUNT = "GET_GLOBAL_LEADERBOARD_ENTRY_COUNT";
+brainCloudClient.socialLeaderboard.OPERATION_REMOVE_PLAYER_SCORE = "REMOVE_PLAYER_SCORE";
+brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYER_SCORE = "GET_PLAYER_SCORE";
+brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYER_SCORES_FROM_LEADERBOARDS = "GET_PLAYER_SCORES_FROM_LEADERBOARDS";
 
 // Constant helper values
 brainCloudClient.socialLeaderboard.leaderboardType = Object.freeze({ HIGH_VALUE : "HIGH_VALUE", CUMULATIVE : "CUMULATIVE", LAST_VALUE : "LAST_VALUE", LOW_VALUE : "LOW_VALUE"});
@@ -42,23 +43,21 @@ brainCloudClient.socialLeaderboard.sortOrder = Object.freeze({ HIGH_TO_LOW : "HI
  * @param sortOrder {string} Sort key Sort order of page.
  * @param startRank {int} The rank at which to start the page.
  * @param endRank {int} The rank at which to end the page.
- * @param includeLeaderboardSize Whether to return the leaderboard size
  * @param callback The method to be invoked when the server response is received
  *
  * @see brainCloudClient.socialLeaderboard.SortOrder
  */
 brainCloudClient.socialLeaderboard.getGlobalLeaderboardPage = function(
-        leaderboardId, sortOrder, startIndex, endIndex, includeLeaderboardSize, callback) {
+        leaderboardId, sortOrder, startIndex, endIndex, callback) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
                 operation : brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_PAGE,
                 data : {
                     leaderboardId : leaderboardId,
                     sort : sortOrder,
                     startIndex : startIndex,
-                    endIndex : endIndex,
-                    includeLeaderboardSize : includeLeaderboardSize
+                    endIndex : endIndex
                 },
                 callback : callback
             });
@@ -76,24 +75,22 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardPage = function(
  * @param sortOrder {string} Sort key Sort order of page.
  * @param startRank {int} The rank at which to start the page.
  * @param endRank {int} The rank at which to end the page.
- * @param includeLeaderboardSize Whether to return the leaderboard size
  * @param versionId The historical version to retrieve
  * @param callback The method to be invoked when the server response is received
  *
  * @see brainCloudClient.socialLeaderboard.SortOrder
  */
 brainCloudClient.socialLeaderboard.getGlobalLeaderboardPageByVersion = function(
-        leaderboardId, sortOrder, startIndex, endIndex, includeLeaderboardSize, versionId, callback) {
+        leaderboardId, sortOrder, startIndex, endIndex, versionId, callback) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
                 operation : brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_PAGE,
                 data : {
                     leaderboardId : leaderboardId,
                     sort : sortOrder,
                     startIndex : startIndex,
                     endIndex : endIndex,
-                    includeLeaderboardSize : includeLeaderboardSize,
                     versionId : versionId
                 },
                 callback : callback
@@ -115,23 +112,21 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardPageByVersion = function(
  * @param sortOrder {string} Sort key Sort order of page.
  * @param beforeCount {int} The count of number of players before the current player to include.
  * @param afterCount {int} The count of number of players after the current player to include.
- * @param includeLeaderboardSize Whether to return the leaderboard size
  * @param callback The method to be invoked when the server response is received
  *
  * @see brainCloudClient.socialLeaderboard.SortOrder
  */
 brainCloudClient.socialLeaderboard.getGlobalLeaderboardView = function(
-        leaderboardId, sortOrder, beforeCount, afterCount, includeLeaderboardSize, callback) {
+        leaderboardId, sortOrder, beforeCount, afterCount, callback) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
                 operation : brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_VIEW,
                 data : {
                     leaderboardId : leaderboardId,
                     sort : sortOrder,
                     beforeCount : beforeCount,
-                    afterCount : afterCount,
-                    includeLeaderboardSize : includeLeaderboardSize
+                    afterCount : afterCount
                 },
                 callback : callback
             });
@@ -149,25 +144,44 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardView = function(
  * @param sortOrder {string} Sort key Sort order of page.
  * @param beforeCount {int} The count of number of players before the current player to include.
  * @param afterCount {int} The count of number of players after the current player to include.
- * @param includeLeaderboardSize Whether to return the leaderboard size
  * @param versionId The historical version to retrieve
  * @param callback The method to be invoked when the server response is received
  *
  * @see brainCloudClient.socialLeaderboard.SortOrder
  */
 brainCloudClient.socialLeaderboard.getGlobalLeaderboardViewByVersion = function(
-        leaderboardId, sortOrder, beforeCount, afterCount, includeLeaderboardSize, versionId, callback) {
+        leaderboardId, sortOrder, beforeCount, afterCount, versionId, callback) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
                 operation : brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_VIEW,
                 data : {
                     leaderboardId : leaderboardId,
                     sort : sortOrder,
                     beforeCount : beforeCount,
                     afterCount : afterCount,
-                    includeLeaderboardSize : includeLeaderboardSize,
                     versionId : versionId
+                },
+                callback : callback
+            });
+};
+
+/**
+ * Gets the number of entries in a global leaderboard
+ *
+ * Service Name - leaderboard
+ * Service Operation - GET_GLOBAL_LEADERBOARD_ENTRY_COUNT
+ *
+ * @param leaderboardId The leaderboard ID
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.socialLeaderboard.getGlobalLeaderboardEntryCount = function(leaderboardId, callback) {
+    brainCloudManager
+            .sendRequest({
+                service : brainCloudClient.SERVICE_LEADERBOARD,
+                operation : brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_ENTRY_COUNT,
+                data : {
+                    leaderboardId : leaderboardId
                 },
                 callback : callback
             });
@@ -198,7 +212,7 @@ brainCloudClient.socialLeaderboard.getSocialLeaderboard = function(
         leaderboardId, replaceName, callback) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
                 operation : brainCloudClient.socialLeaderboard.OPERATION_GET_SOCIAL_LEADERBOARD,
                 data : {
                     leaderboardId : leaderboardId,
@@ -221,7 +235,7 @@ brainCloudClient.socialLeaderboard.getMultiSocialLeaderboard = function(
         leaderboardIds, leaderboardResultCount, replaceName, callback) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
                 operation : brainCloudClient.socialLeaderboard.OPERATION_GET_MULTI_SOCIAL_LEADERBOARD,
                 data : {
                     leaderboardIds : leaderboardIds,
@@ -243,7 +257,7 @@ brainCloudClient.socialLeaderboard.getMultiSocialLeaderboard = function(
 brainCloudClient.socialLeaderboard.getGlobalLeaderboardVersions = function(leaderboardId, callback) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
                 operation : brainCloudClient.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_VERSIONS,
                 data : {
                     leaderboardId : leaderboardId
@@ -254,15 +268,12 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardVersions = function(leade
 
 
 /**
- * Reset the player's score for the given social leaderboard id.
- *
- * @param leaderboardName The leaderboard to post to
- * @param callback The method to be invoked when the server response is received
+ * @deprecated resetLeaderboardScore is deprecated, use removePlayerScore instead - removal after March 22 2017
  */
-brainCloudClient.socialLeaderboard.resetLeaderboardScore = function(leaderboardName,
-        callback) {
+brainCloudClient.socialLeaderboard.resetLeaderboardScore = function(leaderboardName, callback) {
+    console.log("resetLeaderboardScore is deprecated, use removePlayerScore instead - removal after March 22 2017")
     brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+        service : brainCloudClient.SERVICE_LEADERBOARD,
         operation : brainCloudClient.socialLeaderboard.OPERATION_RESET,
         data : {
             leaderboardId : leaderboardName
@@ -302,7 +313,7 @@ brainCloudClient.socialLeaderboard.postScoreToLeaderboard = function(leaderboard
     }
 
     brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+        service : brainCloudClient.SERVICE_LEADERBOARD,
         operation : brainCloudClient.socialLeaderboard.OPERATION_POST_SCORE,
         data : message,
         callback : callback
@@ -332,7 +343,7 @@ brainCloudClient.socialLeaderboard.postScoreToDynamicLeaderboard = function(lead
         data, leaderboardType, rotationType, rotationReset, retainedCount, callback ) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
                 operation : brainCloudClient.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
                 data : {
                     leaderboardId : leaderboardName,
@@ -348,65 +359,43 @@ brainCloudClient.socialLeaderboard.postScoreToDynamicLeaderboard = function(lead
 };
 
 /**
- * If a social leaderboard has been configured to reset periodically, each period
- * can be considered to be a tournament. When the leaderboard resets, the tournament
- * has ended and participants can be ranked based on their final scores.
+ * Post the players score to the given social leaderboard.
+ * Pass leaderboard config data to dynamically create if necessary.
+ * You can optionally send a user-defined json string of data
+ * with the posted score. This string could include information
+ * relevant to the posted score.
  *
- * This API method will return the sorted leaderboard including:
- * the player
- * the game's pacers
- * all friends who participated in the tournament
+ * Service Name - SocialLeaderboard
+ * Service Operation - PostScoreDynamic
  *
- * This API method will return the leaderboard results for a particular
- * tournament only once. If the method is called twice, the second call
- * will yield an empty result.
- *
- * Note that if the leaderboard has not been configured to reset, the concept of a
- * tournament does not apply.
- *
- * @param leaderboardName The id of the leaderboard
- * @param replaceName True if the player's name should be replaced with "You"
+ * @param leaderboardName The leaderboard to post to
+ * @param score The score to post
+ * @param data Optional user-defined data to post with the score
+ * @param leaderboardType leaderboard type
+ * @param rotationType Type of rotation
+ * @param rotationReset A date Object representing the time and date to start rotation
+ * @param retainedCount How many rotations to keep
+ * @param numDaysToRotate How many days between each rotation
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.socialLeaderboard.getCompletedLeaderboardTournament = function(
-        leaderboardName, replaceName, callback) {
+brainCloudClient.socialLeaderboard.postScoreToDynamicLeaderboardDays = function(leaderboardName, score,
+        data, leaderboardType, rotationReset, retainedCount, numDaysToRotate, callback ) {
     brainCloudManager
             .sendRequest({
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
-                operation : brainCloudClient.socialLeaderboard.OPERATION_GET_COMPLETED_TOURNAMENT,
+                service : brainCloudClient.SERVICE_LEADERBOARD,
+                operation : brainCloudClient.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
                 data : {
                     leaderboardId : leaderboardName,
-                    replaceName : replaceName
+                    score : score,
+                    data : data,
+                    leaderboardType : leaderboardType,
+                    rotationType : "DAYS",
+                    rotationResetTime : rotationReset.getTime().toFixed(0),
+                    retainedCount : retainedCount,
+                    numDaysToRotate : numDaysToRotate
                 },
                 callback : callback
             });
-};
-
-/**
- * This method triggers a reward (via a player statistics event)
- * to the currently logged in player for ranking at the
- * completion of a tournament.
- *
- * @param leaderboardId The id of the leaderboard
- * @param eventName The player statistics event name to trigger
- * @param eventMultiplier The multiplier to associate with the event
- * @param callback The method to be invoked when the server response is received
- */
-brainCloudClient.socialLeaderboard.triggerSocialLeaderboardTournamentReward = function(
-        leaderboardId, eventName, eventMultiplier, callback)
-        {
-        brainCloudManager.sendRequest(
-            {
-                service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
-                operation : brainCloudClient.socialLeaderboard.OPERATION_REWARD_TOURNAMENT,
-                data : {
-                    leaderboardId : leaderboardId,
-                    eventName : eventName,
-                    eventMultiplier : eventMultiplier
-                },
-                callback : callback
-            }
-        );
 };
 
 /**
@@ -426,7 +415,7 @@ brainCloudClient.socialLeaderboard.getGroupSocialLeaderboard = function(leaderbo
     };
 
     brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+        service : brainCloudClient.SERVICE_LEADERBOARD,
         operation : brainCloudClient.socialLeaderboard.OPERATION_GET_GROUP_SOCIAL_LEADERBOARD,
         data : message,
         callback : callback
@@ -450,7 +439,7 @@ brainCloudClient.socialLeaderboard.getPlayersSocialLeaderboard = function(leader
     };
 
     brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+        service : brainCloudClient.SERVICE_LEADERBOARD,
         operation : brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD,
         data : message,
         callback : callback
@@ -467,9 +456,79 @@ brainCloudClient.socialLeaderboard.getPlayersSocialLeaderboard = function(leader
  */
 brainCloudClient.socialLeaderboard.listAllLeaderboards = function(callback) {
     brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_SOCIAL_LEADERBOARD,
+        service : brainCloudClient.SERVICE_LEADERBOARD,
         operation : brainCloudClient.socialLeaderboard.OPERATION_LIST_ALL_LEADERBOARDS,
         data : null,
+        callback : callback
+    });
+}
+
+/**
+ * Removes a player's score from the leaderboard
+ *
+ * Service Name - leaderboard
+ * Service Operation - REMOVE_PLAYER_SCORE
+ *
+ * @param leaderboardId The leaderboard ID
+ * @param versionId The version of the leaderboard
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.socialLeaderboard.removePlayerScore = function(leaderboardId, versionId, callback) {
+    var message = {
+        leaderboardId : leaderboardId,
+        versionId : versionId
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_LEADERBOARD,
+        operation : brainCloudClient.socialLeaderboard.OPERATION_REMOVE_PLAYER_SCORE,
+        data : message,
+        callback : callback
+    });
+}
+
+/**
+ * Gets a player's score from a leaderboard
+ *
+ * Service Name - leaderboard
+ * Service Operation - GET_PLAYER_SCORE
+ *
+ * @param leaderboardId The leaderboard ID
+ * @param versionId The version of the leaderboard. Use -1 for current.
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.socialLeaderboard.getPlayerScore = function(leaderboardId, versionId, callback) {
+    var message = {
+        leaderboardId : leaderboardId,
+        versionId : versionId
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_LEADERBOARD,
+        operation : brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYER_SCORE,
+        data : message,
+        callback : callback
+    });
+}
+
+/**
+ * Gets a player's score from multiple leaderboards
+ *
+ * Service Name - leaderboard
+ * Service Operation - GET_PLAYER_SCORES_FROM_LEADERBOARDS
+ *
+ * @param leaderboardIds A collection of leaderboardIds to retrieve scores from
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.socialLeaderboard.getPlayerScoresFromLeaderboards = function(leaderboardIds, callback) {
+    var message = {
+        leaderboardIds : leaderboardIds
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_LEADERBOARD,
+        operation : brainCloudClient.socialLeaderboard.OPERATION_GET_PLAYER_SCORES_FROM_LEADERBOARDS,
+        data : message,
         callback : callback
     });
 }

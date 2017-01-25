@@ -16,11 +16,13 @@ brainCloudClient.globalEntity.OPERATION_GET_LIST_COUNT = "GET_LIST_COUNT";
 brainCloudClient.globalEntity.OPERATION_GET_PAGE = "GET_PAGE";
 brainCloudClient.globalEntity.OPERATION_GET_PAGE_BY_OFFSET = "GET_PAGE_BY_OFFSET";
 brainCloudClient.globalEntity.OPERATION_INCREMENT_GLOBAL_ENTITY_DATA = "INCREMENT_GLOBAL_ENTITY_DATA";
+brainCloudClient.globalEntity.OPERATION_UPDATE_ENTITY_OWNER_AND_ACL = "UPDATE_ENTITY_OWNER_AND_ACL";
+brainCloudClient.globalEntity.OPERATION_MAKE_SYSTEM_ENTITY = "MAKE_SYSTEM_ENTITY";
 
 /**
 * Method creates a new entity on the server.
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - Create
 *
 * @param entityType The entity type as defined by the user
@@ -53,7 +55,7 @@ brainCloudClient.globalEntity.createEntity = function(entityType, timeToLive,
 /**
 * Method creates a new entity on the server with an indexed id.
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - CreateWithIndexedId
 *
 * @param entityType The entity type as defined by the user
@@ -88,7 +90,7 @@ brainCloudClient.globalEntity.createEntityWithIndexedId = function(entityType,
 /**
 * Method deletes an existing entity on the server.
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - Delete
 *
 * @param entityId The entity ID
@@ -114,7 +116,7 @@ brainCloudClient.globalEntity.deleteEntity = function(entityId, version,
 /**
 * Method gets list of entities from the server base on type and/or where clause
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - GetList
 *
 * @param where Mongo style query string
@@ -145,7 +147,7 @@ brainCloudClient.globalEntity.getList = function(where, orderBy, maxReturn,
 /**
 * Method gets list of entities from the server base on indexed id
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - GetListByIndexedId
 *
 * @param entityIndexedId The entity indexed Id
@@ -171,7 +173,7 @@ brainCloudClient.globalEntity.getListByIndexedId = function(entityIndexedId,
 /**
 * Method gets a count of entities based on the where clause
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - GetListCount
 *
 * @param where Mongo style query string
@@ -194,7 +196,7 @@ brainCloudClient.globalEntity.getListCount = function(where, callback) {
 /**
 * Method reads an existing entity from the server.
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - Read
 *
 * @param entityId The entity ID
@@ -216,21 +218,27 @@ brainCloudClient.globalEntity.readEntity = function(entityId, callback) {
 /**
 * Method updates an existing entity on the server.
 *
-* Service Name - GlobalEntity
-* Service Operation - Update
+* Service Name - globalEntity
+* Service Operation - UPDATE
 *
 * @param entityId The entity ID
-* @param data   The entity's data as a json string
 * @param version The version of the entity to update
+* @param data   The entity's data as a json string
 * @param callback The callback object
 */
-brainCloudClient.globalEntity.updateEntity = function(entityId, data, version,
-    callback) {
+brainCloudClient.globalEntity.updateEntity = function(entityId, version, data, callback) {
     var message = {
-    entityId : entityId,
-    version : version,
-    data : data
+        entityId : entityId
     };
+
+    if(typeof version === "number") {
+        message.version = version;
+        message.data = data;
+    }
+    else {
+        message.version = data;
+        message.data = version;
+    }
 
     brainCloudManager
         .sendRequest({
@@ -244,7 +252,7 @@ brainCloudClient.globalEntity.updateEntity = function(entityId, data, version,
 /**
 * Method updates an existing entity's Acl on the server.
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - UpdateAcl
 *
 * @param entityId The entity ID
@@ -272,7 +280,7 @@ brainCloudClient.globalEntity.updateEntityAcl = function(entityId, acl,
 /**
 * Method updates an existing entity's time to live on the server.
 *
-* Service Name - GlobalEntity
+* Service Name - globalEntity
 * Service Operation - UpdateTimeToLive
 *
 * @param entityId The entity ID
@@ -302,7 +310,7 @@ brainCloudClient.globalEntity.updateEntityUpdateTimeToLive = function(entityId,
  * After retrieving a page of Global Entities with this method,
  * use GetPageOffset() to retrieve previous or next pages.
  *
- * Service Name - GlobalEntity
+ * Service Name - globalEntity
  * Service Operation - GetPage
  *
  * @param context The json context for the page request.
@@ -326,7 +334,7 @@ brainCloudClient.globalEntity.getPage = function(context, callback) {
 /**
  * Method to retrieve previous or next pages after having called the GetPage method.
  *
- * Service Name - GlobalEntity
+ * Service Name - globalEntity
  * Service Operation - GetPageOffset
  *
  * @param context The context string returned from the server from a
@@ -371,6 +379,62 @@ brainCloudClient.globalEntity.incrementGlobalEntityData = function(entityId, dat
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_GLOBAL_ENTITY,
         operation : brainCloudClient.globalEntity.OPERATION_INCREMENT_GLOBAL_ENTITY_DATA,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * Method updates an existing entity's Owner and ACL on the server.
+ *
+ * Service Name - globalEntity
+ * Service Operation - UPDATE_ENTITY_OWNER_AND_ACL
+ *
+ * @param entityId The entity ID
+ * @param version The version of the entity to update
+ * @param ownerId The owner ID
+ * @param acl The entity's access control list
+ * @param callback The callback object
+ */
+ brainCloudClient.globalEntity.updateEntityOwnerAndAcl = function(entityId, version, ownerId, acl, callback)
+ {
+     var message = {
+         entityId : entityId,
+         version : version,
+         ownerId: ownerId,
+         acl : acl
+     };
+
+     brainCloudManager.sendRequest({
+         service : brainCloudClient.SERVICE_GLOBAL_ENTITY,
+         operation : brainCloudClient.globalEntity.OPERATION_UPDATE_ENTITY_OWNER_AND_ACL,
+         data : message,
+         callback : callback
+     });
+ };
+
+/**
+ * Method clears the owner id of an existing entity and sets the ACL on the server.
+ *
+ * Service Name - globalEntity
+ * Service Operation - MAKE_SYSTEM_ENTITY
+ *
+ * @param entityId The entity ID
+ * @param version The version of the entity to update
+ * @param acl The entity's access control list
+ * @param callback The callback object
+ */
+brainCloudClient.globalEntity.makeSystemEntity = function(entityId, version, acl, callback)
+{
+    var message = {
+        entityId : entityId,
+        version : version,
+        acl : acl
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_GLOBAL_ENTITY,
+        operation : brainCloudClient.globalEntity.OPERATION_MAKE_SYSTEM_ENTITY,
         data : message,
         callback : callback
     });

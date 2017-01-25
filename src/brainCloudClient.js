@@ -3,7 +3,7 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-brainCloudClient.version = "3.1.0";
+brainCloudClient.version = "3.2.0";
 brainCloudClient.countryCode;
 brainCloudClient.languageCode;
 
@@ -19,6 +19,22 @@ brainCloudClient.languageCode;
  *            gameVersion - The game version (e.g. "1.0.0").
  */
 brainCloudClient.initialize = function(gameId, secret, gameVersion) {
+    function isBlank(str) {
+        return (!str || /^\s*$/.test(str));
+    };
+
+    var error = null;
+    if (isBlank(secret))
+        error = "secret was null or empty";
+    else if (isBlank(gameId))
+        error = "gameId was null or empty";
+    else if (isBlank(gameVersion))
+        error = "gameVersion was null or empty";
+    if (error != null) {
+        console.log("ERROR | Failed to initialize brainCloud - " + error);
+        return;
+    }
+
     brainCloudManager.initialize(gameId, secret, gameVersion);
 };
 
@@ -192,7 +208,7 @@ brainCloudClient.insertEndOfMessageBundleMarker = function() {
  */
 brainCloudClient.overrideCountryCode = function(countryCode) {
     brainCloudClient.countryCode = countryCode;
-} 
+}
 
 /**
  * Sets the language code sent to brainCloud when a user authenticates.
@@ -202,7 +218,7 @@ brainCloudClient.overrideCountryCode = function(countryCode) {
  */
 brainCloudClient.overrideLanguageCode = function(languageCode) {
     brainCloudClient.languageCode = languageCode;
-} 
+}
 
 brainCloudClient.heartbeat = function(callback) {
     brainCloudManager.sendRequest({

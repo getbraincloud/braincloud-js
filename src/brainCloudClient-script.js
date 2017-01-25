@@ -7,6 +7,9 @@ brainCloudClient.script.OPERATION_RUN = "RUN";
 brainCloudClient.script.OPERATION_SCHEDULE_CLOUD_SCRIPT = "SCHEDULE_CLOUD_SCRIPT";
 brainCloudClient.script.OPERATION_RUN_PARENT_SCRIPT = "RUN_PARENT_SCRIPT";
 brainCloudClient.script.OPERATION_CANCEL_SCHEDULED_SCRIPT = "CANCEL_SCHEDULED_SCRIPT";
+brainCloudClient.script.OPERATION_RUN_PEER_SCRIPT = "RUN_PEER_SCRIPT";
+brainCloudClient.script.OPERATION_RUN_PEER_SCRIPT_ASYNC = "RUN_PEER_SCRIPT_ASYNC";
+
 
 /**
  * Executes a script on the server.
@@ -122,6 +125,63 @@ brainCloudClient.script.cancelScheduledScript = function(jobId, callback) {
         data: {
             jobId: jobId
         },
+        callback: callback
+    });
+};
+
+/**
+ * Runs a script from the context of a peer
+ *
+ * Service Name - Script
+ * Service Operation - RUN_PEER_SCRIPT
+ *
+ * @param scriptName The name of the script to be run
+ * @param jsonScriptData Data to be sent to the script in json format
+ * @param peer Peer the script belongs to
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.script.runPeerScript = function(scriptName, scriptData, peer, callback) {
+    var message = {
+        scriptName: scriptName,
+        peer: peer
+    };
+
+    if(scriptData)
+        message.scriptData = scriptData;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_SCRIPT,
+        operation: brainCloudClient.script.OPERATION_RUN_PEER_SCRIPT,
+        data: message,
+        callback: callback
+    });
+};
+
+/**
+ * Runs a script asynchronously from the context of a peer
+ * This method does not wait for the script to complete before returning
+ *
+ * Service Name - Script
+ * Service Operation - RUN_PEER_SCRIPT_ASYNC
+ *
+ * @param scriptName The name of the script to be run
+ * @param jsonScriptData Data to be sent to the script in json format
+ * @param peer Peer the script belongs to
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.script.runPeerScriptAsync = function(scriptName, scriptData, peer, callback) {
+    var message = {
+        scriptName: scriptName,
+        peer: peer
+    };
+
+    if(scriptData)
+        message.scriptData = scriptData;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_SCRIPT,
+        operation: brainCloudClient.script.OPERATION_RUN_PEER_SCRIPT_ASYNC,
+        data: message,
         callback: callback
     });
 };
