@@ -30,9 +30,9 @@ brainCloudClient.event.OPERATION_GET_EVENTS = "GET_EVENTS";
  */
 brainCloudClient.event.sendEvent = function(toPlayerId, eventType, eventData, callback) {
     var message = {
-            toId: toPlayerId,
-            eventType: eventType,
-            eventData: eventData
+        toId: toPlayerId,
+        eventType: eventType,
+        eventData: eventData
     };
 
     brainCloudManager.sendRequest({
@@ -49,13 +49,13 @@ brainCloudClient.event.sendEvent = function(toPlayerId, eventType, eventData, ca
  * Service Name - Event
  * Service Operation - UpdateEventData
  *
- * @param eventId The event id
+ * @param evId The event id
  * @param eventData The user-defined data for this event encoded in JSON.
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.event.updateIncomingEventData = function(eventId, eventData, callback) {
+brainCloudClient.event.updateIncomingEventData = function(evId, eventData, callback) {
     var message = {
-        evId: eventId,
+        evId: evId,
         eventData: eventData
     };
     brainCloudManager.sendRequest({
@@ -72,15 +72,15 @@ brainCloudClient.event.updateIncomingEventData = function(eventId, eventData, ca
  * Service Name - Event
  * Service Operation - DeleteIncoming
  *
- * @param eventId The event id
+ * @param evId The event id
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.event.deleteIncomingEvent = function(eventId, callback) {
+brainCloudClient.event.deleteIncomingEvent = function(evId, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_EVENT,
         operation: brainCloudClient.event.OPERATION_DELETE_INCOMING,
         data: {
-            evId: eventId
+            evId: evId
         },
         callback: callback
     });
