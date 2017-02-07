@@ -267,3 +267,9 @@ brainCloudClient.reasonCodes.FACEBOOK_SECRET_MISMATCH = 500011;
 brainCloudClient.reasonCodes.FACEBOOK_AUTHENTICATION_ERROR = 500012;
 brainCloudClient.reasonCodes.FACEBOOK_APPLICATION_TOKEN_REQUEST_ERROR = 500013;
 brainCloudClient.reasonCodes.FACEBOOK_BAD_APPLICATION_TOKEN_SIGNATURE = 500014;
+
+brainCloudClient.reasonCodes.CLIENT_NETWORK_ERROR_TIMEOUT = 90001;
+brainCloudClient.reasonCodes.CLIENT_UPLOAD_FILE_CANCELLED = 90100;
+brainCloudClient.reasonCodes.CLIENT_UPLOAD_FILE_TIMED_OUT = 90101;
+brainCloudClient.reasonCodes.CLIENT_UPLOAD_FILE_UNKNOWN = 90102;
+brainCloudClient.reasonCodes.CLIENT_DISABLED = 90200;
