@@ -437,7 +437,7 @@ var abTestData;
                 var isAuth = false;
                 for (i = 0; i < _inProgressQueue.length; i++)
                 {
-                    if (_inProgressQueue[i].operation == "AUTHENTICATE")
+                    if (_inProgressQueue[i].operation == "AUTHENTICATE" || _inProgressQueue[i].operation == "RESET_EMAIL_PASSWORD")
                     {
                         isAuth = true;
                         break;
