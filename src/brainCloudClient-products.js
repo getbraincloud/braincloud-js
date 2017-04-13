@@ -137,22 +137,6 @@ brainCloudClient.product.confirmGooglePlayPurchase = function(productId, token, 
 };
 
 /**
- * @deprecated Method is now available in Cloud Code only for security - removal after March 22 2016
- */
-brainCloudClient.product.awardCurrency = function(currencyType, amount, callback) {
-    var message = {
-            vc_id: currencyType,
-            vc_amount: amount
-    };
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_PRODUCT,
-        operation: brainCloudClient.product.OPERATION_AWARD_VC,
-        data: message,
-        callback: callback
-    });
-};
-
-/**
  * Gets the player's currency for the given currency type
  * or all currency types if null passed in.
  *
@@ -176,17 +160,6 @@ brainCloudClient.product.getCurrency = function(currencyType, callback) {
 };
 
 /**
- * @deprecated Method is now available in Cloud Code only for security - removal after March 22 2016
- */
-brainCloudClient.product.resetCurrency = function(callback) {
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_PRODUCT,
-        operation: brainCloudClient.product.OPERATION_RESET_PLAYER_VC,
-        callback: callback
-    });
-};
-
-/**
  * Get Eligible Promotions
  *
  * Service Name - Product
@@ -198,21 +171,6 @@ brainCloudClient.product.getEligiblePromotions = function(callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PRODUCT,
         operation: brainCloudClient.product.OPERATION_ELIGIBLE_PROMOTIONS,
-        callback: callback
-    });
-};
-
-/**
- * @deprecated Method is now available in Cloud Code only for security - removal after March 22 2016
- */
-brainCloudClient.product.consumeCurrency = function(vcId, amount, callback) {
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_PRODUCT,
-        operation: brainCloudClient.product.OPERATION_CONSUME_PLAYER_VC,
-        data: {
-            vc_id: vcId,
-            vc_amount: amount
-        },
         callback: callback
     });
 };

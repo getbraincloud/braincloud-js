@@ -3,7 +3,7 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-brainCloudClient.version = "3.2.2";
+brainCloudClient.version = "3.4.0";
 brainCloudClient.countryCode;
 brainCloudClient.languageCode;
 
@@ -12,13 +12,13 @@ brainCloudClient.languageCode;
  * must be called before any API method is invoked.
  *
  * @param {string}
- *            gameId - The game id
+ *            appId - The app id
  * @param {string}
- *            secret - The game secret
+ *            secret - The secret
  * @param {string}
- *            gameVersion - The game version (e.g. "1.0.0").
+ *            appVersion - The version (e.g. "1.0.0").
  */
-brainCloudClient.initialize = function(gameId, secret, gameVersion) {
+brainCloudClient.initialize = function(appId, secret, version) {
     function isBlank(str) {
         return (!str || /^\s*$/.test(str));
     };
@@ -26,16 +26,16 @@ brainCloudClient.initialize = function(gameId, secret, gameVersion) {
     var error = null;
     if (isBlank(secret))
         error = "secret was null or empty";
-    else if (isBlank(gameId))
-        error = "gameId was null or empty";
-    else if (isBlank(gameVersion))
-        error = "gameVersion was null or empty";
+    else if (isBlank(appId))
+        error = "appId was null or empty";
+    else if (isBlank(version))
+        error = "version was null or empty";
     if (error != null) {
         console.log("ERROR | Failed to initialize brainCloud - " + error);
         return;
     }
 
-    brainCloudManager.initialize(gameId, secret, gameVersion);
+    brainCloudManager.initialize(appId, secret, version);
 };
 
 /**

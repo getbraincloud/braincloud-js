@@ -41,11 +41,11 @@ var abTestData;
     var _isInitialized = false;
     var _isAuthenticated = false;
 
-    brainCloudManager.initialize = function(gameId, secret, gameVersion)
+    brainCloudManager.initialize = function(appId, secret, version)
     {
-        _gameId = gameId;
+        _gameId = appId;
         _secret = secret;
-        _gameVersion = gameVersion;
+        _gameVersion = version;
         _isInitialized = true;
     };
 
@@ -115,9 +115,9 @@ var abTestData;
         return _gameId;
     };
 
-    brainCloudManager.setGameId = function(gameId)
+    brainCloudManager.setGameId = function(appId)
     {
-        _gameId = gameId;
+        _gameId = appId;
     };
 
     brainCloudManager.registerEventCallback = function(eventCallback)

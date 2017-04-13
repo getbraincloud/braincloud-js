@@ -25,22 +25,6 @@ brainCloudClient.friend.OPERATION_FIND_USERS_BY_SUBSTR_NAME = "FIND_USERS_BY_SUB
 brainCloudClient.friend.friendPlatform = Object.freeze({ All : "All",  BrainCloud : "brainCloud",  Facebook : "Facebook" });
 
 /**
-* @deprecated Use getProfileInfoForCredential instead - removal after March 22 2017
-*/
-brainCloudClient.friend.getFriendProfileInfoForExternalId = function(externalId, authenticationType, callback) {
-    console.console.log("getFriendProfileInfoForExternalId is deprecated - Use getProfileInfoForCredential instead - removal after March 22 2017");
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_FRIEND,
-        operation: brainCloudClient.friend.OPERATION_GET_FRIEND_PROFILE_INFO_FOR_EXTERNAL_ID,
-        data : {
-            externalId : externalId,
-            authenticationType : authenticationType
-        },
-        callback: callback
-    });
-};
-
-/**
  * Retrieves profile information for the specified user.
  *
  * Service Name - friend
@@ -161,21 +145,6 @@ brainCloudClient.friend.readFriendPlayerState = function(friendId, callback) {
         operation: brainCloudClient.friend.OPERATION_READ_FRIEND_PLAYER_STATE,
         data: {
             friendId: friendId
-        },
-        callback: callback
-    });
-};
-
-/**
-* @deprecated Use findUsersByExactName & findUsersBySubstrName instead - removal after Nov 22 2016
-*/
-brainCloudClient.friend.findPlayerByName = function(searchText, maxResults, callback) {
-    brainCloudManager.sendRequest({
-        service: brainCloudClient.SERVICE_FRIEND,
-        operation: brainCloudClient.friend.OPERATION_FIND_PLAYER_BY_NAME,
-        data: {
-            searchText: searchText,
-            maxResults: maxResults
         },
         callback: callback
     });
