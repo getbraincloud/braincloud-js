@@ -268,21 +268,6 @@ brainCloudClient.socialLeaderboard.getGlobalLeaderboardVersions = function(leade
 
 
 /**
- * @deprecated resetLeaderboardScore is deprecated, use removePlayerScore instead - removal after March 22 2017
- */
-brainCloudClient.socialLeaderboard.resetLeaderboardScore = function(leaderboardName, callback) {
-    console.log("resetLeaderboardScore is deprecated, use removePlayerScore instead - removal after March 22 2017")
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_LEADERBOARD,
-        operation : brainCloudClient.socialLeaderboard.OPERATION_RESET,
-        data : {
-            leaderboardId : leaderboardName
-        },
-        callback : callback
-    });
-};
-
-/**
  * Post the players score to the given social leaderboard. You can optionally
  * send a user-defined json string of data with the posted score. This string
  * could include information relevant to the posted score.
