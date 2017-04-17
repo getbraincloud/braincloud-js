@@ -341,7 +341,7 @@ var abTestData;
                     _statusMessageCache = messages[c].status_message;
                 }
 
-                updateKillSwitch(_inProgressQueue[c].service, _inProgressQueue[c].oepration, statusCode)
+                updateKillSwitch(_inProgressQueue[c].service, _inProgressQueue[c].operation, statusCode)
             }
 
             var events = response["events"];
