@@ -13,7 +13,7 @@ brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED = "SEND_NORMALIZED";
 brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_BATCH = "SEND_NORMALIZED_BATCH";
 
 /**
-* Deregisters all device tokens currently registered to the player.
+* Deregisters all device tokens currently registered to the user.
 *
 * @param callback The method to be invoked when the server response is received
 */
@@ -71,16 +71,16 @@ brainCloudClient.pushNotification.registerPushNotificationToken = function(devic
 * Sends a simple push notification based on the passed in message.
 * NOTE: It is possible to send a push notification to oneself.
 *
-* @param toPlayerId The braincloud playerId of the user to receive the notification
+* @param toProfileId The braincloud profileId of the user to receive the notification
 * @param message Text of the push notification
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendSimplePushNotification = function(toPlayerId, message, callback) {
+brainCloudClient.pushNotification.sendSimplePushNotification = function(toProfileId, message, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
         operation: brainCloudClient.pushNotification.OPERATION_SEND_SIMPLE,
         data: {
-            toPlayerId: toPlayerId,
+            toPlayerId: toProfileId,
             message: message
         },
         callback: callback
@@ -91,12 +91,12 @@ brainCloudClient.pushNotification.sendSimplePushNotification = function(toPlayer
 * Sends a notification to a user based on a brainCloud portal configured notification template.
 * NOTE: It is possible to send a push notification to oneself.
 *
-* @param toPlayerId The braincloud playerId of the user to receive the notification
+* @param toProfileId The braincloud profileId of the user to receive the notification
 * @param notificationTemplateId Id of the notification template
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendRichPushNotification = function(toPlayerId, notificationTemplateId, callback) {
-    brainCloudClient.pushNotification.sendRichPushNotificationWithParams(toPlayerId, notificationTemplateId, null, callback);
+brainCloudClient.pushNotification.sendRichPushNotification = function(toProfileId, notificationTemplateId, callback) {
+    brainCloudClient.pushNotification.sendRichPushNotificationWithParams(toProfileId, notificationTemplateId, null, callback);
 };
 
 /**
@@ -105,14 +105,14 @@ brainCloudClient.pushNotification.sendRichPushNotification = function(toPlayerId
 * See the Portal documentation for more info.
 * NOTE: It is possible to send a push notification to oneself.
 *
-* @param toPlayerId The braincloud playerId of the user to receive the notification
+* @param toProfileId The braincloud profileId of the user to receive the notification
 * @param notificationTemplateId Id of the notification template
 * @param substitutionJson JSON defining the substitution params to use with the template
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendRichPushNotificationWithParams = function(toPlayerId, notificationTemplateId, substitutionJson, callback) {
+brainCloudClient.pushNotification.sendRichPushNotificationWithParams = function(toProfileId, notificationTemplateId, substitutionJson, callback) {
     var data = {
-        toPlayerId: toPlayerId,
+        toPlayerId: toProfileId,
         notificationTemplateId: notificationTemplateId
     };
 
@@ -182,14 +182,14 @@ brainCloudClient.pushNotification.sendNormalizedPushNotificationToGroup = functi
 /**
 * Sends a notification to a user consisting of alert content and custom data.
 *
-* @param toPlayerId The playerId of the user to receive the notification
+* @param toProfileId The profileId of the user to receive the notification
 * @param alertContent Body and title of alert
 * @param customData Optional custom data
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendNormalizedPushNotification = function(toPlayerId, alertContent, customData, callback) {
+brainCloudClient.pushNotification.sendNormalizedPushNotification = function(toProfileId, alertContent, customData, callback) {
     var data = {
-        toPlayerId: toPlayerId,
+        toPlayerId: toProfileId,
         alertContent: alertContent
     };
 

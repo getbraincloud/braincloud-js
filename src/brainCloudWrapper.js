@@ -230,7 +230,7 @@
      * @param googleId {string} - String representation of google+ userid (email)
      * @param googleToken {string} - The authentication token derived via the google apis.
      * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
-     * If set to false, you need to handle errors in the case of new players.
+     * If set to false, you need to handle errors in the case of new users.
      * @param responseHandler {function} - The user callback method
      */
     brainCloudWrapper.authenticateGoogle = function(googleId, googleToken, forceCreate, responseHandler) {
@@ -286,7 +286,7 @@
      * @param token {string} - The authentication token derived via the Twitter APIs
      * @param secret {string} - The secret given when attempting to link with Twitter
      * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
-     * If set to false, you need to handle errors in the case of new players.
+     * If set to false, you need to handle errors in the case of new users.
      * @param responseHandler {function} - The user callback method
      */
     brainCloudWrapper.authenticateTwitter = function(userId, token, secret, forceCreate, responseHandler) {
@@ -311,8 +311,8 @@
      * 
      * @param userId {string} - The user's id. Can be any string you want.
      * @param userPassword {string} - The user's password. Can be any string you want.
-     * @param forceCreate {boolean} - True if we force creation of the player if they do not already exist.
-     * If set to false, you need to handle errors in the case of new players.
+     * @param forceCreate {boolean} - True if we force creation of the user if they do not already exist.
+     * If set to false, you need to handle errors in the case of new users.
      * @param responseHandler {function} - The user callback method
      */
     brainCloudWrapper.authenticateUniversal = function(userId, userPassword, forceCreate, responseHandler) {

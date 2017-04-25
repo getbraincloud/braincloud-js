@@ -23,14 +23,14 @@ brainCloudClient.event.OPERATION_GET_EVENTS = "GET_EVENTS";
  * Service Name - Event
  * Service Operation - Send
  *
- * @param toPlayerId The id of the player who is being sent the event
+ * @param toProfileId The id of the user who is being sent the event
  * @param eventType The user-defined type of the event.
  * @param eventData The user-defined data for this event encoded in JSON.
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.event.sendEvent = function(toPlayerId, eventType, eventData, callback) {
+brainCloudClient.event.sendEvent = function(toProfileId, eventType, eventData, callback) {
     var message = {
-        toId: toPlayerId,
+        toId: toProfileId,
         eventType: eventType,
         eventData: eventData
     };
@@ -67,7 +67,7 @@ brainCloudClient.event.updateIncomingEventData = function(evId, eventData, callb
 };
 
 /**
- * Delete an event out of the player's incoming mailbox.
+ * Delete an event out of the user's incoming mailbox.
  *
  * Service Name - Event
  * Service Operation - DeleteIncoming
@@ -87,7 +87,7 @@ brainCloudClient.event.deleteIncomingEvent = function(evId, callback) {
 };
 
 /**
- * Get the events currently queued for the player.
+ * Get the events currently queued for the user.
  *
  * Service Name - Event
  * Service Operation - GetEvents

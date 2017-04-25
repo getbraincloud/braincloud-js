@@ -16,12 +16,12 @@ var abTestData;
     var _errorCallback = null;
     var _jsonedQueue = "";
 
-    var _gameId = "";
+    var _appId = "";
     var _secret = "";
     var _serverUrl = "https://sharedprod.braincloudservers.com";
     var _dispatcherUrl = _serverUrl + "/dispatcherv2";
     var _fileUploadUrl = _serverUrl + "/uploader";
-    var _gameVersion = "";
+    var _version = "";
     var _debugEnabled = false;
 
     var _useJQuery = true;
@@ -43,9 +43,9 @@ var abTestData;
 
     brainCloudManager.initialize = function(appId, secret, version)
     {
-        _gameId = appId;
+        _appId = appId;
         _secret = secret;
-        _gameVersion = version;
+        _version = version;
         _isInitialized = true;
     };
 
@@ -100,24 +100,57 @@ var abTestData;
         _secret = secret;
     };
 
+    /**
+     * @deprecated Use getVersion() instead - Removal after September 1 2017
+     */
     brainCloudManager.getGameVersion = function()
     {
-        return _gameVersion;
+        return _version;
     };
 
-    brainCloudManager.setGameVersion = function(gameVersion)
+    brainCloudManager.getVersion = function()
     {
-        _gameVersion = gameVersion;
+        return _version;
     };
 
+    /**
+     * @deprecated Use setVersion() instead - Removal after September 1 2017
+     */
+    brainCloudManager.setGameVersion = function(version)
+    {
+        _version = version;
+    };
+
+    brainCloudManager.setVersion = function(version)
+    {
+        _version = version;
+    };
+
+    /**
+     * @deprecated Use getAppId() instead - Removal after September 1 2017
+     */
     brainCloudManager.getGameId = function()
     {
-        return _gameId;
+        return _appId;
     };
 
+    brainCloudManager.getAppId = function()
+    {
+        return _appId;
+    };
+
+
+    /**
+     * @deprecated Use setAppId() instead - Removal after September 1 2017
+     */
     brainCloudManager.setGameId = function(appId)
     {
-        _gameId = appId;
+        _appId = appId;
+    };
+
+    brainCloudManager.setAppId = function(appId)
+    {
+        _appId = appId;
     };
 
     brainCloudManager.registerEventCallback = function(eventCallback)
@@ -419,7 +452,7 @@ var abTestData;
             _jsonedQueue = JSON.stringify(
             {
                 messages: _inProgressQueue,
-                gameId: _gameId,
+                gameId: _appId,
                 sessionId: _sessionId,
                 packetId: _packetId++
             });
