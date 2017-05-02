@@ -18,7 +18,7 @@ brainCloudClient.languageCode;
  * @param {string}
  *            version - The app version (e.g. "1.0.0").
  */
-brainCloudClient.initialize = function(appId, secret, version) {
+brainCloudClient.initialize = function(appId, secret, appVersion) {
     function isBlank(str) {
         return (!str || /^\s*$/.test(str));
     };
@@ -28,14 +28,14 @@ brainCloudClient.initialize = function(appId, secret, version) {
         error = "secret was null or empty";
     else if (isBlank(appId))
         error = "appId was null or empty";
-    else if (isBlank(version))
-        error = "version was null or empty";
+    else if (isBlank(appVersion))
+        error = "appVersion was null or empty";
     if (error != null) {
         console.log("ERROR | Failed to initialize brainCloud - " + error);
         return;
     }
 
-    brainCloudManager.initialize(appId, secret, version);
+    brainCloudManager.initialize(appId, secret, appVersion);
 };
 
 /**

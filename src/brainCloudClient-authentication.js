@@ -371,7 +371,7 @@ brainCloudClient.authentication.authenticate = function(externalId, authenticati
     var timeZoneOffset = -now.getTimezoneOffset() / 60.0;
 
     var appId = brainCloudManager.getAppId();
-    var version = brainCloudManager.getVersion();
+    var appVersion = brainCloudManager.getAppVersion();
 
     // make sure session id for our session is clear...
     brainCloudManager.setSessionId("");
@@ -380,7 +380,7 @@ brainCloudClient.authentication.authenticate = function(externalId, authenticati
         gameId: appId,
         externalId: externalId,
         releasePlatform: "WEB",
-        gameVersion: version,
+        gameVersion: appVersion,
         clientLibVersion: brainCloudClient.version,
         authenticationToken: authenticationToken,
         authenticationType: authenticationType,

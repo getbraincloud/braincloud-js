@@ -56,8 +56,8 @@
     // public members/methods
     ///////////////////////////////////////////////////////////////////////////
 
-    brainCloudWrapper.initialize = function(appId, secret, version) {
-        brainCloudClient.initialize(appId, secret, version);
+    brainCloudWrapper.initialize = function(appId, secret, appVersion) {
+        brainCloudClient.initialize(appId, secret, appVersion);
     };
     
     brainCloudWrapper.getStoredAnonymousId = function() {

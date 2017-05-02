@@ -21,7 +21,7 @@ var abTestData;
     var _serverUrl = "https://sharedprod.braincloudservers.com";
     var _dispatcherUrl = _serverUrl + "/dispatcherv2";
     var _fileUploadUrl = _serverUrl + "/uploader";
-    var _version = "";
+    var _appVersion = "";
     var _debugEnabled = false;
 
     var _useJQuery = true;
@@ -41,11 +41,11 @@ var abTestData;
     var _isInitialized = false;
     var _isAuthenticated = false;
 
-    brainCloudManager.initialize = function(appId, secret, version)
+    brainCloudManager.initialize = function(appId, secret, appVersion)
     {
         _appId = appId;
         _secret = secret;
-        _version = version;
+        _appVersion = appVersion;
         _isInitialized = true;
     };
 
@@ -101,29 +101,45 @@ var abTestData;
     };
 
     /**
-     * @deprecated Use getVersion() instead - Removal after September 1 2017
+     * @deprecated Use getAppVersion() instead - Removal after September 1 2017
      */
     brainCloudManager.getGameVersion = function()
     {
-        return _version;
-    };
-
-    brainCloudManager.getVersion = function()
-    {
-        return _version;
+        return _appVersion;
     };
 
     /**
-     * @deprecated Use setVersion() instead - Removal after September 1 2017
+     * @deprecated Use getAppVersion() instead - Removal after September 1 2017
      */
-    brainCloudManager.setGameVersion = function(version)
+    brainCloudManager.getVersion = function()
     {
-        _version = version;
+        return _appVersion;
     };
 
-    brainCloudManager.setVersion = function(version)
+    brainCloudManager.getAppVersion = function()
     {
-        _version = version;
+        return _appVersion;
+    };
+
+    /**
+     * @deprecated Use setAppVersion() instead - Removal after September 1 2017
+     */
+    brainCloudManager.setGameVersion = function(appVersion)
+    {
+        _appVersion = appVersion;
+    };
+
+    /**
+     * @deprecated Use setAppVersion() instead - Removal after September 1 2017
+     */
+    brainCloudManager.setVersion = function(appVersion)
+    {
+        _appVersion = appVersion;
+    };
+
+    brainCloudManager.setAppVersion = function(appVersion)
+    {
+        _appVersion = appVersion;
     };
 
     /**
