@@ -137,16 +137,16 @@ brainCloudClient.pushNotification.sendRichPushNotificationWithParams = function(
 *
 * @param groupId Target group
 * @param notificationTemplateId Template to use
-* @param substitutions Map of substitution positions to strings
+* @param substitutionJson Map of substitution positions to strings
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendTemplatedPushNotificationToGroup = function(groupId, notificationTemplateId, substitutions, callback) {
+brainCloudClient.pushNotification.sendTemplatedPushNotificationToGroup = function(groupId, notificationTemplateId, substitutionJson, callback) {
     var data = {
         groupId: groupId,
         notificationTemplateId: notificationTemplateId
     };
 
-    if (substitutions) data.substitutions = substitutions;
+    if (substitutionJson) data.substitutions = substitutionJson;
 
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
@@ -242,19 +242,19 @@ brainCloudClient.pushNotification.scheduleNormalizedPushNotificationMinutes = fu
  *
  * @param profileId The profileId of the user to receive the notification
  * @param notificationTemplateId Body and title of alert
- * @param substitutionsJson Optional custom data
+ * @param substitutionJson Map of substitution positions to strings
  * @param startTime Start time of sending the push notification
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.pushNotification.scheduleRichPushNotificationUTC = function(profileId, notificationTemplateId, substitutionsJson, startTime, callback) {
+brainCloudClient.pushNotification.scheduleRichPushNotificationUTC = function(profileId, notificationTemplateId, substitutionJson, startTime, callback) {
     var data = {
         profileId: profileId,
         notificationTemplateId: notificationTemplateId,
         startDateUTC: startTime
     };
 
-    if (substitutionsJson) {
-        data.substitutions = substitutionsJson;
+    if (substitutionJson) {
+        data.substitutions = substitutionJson;
     }
 
     brainCloudManager.sendRequest({
@@ -270,19 +270,19 @@ brainCloudClient.pushNotification.scheduleRichPushNotificationUTC = function(pro
  *
  * @param profileId The profileId of the user to receive the notification
  * @param notificationTemplateId Body and title of alert
- * @param substitutionsJson Optional custom data
+ * @param substitutionJson Map of substitution positions to strings
  * @param minutesFromNow Minutes from now to send the push notification
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.pushNotification.scheduleRichPushNotificationMinutes = function(profileId, notificationTemplateId, substitutionsJson, minutesFromNow, callback) {
+brainCloudClient.pushNotification.scheduleRichPushNotificationMinutes = function(profileId, notificationTemplateId, substitutionJson, minutesFromNow, callback) {
     var data = {
-        profileId: toProfileId,
+        profileId: profileId,
         notificationTemplateId: notificationTemplateId,
         minutesFromNow: minutesFromNow
     };
 
-    if (substitutionsJson) {
-        data.substitutions = substitutionsJson;
+    if (substitutionJson) {
+        data.substitutions = substitutionJson;
     }
 
     brainCloudManager.sendRequest({
