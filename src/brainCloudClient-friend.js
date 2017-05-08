@@ -196,12 +196,28 @@ brainCloudClient.friend.findUsersBySubstrName = function(searchText, maxResults,
 };
 
 /**
+ * @deprecated Use findUserByUniversalId instead - Removal after September 1 2017
+
+ */
+brainCloudClient.friend.findPlayerByUniversalId = function(searchText, maxResults, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_FRIEND,
+        operation: brainCloudClient.friend.OPERATION_FIND_PLAYER_BY_UNIVERSAL_ID,
+        data: {
+            searchText: searchText,
+            maxResults: maxResults
+        },
+        callback: callback
+    });
+};
+
+/**
  * Retrieves profile information for the partial matches of the specified text.
  *
  * @param searchText Universal ID text on which to search.
  * @param maxResults Maximum number of results to return.
  */
-brainCloudClient.friend.findPlayerByUniversalId = function(searchText, maxResults, callback) {
+brainCloudClient.friend.findUserByUniversalId = function(searchText, maxResults, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_FRIEND,
         operation: brainCloudClient.friend.OPERATION_FIND_PLAYER_BY_UNIVERSAL_ID,
