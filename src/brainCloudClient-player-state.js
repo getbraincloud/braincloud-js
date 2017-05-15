@@ -26,15 +26,7 @@ brainCloudClient.playerState.OPERATION_UPDATE_NAME = "UPDATE_NAME";
 brainCloudClient.playerState.OPERATION_LOGOUT = "LOGOUT";
 
 /**
- * Completely deletes the player record and all data fully owned
- * by the player. After calling this method, the player will need
- * to re-authenticate and create a new profile.
- * This is mostly used for debugging/qa.
- *
- * Service Name - PlayerState
- * Service Operation - FullReset
- *
- * @param callback The method to be invoked when the server response is received
+ * @deprecated Use userPlayer instead - Removal after September 1 2017
  */
 brainCloudClient.playerState.deletePlayer = function(callback) {
     brainCloudManager.sendRequest({
@@ -45,7 +37,26 @@ brainCloudClient.playerState.deletePlayer = function(callback) {
 };
 
 /**
-* Retrieve the player attributes.
+ * Completely deletes the user record and all data fully owned
+ * by the user. After calling this method, the player will need
+ * to re-authenticate and create a new profile.
+ * This is mostly used for debugging/qa.
+ *
+ * Service Name - PlayerState
+ * Service Operation - FullReset
+ *
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.playerState.userPlayer = function(callback) {
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_PLAYERSTATE,
+        operation : brainCloudClient.playerState.OPERATION_FULL_PLAYER_RESET,
+        callback : callback
+    });
+};
+
+/**
+* Retrieve the user's attributes.
 *
 * Service Name - PlayerState
 * Service Operation - GetAttributes
@@ -62,7 +73,7 @@ brainCloudClient.playerState.getAttributes = function(callback) {
 
 
 /**
- * Logs player out of server.
+ * Logs user out of the server.
  *
  * Service Name - PlayerState
  * Service Operation - Logout
@@ -78,16 +89,7 @@ brainCloudClient.playerState.logout = function(callback) {
 };
 
 /**
- * Read the state of the currently logged in player.
- * This method returns a JSON object describing most of the
- * player's data: entities, statistics, level, currency.
- * Apps will typically call this method after authenticating to get an
- * up-to-date view of the player's data.
- *
- * Service Name - PlayerState
- * Service Operation - Read
- *
- * @param callback The method to be invoked when the server response is received
+ * @deprecated Use readUserState instead - Removal after September 1 2017
  */
 brainCloudClient.playerState.readPlayerState = function(callback) {
     brainCloudManager.sendRequest({
@@ -97,8 +99,29 @@ brainCloudClient.playerState.readPlayerState = function(callback) {
     });
 };
 
+
 /**
-* Remove player attributes.
+ * Read the state of the currently logged in user.
+ * This method returns a JSON object describing most of the
+ * user's data: entities, statistics, level, currency.
+ * Apps will typically call this method after authenticating to get an
+ * up-to-date view of the user's data.
+ *
+ * Service Name - PlayerState
+ * Service Operation - Read
+ *
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.playerState.readUserState = function(callback) {
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_PLAYERSTATE,
+        operation : brainCloudClient.playerState.OPERATION_READ,
+        callback : callback
+    });
+};
+
+/**
+* Remove user's attributes.
 *
 * Service Name - PlayerState
 * Service Operation - RemoveAttributes
@@ -118,16 +141,7 @@ brainCloudClient.playerState.removeAttributes = function(attributes, callback) {
 };
 
 /**
- * This method will delete *most* data for the currently logged in player.
- * Data which is not deleted includes: currency, credentials, and
- * purchase transactions. ResetPlayer is different from DeletePlayer in that
- * the player record will continue to exist after the reset (so the user
- * does not need to re-authenticate).
- *
- * Service Name - PlayerState
- * Service Operation - DataReset
- *
- * @param callback The method to be invoked when the server response is received
+ * @deprecated Use resetUser instead - Removal after September 1 2017
  */
 brainCloudClient.playerState.resetPlayer = function(callback) {
     brainCloudManager.sendRequest({
@@ -138,7 +152,27 @@ brainCloudClient.playerState.resetPlayer = function(callback) {
 };
 
 /**
-* Update player attributes.
+ * This method will delete *most* data for the currently logged in user.
+ * Data which is not deleted includes: currency, credentials, and
+ * purchase transactions. ResetUser is different from DeleteUser in that
+ * the user record will continue to exist after the reset (so the user
+ * does not need to re-authenticate).
+ *
+ * Service Name - PlayerState
+ * Service Operation - DataReset
+ *
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.playerState.resetUser = function(callback) {
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_PLAYERSTATE,
+        operation : brainCloudClient.playerState.OPERATION_GAME_DATA_RESET,
+        callback : callback
+    });
+};
+
+/**
+* Update user's attributes.
 *
 * Service Name - PlayerState
 * Service Operation - UpdateAttributes
@@ -161,15 +195,29 @@ brainCloudClient.playerState.updateAttributes = function(attributes,
 };
 
 /**
-* Sets the players name.
+ * @deprecated Use updateUserName instead - Removal after September 1 2017
+ */
+brainCloudClient.playerState.updatePlayerName = function(name, callback) {
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_PLAYERSTATE,
+        operation : brainCloudClient.playerState.OPERATION_UPDATE_NAME,
+        data : {
+            playerName : name
+        },
+        callback : callback
+    });
+};
+
+/**
+* Sets the user name.
 *
 * Service Name - playerState
 * Service Operation - UPDATE_NAME
 *
-* @param name The name of the player
+* @param name The name of the user
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.playerState.updatePlayerName = function(name, callback) {
+brainCloudClient.playerState.updateUserName = function(name, callback) {
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_PLAYERSTATE,
         operation : brainCloudClient.playerState.OPERATION_UPDATE_NAME,
@@ -182,7 +230,7 @@ brainCloudClient.playerState.updatePlayerName = function(name, callback) {
 
 
 /**
- * Updates the "friend summary data" associated with the logged in player.
+ * Updates the "friend summary data" associated with the logged in user.
  * Some operations will return this summary data. For instance the social
  * leaderboards will return the player's score in the leaderboard along
  * with the friend summary data. Generally this data is used to provide
@@ -213,13 +261,7 @@ brainCloudClient.playerState.updateSummaryFriendData = function(summaryFriendDat
 };
 
 /**
- * Update Player picture URL.
- *
- * Service Name - PlayerState
- * Service Operation - UPDATE_PICTURE_URL
- *
- * @param pictureUrl URL to apply
- * @param callback The method to be invoked when the server response is received
+ * @deprecated Use updateUserPictureUrl instead - Removal after September 1 2017
  */
 brainCloudClient.playerState.updatePlayerPictureUrl = function(pictureUrl, callback) {
     brainCloudManager.sendRequest({
@@ -233,7 +275,27 @@ brainCloudClient.playerState.updatePlayerPictureUrl = function(pictureUrl, callb
 }
 
 /**
- * Update the player's contact email. 
+ * Update User picture URL.
+ *
+ * Service Name - PlayerState
+ * Service Operation - UPDATE_PICTURE_URL
+ *
+ * @param pictureUrl URL to apply
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.playerState.updateUserPictureUrl = function(pictureUrl, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PLAYERSTATE,
+        operation: brainCloudClient.playerState.UPDATE_PICTURE_URL,
+        data: {
+            playerPictureUrl: pictureUrl
+        },
+        callback: callback
+    });
+}
+
+/**
+ * Update the user's contact email.
  * Note this is unrelated to email authentication.
  *
  * Service Name - PlayerState

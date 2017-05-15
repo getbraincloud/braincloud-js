@@ -16,12 +16,12 @@ var abTestData;
     var _errorCallback = null;
     var _jsonedQueue = "";
 
-    var _gameId = "";
+    var _appId = "";
     var _secret = "";
     var _serverUrl = "https://sharedprod.braincloudservers.com";
     var _dispatcherUrl = _serverUrl + "/dispatcherv2";
     var _fileUploadUrl = _serverUrl + "/uploader";
-    var _gameVersion = "";
+    var _appVersion = "";
     var _debugEnabled = false;
 
     var _useJQuery = true;
@@ -41,11 +41,11 @@ var abTestData;
     var _isInitialized = false;
     var _isAuthenticated = false;
 
-    brainCloudManager.initialize = function(appId, secret, version)
+    brainCloudManager.initialize = function(appId, secret, appVersion)
     {
-        _gameId = appId;
+        _appId = appId;
         _secret = secret;
-        _gameVersion = version;
+        _appVersion = appVersion;
         _isInitialized = true;
     };
 
@@ -100,24 +100,73 @@ var abTestData;
         _secret = secret;
     };
 
+    /**
+     * @deprecated Use getAppVersion() instead - Removal after September 1 2017
+     */
     brainCloudManager.getGameVersion = function()
     {
-        return _gameVersion;
+        return _appVersion;
     };
 
-    brainCloudManager.setGameVersion = function(gameVersion)
+    /**
+     * @deprecated Use getAppVersion() instead - Removal after September 1 2017
+     */
+    brainCloudManager.getVersion = function()
     {
-        _gameVersion = gameVersion;
+        return _appVersion;
     };
 
+    brainCloudManager.getAppVersion = function()
+    {
+        return _appVersion;
+    };
+
+    /**
+     * @deprecated Use setAppVersion() instead - Removal after September 1 2017
+     */
+    brainCloudManager.setGameVersion = function(appVersion)
+    {
+        _appVersion = appVersion;
+    };
+
+    /**
+     * @deprecated Use setAppVersion() instead - Removal after September 1 2017
+     */
+    brainCloudManager.setVersion = function(appVersion)
+    {
+        _appVersion = appVersion;
+    };
+
+    brainCloudManager.setAppVersion = function(appVersion)
+    {
+        _appVersion = appVersion;
+    };
+
+    /**
+     * @deprecated Use getAppId() instead - Removal after September 1 2017
+     */
     brainCloudManager.getGameId = function()
     {
-        return _gameId;
+        return _appId;
     };
 
+    brainCloudManager.getAppId = function()
+    {
+        return _appId;
+    };
+
+
+    /**
+     * @deprecated Use setAppId() instead - Removal after September 1 2017
+     */
     brainCloudManager.setGameId = function(appId)
     {
-        _gameId = appId;
+        _appId = appId;
+    };
+
+    brainCloudManager.setAppId = function(appId)
+    {
+        _appId = appId;
     };
 
     brainCloudManager.registerEventCallback = function(eventCallback)
@@ -419,7 +468,7 @@ var abTestData;
             _jsonedQueue = JSON.stringify(
             {
                 messages: _inProgressQueue,
-                gameId: _gameId,
+                gameId: _appId,
                 sessionId: _sessionId,
                 packetId: _packetId++
             });

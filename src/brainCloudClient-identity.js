@@ -475,13 +475,13 @@ brainCloudClient.identity.detachParseIdentity = function(parseId, continueAnon, 
  *
  * @param childProfileId The profileId of the child profile to switch to
  * If null and forceCreate is true a new profile will be created
- * @param childGameId The appId of the child game to switch to
+ * @param childAppId The appId of the child app to switch to
  * @param forceCreate Should a new profile be created if it does not exist?
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.identity.switchToChildProfile = function(childProfileId, childGameId, forceCreate, callback) {
+brainCloudClient.identity.switchToChildProfile = function(childProfileId, childAppId, forceCreate, callback) {
 
-    brainCloudClient.identity.switchToChildProfileInternal(childProfileId, childGameId, forceCreate, false, callback);
+    brainCloudClient.identity.switchToChildProfileInternal(childProfileId, childAppId, forceCreate, false, callback);
 };
 
 /**
@@ -491,13 +491,13 @@ brainCloudClient.identity.switchToChildProfile = function(childProfileId, childG
  * Service Name - Identity
  * Service Operation - SWITCH_TO_CHILD_PROFILE
  *
- * @param childGameId The App ID of the child game to switch to
+ * @param childAppId The App ID of the child app to switch to
  * @param forceCreate Should a new profile be created if it does not exist?
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.identity.switchToSingletonChildProfile = function(childGameId, forceCreate, callback) {
+brainCloudClient.identity.switchToSingletonChildProfile = function(childAppId, forceCreate, callback) {
 
-    brainCloudClient.identity.switchToChildProfileInternal(null, childGameId, forceCreate, true, callback);
+    brainCloudClient.identity.switchToChildProfileInternal(null, childAppId, forceCreate, true, callback);
 };
 
 /**
@@ -757,7 +757,7 @@ brainCloudClient.identity.detachIdentity = function(externalId, authenticationTy
     });
 };
 
-brainCloudClient.identity.switchToChildProfileInternal = function(childProfileId, childGameId, forceCreate, forceSingleton, callback) {
+brainCloudClient.identity.switchToChildProfileInternal = function(childProfileId, childAppId, forceCreate, forceSingleton, callback) {
 
     var _navLangCode = window.navigator.userLanguage || window.navigator.language;
     _navLangCode = _navLangCode.split("-");
@@ -772,7 +772,7 @@ brainCloudClient.identity.switchToChildProfileInternal = function(childProfileId
         operation: brainCloudClient.identity.OPERATION_SWITCH_TO_CHILD_PROFILE,
         data: {
             profileId : childProfileId,
-            gameId : childGameId,
+            gameId : childAppId,
             forceCreate : forceCreate,
             forceSingleton : forceSingleton,
             releasePlatform: "WEB",
