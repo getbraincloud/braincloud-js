@@ -197,7 +197,6 @@ brainCloudClient.friend.findUsersBySubstrName = function(searchText, maxResults,
 
 /**
  * @deprecated Use findUserByUniversalId instead - Removal after September 1 2017
-
  */
 brainCloudClient.friend.findPlayerByUniversalId = function(searchText, maxResults, callback) {
     brainCloudManager.sendRequest({

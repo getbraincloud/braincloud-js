@@ -22,7 +22,7 @@ brainCloudClient.playerStatistics.OPERATION_READ_NEXT_XPLEVEL = "READ_NEXT_XPLEV
 brainCloudClient.playerStatistics.OPERATION_SET_XPPOINTS = "SET_XPPOINTS";
 
 /**
- * Returns JSON representing the next experience level for the player.
+ * Returns JSON representing the next experience level for the user.
  *
  * Service Name - PlayerStatistics
  * Service Operation - ReadNextXpLevel
@@ -40,13 +40,13 @@ brainCloudClient.playerStatistics.getNextExperienceLevel = function(
 };
 
 /**
- * Increments the player's experience. If the player goes up a level,
+ * Increments the user's experience. If the user goes up a level,
  * the new level details will be returned along with a list of rewards.
  *
  * Service Name - PlayerStatistics
  * Service Operation - UpdateIncrement
  *
- * @param xp The amount to increase the player's experience by
+ * @param xp The amount to increase the user's experience by
  * @param callback The method to be invoked when the server response is received
  */
 brainCloudClient.playerStatistics.incrementExperiencePoints = function(xp,
@@ -63,11 +63,28 @@ brainCloudClient.playerStatistics.incrementExperiencePoints = function(xp,
 };
 
 /**
- * Atomically increment (or decrement) player statistics.
- * Any rewards that are triggered from player statistic increments
- * will be considered. Player statistics are defined through the brainCloud portal.
+ * @deprecated Use updateUserPictureUrl instead - Removal after September 1 2017
+ */
+brainCloudClient.playerStatistics.incrementUserStats = function(stats,
+                                                                  xp, callback) {
+    brainCloudManager
+        .sendRequest({
+            service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
+            operation : brainCloudClient.playerStatistics.UPDATE,
+            data : {
+                statistics : stats,
+                xp_points : xp
+            },
+            callback : callback
+        });
+};
+
+/**
+ * Atomically increment (or decrement) user statistics.
+ * Any rewards that are triggered from user statistic increments
+ * will be considered. User statistics are defined through the brainCloud portal.
  * Note also that the "xpCapped" property is returned (true/false depending on whether
- * the xp cap is turned on and whether the player has hit it).
+ * the xp cap is turned on and whether the user has hit it).
  *
  * Service Name - PlayerStatistics
  * Service Operation - Update
@@ -87,8 +104,8 @@ brainCloudClient.playerStatistics.incrementExperiencePoints = function(xp,
  *
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.playerStatistics.incrementPlayerStats = function(stats,
-        xp, callback) {
+brainCloudClient.playerStatistics.incrementUserStats = function(stats,
+                                                                xp, callback) {
     brainCloudManager
             .sendRequest({
                 service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
@@ -102,14 +119,26 @@ brainCloudClient.playerStatistics.incrementPlayerStats = function(stats,
 };
 
 /**
- * Read all available player statistics.
+ * @deprecated Use readAllUserStats instead - Removal after September 1 2017
+ */
+brainCloudClient.playerStatistics.readAllPlayerStats = function(callback) {
+    brainCloudManager
+        .sendRequest({
+            service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
+            operation : brainCloudClient.playerStatistics.READ,
+            callback : callback
+        });
+};
+
+/**
+ * Read all available user statistics.
  *
  * Service Name - PlayerStatistics
  * Service Operation - Read
  *
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.playerStatistics.readAllPlayerStats = function(callback) {
+brainCloudClient.playerStatistics.readAllUserStats = function(callback) {
     brainCloudManager
             .sendRequest({
                 service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
@@ -119,7 +148,23 @@ brainCloudClient.playerStatistics.readAllPlayerStats = function(callback) {
 };
 
 /**
- * Reads a subset of player statistics as defined by the input JSON.
+ * @deprecated Use readUserStatsSubset instead - Removal after September 1 2017
+ */
+brainCloudClient.playerStatistics.readPlayerStatsSubset = function(subset,
+                                                                   callback) {
+    brainCloudManager
+        .sendRequest({
+            service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
+            operation : brainCloudClient.playerStatistics.READ_SUBSET,
+            data : {
+                statistics : subset
+            },
+            callback : callback
+        });
+};
+
+/**
+ * Reads a subset of user statistics as defined by the input JSON.
  *
  * Service Name - PlayerStatistics
  * Service Operation - ReadSubset
@@ -139,8 +184,8 @@ brainCloudClient.playerStatistics.readAllPlayerStats = function(callback) {
  *   }
  * }
  */
-brainCloudClient.playerStatistics.readPlayerStatsSubset = function(subset,
-        callback) {
+brainCloudClient.playerStatistics.readUserStatsSubset = function(subset,
+                                                                 callback) {
     brainCloudManager
             .sendRequest({
                 service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
@@ -152,16 +197,8 @@ brainCloudClient.playerStatistics.readPlayerStatsSubset = function(subset,
             });
 };
 
-
-
 /**
- * Method retrieves the player statistics for the given category.
- *
- * Service Name - PlayerStatistics
- * Service Operation - READ_FOR_CATEGORY
- *
- * @param category The player statistics category
- * @param callback Method to be invoked when the server response is received.
+ * @deprecated Use readUserStatsForCategory instead - Removal after September 1 2017
  */
 brainCloudClient.playerStatistics.readPlayerStatsForCategory = function(category, callback) {
     brainCloudManager.sendRequest({
@@ -174,16 +211,47 @@ brainCloudClient.playerStatistics.readPlayerStatsForCategory = function(category
     });
 };
 
+/**
+ * Method retrieves the user statistics for the given category.
+ *
+ * Service Name - PlayerStatistics
+ * Service Operation - READ_FOR_CATEGORY
+ *
+ * @param category The user statistics category
+ * @param callback Method to be invoked when the server response is received.
+ */
+brainCloudClient.playerStatistics.readUserStatsForCategory = function(category, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PLAYER_STATISTICS,
+        operation: brainCloudClient.playerStatistics.READ_FOR_CATEGORY,
+        data: {
+            category: category
+        },
+        callback: callback
+    });
+};
 
 /**
- * Reset all of the statistics for this player back to their initial value.
+ * @deprecated Use resetAllUserStats instead - Removal after September 1 2017
+ */
+brainCloudClient.playerStatistics.resetAllPlayerStats = function(callback) {
+    brainCloudManager
+        .sendRequest({
+            service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
+            operation : brainCloudClient.playerStatistics.RESET,
+            callback : callback
+        });
+};
+
+/**
+ * Reset all of the statistics for this user back to their initial value.
  *
  * Service Name - PlayerStatistics
  * Service Operation - Reset
  *
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.playerStatistics.resetAllPlayerStats = function(callback) {
+brainCloudClient.playerStatistics.resetAllUserStats = function(callback) {
     brainCloudManager
             .sendRequest({
                 service : brainCloudClient.SERVICE_PLAYER_STATISTICS,
@@ -193,14 +261,14 @@ brainCloudClient.playerStatistics.resetAllPlayerStats = function(callback) {
 };
 
 /**
- * Sets the player's experience to an absolute value. Note that this
- * is simply a set and will not reward the player if their level changes
+ * Sets the user's experience to an absolute value. Note that this
+ * is simply a set and will not reward the user if their level changes
  * as a result.
  *
  * Service Name - PlayerStatistics
  * Service Operation - SetXpPoints
  *
- * @param xp The amount to set the the player's experience to
+ * @param xp The amount to set the the user's experience to
  * @param callback The method to be invoked when the server response is received
  */
 brainCloudClient.playerStatistics.setExperiencePoints = function(xp,
