@@ -63,9 +63,9 @@ brainCloudClient.playerStatistics.incrementExperiencePoints = function(xp,
 };
 
 /**
- * @deprecated Use updateUserPictureUrl instead - Removal after September 1 2017
+ * @deprecated Use incrementUserStats instead - Removal after September 1 2017
  */
-brainCloudClient.playerStatistics.incrementUserStats = function(stats,
+brainCloudClient.playerStatistics.incrementPlayerStats = function(stats,
                                                                   xp, callback) {
     brainCloudManager
         .sendRequest({
