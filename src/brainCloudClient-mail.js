@@ -65,7 +65,7 @@ brainCloudClient.mail.sendAdvancedEmail = function(profileId, serviceParams, cal
  *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
  * @param in_callback The method to be invoked when the server response is received
  */
-brainCloudClient.mail.sendAdvancedEmail = function(emailAddress, serviceParams, callback) {
+brainCloudClient.mail.sendAdvancedEmailByAddress = function(emailAddress, serviceParams, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_MAIL,
         operation: brainCloudClient.mail.OPERATION_SEND_ADVANCED_EMAIL_BY_ADDRESS,
