@@ -10,8 +10,8 @@ brainCloudClient.playbackStream.OPERATION_DELETE_STREAM = "DELETE_STREAM";
 brainCloudClient.playbackStream.OPERATION_ADD_EVENT = "ADD_EVENT";
 brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER = "GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER";
 brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER = "GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER";
-brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER = "GET_RECENT_STREAMS_FOR_INITIATING_PLAYER";
-brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER = "GET_RECENT_STREAMS_FOR_TARGET_PLAYER";
+brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER = "GET_RECENT_STREAMS_FOR_INITIATING_PLAYER";
+brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER = "GET_RECENT_STREAMS_FOR_TARGET_PLAYER";
 
 /**
  * Method starts a new playback stream.
@@ -179,7 +179,7 @@ brainCloudClient.playbackStream.getStreamSummariesForTargetPlayer = function(tar
  * @param callback
  *            {function} The callback handler.
  */
-brainCloudClient.playbackStream.getStreamSummariesForInitiatingPlayer = function(initiatingPlayerId, maxNumStreams, callback) {
+brainCloudClient.playbackStream.getRecentStreamsForInitiatingPlayer = function(initiatingPlayerId, maxNumStreams, callback) {
     var message = {
         initiatingPlayerId : initiatingPlayerId,
         maxNumStreams : maxNumStreams
@@ -187,7 +187,7 @@ brainCloudClient.playbackStream.getStreamSummariesForInitiatingPlayer = function
 
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER,
+        operation : brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER,
         data : message,
         callback : callback
     });
@@ -203,7 +203,7 @@ brainCloudClient.playbackStream.getStreamSummariesForInitiatingPlayer = function
  * @param callback
  *            {function} The callback handler.
  */
-brainCloudClient.playbackStream.getStreamSummariesForTargetPlayer = function(targetPlayerId, maxNumStreams, callback) {
+brainCloudClient.playbackStream.getRecentStreamsForTargetPlayer = function(targetPlayerId, maxNumStreams, callback) {
     var message = {
         targetPlayerId : targetPlayerId,
         maxNumStreams : maxNumStreams
@@ -211,7 +211,7 @@ brainCloudClient.playbackStream.getStreamSummariesForTargetPlayer = function(tar
 
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER,
+        operation : brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER,
         data : message,
         callback : callback
     });
