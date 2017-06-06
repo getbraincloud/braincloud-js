@@ -160,6 +160,51 @@ brainCloudClient.product.getCurrency = function(currencyType, callback) {
 };
 
 /**
+ * @deprecated Method is recommended to be used in Cloud Code only for security
+ * If you need to use it client side, enable 'Allow Currency Calls from Client' on the brainCloud dashboard
+ */
+brainCloudClient.product.awardCurrency = function(currencyType, amount, callback) {
+    var message = {
+            vc_id: currencyType,
+            vc_amount: amount
+    };
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PRODUCT,
+        operation: brainCloudClient.product.OPERATION_AWARD_VC,
+        data: message,
+        callback: callback
+    });
+};
+
+/**
+ * @deprecated Method is recommended to be used in Cloud Code only for security
+ * If you need to use it client side, enable 'Allow Currency Calls from Client' on the brainCloud dashboard
+ */
+brainCloudClient.product.resetCurrency = function(callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PRODUCT,
+        operation: brainCloudClient.product.OPERATION_RESET_PLAYER_VC,
+        callback: callback
+    });
+};
+
+/**
+ * @deprecated Method is recommended to be used in Cloud Code only for security
+ * If you need to use it client side, enable 'Allow Currency Calls from Client' on the brainCloud dashboard
+ */
+brainCloudClient.product.consumeCurrency = function(vcId, amount, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PRODUCT,
+        operation: brainCloudClient.product.OPERATION_CONSUME_PLAYER_VC,
+        data: {
+            vc_id: vcId,
+            vc_amount: amount
+        },
+        callback: callback
+    });
+};
+
+/**
  * Get Eligible Promotions
  *
  * Service Name - Product
