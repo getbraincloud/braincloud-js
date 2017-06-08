@@ -214,6 +214,11 @@ var abTestData;
         return _isAuthenticated;
     };
 
+    brainCloudManager.setAuthenticated = function()
+    {
+        _isAuthenticated = true;
+    };
+
     function debugLog(msg, isError)
     {
         if(_debugEnabled)
