@@ -11,9 +11,11 @@ brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_TO_GROUP = "SEND_NOR
 brainCloudClient.pushNotification.OPERATION_SEND_TEMPLATED_TO_GROUP = "SEND_TEMPLATED_TO_GROUP";
 brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED = "SEND_NORMALIZED";
 brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_BATCH = "SEND_NORMALIZED_BATCH";
+brainCloudClient.pushNotification.OPERATION_SCHEDULED_RICH = "SCHEDULE_RICH_NOTIFICATION";
+brainCloudClient.pushNotification.OPERATION_SCHEDULED_NORMALIZED = "SCHEDULE_NORMALIZED_NOTIFICATION"
 
 /**
-* Deregisters all device tokens currently registered to the player.
+* Deregisters all device tokens currently registered to the user.
 *
 * @param callback The method to be invoked when the server response is received
 */
@@ -71,16 +73,16 @@ brainCloudClient.pushNotification.registerPushNotificationToken = function(devic
 * Sends a simple push notification based on the passed in message.
 * NOTE: It is possible to send a push notification to oneself.
 *
-* @param toPlayerId The braincloud playerId of the user to receive the notification
+* @param toProfileId The braincloud profileId of the user to receive the notification
 * @param message Text of the push notification
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendSimplePushNotification = function(toPlayerId, message, callback) {
+brainCloudClient.pushNotification.sendSimplePushNotification = function(toProfileId, message, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
         operation: brainCloudClient.pushNotification.OPERATION_SEND_SIMPLE,
         data: {
-            toPlayerId: toPlayerId,
+            toPlayerId: toProfileId,
             message: message
         },
         callback: callback
@@ -91,12 +93,12 @@ brainCloudClient.pushNotification.sendSimplePushNotification = function(toPlayer
 * Sends a notification to a user based on a brainCloud portal configured notification template.
 * NOTE: It is possible to send a push notification to oneself.
 *
-* @param toPlayerId The braincloud playerId of the user to receive the notification
+* @param toProfileId The braincloud profileId of the user to receive the notification
 * @param notificationTemplateId Id of the notification template
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendRichPushNotification = function(toPlayerId, notificationTemplateId, callback) {
-    brainCloudClient.pushNotification.sendRichPushNotificationWithParams(toPlayerId, notificationTemplateId, null, callback);
+brainCloudClient.pushNotification.sendRichPushNotification = function(toProfileId, notificationTemplateId, callback) {
+    brainCloudClient.pushNotification.sendRichPushNotificationWithParams(toProfileId, notificationTemplateId, null, callback);
 };
 
 /**
@@ -105,14 +107,14 @@ brainCloudClient.pushNotification.sendRichPushNotification = function(toPlayerId
 * See the Portal documentation for more info.
 * NOTE: It is possible to send a push notification to oneself.
 *
-* @param toPlayerId The braincloud playerId of the user to receive the notification
+* @param toProfileId The braincloud profileId of the user to receive the notification
 * @param notificationTemplateId Id of the notification template
 * @param substitutionJson JSON defining the substitution params to use with the template
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendRichPushNotificationWithParams = function(toPlayerId, notificationTemplateId, substitutionJson, callback) {
+brainCloudClient.pushNotification.sendRichPushNotificationWithParams = function(toProfileId, notificationTemplateId, substitutionJson, callback) {
     var data = {
-        toPlayerId: toPlayerId,
+        toPlayerId: toProfileId,
         notificationTemplateId: notificationTemplateId
     };
 
@@ -135,16 +137,16 @@ brainCloudClient.pushNotification.sendRichPushNotificationWithParams = function(
 *
 * @param groupId Target group
 * @param notificationTemplateId Template to use
-* @param substitutions Map of substitution positions to strings
+* @param substitutionJson Map of substitution positions to strings
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendTemplatedPushNotificationToGroup = function(groupId, notificationTemplateId, substitutions, callback) {
+brainCloudClient.pushNotification.sendTemplatedPushNotificationToGroup = function(groupId, notificationTemplateId, substitutionJson, callback) {
     var data = {
         groupId: groupId,
         notificationTemplateId: notificationTemplateId
     };
 
-    if (substitutions) data.substitutions = substitutions;
+    if (substitutionJson) data.substitutions = substitutionJson;
 
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
@@ -159,17 +161,17 @@ brainCloudClient.pushNotification.sendTemplatedPushNotificationToGroup = functio
 * See the Portal documentation for more info.
 *
 * @param groupId Target group
-* @param alertContent Body and title of alert
-* @param customData Optional custom data
+* @param alertContentJson Body and title of alert
+* @param customDataJson Optional custom data
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendNormalizedPushNotificationToGroup = function(groupId, alertContent, customData, callback) {
+brainCloudClient.pushNotification.sendNormalizedPushNotificationToGroup = function(groupId, alertContentJson, customDataJson, callback) {
     var data = {
         groupId: groupId,
-        alertContent: alertContent
+        alertContent: alertContentJson
     };
 
-    if (customData) data.customData = customData;
+    if (customDataJson) data.customData = customDataJson;
 
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
@@ -180,20 +182,132 @@ brainCloudClient.pushNotification.sendNormalizedPushNotificationToGroup = functi
 }
 
 /**
-* Sends a notification to a user consisting of alert content and custom data.
-*
-* @param toPlayerId The playerId of the user to receive the notification
-* @param alertContent Body and title of alert
-* @param customData Optional custom data
-* @param callback The method to be invoked when the server response is received
-*/
-brainCloudClient.pushNotification.sendNormalizedPushNotification = function(toPlayerId, alertContent, customData, callback) {
+ * Schedules a normalized push notification to a user
+ *
+ * @param profileId The profileId of the user to receive the notification
+ * @param alertContentJson Body and title of alert
+ * @param customDataJson Optional custom data
+ * @param startTime Start time of sending the push notification
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.pushNotification.scheduleNormalizedPushNotificationUTC = function(profileId, alertContentJson, customDataJson, startTime, callback) {
     var data = {
-        toPlayerId: toPlayerId,
-        alertContent: alertContent
+        profileId: profileId,
+        alertContent: alertContentJson,
+        startDateUTC: startTime
     };
 
-    if (customData) data.customData = customData;
+    if (customDataJson) {
+        data.customData = customDataJson;
+    }
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SCHEDULED_NORMALIZED,
+        data: data,
+        callback: callback
+    });
+};
+
+/**
+ * Schedules a normalized push notification to a user
+ *
+ * @param profileId The profileId of the user to receive the notification
+ * @param alertContentJson Body and title of alert
+ * @param customDataJson Optional custom data
+ * @param minutesFromNow Minutes from now to send the push notification
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.pushNotification.scheduleNormalizedPushNotificationMinutes = function(profileId, alertContentJson, customDataJson, minutesFromNow, callback) {
+    var data = {
+        profileId: profileId,
+        alertContent: alertContentJson,
+        minutesFromNow: minutesFromNow
+    };
+
+    if (customDataJson) {
+        data.customData = customDataJson;
+    }
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SCHEDULED_NORMALIZED,
+        data: data,
+        callback: callback
+    });
+};
+
+/**
+ * Schedules a rich push notification to a user
+ *
+ * @param profileId The profileId of the user to receive the notification
+ * @param notificationTemplateId Body and title of alert
+ * @param substitutionJson Map of substitution positions to strings
+ * @param startTime Start time of sending the push notification
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.pushNotification.scheduleRichPushNotificationUTC = function(profileId, notificationTemplateId, substitutionJson, startTime, callback) {
+    var data = {
+        profileId: profileId,
+        notificationTemplateId: notificationTemplateId,
+        startDateUTC: startTime
+    };
+
+    if (substitutionJson) {
+        data.substitutions = substitutionJson;
+    }
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SCHEDULED_RICH,
+        data: data,
+        callback: callback
+    });
+};
+
+/**
+ * Schedules a rich push notification to a user
+ *
+ * @param profileId The profileId of the user to receive the notification
+ * @param notificationTemplateId Body and title of alert
+ * @param substitutionJson Map of substitution positions to strings
+ * @param minutesFromNow Minutes from now to send the push notification
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.pushNotification.scheduleRichPushNotificationMinutes = function(profileId, notificationTemplateId, substitutionJson, minutesFromNow, callback) {
+    var data = {
+        profileId: profileId,
+        notificationTemplateId: notificationTemplateId,
+        minutesFromNow: minutesFromNow
+    };
+
+    if (substitutionJson) {
+        data.substitutions = substitutionJson;
+    }
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SCHEDULED_RICH,
+        data: data,
+        callback: callback
+    });
+};
+
+/**
+* Sends a notification to a user consisting of alert content and custom data.
+*
+* @param toProfileId The profileId of the user to receive the notification
+* @param alertContentJson Body and title of alert
+* @param customDataJson Optional custom data
+* @param callback The method to be invoked when the server response is received
+*/
+brainCloudClient.pushNotification.sendNormalizedPushNotification = function(toProfileId, alertContentJson, customDataJson, callback) {
+    var data = {
+        toPlayerId: toProfileId,
+        alertContent: alertContentJson
+    };
+
+    if (customDataJson) data.customData = customDataJson;
 
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
@@ -207,17 +321,17 @@ brainCloudClient.pushNotification.sendNormalizedPushNotification = function(toPl
 * Sends a notification to multiple users consisting of alert content and custom data.
 *
 * @param profileIds Collection of profile IDs to send the notification to
-* @param alertContent Body and title of alert
-* @param customData Optional custom data
+* @param alertContentJson Body and title of alert
+* @param customDataJson Optional custom data
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.sendNormalizedPushNotificationBatch = function(profileIds, alertContent, customData, callback) {
+brainCloudClient.pushNotification.sendNormalizedPushNotificationBatch = function(profileIds, alertContentJson, customDataJson, callback) {
     var data = {
         profileIds: profileIds,
-        alertContent: alertContent
+        alertContent: alertContentJson
     };
 
-    if (customData) data.customData = customData;
+    if (customDataJson) data.customData = customDataJson;
 
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,

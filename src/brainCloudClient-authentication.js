@@ -76,7 +76,7 @@ brainCloudClient.authentication.generateNewAnonymousId = function() {
 
 /**
  * Used to clear the saved profile id - to use in cases when the user is
- * attempting to switch to a different game profile.
+ * attempting to switch to a different profile.
  */
 brainCloudClient.authentication.clearSavedProfileId = function() {
     brainCloudClient.authentication.profileId = "";
@@ -318,13 +318,13 @@ brainCloudClient.authentication.authenticateParse = function(userId, token, forc
  */
 brainCloudClient.authentication.resetEmailPassword = function(email, responseHandler) {
     var callerCallback = responseHandler;
-    var gameId = brainCloudManager.getGameId();
+    var appId = brainCloudManager.getAppId();
 
     var request = {
         service: brainCloudClient.SERVICE_AUTHENTICATION,
         operation: brainCloudClient.authentication.OPERATION_RESET_EMAIL_PASSWORD,
         data: {
-            gameId: gameId,
+            gameId: appId,
             externalId: email
         },
         callerCallback: responseHandler,
@@ -370,17 +370,17 @@ brainCloudClient.authentication.authenticate = function(externalId, authenticati
     var now = new Date();
     var timeZoneOffset = -now.getTimezoneOffset() / 60.0;
 
-    var gameId = brainCloudManager.getGameId();
-    var gameVersion = brainCloudManager.getGameVersion();
+    var appId = brainCloudManager.getAppId();
+    var appVersion = brainCloudManager.getAppVersion();
 
     // make sure session id for our session is clear...
     brainCloudManager.setSessionId("");
 
     var data = {
-        gameId: gameId,
+        gameId: appId,
         externalId: externalId,
         releasePlatform: "WEB",
-        gameVersion: gameVersion,
+        gameVersion: appVersion,
         clientLibVersion: brainCloudClient.version,
         authenticationToken: authenticationToken,
         authenticationType: authenticationType,

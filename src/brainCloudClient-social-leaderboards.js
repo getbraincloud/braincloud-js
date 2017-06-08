@@ -455,7 +455,7 @@ brainCloudClient.socialLeaderboard.listAllLeaderboards = function(callback) {
  * Service Operation - REMOVE_PLAYER_SCORE
  *
  * @param leaderboardId The leaderboard ID
- * @param versionId The version of the leaderboard
+ * @param versionId The version of the leaderboard. Use -1 to specifiy the currently active leaderboard version
  * @param callback The method to be invoked when the server response is received
  */
 brainCloudClient.socialLeaderboard.removePlayerScore = function(leaderboardId, versionId, callback) {
