@@ -3,22 +3,22 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-brainCloudClient.version = "3.4.0";
+brainCloudClient.version = "3.5.0";
 brainCloudClient.countryCode;
 brainCloudClient.languageCode;
 
 /**
- * Initializes the brainCloud client with your game information. This method
+ * Initializes the brainCloud client with your app information. This method
  * must be called before any API method is invoked.
  *
  * @param {string}
  *            appId - The app id
  * @param {string}
- *            secret - The secret
+ *            secret - The app secret
  * @param {string}
- *            appVersion - The version (e.g. "1.0.0").
+ *            version - The app version (e.g. "1.0.0").
  */
-brainCloudClient.initialize = function(appId, secret, version) {
+brainCloudClient.initialize = function(appId, secret, appVersion) {
     function isBlank(str) {
         return (!str || /^\s*$/.test(str));
     };
@@ -28,14 +28,14 @@ brainCloudClient.initialize = function(appId, secret, version) {
         error = "secret was null or empty";
     else if (isBlank(appId))
         error = "appId was null or empty";
-    else if (isBlank(version))
-        error = "version was null or empty";
+    else if (isBlank(appVersion))
+        error = "appVersion was null or empty";
     if (error != null) {
         console.log("ERROR | Failed to initialize brainCloud - " + error);
         return;
     }
 
-    brainCloudManager.initialize(appId, secret, version);
+    brainCloudManager.initialize(appId, secret, appVersion);
 };
 
 /**
@@ -67,6 +67,29 @@ brainCloudClient.setServerUrl = function(serverUrl) {
  */
 brainCloudClient.getSessionId = function() {
     return brainCloudManager.getSessionId();
+};
+
+/**
+ * The brainCloud client considers itself reauthenticated
+ * with the given session
+ *
+ * Warning: ensure the user is within your session expiry (set on the dashboard)
+ * before using this call. This optional method exists to reduce
+ * authentication calls, in event the user needs to restart the app
+ * in rapid succession.
+ *
+ * @param sessionId
+ *            {string} - A recently returned session Id
+ */
+brainCloudClient.restoreRecentSession = function(sessionId) {
+    if (sessionId === "") {
+        // Cannot use a blank session Id. Authenticate once,
+        // and save that session for short-term use
+        return;
+    }
+
+    brainCloudManager.setSessionId(sessionId);
+    brainCloudManager.setAuthenticated();
 };
 
 /**
@@ -212,7 +235,7 @@ brainCloudClient.overrideCountryCode = function(countryCode) {
 
 /**
  * Sets the language code sent to brainCloud when a user authenticates.
- * If the language is set to a non-ISO 639-1 standard value the game default will be used instead.
+ * If the language is set to a non-ISO 639-1 standard value the app default will be used instead.
  * Will override any auto detected language.
  * @param languageCode ISO 639-1 two-letter language code
  */

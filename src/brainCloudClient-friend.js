@@ -71,7 +71,7 @@ brainCloudClient.friend.getProfileInfoForExternalAuthId = function(externalId, e
 /**
 * Retrieves the external ID for the specified user profile ID on the specified social platform.
 *
-* @param profileId Profile (player) ID.
+* @param profileId user's Profile ID.
 * @param authenticationType Associated authentication type.
 */
 brainCloudClient.friend.getExternalIdForProfileId = function(profileId, authenticationType, callback) {
@@ -131,7 +131,7 @@ brainCloudClient.friend.readFriendsEntities = function(entityType, callback) {
 };
 
 /**
-* Read a friend's player state.
+* Read a friend's state.
 *
 * Service Name - PlayerState
 * Service Operation - ReadFriendsPlayerState
@@ -151,7 +151,7 @@ brainCloudClient.friend.readFriendPlayerState = function(friendId, callback) {
 };
 
 /**
-* Finds a list of players matching the search text by performing an exact match search
+* Finds a list of users matching the search text by performing an exact match search
 *
 * Service Name - friend
 * Service Operation - FIND_USERS_BY_EXACT_NAME
@@ -173,8 +173,8 @@ brainCloudClient.friend.findUsersByExactName = function(searchText, maxResults, 
 };
 
 /**
-* Finds a list of players matching the search text by performing a substring
-* search of all player names.
+* Finds a list of users matching the search text by performing a substring
+* search of all user names.
 *
 * Service Name - friend
 * Service Operation - FIND_USERS_BY_SUBSTR_NAME
@@ -196,10 +196,7 @@ brainCloudClient.friend.findUsersBySubstrName = function(searchText, maxResults,
 };
 
 /**
- * Retrieves profile information for the partial matches of the specified text.
- *
- * @param searchText Universal ID text on which to search.
- * @param maxResults Maximum number of results to return.
+ * @deprecated Use findUserByUniversalId instead - Removal after September 1 2017
  */
 brainCloudClient.friend.findPlayerByUniversalId = function(searchText, maxResults, callback) {
     brainCloudManager.sendRequest({
@@ -214,7 +211,25 @@ brainCloudClient.friend.findPlayerByUniversalId = function(searchText, maxResult
 };
 
 /**
- * Retrieves a list of player and friend platform information for all friends of the current player.
+ * Retrieves profile information for the partial matches of the specified text.
+ *
+ * @param searchText Universal ID text on which to search.
+ * @param maxResults Maximum number of results to return.
+ */
+brainCloudClient.friend.findUserByUniversalId = function(searchText, maxResults, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_FRIEND,
+        operation: brainCloudClient.friend.OPERATION_FIND_PLAYER_BY_UNIVERSAL_ID,
+        data: {
+            searchText: searchText,
+            maxResults: maxResults
+        },
+        callback: callback
+    });
+};
+
+/**
+ * Retrieves a list of user and friend platform information for all friends of the current user.
  *
  * Service Name - friend
  * Service Operation - LIST_FRIENDS
@@ -236,12 +251,12 @@ brainCloudClient.friend.listFriends = function(friendPlatform, includeSummaryDat
 };
 
 /**
- * Links the current player and the specified players as brainCloud friends.
+ * Links the current user and the specified users as brainCloud friends.
  *
  * Service Name - friend
  * Service Operation - ADD_FRIENDS
  *
- * @param profileIds Collection of player IDs.
+ * @param profileIds Collection of profile IDs.
  * @param in_callback Method to be invoked when the server response is received.
  */
 brainCloudClient.friend.addFriends = function(profileIds, callback) {
@@ -256,12 +271,12 @@ brainCloudClient.friend.addFriends = function(profileIds, callback) {
 };
 
 /**
-* Unlinks the current player and the specified players as brainCloud friends.
+* Unlinks the current user and the specified user profiles as brainCloud friends.
 *
 * Service Name - friend
 * Service Operation - REMOVE_FRIENDS
 *
-* @param profileIds Collection of player IDs.
+* @param profileIds Collection of profile IDs.
 * @param in_callback Method to be invoked when the server response is received.
 */
 brainCloudClient.friend.removeFriends = function(profileIds, callback) {
@@ -276,9 +291,9 @@ brainCloudClient.friend.removeFriends = function(profileIds, callback) {
 };
 
 /**
- * Returns player state of a particular user.
+ * Returns state of a particular user.
  *
- * @param profileId Profile Id of player to retrieve player state for.
+ * @param profileId Profile Id of user to retrieve user state for.
  * @param callback Method to be invoked when the server response is received.
  */
 brainCloudClient.friend.getSummaryDataForProfileId = function(profileId, callback) {
