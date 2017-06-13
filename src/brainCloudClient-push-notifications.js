@@ -6,6 +6,9 @@ brainCloudClient.pushNotification.OPERATION_DEREGISTER_ALL = "DEREGISTER_ALL";
 brainCloudClient.pushNotification.OPERATION_DEREGISTER = "DEREGISTER";
 brainCloudClient.pushNotification.OPERATION_SEND_SIMPLE = "SEND_SIMPLE";
 brainCloudClient.pushNotification.OPERATION_SEND_RICH = "SEND_RICH";
+brainCloudClient.pushNotification.OPERATION_SEND_RAW = "SEND_RAW";
+brainCloudClient.pushNotification.OPERATION_SEND_RAW_TO_GROUP = "SEND_RICH_TO_GROUP";
+brainCloudClient.pushNotification.OPERATION_SEND_RAW_BATCH = "SEND_RICH_BATCH";
 brainCloudClient.pushNotification.OPERATION_REGISTER = "REGISTER";
 brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_TO_GROUP = "SEND_NORMALIZED_TO_GROUP";
 brainCloudClient.pushNotification.OPERATION_SEND_TEMPLATED_TO_GROUP = "SEND_TEMPLATED_TO_GROUP";
@@ -13,6 +16,7 @@ brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED = "SEND_NORMALIZED";
 brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_BATCH = "SEND_NORMALIZED_BATCH";
 brainCloudClient.pushNotification.OPERATION_SCHEDULED_RICH = "SCHEDULE_RICH_NOTIFICATION";
 brainCloudClient.pushNotification.OPERATION_SCHEDULED_NORMALIZED = "SCHEDULE_NORMALIZED_NOTIFICATION"
+brainCloudClient.pushNotification.OPERATION_SCHEDULED_RAW = "SCHEDULE_RAW_NOTIFICATION"
 
 /**
 * Deregisters all device tokens currently registered to the user.
@@ -176,6 +180,142 @@ brainCloudClient.pushNotification.sendNormalizedPushNotificationToGroup = functi
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
         operation: brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_TO_GROUP,
+        data: data,
+        callback: callback
+    });
+}
+
+/**
+* Sends a notification to a "group" of user consisting of alert content and custom data.
+* See the Portal documentation for more info.
+*
+* @param profileId The profileId of the user to receive the notification
+* @param fcmContent Valid Fcm data content
+* @param iosContent Valid ios data content
+* @param facebookContent Facebook template string
+* @param startTime Start time of sending the push notification
+* @param callback The method to be invoked when the server response is received
+*/
+brainCloudClient.pushNotification.scheduleRawPushNotificationUTC = function(profileId, fcmContent, iosContent, facebookContent, startTime, callback) {
+    var data = {
+        profileId: profileId,
+        startDateUTC: startTime
+    };
+
+    if (fcmContent) data.fcmContent = fcmContent;
+    if (iosContent) data.iosContent = iosContent;
+    if (facebookContent) data.facebookContent = facebookContent;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SCHEDULED_RAW,
+        data: data,
+        callback: callback
+    });
+}
+
+/**
+* Sends a notification to a "group" of user consisting of alert content and custom data.
+* See the Portal documentation for more info.
+*
+* @param profileId The profileId of the user to receive the notification
+* @param fcmContent Valid Fcm data content
+* @param iosContent Valid ios data content
+* @param facebookContent Facebook template string
+* @param minutesFromNow Minutes from now to send the push notification
+* @param callback The method to be invoked when the server response is received
+*/
+brainCloudClient.pushNotification.scheduleRawPushNotificationUTC = function(profileId, fcmContent, iosContent, facebookContent, minutesFromNow, callback) {
+    var data = {
+        profileId: profileId,
+        minutesFromNow: minutesFromNow
+    };
+
+    if (fcmContent) data.fcmContent = fcmContent;
+    if (iosContent) data.iosContent = iosContent;
+    if (facebookContent) data.facebookContent = facebookContent;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SCHEDULED_RAW,
+        data: data,
+        callback: callback
+    });
+}
+
+/**
+ * Sends a raw push notification to a target user.
+ *
+ * @param toProfileId The profileId of the user to receive the notification
+ * @param fcmContent Valid Fcm data content
+ * @param iosContent Valid ios data content
+ * @param facebookContent Facebook template string
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.pushNotification.sendRawPushNotification = function(toProfileId, fcmContent, iosContent, facebookContent, callback) {
+    var data = {
+        toProfileId: toProfileId
+    };
+
+    if (fcmContent) data.fcmContent = fcmContent;
+    if (iosContent) data.iosContent = iosContent;
+    if (facebookContent) data.facebookContent = facebookContent;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SEND_RAW,
+        data: data,
+        callback: callback
+    });
+}
+
+/**
+ * Sends a raw push notification to a target list of users.
+ *
+ * @param profileIds Collection of profile IDs to send the notification to
+ * @param fcmContent Valid Fcm data content
+ * @param iosContent Valid ios data content
+ * @param facebookContent Facebook template string
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.pushNotification.sendRawPushNotificationBatch = function(profileIds, fcmContent, iosContent, facebookContent, callback) {
+    var data = {
+        profileIds: profileIds
+    };
+
+    if (fcmContent) data.fcmContent = fcmContent;
+    if (iosContent) data.iosContent = iosContent;
+    if (facebookContent) data.facebookContent = facebookContent;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SEND_RAW_BATCH,
+        data: data,
+        callback: callback
+    });
+}
+
+/**
+ * Sends a raw push notification to a target group.
+ *
+ * @param groupId Target group
+ * @param fcmContent Valid Fcm data content
+ * @param iosContent Valid ios data content
+ * @param facebookContent Facebook template string
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.pushNotification.sendRawPushNotificationToGroup = function(groupId, fcmContent, iosContent, facebookContent, callback) {
+    var data = {
+        groupId: groupId
+    };
+
+    if (fcmContent) data.fcmContent = fcmContent;
+    if (iosContent) data.iosContent = iosContent;
+    if (facebookContent) data.facebookContent = facebookContent;
+
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PUSH_NOTIFICATION,
+        operation: brainCloudClient.pushNotification.OPERATION_SEND_RAW_TO_GROUP,
         data: data,
         callback: callback
     });
