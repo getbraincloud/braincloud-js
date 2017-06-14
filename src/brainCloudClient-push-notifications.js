@@ -223,7 +223,7 @@ brainCloudClient.pushNotification.scheduleRawPushNotificationUTC = function(prof
 * @param minutesFromNow Minutes from now to send the push notification
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.pushNotification.scheduleRawPushNotificationUTC = function(profileId, fcmContent, iosContent, facebookContent, minutesFromNow, callback) {
+brainCloudClient.pushNotification.scheduleRawPushNotificationMinutes = function(profileId, fcmContent, iosContent, facebookContent, minutesFromNow, callback) {
     var data = {
         profileId: profileId,
         minutesFromNow: minutesFromNow
