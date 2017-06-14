@@ -7,8 +7,8 @@ brainCloudClient.pushNotification.OPERATION_DEREGISTER = "DEREGISTER";
 brainCloudClient.pushNotification.OPERATION_SEND_SIMPLE = "SEND_SIMPLE";
 brainCloudClient.pushNotification.OPERATION_SEND_RICH = "SEND_RICH";
 brainCloudClient.pushNotification.OPERATION_SEND_RAW = "SEND_RAW";
-brainCloudClient.pushNotification.OPERATION_SEND_RAW_TO_GROUP = "SEND_RICH_TO_GROUP";
-brainCloudClient.pushNotification.OPERATION_SEND_RAW_BATCH = "SEND_RICH_BATCH";
+brainCloudClient.pushNotification.OPERATION_SEND_RAW_TO_GROUP = "SEND_RAW_TO_GROUP";
+brainCloudClient.pushNotification.OPERATION_SEND_RAW_BATCH = "SEND_RAW_BATCH";
 brainCloudClient.pushNotification.OPERATION_REGISTER = "REGISTER";
 brainCloudClient.pushNotification.OPERATION_SEND_NORMALIZED_TO_GROUP = "SEND_NORMALIZED_TO_GROUP";
 brainCloudClient.pushNotification.OPERATION_SEND_TEMPLATED_TO_GROUP = "SEND_TEMPLATED_TO_GROUP";
@@ -252,7 +252,7 @@ brainCloudClient.pushNotification.scheduleRawPushNotificationMinutes = function(
  */
 brainCloudClient.pushNotification.sendRawPushNotification = function(toProfileId, fcmContent, iosContent, facebookContent, callback) {
     var data = {
-        toProfileId: toProfileId
+        toPlayerId : toProfileId
     };
 
     if (fcmContent) data.fcmContent = fcmContent;
