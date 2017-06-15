@@ -10,6 +10,8 @@ brainCloudClient.playbackStream.OPERATION_DELETE_STREAM = "DELETE_STREAM";
 brainCloudClient.playbackStream.OPERATION_ADD_EVENT = "ADD_EVENT";
 brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER = "GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER";
 brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER = "GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER";
+brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER = "GET_RECENT_STREAMS_FOR_INITIATING_PLAYER";
+brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER = "GET_RECENT_STREAMS_FOR_TARGET_PLAYER";
 
 /**
  * Method starts a new playback stream.
@@ -126,12 +128,7 @@ brainCloudClient.playbackStream.addEvent = function(playbackStreamId, eventData,
 };
 
 /**
- * Method gets stream summaries for initiating player
- *        
- * @param initiatingPlayerId
- *            {string} The player that started the stream
- * @param callback
- *            {function} The callback handler.
+ * @deprecated Use getRecentStreamsForInitiatingPlayer instead - Removal after September 1 2017
  */
 brainCloudClient.playbackStream.getStreamSummariesForInitiatingPlayer = function(initiatingPlayerId, callback) {
     var message = {
@@ -147,12 +144,7 @@ brainCloudClient.playbackStream.getStreamSummariesForInitiatingPlayer = function
 };
 
 /**
- * Method gets stream summaries for initiating player
- *        
- * @param targetPlayerId
- *            {string} The player that was the target of the stream
- * @param callback
- *            {function} The callback handler.
+ * @deprecated Use getRecentStreamsForTargetPlayer instead - Removal after September 1 2017
  */
 brainCloudClient.playbackStream.getStreamSummariesForTargetPlayer = function(targetPlayerId, callback) {
     var message = {
@@ -162,6 +154,54 @@ brainCloudClient.playbackStream.getStreamSummariesForTargetPlayer = function(tar
     brainCloudManager.sendRequest({
         service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
         operation : brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * Method get recent stream summaries for initiating player
+ *
+ * @param initiatingPlayerId
+ *            {string} The player that started the stream
+ * @param maxNumStreams
+ *            {int} The max number of streams to query
+ * @param callback
+ *            {function} The callback handler.
+ */
+brainCloudClient.playbackStream.getRecentStreamsForInitiatingPlayer = function(initiatingPlayerId, maxNumStreams, callback) {
+    var message = {
+        initiatingPlayerId : initiatingPlayerId,
+        maxNumStreams : maxNumStreams
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
+        operation : brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * Method gets recent stream summaries for target player
+ *
+ * @param targetPlayerId
+ *            {string} The player that was the target of the stream
+ * @param maxNumStreams
+ *            {int} The max number of streams to query
+ * @param callback
+ *            {function} The callback handler.
+ */
+brainCloudClient.playbackStream.getRecentStreamsForTargetPlayer = function(targetPlayerId, maxNumStreams, callback) {
+    var message = {
+        targetPlayerId : targetPlayerId,
+        maxNumStreams : maxNumStreams
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
+        operation : brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER,
         data : message,
         callback : callback
     });

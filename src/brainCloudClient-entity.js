@@ -33,7 +33,7 @@ brainCloudClient.entity.OPERATION_INCREMENT_SHARED_USER_ENTITY_DATA = "INCREMENT
  * @param acl
  *            {json} The entity's access control list as json. A null acl
  *            implies default permissions which make the entity
- *            readable/writeable by only the player.
+ *            readable/writeable by only the user.
  * @param callback
  *            {function} The callback handler.
  */
@@ -77,7 +77,7 @@ brainCloudClient.entity.getEntity = function(entityId, callback) {
 };
 
 /**
- * Method returns all player entities that match the given type.
+ * Method returns all user entities that match the given type.
  *
  * @param entityType
  *            {string} The entity type to retrieve
@@ -98,20 +98,11 @@ brainCloudClient.entity.getEntitiesByType = function(entityType, callback) {
 };
 
 /**
-* Method returns a shared entity for the given player and entity ID.
-* An entity is shared if its ACL allows for the currently logged
-* in player to read the data.
-*
-* Service Name - Entity
-* Service Operation - READ_SHARED_ENTITY
-*
-* @param playerId The the profile ID of the player who owns the entity
-* @param entityId The ID of the entity that will be retrieved
-* @param callback The method to be invoked when the server response is received
-*/
-brainCloudClient.entity.getSharedEntityForPlayerId = function(playerId, entityId, callback) {
+ * @deprecated Use getSharedEntityForProfileId() instead - Removal after September 1 2017
+ */
+brainCloudClient.entity.getSharedEntityForPlayerId = function(profileId, entityId, callback) {
     var message = {
-        targetPlayerId : playerId,
+        targetPlayerId : profileId,
         entityId: entityId
     };
 
@@ -124,19 +115,37 @@ brainCloudClient.entity.getSharedEntityForPlayerId = function(playerId, entityId
 };
 
 /**
- * Method returns all shared entities for the given player id.
- * An entity is shared if its ACL allows for the currently logged
- * in player to read the data.
- *
- * Service Name - Entity
- * Service Operation - ReadShared
- *
- * @param playerId The player id to retrieve shared entities for
- * @param callback The method to be invoked when the server response is received
- */
-brainCloudClient.entity.getSharedEntitiesForPlayerId = function(playerId, callback) {
+* Method returns a shared entity for the given profile and entity ID.
+* An entity is shared if its ACL allows for the currently logged
+* in user to read the data.
+*
+* Service Name - Entity
+* Service Operation - READ_SHARED_ENTITY
+*
+* @param profileId The the profile ID of the user who owns the entity
+* @param entityId The ID of the entity that will be retrieved
+* @param callback The method to be invoked when the server response is received
+*/
+brainCloudClient.entity.getSharedEntityForProfileId = function(profileId, entityId, callback) {
     var message = {
-        targetPlayerId : playerId
+        targetPlayerId : profileId,
+        entityId: entityId
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_ENTITY,
+        operation : brainCloudClient.entity.OPERATION_READ_SHARED_ENTITY,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * @deprecated Use getSharedEntitiesForProfileId() instead - Removal after September 1 2017
+ */
+brainCloudClient.entity.getSharedEntitiesForPlayerId = function(profileId, callback) {
+    var message = {
+        targetPlayerId : profileId
     };
 
     brainCloudManager.sendRequest({
@@ -148,20 +157,64 @@ brainCloudClient.entity.getSharedEntitiesForPlayerId = function(playerId, callba
 };
 
 /**
-* Method gets list of shared entities for the specified player based on type and/or where clause
+ * Method returns all shared entities for the given profile id.
+ * An entity is shared if its ACL allows for the currently logged
+ * in user to read the data.
+ *
+ * Service Name - Entity
+ * Service Operation - ReadShared
+ *
+ * @param profileId The profile id to retrieve shared entities for
+ * @param callback The method to be invoked when the server response is received
+ */
+brainCloudClient.entity.getSharedEntitiesForProfileId = function(profileId, callback) {
+    var message = {
+        targetPlayerId : profileId
+    };
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_ENTITY,
+        operation : brainCloudClient.entity.OPERATION_READ_SHARED,
+        data : message,
+        callback : callback
+    });
+};
+
+/**
+ * @deprecated Use getAppId() instead - Removal after September 1 2017
+ */
+brainCloudClient.entity.getSharedEntitiesListForPlayerId = function(profileId, where, orderBy, maxReturn, callback) {
+    var message = {
+        targetPlayerId : profileId,
+        maxReturn : maxReturn
+    };
+
+    if(where) message.where = where;
+    if(orderBy) message.orderBy = orderBy;
+
+    brainCloudManager.sendRequest({
+        service : brainCloudClient.SERVICE_ENTITY,
+        operation : brainCloudClient.entity.OPERATION_READ_SHARED_ENTITIES_LIST,
+        data : message,
+        callback : callback
+    });
+}
+
+/**
+* Method gets list of shared entities for the specified user based on type and/or where clause
 *
 * Service Name - entity
 * Service Operation - READ_SHARED_ENTITIES_LIST
 *
-* @param playerId The player ID to retrieve shared entities for
+* @param profileId The profile ID to retrieve shared entities for
 * @param where Mongo style query
 * @param orderBy Sort order
 * @param maxReturn The maximum number of entities to return
 * @param callback The method to be invoked when the server response is received
 */
-brainCloudClient.entity.getSharedEntitiesListForPlayerId = function(playerId, where, orderBy, maxReturn, callback) {
+brainCloudClient.entity.getSharedEntitiesListForProfileId = function(profileId, where, orderBy, maxReturn, callback) {
     var message = {
-        targetPlayerId : playerId,
+        targetPlayerId : profileId,
         maxReturn : maxReturn
     };
 
@@ -189,7 +242,7 @@ brainCloudClient.entity.getSharedEntitiesListForPlayerId = function(playerId, wh
  * @param acl
  *            {json} The entity's access control list as json. A null acl
  *            implies default permissions which make the entity
- *            readable/writeable by only the player.
+ *            readable/writeable by only the user.
  * @param version
  *            {number} Current version of the entity. If the version of the
  *            entity on the server does not match the version passed in, the
@@ -222,11 +275,11 @@ brainCloudClient.entity.updateEntity = function(entityId, entityType, data,
 };
 
 /**
- * Method updates another player's entity. This operation results in the entity
+ * Method updates another user's entity. This operation results in the entity
  * data being completely replaced by the passed in JSON string.
  *
- * @param targetPlayerId
- *            {string} The entity's owning player id
+ * @param targetProfileId
+ *            {string} The entity's owning profle id
  * @param entityId
  *            {string} The id of the entity to update
  * @param entityType
@@ -240,10 +293,10 @@ brainCloudClient.entity.updateEntity = function(entityId, entityType, data,
  * @param callback
  *            {function} The callback handler
  */
-brainCloudClient.entity.updateSharedEntity = function(entityId, targetPlayerId,
+brainCloudClient.entity.updateSharedEntity = function(entityId, targetProfileId,
         entityType, data, version, callback) {
     var message = {
-        targetPlayerId : targetPlayerId,
+        targetPlayerId : targetProfileId,
         entityId : entityId,
         data : data,
         version : version
@@ -272,7 +325,7 @@ brainCloudClient.entity.updateSharedEntity = function(entityId, targetPlayerId,
  * @param acl
  *            {json} The entity's access control list as json. A null acl
  *            implies default permissions which make the entity
- *            readable/writeable by only the player.
+ *            readable/writeable by only the user.
  * @param version
  *            {number} Current version of the entity. If the version of the
  *            entity on the server does not match the version passed in, the
@@ -322,7 +375,7 @@ brainCloudClient.entity.getSingleton = function(entityType, callback) {
 };
 
 /**
- * Method to delete the specified entity for the player.
+ * Method to delete the specified entity for the user.
  *
  * @param entityId
  *            {string} ID of the entity
@@ -348,7 +401,7 @@ brainCloudClient.entity.deleteEntity = function(entityId, version, callback) {
 };
 
 /**
- * Method to delete the specified singleton entity for the player.
+ * Method to delete the specified singleton entity for the user.
  *
  * @param entityType
  *            {string} Type of the entity to delete
@@ -513,15 +566,15 @@ brainCloudClient.entity.incrementUserEntityData = function(entityId, data, callb
 * Service Operation - INCREMENT_SHARED_USER_ENTITY_DATA
 *
 * @param entityId The id of the entity to update
-* @param targetPlayerId Profile ID of the entity owner
+* @param targetProfileId Profile ID of the entity owner
 * @param data The entity's data object
 * @param callback The callback object
 */
-brainCloudClient.entity.incrementSharedUserEntityData = function(entityId, targetPlayerId, data, callback)
+brainCloudClient.entity.incrementSharedUserEntityData = function(entityId, targetProfileId, data, callback)
 {
     var message = {
         entityId : entityId,
-        targetPlayerId : targetPlayerId,
+        targetPlayerId : targetProfileId,
         data : data
     };
 

@@ -180,7 +180,7 @@ brainCloudClient.group.cancelGroupInvitation = function(groupId, profileId, call
  * @param groupType Name of the type of group.
  * @param isOpenGroup true if group is open; false if closed.
  * @param acl The group's access control list. A null ACL implies default.
- * @param ownerAttributes Attributes for the group owner (current player).
+ * @param ownerAttributes Attributes for the group owner (current member).
  * @param defaultMemberAttributes Default attributes for group members.
  * @param data Custom application data.
  * @param callback The method to be invoked when the server response is received
@@ -301,7 +301,7 @@ brainCloudClient.group.deleteGroupEntity = function(groupId, entityId, version, 
 };
 
 /**
- * Read information on groups to which the current player belongs.
+ * Read information on groups to which the current user belongs.
  *
  * Service Name - group
  * Service Operation - GET_MY_GROUPS
@@ -367,7 +367,7 @@ brainCloudClient.group.incrementGroupEntityData = function(groupId, entityId, da
 };
 
 /**
- * Invite a member to the group.
+ * Invite a user to the group.
  *
  * Service Name - group
  * Service Operation - INVITE_GROUP_MEMBER
@@ -418,7 +418,7 @@ brainCloudClient.group.joinGroup = function(groupId, callback) {
 };
 
 /**
- * Leave a group in which the player is a member.
+ * Leave a group in which the user is a member.
  *
  * Service Name - group
  * Service Operation - LEAVE_GROUP
@@ -486,7 +486,7 @@ brainCloudClient.group.listGroupsPageByOffset = function(encodedContext, pageOff
 };
 
 /**
- * Read information on groups to which the specified player belongs.  Access is subject to restrictions.
+ * Read information on groups to which the specified member belongs.  Access is subject to restrictions.
  *
  * Service Name - group
  * Service Operation - LIST_GROUPS_WITH_MEMBER

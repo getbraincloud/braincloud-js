@@ -7,8 +7,23 @@ brainCloudClient.playerStatisticsEvent.OPERATION_TRIGGER = "TRIGGER";
 brainCloudClient.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE = "TRIGGER_MULTIPLE";
 
 /**
- * Trigger an event server side that will increase the players statistics.
- * This may cause one or more awards to be sent back to the player - 
+ * @deprecated Use triggerUserStatsEvents instead - Removal after September 1 2017
+ */
+brainCloudClient.playerStatisticsEvent.triggerPlayerStatisticsEvent = function(eventName, eventMultiplier, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PLAYER_STATISTICS_EVENT,
+        operation: brainCloudClient.playerStatisticsEvent.OPERATION_TRIGGER,
+        data: {
+            eventName : eventName,
+            eventMultiplier : eventMultiplier
+        },
+        callback: callback
+    });
+};
+
+/**
+ * Trigger an event server side that will increase the users statistics.
+ * This may cause one or more awards to be sent back to the user -
  * could be achievements, experience, etc. Achievements will be sent by this
  * client library to the appropriate awards service (Apple Game Center, etc).
  * 
@@ -23,13 +38,27 @@ brainCloudClient.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE = "TRIGGER_MUL
  * 
  * @param callback The method to be invoked when the server response is received
  */
-brainCloudClient.playerStatisticsEvent.triggerPlayerStatisticsEvent = function(eventName, eventMultiplier, callback) {
+brainCloudClient.playerStatisticsEvent.triggerUserStatsEvent = function(eventName, eventMultiplier, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PLAYER_STATISTICS_EVENT,
         operation: brainCloudClient.playerStatisticsEvent.OPERATION_TRIGGER,
         data: {
             eventName : eventName,
             eventMultiplier : eventMultiplier
+        },
+        callback: callback
+    });
+};
+
+/**
+ * @deprecated Use triggerUserStatsEvents instead - Removal after September 1 2017
+ */
+brainCloudClient.playerStatisticsEvent.triggerPlayerStatisticsEvents = function(events, callback) {
+    brainCloudManager.sendRequest({
+        service: brainCloudClient.SERVICE_PLAYER_STATISTICS_EVENT,
+        operation: brainCloudClient.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE,
+        data: {
+            events : events
         },
         callback: callback
     });
@@ -54,7 +83,7 @@ brainCloudClient.playerStatisticsEvent.triggerPlayerStatisticsEvent = function(e
  *     }
  *   ]
  */
-brainCloudClient.playerStatisticsEvent.triggerPlayerStatisticsEvents = function(events, callback) {
+brainCloudClient.playerStatisticsEvent.triggerUserStatsEvents = function(events, callback) {
     brainCloudManager.sendRequest({
         service: brainCloudClient.SERVICE_PLAYER_STATISTICS_EVENT,
         operation: brainCloudClient.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE,
