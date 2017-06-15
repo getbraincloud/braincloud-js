@@ -128,12 +128,7 @@ brainCloudClient.playbackStream.addEvent = function(playbackStreamId, eventData,
 };
 
 /**
- * Method gets stream summaries for initiating player
- *        
- * @param initiatingPlayerId
- *            {string} The player that started the stream
- * @param callback
- *            {function} The callback handler.
+ * @deprecated Use getRecentStreamsForInitiatingPlayer instead - Removal after September 1 2017
  */
 brainCloudClient.playbackStream.getStreamSummariesForInitiatingPlayer = function(initiatingPlayerId, callback) {
     var message = {
@@ -149,12 +144,7 @@ brainCloudClient.playbackStream.getStreamSummariesForInitiatingPlayer = function
 };
 
 /**
- * Method gets stream summaries for initiating player
- *        
- * @param targetPlayerId
- *            {string} The player that was the target of the stream
- * @param callback
- *            {function} The callback handler.
+ * @deprecated Use getRecentStreamsForTargetPlayer instead - Removal after September 1 2017
  */
 brainCloudClient.playbackStream.getStreamSummariesForTargetPlayer = function(targetPlayerId, callback) {
     var message = {
