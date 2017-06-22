@@ -3,7 +3,7 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-brainCloudClient.version = "3.5.0";
+brainCloudClient.version = "3.5.2";
 brainCloudClient.countryCode;
 brainCloudClient.languageCode;
 
@@ -67,29 +67,6 @@ brainCloudClient.setServerUrl = function(serverUrl) {
  */
 brainCloudClient.getSessionId = function() {
     return brainCloudManager.getSessionId();
-};
-
-/**
- * The brainCloud client considers itself reauthenticated
- * with the given session
- *
- * Warning: ensure the user is within your session expiry (set on the dashboard)
- * before using this call. This optional method exists to reduce
- * authentication calls, in event the user needs to restart the app
- * in rapid succession.
- *
- * @param sessionId
- *            {string} - A recently returned session Id
- */
-brainCloudClient.restoreRecentSession = function(sessionId) {
-    if (sessionId === "") {
-        // Cannot use a blank session Id. Authenticate once,
-        // and save that session for short-term use
-        return;
-    }
-
-    brainCloudManager.setSessionId(sessionId);
-    brainCloudManager.setAuthenticated();
 };
 
 /**
