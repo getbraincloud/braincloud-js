@@ -70,29 +70,6 @@ brainCloudClient.getSessionId = function() {
 };
 
 /**
- * The brainCloud client considers itself reauthenticated
- * with the given session
- *
- * Warning: ensure the user is within your session expiry (set on the dashboard)
- * before using this call. This optional method exists to reduce
- * authentication calls, in event the user needs to restart the app
- * in rapid succession.
- *
- * @param sessionId
- *            {string} - A recently returned session Id
- */
-brainCloudClient.restoreRecentSession = function(sessionId) {
-    if (sessionId === "") {
-        // Cannot use a blank session Id. Authenticate once,
-        // and save that session for short-term use
-        return;
-    }
-
-    brainCloudManager.setSessionId(sessionId);
-    brainCloudManager.setAuthenticated();
-};
-
-/**
  * Sets a callback handler for any out of band messages that come from
  * brainCloud (essentially any message sent from brainCloud that wasn't in
  * direct response to a client request).
