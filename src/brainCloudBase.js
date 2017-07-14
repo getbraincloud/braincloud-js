@@ -437,6 +437,7 @@ var abTestData;
     {
         var sig = CryptoJS.MD5(_jsonedQueue + _secret);
         xhr.setRequestHeader('X-SIG', sig);
+		xhr.setRequestHeader('X-APPID', _appId);
     }
 
     function processQueue()
@@ -614,6 +615,7 @@ var abTestData;
                 xmlhttp.setRequestHeader("Content-type", "application/json");
                 var sig = CryptoJS.MD5(_jsonedQueue + _secret);
                 xmlhttp.setRequestHeader("X-SIG", sig);
+				xmlhttp.setRequestHeader('X-APPID', _appId);
                 xmlhttp.send(_jsonedQueue);
             }
         }
