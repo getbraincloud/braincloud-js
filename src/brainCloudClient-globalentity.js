@@ -16,6 +16,7 @@ brainCloudClient.globalEntity.OPERATION_GET_LIST_COUNT = "GET_LIST_COUNT";
 brainCloudClient.globalEntity.OPERATION_GET_PAGE = "GET_PAGE";
 brainCloudClient.globalEntity.OPERATION_GET_PAGE_BY_OFFSET = "GET_PAGE_BY_OFFSET";
 brainCloudClient.globalEntity.OPERATION_INCREMENT_GLOBAL_ENTITY_DATA = "INCREMENT_GLOBAL_ENTITY_DATA";
+brainCloudClient.globalEntity.OPERATION_GET_RANDOM_ENTITIES_MATCHING = "GET_RANDOM_ENTITIES_MATCHING";
 brainCloudClient.globalEntity.OPERATION_UPDATE_ENTITY_OWNER_AND_ACL = "UPDATE_ENTITY_OWNER_AND_ACL";
 brainCloudClient.globalEntity.OPERATION_MAKE_SYSTEM_ENTITY = "MAKE_SYSTEM_ENTITY";
 
@@ -382,6 +383,31 @@ brainCloudClient.globalEntity.incrementGlobalEntityData = function(entityId, dat
         data : message,
         callback : callback
     });
+};
+
+/**
+ * Gets a list of up to randomCount randomly selected entities from the server based on the where condition and specified maximum return count.
+ *
+ * Service Name - globalEntity
+ * Service Operation - GET_RANDOM_ENTITIES_MATCHING
+ *
+ * @param where Mongo style query string.
+ * @param maxReturn The maximum number of entities to return.
+ * @param callback The callback object
+ */
+brainCloudClient.globalEntity.getRandomEntitiesMatching = function(where, maxReturn, callback)
+{
+	var message = {
+		where : where,
+		maxReturn : maxReturn
+	};
+
+	brainCloudManager.sendRequest({
+		service : brainCloudClient.SERVICE_GLOBAL_ENTITY,
+		operation : brainCloudClient.globalEntity.OPERATION_GET_RANDOM_ENTITIES_MATCHING,
+		data : message,
+		callback : callback
+	});
 };
 
 /**

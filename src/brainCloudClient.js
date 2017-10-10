@@ -3,7 +3,7 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-brainCloudClient.version = "3.5.2";
+brainCloudClient.version = "3.6.0";
 brainCloudClient.countryCode;
 brainCloudClient.languageCode;
 
