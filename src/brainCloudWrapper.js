@@ -111,11 +111,13 @@ function BrainCloudWrapper(wrapperName) {
 	};
 
 	bcw.getStoredAnonymousId = function() {
-		return localStorage.getItem(wrapperName + "anonymousId");
+		var prefix = wrapperName === "" ? "" : wrapperName + ".";
+		return localStorage.getItem(prefix + "anonymousId");
 	};
 
 	bcw.setStoredAnonymousId = function(anonymousId) {
-		localStorage.setItem(wrapperName + "anonymousId", anonymousId);
+		var prefix = wrapperName === "" ? "" : wrapperName + ".";
+		localStorage.setItem(prefix + "anonymousId", anonymousId);
 	};
 
 	bcw.resetStoredAnonymousId = function() {
@@ -123,11 +125,13 @@ function BrainCloudWrapper(wrapperName) {
 	};
 
 	bcw.getStoredProfileId = function() {
-		return localStorage.getItem(wrapperName + "profileId");
+		var prefix = wrapperName === "" ? "" : wrapperName + ".";
+		return localStorage.getItem(prefix + "profileId");
 	};
 
 	bcw.setStoredProfileId = function(profileId) {
-		localStorage.setItem(wrapperName + "profileId", profileId);
+		var prefix = wrapperName === "" ? "" : wrapperName + ".";
+		localStorage.setItem(prefix + "profileId", profileId);
 	};
 
 	bcw.resetStoredProfileId = function() {
