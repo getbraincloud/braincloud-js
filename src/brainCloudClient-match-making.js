@@ -14,6 +14,7 @@ function BCMatchMaking() {
 	bc.matchMaking.OPERATION_TURN_SHIELD_ON                   = "SHIELD_ON";
 	bc.matchMaking.OPERATION_TURN_SHIELD_ON_FOR               = "SHIELD_ON_FOR";
 	bc.matchMaking.OPERATION_TURN_SHIELD_OFF                  = "SHIELD_OFF";
+    bc.matchMaking.OPERATION_INCREMENT_SHIELD_ON_FOR          = "INCREMENT_SHIELD_ON_FOR";
 	bc.matchMaking.OPERATION_GET_SHIELD_EXPIRY                = "GET_SHIELD_EXPIRY";
 	bc.matchMaking.OPERATION_FIND_PLAYERS                     = "FIND_PLAYERS";
 	bc.matchMaking.OPERATION_FIND_PLAYERS_USING_FILTER        = "FIND_PLAYERS_USING_FILTER";
@@ -171,6 +172,26 @@ function BCMatchMaking() {
 			callback: callback
 		});
 	};
+
+    /**
+     * Increases the shield on time by specified number of minutes
+     *
+     * Service Name - MatchMaking
+     * Service Operation - IncrementShieldOnFor
+     *
+     * @param minutes Number of minutes to increase the shield time for
+     * @param callback The callback function
+     */
+    bc.matchMaking.incrementShieldOnFor = function(minutes, callback) {
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_MATCH_MAKING,
+            operation: bc.matchMaking.OPERATION_INCREMENT_SHIELD_ON_FOR,
+            data: {
+                minutes: minutes
+            },
+            callback: callback
+        });
+    };
 
 
 	/**
