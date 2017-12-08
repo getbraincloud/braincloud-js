@@ -391,4 +391,7 @@ function BrainCloudWrapper(wrapperName) {
 	};
 }
 
+/**
+ * @deprecated Use of the *singleton* (window.brainCloudWrapper) has been deprecated. We recommend that you create your own *variable* to hold an instance of the brainCloudWrapper. Explanation here: http://getbraincloud.com/apidocs/release-3-6-5/
+ */
 BrainCloudWrapper.apply(window.brainCloudWrapper = window.brainCloudWrapper || {});
