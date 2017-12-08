@@ -18,7 +18,6 @@ function BrainCloudWrapper(wrapperName) {
 
 		bcw.abtests = bcw.brainCloudClient.abtests;
         bcw.asyncMatch = bcw.brainCloudClient.asyncMatch;
-        bcw.authentication = bcw.brainCloudClient.authentication;
         bcw.dataStream = bcw.brainCloudClient.dataStream;
         bcw.entity = bcw.brainCloudClient.entity;
         bcw.event = bcw.brainCloudClient.event;
