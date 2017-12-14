@@ -1,208 +1,215 @@
 
-brainCloudClient.playbackStream = {};
+function BCPlaybackStream() {
+    var bc = this;
 
-brainCloudClient.SERVICE_PLAYBACK_STREAM = "playbackStream";
+	bc.playbackStream = {};
 
-brainCloudClient.playbackStream.OPERATION_START_STREAM = "START_STREAM";
-brainCloudClient.playbackStream.OPERATION_READ_STREAM = "READ_STREAM";
-brainCloudClient.playbackStream.OPERATION_END_STREAM = "END_STREAM";
-brainCloudClient.playbackStream.OPERATION_DELETE_STREAM = "DELETE_STREAM";
-brainCloudClient.playbackStream.OPERATION_ADD_EVENT = "ADD_EVENT";
-brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER = "GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER";
-brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER = "GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER";
-brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER = "GET_RECENT_STREAMS_FOR_INITIATING_PLAYER";
-brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER = "GET_RECENT_STREAMS_FOR_TARGET_PLAYER";
+	bc.SERVICE_PLAYBACK_STREAM = "playbackStream";
 
-/**
- * Method starts a new playback stream.
- * 
- * @param targetPlayerId
- *            {string} The player to start a stream with
- * @param includeSharedData
- *            {boolean} Whether to include shared data in the stream
- * @param callback
- *            {function} The callback handler.
- */
-brainCloudClient.playbackStream.startStream = function(targetPlayerId, includeSharedData, callback) {
-    var message = {
-        targetPlayerId : targetPlayerId,
-        includeSharedData : includeSharedData
-    };
+	bc.playbackStream.OPERATION_START_STREAM = "START_STREAM";
+	bc.playbackStream.OPERATION_READ_STREAM = "READ_STREAM";
+	bc.playbackStream.OPERATION_END_STREAM = "END_STREAM";
+	bc.playbackStream.OPERATION_DELETE_STREAM = "DELETE_STREAM";
+	bc.playbackStream.OPERATION_ADD_EVENT = "ADD_EVENT";
+	bc.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER = "GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER";
+	bc.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER = "GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER";
+	bc.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER = "GET_RECENT_STREAMS_FOR_INITIATING_PLAYER";
+	bc.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER = "GET_RECENT_STREAMS_FOR_TARGET_PLAYER";
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_START_STREAM,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * Method starts a new playback stream.
+	 *
+	 * @param targetPlayerId
+	 *            {string} The player to start a stream with
+	 * @param includeSharedData
+	 *            {boolean} Whether to include shared data in the stream
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.playbackStream.startStream = function(targetPlayerId, includeSharedData, callback) {
+		var message = {
+			targetPlayerId : targetPlayerId,
+			includeSharedData : includeSharedData
+		};
 
-/**
- * Method reads an existing playback stream.
- * 
- * @param playbackStreamId
- *            {string} Identifies the stream
- * @param callback
- *            {function} The callback handler.
- */
-brainCloudClient.playbackStream.readStream = function(playbackStreamId, callback) {
-    var message = {
-            playbackStreamId : playbackStreamId
-    };
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_START_STREAM,
+			data : message,
+			callback : callback
+		});
+	};
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_READ_STREAM,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * Method reads an existing playback stream.
+	 *
+	 * @param playbackStreamId
+	 *            {string} Identifies the stream
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.playbackStream.readStream = function(playbackStreamId, callback) {
+		var message = {
+			playbackStreamId : playbackStreamId
+		};
 
-/**
- * Method ends an existing playback stream.
- * 
- * @param playbackStreamId
- *            {string} Identifies the stream
- * @param callback
- *            {function} The callback handler.
- */
-brainCloudClient.playbackStream.endStream = function(playbackStreamId, callback) {
-    var message = {
-            playbackStreamId : playbackStreamId
-    };
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_READ_STREAM,
+			data : message,
+			callback : callback
+		});
+	};
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_END_STREAM,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * Method ends an existing playback stream.
+	 *
+	 * @param playbackStreamId
+	 *            {string} Identifies the stream
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.playbackStream.endStream = function(playbackStreamId, callback) {
+		var message = {
+			playbackStreamId : playbackStreamId
+		};
 
-/**
- * Method deletes an existing playback stream.
- * 
- * @param playbackStreamId
- *            {string} Identifies the stream
- * @param callback
- *            {function} The callback handler.
- */
-brainCloudClient.playbackStream.deleteStream = function(playbackStreamId, callback) {
-    var message = {
-            playbackStreamId : playbackStreamId
-    };
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_END_STREAM,
+			data : message,
+			callback : callback
+		});
+	};
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_DELETE_STREAM,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * Method deletes an existing playback stream.
+	 *
+	 * @param playbackStreamId
+	 *            {string} Identifies the stream
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.playbackStream.deleteStream = function(playbackStreamId, callback) {
+		var message = {
+			playbackStreamId : playbackStreamId
+		};
 
-/**
- * Method adds an event to an existing playback stream.
- * 
- * @param playbackStreamId
- *            {string} Identifies the stream
- * @param eventData
- *            {json} Describes the event
- * @param summary
- *            {json} Summary data
- * @param callback
- *            {function} The callback handler.
- */
-brainCloudClient.playbackStream.addEvent = function(playbackStreamId, eventData, summary, callback) {
-    var message = {
-            playbackStreamId : playbackStreamId,
-            eventData : eventData,
-            summary : summary
-    };
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_DELETE_STREAM,
+			data : message,
+			callback : callback
+		});
+	};
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_ADD_EVENT,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * Method adds an event to an existing playback stream.
+	 *
+	 * @param playbackStreamId
+	 *            {string} Identifies the stream
+	 * @param eventData
+	 *            {json} Describes the event
+	 * @param summary
+	 *            {json} Summary data
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.playbackStream.addEvent = function(playbackStreamId, eventData, summary, callback) {
+		var message = {
+			playbackStreamId : playbackStreamId,
+			eventData : eventData,
+			summary : summary
+		};
 
-/**
- * @deprecated Use getRecentStreamsForInitiatingPlayer instead - Removal after September 1 2017
- */
-brainCloudClient.playbackStream.getStreamSummariesForInitiatingPlayer = function(initiatingPlayerId, callback) {
-    var message = {
-            initiatingPlayerId : initiatingPlayerId
-    };
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_ADD_EVENT,
+			data : message,
+			callback : callback
+		});
+	};
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * @deprecated Use getRecentStreamsForInitiatingPlayer instead - Removal after September 1 2017
+	 */
+	bc.playbackStream.getStreamSummariesForInitiatingPlayer = function(initiatingPlayerId, callback) {
+		var message = {
+			initiatingPlayerId : initiatingPlayerId
+		};
 
-/**
- * @deprecated Use getRecentStreamsForTargetPlayer instead - Removal after September 1 2017
- */
-brainCloudClient.playbackStream.getStreamSummariesForTargetPlayer = function(targetPlayerId, callback) {
-    var message = {
-            targetPlayerId : targetPlayerId
-    };
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER,
+			data : message,
+			callback : callback
+		});
+	};
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * @deprecated Use getRecentStreamsForTargetPlayer instead - Removal after September 1 2017
+	 */
+	bc.playbackStream.getStreamSummariesForTargetPlayer = function(targetPlayerId, callback) {
+		var message = {
+			targetPlayerId : targetPlayerId
+		};
 
-/**
- * Method get recent stream summaries for initiating player
- *
- * @param initiatingPlayerId
- *            {string} The player that started the stream
- * @param maxNumStreams
- *            {int} The max number of streams to query
- * @param callback
- *            {function} The callback handler.
- */
-brainCloudClient.playbackStream.getRecentStreamsForInitiatingPlayer = function(initiatingPlayerId, maxNumStreams, callback) {
-    var message = {
-        initiatingPlayerId : initiatingPlayerId,
-        maxNumStreams : maxNumStreams
-    };
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER,
+			data : message,
+			callback : callback
+		});
+	};
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * Method get recent stream summaries for initiating player
+	 *
+	 * @param initiatingPlayerId
+	 *            {string} The player that started the stream
+	 * @param maxNumStreams
+	 *            {int} The max number of streams to query
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.playbackStream.getRecentStreamsForInitiatingPlayer = function(initiatingPlayerId, maxNumStreams, callback) {
+		var message = {
+			initiatingPlayerId : initiatingPlayerId,
+			maxNumStreams : maxNumStreams
+		};
 
-/**
- * Method gets recent stream summaries for target player
- *
- * @param targetPlayerId
- *            {string} The player that was the target of the stream
- * @param maxNumStreams
- *            {int} The max number of streams to query
- * @param callback
- *            {function} The callback handler.
- */
-brainCloudClient.playbackStream.getRecentStreamsForTargetPlayer = function(targetPlayerId, maxNumStreams, callback) {
-    var message = {
-        targetPlayerId : targetPlayerId,
-        maxNumStreams : maxNumStreams
-    };
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER,
+			data : message,
+			callback : callback
+		});
+	};
 
-    brainCloudManager.sendRequest({
-        service : brainCloudClient.SERVICE_PLAYBACK_STREAM,
-        operation : brainCloudClient.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER,
-        data : message,
-        callback : callback
-    });
-};
+	/**
+	 * Method gets recent stream summaries for target player
+	 *
+	 * @param targetPlayerId
+	 *            {string} The player that was the target of the stream
+	 * @param maxNumStreams
+	 *            {int} The max number of streams to query
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.playbackStream.getRecentStreamsForTargetPlayer = function(targetPlayerId, maxNumStreams, callback) {
+		var message = {
+			targetPlayerId : targetPlayerId,
+			maxNumStreams : maxNumStreams
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYBACK_STREAM,
+			operation : bc.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER,
+			data : message,
+			callback : callback
+		});
+	};
+
+}
+
+BCPlaybackStream.apply(window.brainCloudClient = window.brainCloudClient || {});
