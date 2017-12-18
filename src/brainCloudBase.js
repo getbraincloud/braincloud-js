@@ -302,8 +302,6 @@ function BrainCloudManager ()
     //Handle response bundles with HTTP 200 response
     bcm.handleSuccessResponse = function(response)
     {
-        console.log("JSON: " + JSON.stringify(bcm));
-
         var messages = response["responses"];
 
         if (bcm._debugEnabled)
@@ -445,7 +443,6 @@ function BrainCloudManager ()
             responses[i] = response;
         }
 
-        console.log("CalledFromHere:446");
         bcm.handleSuccessResponse(
             {
                 "responses": responses
@@ -539,10 +536,6 @@ function BrainCloudManager ()
                         data: bcm._jsonedQueue
                     }).done(function(response)
                 {
-                    console.log("CalledFromThere:541");
-
-                    console.log(JSON.stringify(bcm));
-
                     bcm.handleSuccessResponse(response);
                 }).fail(
                     function(jqXhr, textStatus, errorThrown)
