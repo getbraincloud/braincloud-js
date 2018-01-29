@@ -70,7 +70,7 @@ function BCFile() {
 		var fileSize = file.size;
 
 		xhr.open("POST", url, true);
-		fd.append("_sessionId", bc.brainCloudManager.getSessionId());
+		fd.append("sessionId", bc.brainCloudManager.getSessionId());
 		fd.append("uploadId", uploadId);
 		fd.append("fileSize", fileSize);
 		fd.append("uploadFile", file);
