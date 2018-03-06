@@ -15,6 +15,7 @@ function BCIdentity() {
 	bc.identity.OPERATION_GET_IDENTITIES = "GET_IDENTITIES";
 	bc.identity.OPERATION_GET_EXPIRED_IDENTITIES = "GET_EXPIRED_IDENTITIES";
 	bc.identity.OPERATION_REFRESH_IDENTITY = "REFRESH_IDENTITY";
+	bc.identity.OPERATION_CHANGE_EMAIL_IDENTITY = "CHANGE_EMAIL_IDENTITY";
 	bc.identity.OPERATION_ATTACH_PARENT_WITH_IDENTITY = "ATTACH_PARENT_WITH_IDENTITY";
 	bc.identity.OPERATION_DETACH_PARENT = "DETACH_PARENT";
 	bc.identity.OPERATION_ATTACH_PEER_PROFILE = "ATTACH_PEER_PROFILE";
@@ -591,6 +592,32 @@ function BCIdentity() {
 				externalId : externalId,
 				authenticationType : authenticationType,
 				authenticationToken : authenticationToken
+			},
+			callback: callback
+		});
+	}
+
+	/**
+	 * Allows email identity email address to be changed
+	 *
+	 * Service Name - identity
+	 * Service Operation - CHANGE_EMAIL_IDENTITY
+	 *
+	 * @param oldEmailAddress Old email address
+     * @param authenticationToken Password for identity
+     * @param newEmailAddress New email address
+     * @param updateContactEmail Whether to update contact email in profile
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.identity.changeEmailIdentity = function(oldEmailAddress, authenticationToken, newEmailAddress, updateContactEmail, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_IDENTITY,
+			operation: bc.identity.OPERATION_CHANGE_EMAIL_IDENTITY,
+			data: {
+				oldEmailAddress : oldEmailAddress,
+				authenticationToken : authenticationToken,
+				newEmailAddress : newEmailAddress,
+				updateContactEmail : updateContactEmail
 			},
 			callback: callback
 		});
