@@ -604,18 +604,18 @@ function BCIdentity() {
 	 * Service Operation - CHANGE_EMAIL_IDENTITY
 	 *
 	 * @param oldEmailAddress Old email address
-     * @param authenticationToken Password for identity
+     * @param password Password for identity
      * @param newEmailAddress New email address
      * @param updateContactEmail Whether to update contact email in profile
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.identity.changeEmailIdentity = function(oldEmailAddress, authenticationToken, newEmailAddress, updateContactEmail, callback) {
+	bc.identity.changeEmailIdentity = function(oldEmailAddress, password, newEmailAddress, updateContactEmail, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_IDENTITY,
 			operation: bc.identity.OPERATION_CHANGE_EMAIL_IDENTITY,
 			data: {
 				oldEmailAddress : oldEmailAddress,
-				authenticationToken : authenticationToken,
+				authenticationToken : password,
 				newEmailAddress : newEmailAddress,
 				updateContactEmail : updateContactEmail
 			},
