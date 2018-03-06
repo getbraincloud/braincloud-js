@@ -1881,8 +1881,6 @@
         asyncTest("attachEmailIdentity()", 2, function() {
             bc.identity.attachEmailIdentity(UserA.email, 
                 UserA.password,
-                UserA.email,
-                true,
                 function(result) {
                         ok(true, JSON.stringify(result));
                         equal(result.status, 200, "Expecting 200");
@@ -1901,7 +1899,7 @@
                     true,
                     function(result) {
                         ok(true, JSON.stringify(result));
-                        equal(result.status, 400, "Expecting 400");
+                        equal(result.status, 200, "Expecting 200");
                         start();
                     });
                     
