@@ -29,9 +29,20 @@ function BCPlayerState() {
 	bc.playerState.OPERATION_LOGOUT = "LOGOUT";
 
 	/**
-	 * @deprecated Use userPlayer instead - Removal after September 1 2017
+	 * @deprecated Use deleteUser instead - Removal after September 1 2017
 	 */
 	bc.playerState.deletePlayer = function(callback) {
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYERSTATE,
+			operation : bc.playerState.OPERATION_FULL_PLAYER_RESET,
+			callback : callback
+		});
+	};
+
+	/**
+	 * @deprecated Use deleteUser instead
+	 */
+	bc.playerState.userPlayer = function(callback) {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_PLAYERSTATE,
 			operation : bc.playerState.OPERATION_FULL_PLAYER_RESET,
@@ -50,7 +61,7 @@ function BCPlayerState() {
 	 *
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.playerState.userPlayer = function(callback) {
+	bc.playerState.deleteUser = function(callback) {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_PLAYERSTATE,
 			operation : bc.playerState.OPERATION_FULL_PLAYER_RESET,
