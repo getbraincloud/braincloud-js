@@ -3827,14 +3827,110 @@
         bc.brainCloudClient.useJQuery(true);
 
 
+		asyncTest("authenticateAnonymous()", function() {
+			bc.authenticateAnonymous(function(result) {
+				ok(true, JSON.stringify(result));
+				equal(result.status, 200, "Expecting 200");
+				start();
+			});
+		});
 
-        asyncTest("authenticateAnonymous()", function() {
-            bc.authenticateAnonymous(function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                start();
-            });
+
+		asyncTest("smartSwitchFromNoAuth()", function() {
+
+			bc.brainCloudClient.authentication.generateNewAnonymousId();
+			bc.brainCloudClient.authentication.clearSavedProfileId();
+
+			if(bc.brainCloudClient.isAuthenticated()) {
+				bc.brainCloudClient.playerState.logout(()=> {
+					bc.smartSwitchAuthenticateUniversal(
+						UserA.name,
+						UserA.password,
+						true,
+						function(result) {
+							ok(true, JSON.stringify(result));
+							equal(result.status, 200, "Expecting 200");
+							start();
+						});
+                });
+            } else {
+				bc.smartSwitchAuthenticateUniversal(
+					UserA.name,
+					UserA.password,
+					true,
+					function(result) {
+						ok(true, JSON.stringify(result));
+						equal(result.status, 200, "Expecting 200");
+						start();
+					});
+            }
+
+
+		});
+
+
+		asyncTest("smartSwitchFromAnon()", function() {
+
+			bc.brainCloudClient.authentication.generateNewAnonymousId();
+			bc.brainCloudClient.authentication.clearSavedProfileId();
+
+			bc.brainCloudClient.authentication.authenticateAnonymous(
+				true, function(result) {
+
+					console.log(bc.brainCloudClient.authentication.anonymousId);
+					console.log(bc.brainCloudClient.authentication.profileId);
+
+					bc.setStoredProfileId("");
+					bc.setStoredAnonymousId("");
+
+					bc.brainCloudClient.authentication.anonymousId = "";
+					bc.brainCloudClient.authentication.profileId = "";
+
+					bc.smartSwitchAuthenticateUniversal(
+						UserA.name,
+						UserA.password,
+						true,
+						function(result) {
+							ok(true, JSON.stringify(result));
+							equal(result.status, 200, "Expecting 200");
+                            start();
+						});
+
+				});
+
         });
+
+
+		asyncTest("smartSwitchFromAuth()", function() {
+
+			bc.brainCloudClient.authentication.generateNewAnonymousId();
+			bc.brainCloudClient.authentication.clearSavedProfileId();
+
+			bc.brainCloudClient.authentication.authenticateEmailPassword(UserA.email, UserA.password,
+				true, function(result) {
+
+					console.log(bc.brainCloudClient.authentication.anonymousId);
+					console.log(bc.brainCloudClient.authentication.profileId);
+
+					bc.setStoredProfileId("");
+					bc.setStoredAnonymousId("");
+
+					bc.brainCloudClient.authentication.anonymousId = "";
+					bc.brainCloudClient.authentication.profileId = "";
+
+					bc.smartSwitchAuthenticateUniversal(
+						UserA.name,
+						UserA.password,
+						true,
+						function(result) {
+							ok(true, JSON.stringify(result));
+							equal(result.status, 200, "Expecting 200");
+							start();
+						});
+
+				});
+
+		});
 
     }
 

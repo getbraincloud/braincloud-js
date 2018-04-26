@@ -671,19 +671,31 @@ function BrainCloudWrapper(wrapperName) {
 	getIdentitiesCallback = function(callback) {
 		identitiesCallback = function (response)
 		{
-			try {
-				let identities = JSON.stringify(response.data.identities);
-				let len = identities.length;
+			if (bcw.brainCloudClient.isAuthenticated())
+			{
+				try
+				{
+					let identities = JSON.stringify(response.data.identities);
 
-				if(identities === "{}" || identities === "") {
-					bcw.brainCloudClient.playerState.deleteUser(callback);
-				} else {
+					if (identities === "{}" || identities === "")
+					{
+						bcw.brainCloudClient.playerState.deleteUser(callback);
+					}
+					else
+					{
+						bcw.brainCloudClient.playerState.logout(callback);
+					}
+				}
+				catch (e)
+				{
 					bcw.brainCloudClient.playerState.logout(callback);
 				}
-			} catch(e) {
-				bcw.brainCloudClient.playerState.logout(callback);
 			}
-		}
+			else
+			{
+				callback();
+			}
+		};
 
 		return identitiesCallback;
 	};
