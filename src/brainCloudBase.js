@@ -358,7 +358,8 @@ function BrainCloudManager ()
                 if (bcm._rewardCallback)
                 {
                     var rewards = null;
-                    if (bcm._inProgressQueue[c].service &&
+                    if (data &&
+                        bcm._inProgressQueue[c].service &&
                         bcm._inProgressQueue[c].operation)
                     {
                         if (bcm._inProgressQueue[c].service == "authenticationV2" &&
@@ -409,21 +410,21 @@ function BrainCloudManager ()
                 bcm.updateKillSwitch(bcm._inProgressQueue[c].service, bcm._inProgressQueue[c].operation, statusCode)
             }
 
-            var events = response["events"];
-            if (events && bcm._eventCallback)
-            {
-                for (var c = 0; c < events.length; ++c)
-                {
-                    var eventsJson = {
-                        events: events
-                    };
-                    bcm._eventCallback(eventsJson);
-                }
-            }
-
             if (callback)
             {
                 callback(messages[c]);
+            }
+        }
+
+        var events = response["events"];
+        if (events && bcm._eventCallback)
+        {
+            for (var c = 0; c < events.length; ++c)
+            {
+                var eventsJson = {
+                    events: events
+                };
+                bcm._eventCallback(eventsJson);
             }
         }
     }
