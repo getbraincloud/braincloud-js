@@ -1,5 +1,8 @@
 const fs = require('fs');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+var jQuery = {
+    ajax: require('najax')
+};
 
 XMLHttpRequest.UNSENT = 0;
 XMLHttpRequest.OPENED = 1;
@@ -17,6 +20,7 @@ var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
 
 var DEFAULT_TIMEOUT = 5000;
+var use_jquery = false;
 
 var GAME_ID = "";
 var SECRET = "";
@@ -27,15 +31,17 @@ var CHILD_APP_ID = "";
 var PEER_NAME = "";
 loadIDs();
 
-// Load third parties used by brainCloud
-eval(fs.readFileSync("./CryptoJS-3.0.2.min.js").toString());
-
-var window = { // brainCloud expects this to exist globally
+// brainCloud and jquery expects this to exist globally
+var window = {
     navigator: {
         userLanguage: "en-US"
     },
-    XMLHttpRequest: true
+    XMLHttpRequest: true,
+    document: {}
 };
+
+// Load third parties used by brainCloud
+eval(fs.readFileSync("./CryptoJS-3.0.2.min.js").toString());
 
 var storageItems = {};
 var localStorage = {
@@ -138,7 +144,7 @@ function initializeClient()
     // point to internal (default is sharedprod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
 
-    bc.brainCloudClient.useJQuery(false);
+    bc.brainCloudClient.useJQuery(use_jquery);
 
     bc.brainCloudClient.authentication.clearSavedProfileId();
 }
@@ -235,7 +241,7 @@ async function asyncTest(name, expected, testFn)
         expected = 1;
     }
     
-    test_name = module_name + " : " + name;
+    test_name = (use_jquery ? "(JQUERY) " : "") + module_name + " : " + name;
 
     if (!isModuleRunnable)
     {
@@ -3807,7 +3813,7 @@ async function testWrapper()
     // point to internal (default is sharedprod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
 
-    bc.brainCloudClient.useJQuery(false);
+    bc.brainCloudClient.useJQuery(use_jquery);
 
 
     await asyncTest("authenticateAnonymous()", 2, function() {
@@ -3914,7 +3920,7 @@ async function testWrapper()
 
 }
 
-async function main()
+async function run_tests()
 {
     await testKillSwitch();
     await testAsyncMatch();
@@ -3949,6 +3955,17 @@ async function main()
     await testComms();
     await testFile();
     await testWrapper();
+}
+
+async function main()
+{
+    // Test XMLHttpRequest first
+    use_jquery = false;
+    await run_tests();
+
+    // Test with JQuery
+    use_jquery = true;
+    await run_tests();
 
     console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + "\x1b[0m");
     console.log(fail_log.join("\n"));
