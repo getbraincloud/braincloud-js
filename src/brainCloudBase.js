@@ -325,11 +325,6 @@ function BrainCloudManager ()
         {
             callback = bcm._inProgressQueue[c].callback;
 
-            if (callback)
-            {
-                callback(messages[c]);
-            }
-
             if (bcm._inProgressQueue[c] != null && bcm._errorCallback && essages[c].status != 200)
             {
                 bcm._errorCallback(messages[c]);
@@ -424,6 +419,11 @@ function BrainCloudManager ()
                     };
                     bcm._eventCallback(eventsJson);
                 }
+            }
+
+            if (callback)
+            {
+                callback(messages[c]);
             }
         }
     }
