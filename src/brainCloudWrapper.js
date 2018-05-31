@@ -184,7 +184,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.authenticateEmailPassword = function(email, password, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		bcw.brainCloudClient.authentication.authenticateEmailPassword(
 			email,
@@ -211,7 +211,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.authenticateExternal = function(userId, token, externalAuthName, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		bcw.brainCloudClient.authentication.authenticateExternal(
 			userId,
@@ -238,7 +238,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.authenticateFacebook = function(facebookId, facebookToken, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		bcw.brainCloudClient.authentication.authenticateFacebook(
 			facebookId,
@@ -263,7 +263,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.authenticateGameCenter = function(gameCenterId, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		bcw.brainCloudClient.authentication.authenticateGameCenter(
 			gameCenterId,
@@ -288,7 +288,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.authenticateGoogle = function(googleId, googleToken, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		bcw.brainCloudClient.authentication.authenticateGoogle(
 			googleId,
@@ -317,7 +317,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.authenticateSteam = function(userId, sessionTicket, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		bcw.brainCloudClient.authentication.authenticateSteam(
 			userId,
@@ -344,7 +344,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.authenticateTwitter = function(userId, token, secret, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		bcw.brainCloudClient.authentication.authenticateTwitter(
 			userId,
@@ -370,7 +370,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.authenticateUniversal = function(userId, userPassword, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		bcw.brainCloudClient.authentication.authenticateUniversal(
 			userId,
@@ -404,7 +404,7 @@ function BrainCloudWrapper(wrapperName) {
 	bcw.smartSwitchAuthenticateEmailPassword = function (email, password, forceCreate, responseHandler)
 	{
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		authenticationCallback = function() {
 			bcw.brainCloudClient.authentication.authenticateEmailPassword(
@@ -440,7 +440,7 @@ function BrainCloudWrapper(wrapperName) {
 	bcw.smartSwitchAuthenticateExternal = function (userId, token, externalAuthName, forceCreate, responseHandler)
 	{
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		authenticationCallback = function() {
 			bcw.brainCloudClient.authentication.authenticateExternal(
@@ -475,7 +475,7 @@ function BrainCloudWrapper(wrapperName) {
 	bcw.smartSwitchAuthenticateFacebook = function (facebookId, facebookToken, forceCreate, responseHandler)
 	{
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		authenticationCallback = function() {
 			bcw.brainCloudClient.authentication.authenticateFacebook(
@@ -509,7 +509,7 @@ function BrainCloudWrapper(wrapperName) {
 	bcw.smartSwitchAuthenticateGameCenter = function (gameCenterId, forceCreate, responseHandler)
 	{
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		authenticationCallback = function() {
 			bcw.brainCloudClient.authentication.authenticateGameCenter(
@@ -543,7 +543,7 @@ function BrainCloudWrapper(wrapperName) {
 	bcw.smartSwitchAuthenticateGoogle = function (googleId, googleToken, forceCreate, responseHandler)
 	{
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		authenticationCallback = function() {
 			bcw.brainCloudClient.authentication.authenticateGoogle(
@@ -581,7 +581,7 @@ function BrainCloudWrapper(wrapperName) {
 	bcw.smartSwitchAuthenticateSteam = function (userId, sessionTicket, forceCreate, responseHandler)
 	{
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		authenticationCallback = function() {
 			bcw.brainCloudClient.authentication.authenticateSteam(
@@ -617,7 +617,7 @@ function BrainCloudWrapper(wrapperName) {
 	bcw.smartSwitchAuthenticateTwitter = function (userId, token, secret, forceCreate, responseHandler)
 	{
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		authenticationCallback = function() {
 			bcw.brainCloudClient.authentication.authenticateTwitter(
@@ -652,7 +652,7 @@ function BrainCloudWrapper(wrapperName) {
 	 */
 	bcw.smartSwitchAuthenticateUniversal = function(userId, userPassword, forceCreate, responseHandler) {
 
-		bcw._initializeIdentity(true);
+		bcw._initializeIdentity(false);
 
 		authenticationCallback = function() {
 			bcw.brainCloudClient.authentication.authenticateUniversal(
