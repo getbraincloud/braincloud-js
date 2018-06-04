@@ -14,7 +14,10 @@ console.log("--- Running JS unit tests ---");
 
 var fail_log = [];
 
-var filters = process.argv.slice(2)[0];
+var type = process.argv[2];
+var filters = process.argv[3];
+console.log("type: " + type);
+console.log("filters: " + filters);
 
 var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
@@ -3959,12 +3962,7 @@ async function run_tests()
 
 async function main()
 {
-    // Test XMLHttpRequest first
-    use_jquery = false;
-    await run_tests();
-
-    // Test with JQuery
-    use_jquery = true;
+    use_jquery = type === "jquery";
     await run_tests();
 
     console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + "\x1b[0m");
