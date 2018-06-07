@@ -20,6 +20,8 @@ function BrainCloudManager ()
     bcm._rewardCallback = null;
     bcm._errorCallback = null;
     bcm._jsonedQueue = "";
+    bcm._idleTimeout = 30;
+    bcm._heartBeatIntervalId = null;
 
     bcm._appId = "";
     bcm._secret = "";
@@ -222,6 +224,7 @@ function BrainCloudManager ()
     bcm.setAuthenticated = function()
     {
         bcm._isAuthenticated = true;
+        bcm.startHeartBeat();
     };
 
     bcm.debugLog = function(msg, isError)
@@ -251,6 +254,8 @@ function BrainCloudManager ()
 
     bcm.resetCommunication = function()
     {
+        bcm.stopHeartBeat();
+
         bcm._sendQueue = [];
         bcm._inProgressQueue = [];
         bcm._sessionId = "";
@@ -299,6 +304,28 @@ function BrainCloudManager ()
         bcm._killSwitchOperation = "";
     }
 
+    bcm.startHeartBeat = function()
+    {
+        bcm.stopHeartBeat();
+        bcm._heartBeatIntervalId = setInterval(() =>
+        {
+            bcm.sendRequest({
+                service : "heartbeat",
+                operation : "READ",
+                callback : (result) => {}
+            });
+        }, bcm._idleTimeout * 1000);
+    }
+
+    bcm.stopHeartBeat = function()
+    {
+        if (bcm._heartBeatIntervalId)
+        {
+            clearInterval(bcm._heartBeatIntervalId);
+            bcm._heartBeatIntervalId = null;
+        }
+    }
+
     //Handle response bundles with HTTP 200 response
     bcm.handleSuccessResponse = function(response)
     {
@@ -341,6 +368,7 @@ function BrainCloudManager ()
                 if (bcm._inProgressQueue[c].service == "playerState" &&
                     (bcm._inProgressQueue[c].operation == "LOGOUT" || bcm._inProgressQueue[c].operation == "FULL_RESET"))
                 {
+                    bcm.stopHeartBeat();
                     bcm._isAuthenticated = false;
                     bcm._sessionId = "";
                     bcm.authentication.profileId = "";
@@ -348,11 +376,20 @@ function BrainCloudManager ()
                 else if (bcm._inProgressQueue[c].operation == "AUTHENTICATE")
                 {
                     bcm._isAuthenticated = true;
+                    if (data.hasOwnProperty("playerSessionExpiry"))
+                    {
+                        bcm._idleTimeout = data.playerSessionExpiry * 0.85;
+                    }
+                    else
+                    {
+                        bcm._idleTimeout = 30;
+                    }
                     if(data.hasOwnProperty("maxKillCount"))
                     {
                         bcm._killSwitchThreshold = data.maxKillCount;
                     }
                     bcm.resetErrorCache();
+                    bcm.startHeartBeat();
                 }
 
                 if (bcm._rewardCallback)
@@ -397,6 +434,7 @@ function BrainCloudManager ()
                     resonCode === 40304 ||
                     resonCode === 40356)
                 {
+                    bcm.stopHeartBeat();
                     bcm._isAuthenticated = false;
                     bcm._sessionID = "";
 

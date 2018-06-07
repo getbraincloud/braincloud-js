@@ -3684,6 +3684,8 @@ async function testComms() {
 
     module("Comms", null, null);
 
+    let expiryTimeout = 0;
+
     await asyncTest("readServerTime()", 3, function() {
         bc.time.readServerTime(function(result) {
             ok(true, JSON.stringify(result));
@@ -3696,6 +3698,7 @@ async function testComms() {
     await asyncTest("authenticateUniversal()", function() {
         bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
                 UserA.password, true, function(result) {
+                    expiryTimeout = result.data.playerSessionExpiry;
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
@@ -3709,32 +3712,31 @@ async function testComms() {
         });
     });
 
-    await asyncTest("Timeout test", 2, function() {
+    await asyncTest("Timeout test (With HeartBeat)", 2, function() {
         bc.time.readServerTime(function(result) {
-            console.log("Waiting for session to timeout...")
+            equal(result.status, 200, "Expecting 200");
+            console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
             setTimeout(function() {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            }, 61 * 1000)
+                bc.time.readServerTime(function(result) {
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+            }, (expiryTimeout + 2) * 1000)
         });
     });
 
-    await asyncTest("Timeout test P2", 3, function() {
+    await asyncTest("Timeout test (Without HeartBeat)", 3, function() {
         bc.time.readServerTime(function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 403, "Expecting 403");
-            equal(result.reason_code, 40303, "Expecting 40303");
-            resolve_test();
-        });
-    });
-
-    await asyncTest("Timeout test P3", 3, function() {
-        bc.time.readServerTime(function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 403, "Expecting 403");
-            equal(result.reason_code, 40303, "Expecting 40303");
-            resolve_test();
+            equal(result.status, 200, "Expecting 200");
+            console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
+            bc.brainCloudClient.brainCloudManager.stopHeartBeat();
+            setTimeout(function() {
+                bc.time.readServerTime(function(result) {
+                    equal(result.status, 403, "Expecting 403");
+                    equal(result.reason_code, 40303, "Expecting 40303");
+                    resolve_test();
+                });
+            }, (expiryTimeout + 2) * 1000)
         });
     });
 
@@ -3753,6 +3755,8 @@ async function testComms() {
             resolve_test();
         });
     });
+
+    tearDownLogout();
 }
 
 ////////////////////////////////////////
