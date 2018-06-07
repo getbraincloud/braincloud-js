@@ -495,6 +495,182 @@ function BrainCloudManager ()
         xhr.setRequestHeader('X-APPID', bcm._appId);
     }
 
+    bcm.retry = function()
+    {
+        if (bcm._retry <= 2)
+        {
+            bcm._retry++;
+            bcm.debugLog("Retry # " + bcm._retry.toString(), false);
+            if (bcm._retry === 1)
+            {
+                bcm.debugLog("Retrying right away", false);
+                bcm.performQuery();
+            }
+            else
+            {
+                bcm.debugLog("Waiting for 10 sec...", false);
+                setTimeout(bcm.performQuery, 10000);
+            }
+        }
+        else
+        {
+            bcm.debugLog("Failed after " + bcm._retry + " retries.", true);
+
+            if ((bcm._errorCallback != undefined) &&
+                (typeof bcm._errorCallback == 'function'))
+            {
+                bcm._errorCallback(errorThrown);
+            }
+
+            bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, bcm.reasonCodes.CLIENT_NETWORK_ERROR_TIMEOUT, "Request timed out");
+            
+            bcm._requestInProgress = false;
+            // Now call bcm.processQueue again if there is more data...
+            bcm.processQueue();
+        }
+    }
+
+    bcm.performQuery = function()
+    {
+        if (bcm._useJQuery)
+        {
+            bcm._requestInProgress = true;
+            bcm._loader = jQuery.ajax({
+                timeout: 15000,
+                url: bcm._dispatcherUrl,
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                beforeSend: bcm.setHeader,
+                data: bcm._jsonedQueue
+            })
+            .done(function(response)
+            {
+                bcm.handleSuccessResponse(response);
+    
+                bcm._loader = null;
+                bcm._requestInProgress = false;
+                // Now call bcm.processQueue again if there is more data...
+                bcm.processQueue();
+            })
+            .fail(function(jqXhr, textStatus, errorThrown)
+            {
+                bcm.retry();
+            });
+        }
+        else
+        {
+            clearTimeout(bcm.xml_timeoutId);
+            bcm.xml_timeoutId = null;
+
+            bcm._requestInProgress = true;
+            var xmlhttp;
+            if (window.XMLHttpRequest)
+            {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
+            else
+            {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            xmlhttp.ontimeout_bc = function()
+            {
+                if (xmlhttp.readyState < 4)
+                {
+                    xmlhttp.hasTimedOut = true;
+                    xmlhttp.abort();
+                    xmlhttp.hasTimedOut = null;
+
+                    bcm.xml_timeoutId = null;
+    
+                    bcm.debugLog("timeout", false);
+                    bcm.retry();
+                }
+            }
+
+            xmlhttp.onreadystatechange = function()
+            {
+                if (xmlhttp.hasTimedOut)
+                {
+                    return;
+                }
+
+                if (xmlhttp.readyState == XMLHttpRequest.DONE)
+                {
+                    clearTimeout(bcm.xml_timeoutId);
+                    bcm.xml_timeoutId = null;
+
+                    bcm.debugLog("response status : " + xmlhttp.status);
+                    bcm.debugLog("response : " + xmlhttp.responseText);
+
+                    if (xmlhttp.status == 200)
+                    {
+                        var response = JSON.parse(xmlhttp.responseText);
+
+                        bcm.handleSuccessResponse(response);
+    
+                        bcm._requestInProgress = false;
+                        bcm.processQueue();
+                    }
+                    else if (xmlhttp.status == 503)
+                    {
+                        bcm.debugLog("packet in progress", false);
+                        bcm.retry();
+                        return;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var errorResponse = JSON.parse(xmlhttp.responseText);
+                            if (errorResponse["reason_code"])
+                            {
+                                reasonCode = errorResponse["reason_code"];
+                            }
+                            if (errorResponse["status_message"])
+                            {
+                                statusMessage = errorResponse["status_message"];
+                            }
+                            else
+                            {
+                                statusMessage = xmlhttp.responseText;
+                            }
+                        }
+                        catch (e)
+                        {
+                            reasonCode = 0;
+                            statusMessage = xmlhttp.responseText;
+                        }
+
+                        // TODO: New error handling will split out the parts... for now
+                        // just send back the response text.
+                        var errorMessage = xmlhttp.responseText;
+                        bcm.debugLog("Failed", true);
+
+                        if ((bcm._errorCallback != undefined) &&
+                            (typeof bcm._errorCallback == 'function'))
+                        {
+                            bcm._errorCallback(errorMessage);
+                        }
+                    }
+                }
+            }; // end inner function
+
+            // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
+            bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, 15000);
+
+            xmlhttp.open("POST", bcm._dispatcherUrl, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+            xmlhttp.setRequestHeader("X-SIG", sig);
+            xmlhttp.setRequestHeader('X-APPID', bcm._appId);
+            xmlhttp.send(bcm._jsonedQueue);
+        }
+    }
+
     bcm.processQueue = function()
     {
         if (bcm._sendQueue.length > 0)
@@ -560,121 +736,8 @@ function BrainCloudManager ()
                 }
             }
 
-
-            if (bcm._useJQuery)
-            {
-                bcm._requestInProgress = true;
-                bcm._loader = jQuery.ajax(
-                    {
-                        timeout: 15000,
-                        url: bcm._dispatcherUrl,
-                        type: "POST",
-                        contentType: "application/json",
-                        dataType: "json",
-                        beforeSend: bcm.setHeader,
-                        data: bcm._jsonedQueue
-                    }).done(function(response)
-                {
-                    bcm.handleSuccessResponse(response);
-                }).fail(
-                    function(jqXhr, textStatus, errorThrown)
-                    {
-                        bcm.debugLog("Failed: " + jqXhr + ", " +
-                            textStatus + ", " + errorThrown, true);
-
-                        if ((bcm._errorCallback != undefined) &&
-                            (typeof bcm._errorCallback == 'function'))
-                        {
-                            bcm._errorCallback(errorThrown);
-                        }
-                    }).always(function(jqXhr, textStatus, errorThrown)
-                {
-                    //console.log("Complete: " + jqXhr + ", " + textStatus + ", " + errorThrown);
-                    bcm._loader = null;
-                    bcm._requestInProgress = false;
-                    // Now call bcm.processQueue again if there is more data...
-                    bcm.processQueue();
-                });
-            }
-            else
-            { // don't use jquery for the request
-                bcm._requestInProgress = true;
-                var xmlhttp;
-                if (window.XMLHttpRequest)
-                {
-                    // code for IE7+, Firefox, Chrome, Opera, Safari
-                    xmlhttp = new XMLHttpRequest();
-                }
-                else
-                {
-                    // code for IE6, IE5
-                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-                }
-
-                xmlhttp.onreadystatechange = function()
-                {
-                    if (xmlhttp.readyState == XMLHttpRequest.DONE)
-                    {
-                        bcm.debugLog("response status : " + xmlhttp.status);
-                        bcm.debugLog("response : " + xmlhttp.responseText);
-
-                        if (xmlhttp.status == 200)
-                        {
-                            var response = JSON.parse(xmlhttp.responseText);
-
-                            bcm.handleSuccessResponse(response);
-                        }
-                        else
-                        {
-                            try
-                            {
-                                var errorResponse = JSON
-                                    .parse(xmlhttp.responseText);
-                                if (errorResponse["reason_code"])
-                                {
-                                    reasonCode = errorResponse["reason_code"];
-                                }
-                                if (errorResponse["status_message"])
-                                {
-                                    statusMessage = errorResponse["status_message"];
-                                }
-                                else
-                                {
-                                    statusMessage = xmlhttp.responseText;
-                                }
-
-                            }
-                            catch (e)
-                            {
-                                reasonCode = 0;
-                                statusMessage = xmlhttp.responseText;
-                            }
-
-                            // TODO: New error handling will split out the parts... for now
-                            // just send back the response text.
-                            var errorMessage = xmlhttp.responseText;
-                            bcm.debugLog("Failed", true);
-
-                            if ((bcm._errorCallback != undefined) &&
-                                (typeof bcm._errorCallback == 'function'))
-                            {
-                                bcm._errorCallback(errorMessage);
-                            }
-                        }
-                    }
-
-                    bcm._requestInProgress = false;
-                    bcm.processQueue();
-                }; // end inner function
-
-                xmlhttp.timeout = 15000; //millis
-                xmlhttp.open("POST", bcm._dispatcherUrl, true);
-                xmlhttp.setRequestHeader("Content-type", "application/json");
-                var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
-                xmlhttp.setRequestHeader("X-SIG", sig);
-                xmlhttp.setRequestHeader('X-APPID', bcm._appId);
-                xmlhttp.send(bcm._jsonedQueue);
-            }
+            bcm._retry = 0;
+            bcm.performQuery();
         }
     }
 }

@@ -3740,14 +3740,35 @@ async function testComms() {
         });
     });
 
-    await asyncTest("authenticateUniversal()", function() {
-        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-                UserA.password, true, function(result) {
-                    equal(result.status, 200, JSON.stringify(result));
-                    resolve_test();
-                });
+    await asyncTest("authenticateUniversal()", () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, result =>
+        {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
     });
 
+    await asyncTest("retry 30sec script", 2, () =>
+    {
+        bc.brainCloudClient.script.runScript("TestTimeoutRetry", {}, result =>
+        {
+            equal(true, result.data.response, JSON.stringify(result));
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("retry 45sec script", () =>
+    {
+        bc.brainCloudClient.script.runScript("TestTimeoutRetry45", {}, result =>
+        {
+            equal(result.status, bc.statusCodes.CLIENT_NETWORK_ERROR, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    // Do a normal call after this to make sure things are still up and running nicely
     await asyncTest("readServerTime()", 2, function() {
         bc.time.readServerTime(function(result) {
             ok(true, JSON.stringify(result));
@@ -3756,7 +3777,7 @@ async function testComms() {
         });
     });
 
-    tearDownLogout();
+    await tearDownLogout();
 }
 
 ////////////////////////////////////////
