@@ -209,41 +209,42 @@ function BCPlayerState() {
 	};
 
 	/**
-	 * @deprecated Use updateUserName instead - Removal after September 1 2017
+	 * @deprecated Use updateName instead - Removal after September 1 2017
 	 */
 	bc.playerState.updatePlayerName = function(name, callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYERSTATE,
-			operation : bc.playerState.OPERATION_UPDATE_NAME,
-			data : {
-				playerName : name
-			},
-			callback : callback
-		});
+        bc.playerState.updateName(name, callback);
 	};
 
-	/**
-	 * Sets the user name.
-	 *
-	 * Service Name - playerState
-	 * Service Operation - UPDATE_NAME
-	 *
-	 * @param name The name of the user
-	 * @param callback The method to be invoked when the server response is received
-	 */
-	bc.playerState.updateUserName = function(name, callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYERSTATE,
-			operation : bc.playerState.OPERATION_UPDATE_NAME,
-			data : {
-				playerName : name
-			},
-			callback : callback
-		});
-	};
+    /**
+     * @deprecated Use updateName instead
+     */
+    bc.playerState.updateUserName = function(name, callback) {
+        bc.playerState.updateName(name, callback);
+    };
+
+    /**
+     * Sets the user name.
+     *
+     * Service Name - playerState
+     * Service Operation - UPDATE_NAME
+     *
+     * @param name The name of the user
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.playerState.updateName = function(name, callback) {
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_PLAYERSTATE,
+            operation : bc.playerState.OPERATION_UPDATE_NAME,
+            data : {
+                playerName : name
+            },
+            callback : callback
+        });
+    };
 
 
-	/**
+
+    /**
 	 * Updates the "friend summary data" associated with the logged in user.
 	 * Some operations will return this summary data. For instance the social
 	 * leaderboards will return the player's score in the leaderboard along

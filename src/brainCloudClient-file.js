@@ -11,6 +11,13 @@ function BCFile() {
 	bc.file.OPERATION_DELETE_USER_FILES = "DELETE_USER_FILES";
 	bc.file.OPERATION_GET_CDN_URL = "GET_CDN_URL";
 
+    /**
+     * @deprecated Use prepareUserUpload instead
+     */
+    bc.file.prepareFileUpload = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, callback) {
+        bc.file.prepareUserUpload(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, callback);
+    };
+
 	/**
 	 * Prepares a user file upload. On success an uploadId will be returned which
 	 * can be used to upload the file using the bc.file.uploadFile method.
@@ -27,7 +34,7 @@ function BCFile() {
 	 * 40429 - File maximum file size exceeded
 	 * 40430 - File exists, replaceIfExists not set
 	 */
-	bc.file.prepareFileUpload = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, callback) {
+	bc.file.prepareUserUpload = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, callback) {
 
 		var message = {
 			cloudPath : cloudPath,
