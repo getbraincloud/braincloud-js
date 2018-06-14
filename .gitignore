@@ -2,3 +2,5 @@
 autobuild/artifacts
 ids.txt
 node_modules/
+
+\.idea/
