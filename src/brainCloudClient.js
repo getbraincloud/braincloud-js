@@ -344,8 +344,19 @@ function BrainCloudClient() {
 			operation : "READ",
 			callback : callback
 		});
-	};
+    };
+    
+    /**
+     * If the library is used through a command line nodejs app, the app need to be able to stop the heartbeat interval
+     * otherwise the app can never exit once it's done processing.
+     */
+    bcc.stopHeartBeat = function() {
+        bcc.brainCloudManager.stopHeartBeat();
+    }
 
+    bcc.startHeartBeat = function() {
+        bcc.brainCloudManager.startHeartBeat();
+    }
 }
 
 /**
