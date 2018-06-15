@@ -55,7 +55,7 @@ function BCFile() {
 
 	/**
 	 * Method uploads the supplied file to the brainCloud server. Note that you must
-	 * call prepareFileUpload to retrieve the uploadId before calling this method.
+	 * call prepareUserUpload to retrieve the uploadId before calling this method.
 	 * It is assumed that any methods required to monitor the file upload including
 	 * progress, and completion are attached to the XMLHttpRequest xhr object's
 	 * events such as:
@@ -68,9 +68,10 @@ function BCFile() {
 	 * @param xhr The XMLHttpRequest object that the brainCloud client will
 	 * use to upload the file.
 	 * @param file The file object
-	 * @param uploadId The upload id obtained via prepareFileUpload()
+	 * @param uploadId The upload id obtained via prepareUserUpload()
+     * @param peerCode - optional - peerCode.  A Peer needs to allow prepareUserUpload 
 	 */
-	bc.file.uploadFile = function(xhr, file, uploadId) {
+	bc.file.uploadFile = function(xhr, file, uploadId, peerCode = "") {
 
 		var url = bc.brainCloudManager.getFileUploadUrl();
 		var fd = new FormData();
@@ -78,6 +79,7 @@ function BCFile() {
 
 		xhr.open("POST", url, true);
 		fd.append("sessionId", bc.brainCloudManager.getSessionId());
+		if (peerCode != "") fd.append("peerCode", peerCode);
 		fd.append("uploadId", uploadId);
 		fd.append("fileSize", fileSize);
 		fd.append("uploadFile", file);
