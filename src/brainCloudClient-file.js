@@ -71,7 +71,7 @@ function BCFile() {
 	 * @param uploadId The upload id obtained via prepareUserUpload()
      * @param peerCode - optional - peerCode.  A Peer needs to allow prepareUserUpload 
 	 */
-	bc.file.uploadFile = function(xhr, file, uploadId, peerCode = "") {
+	bc.file.uploadFile = function(xhr, file, uploadId, peerCode) {
 
 		var url = bc.brainCloudManager.getFileUploadUrl();
 		var fd = new FormData();
@@ -79,7 +79,7 @@ function BCFile() {
 
 		xhr.open("POST", url, true);
 		fd.append("sessionId", bc.brainCloudManager.getSessionId());
-		if (peerCode != "") fd.append("peerCode", peerCode);
+		if (peerCode !== undefined) fd.append("peerCode", peerCode);
 		fd.append("uploadId", uploadId);
 		fd.append("fileSize", fileSize);
 		fd.append("uploadFile", file);
