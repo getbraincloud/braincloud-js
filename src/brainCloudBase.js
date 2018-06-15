@@ -307,12 +307,12 @@ function BrainCloudManager ()
     bcm.startHeartBeat = function()
     {
         bcm.stopHeartBeat();
-        bcm._heartBeatIntervalId = setInterval(() =>
+        bcm._heartBeatIntervalId = setInterval(function()
         {
             bcm.sendRequest({
                 service : "heartbeat",
                 operation : "READ",
-                callback : (result) => {}
+                callback : function(result) {}
             });
         }, bcm._idleTimeout * 1000);
     }

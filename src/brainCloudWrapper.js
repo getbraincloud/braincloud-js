@@ -675,7 +675,7 @@ function BrainCloudWrapper(wrapperName) {
 			{
 				try
 				{
-					let identities = JSON.stringify(response.data.identities);
+					var identities = JSON.stringify(response.data.identities);
 
 					if (identities === "{}" || identities === "")
 					{
