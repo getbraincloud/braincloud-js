@@ -3729,7 +3729,7 @@ async function testComms() {
         bc.time.readServerTime(function(result) {
             equal(result.status, 200, "Expecting 200");
             console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
-            bc.brainCloudClient.brainCloudManager.stopHeartBeat();
+            bc.brainCloudClient.stopHeartBeat();
             setTimeout(function() {
                 bc.time.readServerTime(function(result) {
                     equal(result.status, 403, "Expecting 403");
