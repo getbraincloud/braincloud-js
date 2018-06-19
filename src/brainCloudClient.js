@@ -13,6 +13,7 @@ function BrainCloudClient() {
 		BCAbTest.apply(bcc);
 		BCAsyncMatch.apply(bcc);
 		BCAuthentication.apply(bcc);
+		BCChat.apply(bcc);
 		BCDataStream.apply(bcc);
 		BCEntity.apply(bcc);
 		BCEvents.apply(bcc);
@@ -48,6 +49,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.abtests = bcc.abtests;
         bcc.brainCloudManager.asyncMatch = bcc.asyncMatch;
         bcc.brainCloudManager.authentication = bcc.authentication;
+        bcc.brainCloudManager.chat = bcc.chat;
         bcc.brainCloudManager.dataStream = bcc.dataStream;
         bcc.brainCloudManager.entity = bcc.entity;
         bcc.brainCloudManager.event = bcc.event;
@@ -87,6 +89,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.abtests = bcc.brainCloudClient.abtests  = bcc.brainCloudClient.abtests || {};
         bcc.brainCloudManager.asyncMatch = bcc.brainCloudClient.asyncMatch = bcc.brainCloudClient.asyncMatch || {};
         bcc.brainCloudManager.authentication = bcc.brainCloudClient.authentication = bcc.brainCloudClient.authentication || {};
+        bcc.brainCloudManager.chat = bcc.brainCloudClient.chat = bcc.brainCloudClient.chat || {};
         bcc.brainCloudManager.dataStream = bcc.brainCloudClient.dataStream = bcc.brainCloudClient.dataStream || {};
         bcc.brainCloudManager.entity = bcc.brainCloudClient.entity = bcc.brainCloudClient.entity || {};
         bcc.brainCloudManager.event = bcc.brainCloudClient.event = bcc.brainCloudClient.event || {};

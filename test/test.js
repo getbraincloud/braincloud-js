@@ -3948,6 +3948,204 @@ async function testWrapper()
 
 }
 
+async function testChat()
+{
+    module("Chat", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    let channelId = "";
+
+    await asyncTest("getChannelId() with valid channel", 2, () =>
+    {
+        bc.chat.getChannelId("gl", "valid", result =>
+        {
+            if (result.data && result.data.channelId)
+            {
+                channelId = result.data.channelId;
+                ok(true, JSON.stringify(result));
+            }
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getChannelId() with invalid channel", 1, () =>
+    {
+        bc.chat.getChannelId("gl", "invalid", result =>
+        {
+            equal(result.status, 500, "Expecting 500");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getChannelInfo()", 1, () =>
+    {
+        bc.chat.getChannelInfo(channelId, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+    
+    await asyncTest("channelConnect()", 1, () =>
+    {
+        bc.chat.channelConnect(channelId, 50, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+    
+    await asyncTest("getSubscribedChannels()", 2, () =>
+    {
+        bc.chat.getSubscribedChannels("gl", result =>
+        {
+            if (result.data && result.data.channels)
+            {
+                result.data.channels.forEach(channel =>
+                {
+                    if (channel.id && channel.id === channelId)
+                    {
+                        ok(true, `Found ${channelId}`);
+                    }
+                });
+            }
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    let msgId = "";
+    
+    await asyncTest("postChatMessage()", 2, () =>
+    {
+        bc.chat.postChatMessage(channelId, {
+            plain: "Hello World!",
+            rich: {custom: 1}
+        }, true, result =>
+        {
+            if (result.data && result.data.msgId)
+            {
+                msgId = result.data.msgId;
+                ok(true, `MsgId: ${msgId}`);
+            }
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    let msgVersion = 0;
+    await asyncTest("getChatMessage()", 3, () =>
+    {
+        bc.chat.getChatMessage(channelId, msgId, result =>
+        {
+            if (result.data && result.data.content)
+            {
+                equal(result.data.content.plain, "Hello World!", `Expecting "plain:Hello World!"`);
+                if (result.data.content.rich)
+                {
+                    equal(result.data.content.rich.custom, 1, `Expecting "rich:custom:1"`);
+                }
+                msgVersion = result.data.ver;
+            }
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+    
+    await asyncTest("updateChatMessage()", 1, () =>
+    {
+        bc.chat.updateChatMessage(channelId, msgId, msgVersion, {
+            plain: "Hello World! edited",
+            rich: {custom: 2}
+        }, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getChatMessage()", 4, () =>
+    {
+        bc.chat.getChatMessage(channelId, msgId, result =>
+        {
+            if (result.data && result.data.content)
+            {
+                equal(result.data.ver, 2, `Expecting "ver == 2"`);
+                equal(result.data.content.plain, "Hello World! edited", `Expecting "plain:Hello World! edited"`);
+                if (result.data.content.rich)
+                {
+                    equal(result.data.content.rich.custom, 2, `Expecting "rich:custom:2"`);
+                }
+                msgVersion = result.data.ver;
+            }
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getRecentMessages()", 3, () =>
+    {
+        bc.chat.getRecentMessages(channelId, 50, result =>
+        {
+            if (result.data && result.data.messages)
+            {
+                result.data.messages.forEach(message =>
+                {
+                    if (message.msgId === msgId)
+                    {
+                        ok(true, `MsgId: ${msgId}`);
+                        equal(message.ver, msgVersion, `Expecting ver:${msgVersion}`);
+                    }
+                })
+            }
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("deleteChatMessage() valid", 1, () =>
+    {
+        bc.chat.deleteChatMessage(channelId, msgId, msgVersion, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+    
+    await asyncTest("deleteChatMessage() invalid", 1, () =>
+    {
+        bc.chat.deleteChatMessage(channelId, msgId, msgVersion, result =>
+        {
+            equal(result.status, 500, "Expecting 500");
+            resolve_test();
+        });
+    });
+    
+    await asyncTest("getChatMessage() that got deleted", 1, () =>
+    {
+        bc.chat.getChatMessage(channelId, msgId, result =>
+        {
+            equal(result.status, 500, "Expecting 500");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("channelDisconnect()", 1, () =>
+    {
+        bc.chat.channelDisconnect(channelId, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -3983,6 +4181,7 @@ async function run_tests()
     await testComms();
     await testFile();
     await testWrapper();
+    await testChat();
 }
 
 async function main()
@@ -3990,7 +4189,7 @@ async function main()
     use_jquery = type === "jquery";
     await run_tests();
 
-    console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + "\x1b[0m");
+    console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + " passed\x1b[0m");
     console.log(fail_log.join("\n"));
     process.exit(test_count - test_passed);
 }
