@@ -14,7 +14,7 @@ function BCReasonCodes() {
 	bc.reasonCodes.MERGING_MEMORY = 40202;
 	bc.reasonCodes.RECREATING_ANONYMOUS_MEMORY = 40203;
 	bc.reasonCodes.MOVING_ANONYMOUS_MEMORY = 40204;
-	bc.reasonCodes.LOGIN_SECURITY_ERROR = 40205;
+	bc.reasonCodes.LOGIN_SECURITY_ERROR = 40209;
 	bc.reasonCodes.MISSING_IDENTITY_ERROR = 40206;
 	bc.reasonCodes.SWITCHING_PROFILES = 40207;
 	bc.reasonCodes.MISSING_PROFILE_ERROR = 40208;
@@ -295,6 +295,208 @@ function BCReasonCodes() {
 	bc.reasonCodes.CLIENT_UPLOAD_FILE_TIMED_OUT = 90101;
 	bc.reasonCodes.CLIENT_UPLOAD_FILE_UNKNOWN = 90102;
 	bc.reasonCodes.CLIENT_DISABLED = 90200;
+
+	bc.reasonCodes.DATABASE_ERROR = 40215;
+
+	bc.reasonCodes.PROPERTY_NOT_OVERRIDEABLE = 40216;
+
+	bc.reasonCodes.UNKNOWN_AUTH_ERROR = 40217;
+
+	bc.reasonCodes.DATABASE_INPUT_TOO_LARGE_ERROR = 40218;
+
+	bc.reasonCodes.MISSING_APP_EMAIL_ACCOUNT = 40219;
+
+	bc.reasonCodes.INVALID_DATABASE_FIELD_NAME = 40347;
+
+	bc.reasonCodes.INVALID_AMOUNT = 40385;
+
+	bc.reasonCodes.GLOBAL_ENTITY_SECURITY_ERROR = 40535;
+
+	bc.reasonCodes.LEADERBOARD_SECURITY_ERROR = 40536;
+
+	bc.reasonCodes.NOT_A_SYSTEM_ENTITY = 40537;
+
+	bc.reasonCodes.CONTROLLER_ERROR = 40538;
+
+	bc.reasonCodes.EVENT_MISSING = 40539;
+
+	bc.reasonCodes.INVALID_XP_LEVEL = 40540;
+
+	bc.reasonCodes.INVALID_ITUNES_ID = 40541;
+
+	bc.reasonCodes.IMPORT_ERROR = 40542;
+
+	bc.reasonCodes.INVALID_ENTITY_TYPE = 40543;
+
+	bc.reasonCodes.FORM_ERROR = 40544;
+
+	bc.reasonCodes.INVALID_PARENT = 40545;
+
+	bc.reasonCodes.INVALID_CURRENCY = 40546;
+
+	bc.reasonCodes.INVALID_THRESHHOLD = 40547;
+
+	bc.reasonCodes.MATCH_ALREADY_EXISTS = 40548;
+
+	bc.reasonCodes.FRIEND_NOT_FOUND = 40549;
+
+	bc.reasonCodes.MATCH_NOT_FOUND = 40550;
+
+	bc.reasonCodes.MATCH_COMPLETE = 40551;
+
+	bc.reasonCodes.MATCH_NOT_STARTED = 40552;
+
+	bc.reasonCodes.MATCH_EXPIRED = 40553;
+
+	bc.reasonCodes.PLAYER_NOT_IN_MATCH = 40554;
+
+	bc.reasonCodes.INVALID_MATCH_VERSION = 40555;
+
+	bc.reasonCodes.INVALID_TURN_VERSION = 40556;
+
+	bc.reasonCodes.INVALID_DEVICE_TYPE = 40557;
+
+	bc.reasonCodes.DUPLICATE_ENTITY = 40558;
+
+	bc.reasonCodes.DUPLICATE_EVENT = 40559;
+
+	bc.reasonCodes.INVALID_LEADERBOARD_COUNT = 40560;
+
+	bc.reasonCodes.DUPLICATE_LEADERBOARD = 40561;
+
+	bc.reasonCodes.MICROSOFT_ERROR = 40562;
+
+	bc.reasonCodes.DUPLICATE_TOURNAMENT = 40563;
+
+	bc.reasonCodes.CREATE_SYSTEM_ENTITY_FAILED = 40564;
+
+	bc.reasonCodes.INVALID_MAX_NUM_STREAMS = 40565;
+
+	bc.reasonCodes.INVALID_PACKET_ID = 40566;
+
+	bc.reasonCodes.HOOK_ERROR = 40567;
+
+	bc.reasonCodes.INVALID_STREAM_ID = 40568;
+
+	bc.reasonCodes.INVALID_SCAN_CODE = 40569;
+
+	bc.reasonCodes.NO_CUSTOM_ENTITY_CONFIG_FOUND = 40570;
+
+	bc.reasonCodes.NO_CUSTOM_ENTITY_FOUND = 40571;
+
+	bc.reasonCodes.CLOUD_STORAGE_ERROR = 40572;
+
+	bc.reasonCodes.NO_CUSTOM_FIELD_CONFIG_FOUND = 40573;
+
+	bc.reasonCodes.MISSING_CUSTOM_ENTITY_QUERY = 40574;
+
+	bc.reasonCodes.INVALID_CUSTOM_ENTITY_JSON_WHERE = 40575;
+
+	bc.reasonCodes.INVALID_CUSTOM_ENTITY_JSON_FIELDS = 40576;
+
+	bc.reasonCodes.ENTITY_ID_NOT_CONFIGURED = 40577;
+
+	bc.reasonCodes.UNCONFIGURED_CUSTOM_FIELD_ERROR = 40578;
+
+	bc.reasonCodes.CUSTOM_ENTITY_SECURITY_ERROR = 40579;
+
+	bc.reasonCodes.CUSTOM_ENTITY_PARTIAL_UPDATE_INVALID_DATA = 40580;
+
+	bc.reasonCodes.TOURNAMENT_PLAY_HAS_NOT_STARTED = 40581;
+
+	bc.reasonCodes.TOURNAMENT_PLAY_HAS_ENDED = 40582;
+
+	bc.reasonCodes.NEW_CREDENTIAL_IN_USE = 40583;
+
+	bc.reasonCodes.OLD_CREDENTIAL_NOT_OWNED = 40584;
+
+	bc.reasonCodes.CLOUD_CODE_SECURITY_ERROR = 40585;
+
+	bc.reasonCodes.RTT_SERVER_NOT_FOUND = 40586;
+
+	bc.reasonCodes.RTT_CLIENT_NOT_FOUND = 40587;
+
+	bc.reasonCodes.NO_RTT_SERVERS_AVAILABLE = 40588;
+
+	bc.reasonCodes.PROFILE_SESSION_MISMATCH = 40589;
+
+	bc.reasonCodes.WAITING_FOR_ON_DEMAND_TOURNAMENT_TO_START = 40590;
+
+	bc.reasonCodes.CDN_URLS_NOT_SUPPORTED = 40591;
+
+	bc.reasonCodes.CLOUD_CONTAINER_ERROR = 40592;
+
+	bc.reasonCodes.MESSAGING_FEATURE_NOT_CONFIGURED = 40593;
+
+	bc.reasonCodes.CHAT_FEATURE_NOT_CONFIGURED = 40594;
+
+	bc.reasonCodes.MESSAGE_NOT_FOUND = 40595;
+
+	bc.reasonCodes.COLLECTION_CREATE_DISABLED = 40596;
+
+	bc.reasonCodes.LEADERBAORD_COLLECTION_CREATE_DISABLED = 40597;
+
+	bc.reasonCodes.MESSAGE_VERSION_MISMATCH = 40598;
+
+	bc.reasonCodes.MESSAGEBOX_VERSION_MISMATCH = 40599;
+
+	bc.reasonCodes.MESSAGE_TOO_LARGE = 40600;
+
+	bc.reasonCodes.FEATURE_NOT_ENABLED = 40601;
+
+	bc.reasonCodes.CHANNEL_NOT_FOUND = 40603;
+
+	bc.reasonCodes.MALFORMED_FORM_DATA = 40604;
+
+	bc.reasonCodes.MISSING_LAST_PACKET_RESPONSE = 40605;
+
+	bc.reasonCodes.PACKET_IN_PROGRESS = 40606;
+
+	bc.reasonCodes.LOBBY_MEMBER_NOT_FOUND = 40607;
+
+	bc.reasonCodes.LOBBY_TEAM_NOT_FOUND = 40608;
+
+	bc.reasonCodes.LOBBY_ENTRY_QUEUE_MEMBER_NOT_FOUND = 40609;
+
+	bc.reasonCodes.INVALID_HEADER_APP_ID = 40610;
+
+	bc.reasonCodes.LOBBY_TYPE_NOT_FOUND = 40611;
+
+	bc.reasonCodes.LOBBY_TEAM_FULL = 40612;
+
+	bc.reasonCodes.TWITTER_AUTH_ERROR = 500006;
+
+	bc.reasonCodes.TWITTER_ERROR = 500007;
+
+	bc.reasonCodes.NOT_TEAM_ADMIN = 550000;
+
+	bc.reasonCodes.NO_TEAM_ACCESS = 550001;
+
+	bc.reasonCodes.MISSING_COMPANY_RECORD = 550002;
+
+	bc.reasonCodes.TEAM_MEMBER_NOT_FOUND = 550003;
+
+	bc.reasonCodes.TEAM_MEMBER_NOT_ENABLED = 550004;
+
+	bc.reasonCodes.TEAM_MEMBER_NOT_ACTIVE = 550005;
+
+	bc.reasonCodes.TEAM_MEMBER_LOCKED = 550006;
+
+	bc.reasonCodes.INVALID_PASSWORD = 550007;
+
+	bc.reasonCodes.TOKEN_INVALID = 550008;
+
+	bc.reasonCodes.TOKEN_EXPIRED = 550009;
+
+	bc.reasonCodes.TEMPLATE_GAME_NOT_FOUND = 550011;
+
+	bc.reasonCodes.INVALID_TEMPLATE_GAME_TEAM = 550012;
+
+	bc.reasonCodes.BASIC_AUTH_FAILURE = 550013;
+
+	bc.reasonCodes.MONGO_DB_EXCEPTION = 600001;
+
+	bc.reasonCodes.CONCURRENT_LOCK_ERROR = 600002;
 
 }
 
