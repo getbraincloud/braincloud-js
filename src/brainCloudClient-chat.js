@@ -217,13 +217,17 @@ function BCChat() {
 	 * Service Operation - postChatMessage
 	 *
 	 * @param channelId Channel id to post message to.
-     * @param content Object containing "plain" for the text message. Can also has a "rich" field for custom data.
+     * @param plain the text message.
+     * @param rich custom data.
 	 * @param callback The method to be invoked when the server response is received.
 	 */
-	bc.chat.postChatMessage = function(channelId, content, recordInHistory, callback) {
+	bc.chat.postChatMessage = function(channelId, plain, rich, recordInHistory, callback) {
 		var message = {
             channelId: channelId,
-            content: content,
+            content: {
+                plain: plain,
+                rich: rich ? rich : "{}"
+            },
             recordInHistory: recordInHistory
 		};
 
@@ -246,15 +250,19 @@ function BCChat() {
 	 * @param channelId Channel id where the message to update is.
      * @param msgId Message id to update.
      * @param version Version of the message to update. Must match latest or pass -1 to bypass version check.
-     * @param content Data to update. Object containing "plain" for the text message. Can also has a "rich" field for custom data.
+     * @param plain the text message.
+     * @param rich custom data.
 	 * @param callback The method to be invoked when the server response is received.
 	 */
-	bc.chat.updateChatMessage = function(channelId, msgId, version, content, recordInHistory, callback) {
+	bc.chat.updateChatMessage = function(channelId, msgId, version, plain, rich, recordInHistory, callback) {
 		var message = {
             channelId: channelId,
             msgId: msgId,
             version: version,
-            content: content,
+            content: {
+                plain: plain,
+                rich: rich ? rich : "{}"
+            },
             recordInHistory: recordInHistory
 		};
 

@@ -3978,7 +3978,7 @@ async function testChat()
     {
         bc.chat.getChannelId("gl", "invalid", result =>
         {
-            equal(result.status, 500, "Expecting 500");
+            equal(result.status, 400, "Expecting 400");
             resolve_test();
         });
     });
@@ -4024,10 +4024,7 @@ async function testChat()
     
     await asyncTest("postChatMessage()", 2, () =>
     {
-        bc.chat.postChatMessage(channelId, {
-            plain: "Hello World!",
-            rich: {custom: 1}
-        }, true, result =>
+        bc.chat.postChatMessage(channelId, "Hello World!", {custom: 1}, true, result =>
         {
             if (result.data && result.data.msgId)
             {
@@ -4060,10 +4057,7 @@ async function testChat()
     
     await asyncTest("updateChatMessage()", 1, () =>
     {
-        bc.chat.updateChatMessage(channelId, msgId, msgVersion, {
-            plain: "Hello World! edited",
-            rich: {custom: 2}
-        }, true, result =>
+        bc.chat.updateChatMessage(channelId, msgId, msgVersion, "Hello World! edited", {custom: 2}, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -4109,20 +4103,11 @@ async function testChat()
         });
     });
 
-    await asyncTest("deleteChatMessage() valid", 1, () =>
+    await asyncTest("deleteChatMessage()", 1, () =>
     {
         bc.chat.deleteChatMessage(channelId, msgId, msgVersion, result =>
         {
             equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
-    
-    await asyncTest("deleteChatMessage() invalid", 1, () =>
-    {
-        bc.chat.deleteChatMessage(channelId, msgId, msgVersion, result =>
-        {
-            equal(result.status, 500, "Expecting 500");
             resolve_test();
         });
     });
