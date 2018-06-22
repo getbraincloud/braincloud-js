@@ -350,9 +350,9 @@ function BrainCloudManager ()
 
         for (var c = 0; c < bcm._inProgressQueue.length && c < messages.length; ++c)
         {
-            callback = bcm._inProgressQueue[c].callback;
+            var callback = bcm._inProgressQueue[c].callback;
 
-            if (bcm._inProgressQueue[c] != null && bcm._errorCallback && essages[c].status != 200)
+            if (bcm._inProgressQueue[c] != null && bcm._errorCallback && messages[c].status != 200)
             {
                 bcm._errorCallback(messages[c]);
             }
@@ -441,11 +441,11 @@ function BrainCloudManager ()
             else
             {
                 var statusCode = messages[c].status;
-                var resonCode = messages[c].reason_code;
+                var reasonCode = messages[c].reason_code;
 
-                if (resonCode === 40303 ||
-                    resonCode === 40304 ||
-                    resonCode === 40356)
+                if (reasonCode === 40303 ||
+                    reasonCode === 40304 ||
+                    reasonCode === 40356)
                 {
                     bcm.stopHeartBeat();
                     bcm._isAuthenticated = false;
@@ -453,7 +453,7 @@ function BrainCloudManager ()
 
                     // cache error if session related
                     bcm._statusCodeCache = statusCode;
-                    bcm._reasonCodeCache = resonCode;
+                    bcm._reasonCodeCache = reasonCode;
                     bcm._statusMessageCache = messages[c].status_message;
                 }
 
@@ -536,7 +536,7 @@ function BrainCloudManager ()
             }
 
             bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, bcm.reasonCodes.CLIENT_NETWORK_ERROR_TIMEOUT, "Request timed out");
-            
+
             bcm._requestInProgress = false;
             // Now call bcm.processQueue again if there is more data...
             bcm.processQueue();
@@ -560,7 +560,7 @@ function BrainCloudManager ()
             .done(function(response)
             {
                 bcm.handleSuccessResponse(response);
-    
+
                 bcm._loader = null;
                 bcm._requestInProgress = false;
                 // Now call bcm.processQueue again if there is more data...
@@ -598,7 +598,7 @@ function BrainCloudManager ()
                     xmlhttp.hasTimedOut = null;
 
                     bcm.xml_timeoutId = null;
-    
+
                     bcm.debugLog("timeout", false);
                     bcm.retry();
                 }
@@ -624,7 +624,7 @@ function BrainCloudManager ()
                         var response = JSON.parse(xmlhttp.responseText);
 
                         bcm.handleSuccessResponse(response);
-    
+
                         bcm._requestInProgress = false;
                         bcm.processQueue();
                     }
