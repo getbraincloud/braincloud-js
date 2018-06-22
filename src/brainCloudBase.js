@@ -350,7 +350,7 @@ function BrainCloudManager ()
 
         for (var c = 0; c < bcm._inProgressQueue.length && c < messages.length; ++c)
         {
-            const callback = bcm._inProgressQueue[c].callback;
+            var callback = bcm._inProgressQueue[c].callback;
 
             if (bcm._inProgressQueue[c] != null && bcm._errorCallback && messages[c].status != 200)
             {
