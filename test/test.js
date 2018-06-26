@@ -4057,7 +4057,7 @@ async function testChat()
     
     await asyncTest("updateChatMessage()", 1, () =>
     {
-        bc.chat.updateChatMessage(channelId, msgId, msgVersion, "Hello World! edited", {custom: 2}, true, result =>
+        bc.chat.updateChatMessage(channelId, msgId, msgVersion, "Hello World! edited", {custom: 2}, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -4108,15 +4108,6 @@ async function testChat()
         bc.chat.deleteChatMessage(channelId, msgId, msgVersion, result =>
         {
             equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
-    
-    await asyncTest("getChatMessage() that got deleted", 1, () =>
-    {
-        bc.chat.getChatMessage(channelId, msgId, result =>
-        {
-            equal(result.status, 500, "Expecting 500");
             resolve_test();
         });
     });

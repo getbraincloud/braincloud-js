@@ -1,6 +1,6 @@
 
 function BCChat() {
-    var bc = this;
+	var bc = this;
 
 	bc.chat = {};
 
@@ -19,7 +19,7 @@ function BCChat() {
 
 	/**
 	 * Registers a listener for incoming events from <channelId>.
-     * Also returns a list of <maxReturn> recent messages from history.
+	 * Also returns a list of <maxReturn> recent messages from history.
 	 *
 	 * Service Name - Chat
 	 * Service Operation - ChannelConnect
@@ -77,9 +77,9 @@ function BCChat() {
 	 */
 	bc.chat.deleteChatMessage = function(channelId, msgId, version, callback) {
 		var message = {
-            channelId: channelId,
-            msgId: msgId,
-            version: version
+			channelId: channelId,
+			msgId: msgId,
+			version: version
 		};
 
 		bc.brainCloudManager.sendRequest({
@@ -102,8 +102,8 @@ function BCChat() {
 	 */
 	bc.chat.getChannelId = function(channelType, channelSubId, callback) {
 		var message = {
-            channelType: channelType,
-            channelSubId: channelSubId
+			channelType: channelType,
+			channelSubId: channelSubId
 		};
 
 		bc.brainCloudManager.sendRequest({
@@ -116,8 +116,8 @@ function BCChat() {
 
 	/**
 	 * Gets description info and activity stats for channel <channelId>.
-     * Note that numMsgs and listeners only returned for non-global groups.
-     * Only callable for channels the user is a member of.
+	 * Note that numMsgs and listeners only returned for non-global groups.
+	 * Only callable for channels the user is a member of.
 	 *
 	 * Service Name - Chat
 	 * Service Operation - getChannelInfo
@@ -127,7 +127,7 @@ function BCChat() {
 	 */
 	bc.chat.getChannelInfo = function(channelId, callback) {
 		var message = {
-            channelId: channelId
+			channelId: channelId
 		};
 
 		bc.brainCloudManager.sendRequest({
@@ -150,8 +150,8 @@ function BCChat() {
 	 */
 	bc.chat.getChatMessage = function(channelId, msgId, callback) {
 		var message = {
-            channelId: channelId,
-            msgId: msgId
+			channelId: channelId,
+			msgId: msgId
 		};
 
 		bc.brainCloudManager.sendRequest({
@@ -174,8 +174,8 @@ function BCChat() {
 	 */
 	bc.chat.getRecentMessages = function(channelId, maxReturn, callback) {
 		var message = {
-            channelId: channelId,
-            maxReturn: maxReturn
+			channelId: channelId,
+			maxReturn: maxReturn
 		};
 
 		bc.brainCloudManager.sendRequest({
@@ -188,7 +188,7 @@ function BCChat() {
 
 	/**
 	 * Gets a list of the channels of type <channelType> that the user has access to.
-     * Channel type must be one of "gl", "gr" or "all".
+	 * Channel type must be one of "gl", "gr" or "all".
 	 *
 	 * Service Name - Chat
 	 * Service Operation - getSubscribedChannels
@@ -198,7 +198,7 @@ function BCChat() {
 	 */
 	bc.chat.getSubscribedChannels = function(channelType, callback) {
 		var message = {
-            channelType: channelType
+			channelType: channelType
 		};
 
 		bc.brainCloudManager.sendRequest({
@@ -211,24 +211,25 @@ function BCChat() {
 
 	/**
 	 * Send a potentially rich chat message.
-     * <content> must contain at least a "plain" field for plain-text messaging.
+	 * <content> must contain at least a "plain" field for plain-text messaging.
 	 *
 	 * Service Name - Chat
 	 * Service Operation - postChatMessage
 	 *
 	 * @param channelId Channel id to post message to.
-     * @param plain the text message.
-     * @param rich custom data.
+	 * @param plain the text message.
+	 * @param rich custom data.
+	 * @param recordInHistory true if the message persist in history
 	 * @param callback The method to be invoked when the server response is received.
 	 */
 	bc.chat.postChatMessage = function(channelId, plain, rich, recordInHistory, callback) {
 		var message = {
-            channelId: channelId,
-            content: {
-                plain: plain,
-                rich: rich ? rich : "{}"
-            },
-            recordInHistory: recordInHistory
+			channelId: channelId,
+			content: {
+				plain: plain,
+				rich: rich ? rich : {}
+			},
+			recordInHistory: recordInHistory
 		};
 
 		bc.brainCloudManager.sendRequest({
@@ -241,29 +242,28 @@ function BCChat() {
 
 	/**
 	 * Update a chat message.
-     * <content> must contain at least a "plain" field for plain-text messaging.
-     * <version> must match the latest or pass -1 to bypass version check.
+	 * <content> must contain at least a "plain" field for plain-text messaging.
+	 * <version> must match the latest or pass -1 to bypass version check.
 	 *
 	 * Service Name - Chat
 	 * Service Operation - updateChatMessage
 	 *
 	 * @param channelId Channel id where the message to update is.
-     * @param msgId Message id to update.
-     * @param version Version of the message to update. Must match latest or pass -1 to bypass version check.
-     * @param plain the text message.
-     * @param rich custom data.
+	 * @param msgId Message id to update.
+	 * @param version Version of the message to update. Must match latest or pass -1 to bypass version check.
+	 * @param plain the text message.
+	 * @param rich custom data.
 	 * @param callback The method to be invoked when the server response is received.
 	 */
-	bc.chat.updateChatMessage = function(channelId, msgId, version, plain, rich, recordInHistory, callback) {
+	bc.chat.updateChatMessage = function(channelId, msgId, version, plain, rich, callback) {
 		var message = {
-            channelId: channelId,
-            msgId: msgId,
-            version: version,
-            content: {
-                plain: plain,
-                rich: rich ? rich : "{}"
-            },
-            recordInHistory: recordInHistory
+			channelId: channelId,
+			msgId: msgId,
+			version: version,
+			content: {
+				plain: plain,
+				rich: rich ? rich : "{}"
+			}
 		};
 
 		bc.brainCloudManager.sendRequest({
