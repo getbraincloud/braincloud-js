@@ -43,6 +43,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.pushNotification = bcw.brainCloudClient.pushNotification;
         bcw.reasonCodes = bcw.brainCloudClient.reasonCodes;
         bcw.redemptionCode = bcw.brainCloudClient.redemptionCode;
+        bcw.rttRegistration = bcw.brainCloudClient.rttRegistration;
         bcw.s3Handling = bcw.brainCloudClient.s3Handling;
         bcw.script = bcw.brainCloudClient.script;
         bcw.socialLeaderboard = bcw.brainCloudClient.socialLeaderboard;
