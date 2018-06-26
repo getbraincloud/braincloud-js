@@ -4322,6 +4322,26 @@ async function testMessaging()
     await tearDownLogout();
 }
 
+async function testRTT()
+{
+    module("RTT", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    await asyncTest("requestClientConnection()", 1, () =>
+    {
+        bc.rttRegistration.requestClientConnection(result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -4359,6 +4379,7 @@ async function run_tests()
     await testWrapper();
     await testChat();
     await testMessaging();
+    await testRTT();
 }
 
 async function main()
