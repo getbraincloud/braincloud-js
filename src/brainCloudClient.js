@@ -27,6 +27,7 @@ function BrainCloudClient() {
 		BCIdentity.apply(bcc);
 		BCMail.apply(bcc);
 		BCMatchMaking.apply(bcc);
+		BCMessaging.apply(bcc);
 		BCOneWayMatch.apply(bcc);
 		BCPlaybackStream.apply(bcc);
 		BCPlayerState.apply(bcc);
@@ -63,6 +64,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.identity = bcc.identity;
         bcc.brainCloudManager.mail = bcc.mail;
         bcc.brainCloudManager.matchMaking = bcc.matchMaking;
+        bcc.brainCloudManager.messaging = bcc.messaging;
         bcc.brainCloudManager.oneWayMatch = bcc.oneWayMatch;
         bcc.brainCloudManager.playbackStream = bcc.playbackStream;
         bcc.brainCloudManager.playerState = bcc.playerState;
@@ -103,6 +105,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.identity = bcc.brainCloudClient.identity = bcc.brainCloudClient.identity || {};
         bcc.brainCloudManager.mail = bcc.brainCloudClient.mail = bcc.brainCloudClient.mail || {};
         bcc.brainCloudManager.matchMaking = bcc.brainCloudClient.matchMaking = bcc.brainCloudClient.matchMaking || {};
+        bcc.brainCloudManager.messaging = bcc.brainCloudClient.messaging = bcc.brainCloudClient.messaging || {};
         bcc.brainCloudManager.oneWayMatch = bcc.brainCloudClient.oneWayMatch = bcc.brainCloudClient.oneWayMatch || {};
         bcc.brainCloudManager.playbackStream = bcc.brainCloudClient.playbackStream = bcc.brainCloudClient.playbackStream || {};
         bcc.brainCloudManager.playerState = bcc.brainCloudClient.playerState = bcc.brainCloudClient.playerState || {};

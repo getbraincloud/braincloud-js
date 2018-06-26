@@ -32,6 +32,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.identity = bcw.brainCloudClient.identity;
         bcw.mail = bcw.brainCloudClient.mail;
         bcw.matchMaking = bcw.brainCloudClient.matchMaking;
+        bcw.messaging = bcw.brainCloudClient.messaging;
         bcw.oneWayMatch = bcw.brainCloudClient.oneWayMatch;
         bcw.playbackStream = bcw.brainCloudClient.playbackStream;
         bcw.playerState = bcw.brainCloudClient.playerState;

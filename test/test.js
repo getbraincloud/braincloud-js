@@ -342,6 +342,12 @@ function equal(actual, expected, log)
     else failed(actual + " != " + expected, log);
 }
 
+function greaterEq(actual, expected, log)
+{
+    if (actual >= expected) passed(actual + " >= " + expected, log);
+    else failed(actual + " < " + expected, log);
+}
+
 async function testKillSwitch()
 {
     module("Test Misc", () =>
@@ -4122,6 +4128,200 @@ async function testChat()
     });
 }
 
+async function testMessaging()
+{
+    initializeClient();
+
+    module("Messaging", null, null);
+
+    await setUpWithAuthenticate();
+    await tearDownLogout();
+
+    await asyncTest("sendMessage()", 2, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.sendMessage([UserB.profileId], "Hello World!", "Important - Please Read", result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    let msgId;
+
+    await asyncTest("sendSimpleMessage()", 2, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.sendSimpleMessage([UserB.profileId], "Hello World!", result =>
+            {
+                msgId = result.data.results.msgId;
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    await asyncTest("getMessageboxes()", 2, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.getMessageboxes(result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    await asyncTest("getMessageCounts()", 3, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.getMessageCounts(result =>
+            {
+                greaterEq(result.data.results.sent.total, 1, "Should have sent");
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    await asyncTest("getMessageCounts()", 3, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.getMessageCounts(result =>
+            {
+                greaterEq(result.data.results.inbox.total, 1, "Should have inbox");
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    await asyncTest("deleteMessages()", 3, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.deleteMessages("sent", [msgId], result =>
+            {
+                equal(result.data.results.actual, 1, "Expected 1 message to be deleted");
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    await asyncTest("getMessages()", 2, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.getMessages("inbox", [msgId], result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    let context;
+
+    await asyncTest("getMessagesPage()", 2, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.getMessagesPage({
+                pagination: {
+                    rowsPerPage: 10,
+                    pageNumber: 1
+                },
+                searchCriteria: {
+                    ["$or"]: [
+                        {
+                            "message.message.from": UserA.profileId
+                        },
+                        {
+                            "message.message.to": UserB.profileId
+                        }
+                    ]
+                },
+                sortCriteria: {
+                    mbCr: 1,
+                    mbUp: -1
+                }
+            }, result =>
+            {
+                context = result.data.context;
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    await asyncTest("getMessagesPageOffset()", 2, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.getMessagesPageOffset(context, 1, result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    await asyncTest("markMessagesRead()", 3, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.markMessagesRead("inbox", [msgId], result =>
+            {
+                equal(result.data.results.actual, 1, "Expected 1 message to be marked read");
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+
+    await asyncTest("deleteMessages()", 3, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, function(result)
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.messaging.deleteMessages("inbox", [msgId], result =>
+            {
+                equal(result.data.results.actual, 1, "Expected 1 message to be deleted");
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+        });
+    });
+    await tearDownLogout();
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -4158,6 +4358,7 @@ async function run_tests()
     await testFile();
     await testWrapper();
     await testChat();
+    await testMessaging();
 }
 
 async function main()
