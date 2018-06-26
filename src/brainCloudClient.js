@@ -47,6 +47,7 @@ function BrainCloudClient() {
         BCTournament.apply(bcc);
 
         bcc.brainCloudManager = new BrainCloudManager();
+        bcc.brainCloudRttComms = new BrainCloudRttComms();
 
         bcc.brainCloudManager.abtests = bcc.abtests;
         bcc.brainCloudManager.asyncMatch = bcc.asyncMatch;
@@ -84,9 +85,12 @@ function BrainCloudClient() {
         bcc.brainCloudManager.time = bcc.time;
         bcc.brainCloudManager.tournament = bcc.tournament;
 
+        bcc.brainCloudRttComms.rttRegistration = bcc.rttRegistration;
+        bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
 
     } else {
         bcc.brainCloudManager = window.brainCloudManager = window.brainCloudManager || {};
+        bcc.brainCloudRttComms = window.brainCloudRttComms = window.brainCloudRttComms || {};
 
         bcc.brainCloudClient = window.brainCloudClient = window.brainCloudClient || {};
 
@@ -125,6 +129,9 @@ function BrainCloudClient() {
         bcc.brainCloudManager.statusCodes = bcc.brainCloudClient.statusCodes = bcc.brainCloudClient.statusCodes || {};
         bcc.brainCloudManager.time = bcc.brainCloudClient.time = bcc.brainCloudClient.time || {};
         bcc.brainCloudManager.tournament = bcc.brainCloudClient.tournament = bcc.brainCloudClient.tournament || {};
+
+        bcc.brainCloudRttComms.rttRegistration = bcc.brainCloudClient.rttRegistration = bcc.brainCloudClient.rttRegistration || {};
+        bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
     }
 
 
@@ -183,6 +190,24 @@ function BrainCloudClient() {
      */
     bcc.setServerUrl = function(serverUrl) {
         bcc.brainCloudManager.setServerUrl(serverUrl);
+    };
+
+    /**
+     * Returns the app id
+     *
+     * @return {string} - The brainCloud app id.
+     */
+    bcc.getAppId = function() {
+        return bcc.brainCloudManager.getAppId();
+    };
+
+    /**
+     * Returns the profile Id
+     *
+     * @return {string} - The brainCloud session's profile id.
+     */
+    bcc.getProfileId = function() {
+        return bcc.authentication.profileId;
     };
 
     /**
@@ -305,6 +330,7 @@ function BrainCloudClient() {
         bcc.authentication.profileId = "";
 
         bcc.brainCloudManager.resetCommunication();
+        bcc.brainCloudRttComms.disableRTT();
     };
 
     /**
@@ -365,6 +391,87 @@ function BrainCloudClient() {
 
     bcc.startHeartBeat = function() {
         bcc.brainCloudManager.startHeartBeat();
+    }
+    
+    /**
+     * Enables Real Time event for this session.
+     * Real Time events are disabled by default. Usually events
+     * need to be polled using GET_EVENTS. By enabling this, events will
+     * be received instantly when they happen through a WebSocket connection to an Event Server.
+     *
+     * This function will first call requestClientConnection, then connect to the address
+     * 
+     * @param success Called on success to establish an RTT connection.
+     * @param failure Called on failure to establish an RTT connection or got disconnected.
+     */
+    bcc.enableRTT = function(success, failure) {
+        bcc.brainCloudRttComms.enableRTT(success, failure);
+    }
+    
+    /** 
+     * Disables Real Time event for this session.
+     */
+    bcc.disableRTT = function() {
+        bcc.brainCloudRttComms.disableRTT();
+    }
+
+    /**
+     * Listen to real time events.
+     * 
+     * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
+     * Only one event callback can be registered at a time. Calling this a second time will override the previous callback.
+     */
+    bcc.registerRTTEventCallback = function(callback) {
+        bcc.brainCloudRttComms.registerRTTCallback(bcc.SERVICE_EVENT, callback);
+    }
+    bcc.deregisterRTTEventCallback = function() {
+        bcc.brainCloudRttComms.deregisterRTTCallback(bcc.SERVICE_EVENT);
+    }
+
+    /**
+     * Listen to real time chat messages.
+     * 
+     * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
+     * Only one chat callback can be registered at a time. Calling this a second time will override the previous callback.
+     */
+    bcc.registerRTTChatCallback = function(callback) {
+        bcc.brainCloudRttComms.registerRTTCallback(bcc.SERVICE_CHAT, callback);
+    }
+    bcc.deregisterRTTChatCallback = function() {
+        bcc.brainCloudRttComms.deregisterRTTCallback(bcc.SERVICE_CHAT);
+    }
+
+    /**
+     * Listen to real time chat messages.
+     * 
+     * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
+     * Only one chat callback can be registered at a time. Calling this a second time will override the previous callback.
+     */
+    bcc.registerRTTMessagingCallback = function(callback) {
+        bcc.brainCloudRttComms.registerRTTCallback(bcc.SERVICE_MESSAGING, callback);
+    }
+    bcc.deregisterRTTMessagingCallback = function() {
+        bcc.brainCloudRttComms.deregisterRTTCallback(bcc.SERVICE_MESSAGING);
+    }
+
+    /**
+     * Listen to real time chat messages.
+     * 
+     * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
+     * Only one chat callback can be registered at a time. Calling this a second time will override the previous callback.
+     */
+    bcc.registerRTTLobbyCallback = function(callback) {
+        bcc.brainCloudRttComms.registerRTTCallback(bcc.SERVICE_LOBBY, callback);
+    }
+    bcc.deregisterRTTLobbyCallback = function() {
+        bcc.brainCloudRttComms.deregisterRTTCallback(bcc.SERVICE_LOBBY);
+    }
+
+    /**
+     * Clear all set RTT callbacks
+     */
+    bcc.deregisterAllRTTCallbacks = function() {
+        bcc.brainCloudRttComms.deregisterAllRTTCallbacks();
     }
 }
 
