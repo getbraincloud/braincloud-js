@@ -17,7 +17,20 @@ function BrainCloudRttComms () {
     bcrtt.connect = function(host, port, auth, ssl, success, failure) {
         bcrtt.auth = auth;
 
-        var uri = (ssl ? "wss://" : "ws://") + host + ":" + port + "?appid=" + bcrtt.auth["X-APPID"] + "&secret=" + bcrtt.auth["X-RTT-SECRET"];
+        // build url with auth as arguments
+        var uri = (ssl ? "wss://" : "ws://") + host + ":" + port;
+        if (bcrtt.auth) {
+            uri += "?";
+            var count = 0;
+            for (var key in bcrtt.auth) {
+                if (count > 0) {
+                    uri += "&";
+                }
+                uri += key + "=" + bcrtt.auth[key];
+                ++count;
+            }
+        }
+
         bcrtt.socket = new WebSocket(uri);
 
         bcrtt.socket.addEventListener('error', function(e) {
