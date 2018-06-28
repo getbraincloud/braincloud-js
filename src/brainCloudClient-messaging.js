@@ -14,7 +14,7 @@ function BCMessaging() {
     bc.messaging.OPERATION_GET_MESSAGES_PAGE_OFFSET = "GET_MESSAGES_PAGE_OFFSET";
     bc.messaging.OPERATION_MARK_MESSAGES_READ = "MARK_MESSAGES_READ";
     bc.messaging.OPERATION_SEND_MESSAGE = "SEND_MESSAGE";
-    bc.messaging.OPERATION_SEND_SIMPLE_MESSAGE = "SEND_SIMPLE_MESSAGE";
+    bc.messaging.OPERATION_SEND_MESSAGE_SIMPLE = "SEND_MESSAGE_SIMPLE";
     bc.messaging.OPERATION_MARK_MESSAGES_READ = "MARK_MESSAGES_READ";
 
     /**
@@ -181,13 +181,13 @@ function BCMessaging() {
      * Marks list of user messages as read on the server.
      *
      * Service Name - Messaging
-     * Service Operation - SendSimpleMessage
+     * Service Operation - SendMessageSimple
      *
      * @param toProfileIds
      * @param messageText
      * @param callback The method to be invoked when the server response is received
      */
-    bc.messaging.sendSimpleMessage = function(toProfileIds, messageText, callback) {
+    bc.messaging.sendMessageSimple = function(toProfileIds, messageText, callback) {
         var message = {
             toProfileIds: toProfileIds,
             text: messageText
@@ -195,7 +195,7 @@ function BCMessaging() {
 
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_MESSAGING,
-            operation: bc.messaging.OPERATION_SEND_SIMPLE_MESSAGE,
+            operation: bc.messaging.OPERATION_SEND_MESSAGE_SIMPLE,
             data: message,
             callback: callback
         });

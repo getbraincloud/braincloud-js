@@ -4162,14 +4162,14 @@ async function testMessaging()
 
     let msgId;
 
-    await asyncTest("sendSimpleMessage()", 2, () =>
+    await asyncTest("sendMessageSimple()", 2, () =>
     {
         bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
         {
             equal(result.status, 200, "Expecting 200");
-            bc.messaging.sendSimpleMessage([UserB.profileId], "Hello World!", result =>
+            bc.messaging.sendMessageSimple([UserB.profileId], "Hello World!", result =>
             {
-                msgId = result.data.results.msgId;
+                msgId = result.data.msgId;
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
@@ -4198,7 +4198,7 @@ async function testMessaging()
             equal(result.status, 200, "Expecting 200");
             bc.messaging.getMessageCounts(result =>
             {
-                greaterEq(result.data.results.sent.total, 1, "Should have sent");
+                greaterEq(result.data.sent.total, 1, "Should have sent");
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
@@ -4213,7 +4213,7 @@ async function testMessaging()
             equal(result.status, 200, "Expecting 200");
             bc.messaging.getMessageCounts(result =>
             {
-                greaterEq(result.data.results.inbox.total, 1, "Should have inbox");
+                greaterEq(result.data.inbox.total, 1, "Should have inbox");
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
@@ -4228,7 +4228,7 @@ async function testMessaging()
             equal(result.status, 200, "Expecting 200");
             bc.messaging.deleteMessages("sent", [msgId], result =>
             {
-                equal(result.data.results.actual, 1, "Expected 1 message to be deleted");
+                equal(result.data.actual, 1, "Expected 1 message to be deleted");
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
@@ -4307,7 +4307,7 @@ async function testMessaging()
             equal(result.status, 200, "Expecting 200");
             bc.messaging.markMessagesRead("inbox", [msgId], result =>
             {
-                equal(result.data.results.actual, 1, "Expected 1 message to be marked read");
+                equal(result.data.actual, 1, "Expected 1 message to be marked read");
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
@@ -4322,7 +4322,7 @@ async function testMessaging()
             equal(result.status, 200, "Expecting 200");
             bc.messaging.deleteMessages("inbox", [msgId], result =>
             {
-                equal(result.data.results.actual, 1, "Expected 1 message to be deleted");
+                equal(result.data.actual, 1, "Expected 1 message to be deleted");
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
