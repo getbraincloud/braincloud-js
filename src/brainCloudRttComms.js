@@ -62,10 +62,10 @@ function BrainCloudRttComms () {
                         appId: bcrtt.brainCloudClient.getAppId(),
                         profileId: bcrtt.brainCloudClient.getProfileId(),
                         sessionId: bcrtt.brainCloudClient.getSessionId(),
+                        protocol: "ws"
                     }
                 };
 
-                request.data = {...bcrtt.auth, ...request.data};
                 request.data.auth = bcrtt.auth;
 
                 console.log("WS SEND: " + JSON.stringify(request));
