@@ -146,7 +146,7 @@ function BrainCloudRttComms () {
 
     bcrtt.startHeartbeat = function() {
         if (!this.heartbeatId) {
-            bcrtt.heartbeatId = setInterval(() => {
+            bcrtt.heartbeatId = setInterval(function() {
                 // Send a connect request
                 var request = {
                     operation: "HEARTBEAT",
