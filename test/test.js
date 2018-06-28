@@ -4324,13 +4324,10 @@ async function testMessaging()
 
 async function testRTT()
 {
-    module("RTT", () =>
-    {
-        return setUpWithAuthenticate();
-    }, () =>
-    {
-        return tearDownLogout();
-    });
+    module("RTT", null, null);
+
+    initializeClient();
+    await setUpWithAuthenticate();
 
     await asyncTest("requestClientConnection()", 1, () =>
     {
@@ -4340,6 +4337,115 @@ async function testRTT()
             resolve_test();
         });
     });
+
+    await asyncTest("enableRTT()", 1, () =>
+    {
+        bc.brainCloudClient.enableRTT(result =>
+        {
+            console.log(result);
+            equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
+            resolve_test();
+        }, error =>
+        {
+            console.log(error);
+            ok(false, error);
+            resolve_test();
+        });
+    });
+    
+    let channelId = "";
+    await asyncTest("getChannelId()", 2, () =>
+    {
+        bc.chat.getChannelId("gl", "valid", result =>
+        {
+            if (result.data && result.data.channelId)
+            {
+                channelId = result.data.channelId;
+                ok(true, JSON.stringify(result));
+            }
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    // Test sending a chat message without being connected to the channel and make sure we are not getting anything
+    {
+        let msgReceived = false;
+        bc.brainCloudClient.registerRTTChatCallback(message =>
+        {
+            if (message.service === "chat" && message.operation === "INCOMING")
+            {
+                msgReceived = true;
+            }
+        });
+
+        await asyncTest("postChatMessage() without listning to the channel", 2, () =>
+        {
+            bc.chat.postChatMessageSimple(channelId, "Unit test message", true, result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+
+                // Wait 5sec, and make sure we never receive that message because we didn't CHANNEL_CONNECT
+                setTimeout(() =>
+                {
+                    ok(!msgReceived, "!msgReceived after 5sec");
+                    resolve_test();
+                }, 5000);
+            });
+        });
+
+        bc.brainCloudClient.deregisterAllRTTCallbacks();
+    }
+
+    // Connect to the channel
+    await asyncTest("channelConnect()", 1, () =>
+    {
+        bc.chat.channelConnect(channelId, 50, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    // Now send a chat message and check if we got the callback
+    {
+        let msgIdExpected = null;
+        let msgIdsReceived = [];
+        let timeoutId = null;
+        bc.brainCloudClient.registerRTTChatCallback(message =>
+        {
+            if (message.service === "chat" && message.operation === "INCOMING")
+            {
+                msgIdsReceived.push(message.data.msgId);
+                if (msgIdsReceived.find(msgId => msgId === msgIdExpected))
+                {
+                    clearTimeout(timeoutId);
+                    ok(true, "msgReceived");
+                    resolve_test();
+                }
+            }
+        });
+
+        await asyncTest("postChatMessage() while listning to the channel", 2, () =>
+        {
+            bc.chat.postChatMessageSimple(channelId, "Unit test message", true, result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                msgIdExpected = result.data.msgId;
+
+                // Wait 5sec, and make sure we receive that message
+                timeoutId = setTimeout(() =>
+                {
+                    ok(msgIdsReceived.find(msgId => msgId === msgIdExpected), "msgReceived");
+                    resolve_test();
+                }, 5000);
+            });
+        });
+
+        bc.brainCloudClient.deregisterAllRTTCallbacks();
+    }
+
+    await tearDownLogout();
 }
 
 async function run_tests()
