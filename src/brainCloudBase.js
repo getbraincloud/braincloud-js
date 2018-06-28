@@ -723,6 +723,8 @@ function BrainCloudManager ()
                     packetId: bcm._packetId++
                 });
 
+            localStorage.setItem("lastPacketId", bcm._packetId);
+
             if(bcm._killSwitchEngaged)
             {
                 bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR,
