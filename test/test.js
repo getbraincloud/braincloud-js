@@ -4030,13 +4030,22 @@ async function testChat()
     
     await asyncTest("postChatMessage()", 2, () =>
     {
-        bc.chat.postChatMessage(channelId, "Hello World!", {custom: 1}, true, result =>
+        bc.chat.postChatMessage(channelId, {text: "Hello World!", rich: {custom: 1}}, true, result =>
         {
             if (result.data && result.data.msgId)
             {
                 msgId = result.data.msgId;
                 ok(true, `MsgId: ${msgId}`);
             }
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+    
+    await asyncTest("postChatMessageSimple()", 1, () =>
+    {
+        bc.chat.postChatMessageSimple(channelId, "Hello World Simple!", true, result =>
+        {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
@@ -4049,7 +4058,7 @@ async function testChat()
         {
             if (result.data && result.data.content)
             {
-                equal(result.data.content.plain, "Hello World!", `Expecting "plain:Hello World!"`);
+                equal(result.data.content.text, "Hello World!", `Expecting "text:Hello World!"`);
                 if (result.data.content.rich)
                 {
                     equal(result.data.content.rich.custom, 1, `Expecting "rich:custom:1"`);
@@ -4063,7 +4072,7 @@ async function testChat()
     
     await asyncTest("updateChatMessage()", 1, () =>
     {
-        bc.chat.updateChatMessage(channelId, msgId, msgVersion, "Hello World! edited", {custom: 2}, result =>
+        bc.chat.updateChatMessage(channelId, msgId, msgVersion, {text: "Hello World! edited", rich:{custom: 2}}, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -4077,7 +4086,7 @@ async function testChat()
             if (result.data && result.data.content)
             {
                 equal(result.data.ver, 2, `Expecting "ver == 2"`);
-                equal(result.data.content.plain, "Hello World! edited", `Expecting "plain:Hello World! edited"`);
+                equal(result.data.content.text, "Hello World! edited", `Expecting "text:Hello World! edited"`);
                 if (result.data.content.rich)
                 {
                     equal(result.data.content.rich.custom, 2, `Expecting "rich:custom:2"`);
@@ -4089,9 +4098,9 @@ async function testChat()
         });
     });
 
-    await asyncTest("getRecentMessages()", 3, () =>
+    await asyncTest("getRecentChatMessages()", 3, () =>
     {
-        bc.chat.getRecentMessages(channelId, 50, result =>
+        bc.chat.getRecentChatMessages(channelId, 50, result =>
         {
             if (result.data && result.data.messages)
             {

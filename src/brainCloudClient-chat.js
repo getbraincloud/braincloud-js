@@ -12,7 +12,7 @@ function BCChat() {
     bc.chat.OPERATION_GET_CHANNEL_ID = "GET_CHANNEL_ID";
     bc.chat.OPERATION_GET_CHANNEL_INFO = "GET_CHANNEL_INFO";
     bc.chat.OPERATION_GET_CHAT_MESSAGE = "GET_CHAT_MESSAGE";
-    bc.chat.OPERATION_GET_RECENT_MESSAGES = "GET_RECENT_MESSAGES";
+    bc.chat.OPERATION_GET_RECENT_CHAT_MESSAGES = "GET_RECENT_CHAT_MESSAGES";
     bc.chat.OPERATION_GET_SUBSCRIBED_CHANNELS = "GET_SUBSCRIBED_CHANNELS";
     bc.chat.OPERATION_POST_CHAT_MESSAGE = "POST_CHAT_MESSAGE";
     bc.chat.OPERATION_UPDATE_CHAT_MESSAGE = "UPDATE_CHAT_MESSAGE";
@@ -166,13 +166,13 @@ function BCChat() {
      * Get a list of <maxReturn> messages from history of channel <channelId>.
      *
      * Service Name - Chat
-     * Service Operation - getRecentMessages
+     * Service Operation - GetRecentChatMessages
      *
      * @param channelId Id of the channel to receive the info from.
      * @param maxReturn Maximum message count to return.
      * @param callback The method to be invoked when the server response is received.
      */
-    bc.chat.getRecentMessages = function(channelId, maxReturn, callback) {
+    bc.chat.getRecentChatMessages = function(channelId, maxReturn, callback) {
         var message = {
             channelId: channelId,
             maxReturn: maxReturn
@@ -180,7 +180,7 @@ function BCChat() {
 
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_CHAT,
-            operation: bc.chat.OPERATION_GET_RECENT_MESSAGES,
+            operation: bc.chat.OPERATION_GET_RECENT_CHAT_MESSAGES,
             data: message,
             callback: callback
         });
@@ -276,13 +276,12 @@ function BCChat() {
      * @param content Data to update. Object containing "text" for the text message. Can also has rich content for custom data.
      * @param callback The method to be invoked when the server response is received.
      */
-    bc.chat.updateChatMessage = function(channelId, msgId, version, content, recordInHistory, callback) {
+    bc.chat.updateChatMessage = function(channelId, msgId, version, content, callback) {
         var message = {
             channelId: channelId,
             msgId: msgId,
             version: version,
-            content: content,
-            recordInHistory: recordInHistory
+            content: content
         };
 
         bc.brainCloudManager.sendRequest({
