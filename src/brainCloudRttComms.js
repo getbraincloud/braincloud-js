@@ -4,6 +4,39 @@ if (typeof WebSocket === 'undefined') {
 
 var DEFAULT_RTT_HEARTBEAT = 10; // Seconds
 
+function getBrowserName() {
+    // Opera 8.0+
+    var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || (typeof navigator !== 'undefined' && navigator.userAgent.indexOf(' OPR/') >= 0);
+
+    // Firefox 1.0+
+    var isFirefox = typeof InstallTrigger !== 'undefined';
+
+    // Safari 3.0+ "[object HTMLElementConstructor]" 
+    var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+
+    // Internet Explorer 6-11
+    var isIE = (typeof document !== 'undefined' && !!document.documentMode);
+
+    // Edge 20+
+    var isEdge = !isIE && !!window.StyleMedia;
+
+    // Chrome 1+
+    var isChrome = !!window.chrome && !!window.chrome.webstore;
+
+    // Blink engine detection
+    var isBlink = (isChrome || isOpera) && !!window.CSS;
+
+    if (isOpera) return "opera";
+    if (isFirefox) return "firefox";
+    if (isSafari) return "safari";
+    if (isIE) return "ie";
+    if (isEdge) return "edge";
+    if (isChrome) return "chrome";
+    if (isBlink) return "blink";
+
+    return null;
+}
+
 function BrainCloudRttComms () {
     var bcrtt = this;
 
@@ -62,9 +95,17 @@ function BrainCloudRttComms () {
                         appId: bcrtt.brainCloudClient.getAppId(),
                         profileId: bcrtt.brainCloudClient.getProfileId(),
                         sessionId: bcrtt.brainCloudClient.getSessionId(),
-                        protocol: "ws"
+                        system: {
+                            protocol: "ws",
+                            platform: "WEB"
+                        }
                     }
                 };
+
+                var browserName = getBrowserName();
+                if (browserName) {
+                    request.data.system.browser = browserName;
+                }
 
                 request.data.auth = bcrtt.auth;
 
