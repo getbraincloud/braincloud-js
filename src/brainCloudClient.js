@@ -442,10 +442,10 @@ function BrainCloudClient() {
     }
 
     /**
-     * Listen to real time chat messages.
+     * Listen to real time messaging.
      * 
      * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
-     * Only one chat callback can be registered at a time. Calling this a second time will override the previous callback.
+     * Only one messaging callback can be registered at a time. Calling this a second time will override the previous callback.
      */
     bcc.registerRTTMessagingCallback = function(callback) {
         bcc.brainCloudRttComms.registerRTTCallback(bcc.SERVICE_MESSAGING, callback);
@@ -455,10 +455,10 @@ function BrainCloudClient() {
     }
 
     /**
-     * Listen to real time chat messages.
+     * Listen to real time lobby events.
      * 
      * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
-     * Only one chat callback can be registered at a time. Calling this a second time will override the previous callback.
+     * Only one lobby callback can be registered at a time. Calling this a second time will override the previous callback.
      */
     bcc.registerRTTLobbyCallback = function(callback) {
         bcc.brainCloudRttComms.registerRTTCallback(bcc.SERVICE_LOBBY, callback);
