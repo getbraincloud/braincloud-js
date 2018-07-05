@@ -4517,7 +4517,8 @@ async function main()
 
     console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + " passed\x1b[0m");
     console.log(fail_log.join("\n"));
-    process.exit(test_count - test_passed);
+
+    setTimeout(function() { process.exit(test_count - test_passed); }, 5000);
 }
 
 main();
