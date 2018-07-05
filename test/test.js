@@ -4444,14 +4444,23 @@ async function testRTT()
             bc.chat.postChatMessageSimple(channelId, "Unit test message", true, result =>
             {
                 equal(result.status, 200, "Expecting 200");
-                msgIdExpected = result.data.msgId;
 
-                // Wait 5sec, and make sure we receive that message
-                timeoutId = setTimeout(() =>
-                {
-                    ok(msgIdsReceived.find(msgId => msgId === msgIdExpected), "msgReceived");
+                console.log("OUTPUT: \x1b[36m" + JSON.stringify(result) + "\x1b[0m");
+
+                if(result.data !== undefined) {
+                    msgIdExpected = result.data.msgId;
+
+                    // Wait 5sec, and make sure we receive that message
+                    timeoutId = setTimeout(() => {
+                            ok(msgIdsReceived.find(msgId => msgId === msgIdExpected), "msgReceived");
+                            resolve_test();
+                    }, 5000);
+                } else {
+                    ok(false, "msgReceived");
                     resolve_test();
-                }, 5000);
+                }
+
+
             });
         });
 
