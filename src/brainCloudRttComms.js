@@ -46,6 +46,12 @@ function BrainCloudRttComms () {
     bcrtt.isEnabled = false;
     bcrtt.auth = {};
     bcrtt.callbacks = {};
+    bcrtt._debugEnabled = false;
+
+    bcrtt.setDebugEnabled = function(debugEnabled)
+    {
+        bcrtt._debugEnabled = debugEnabled;
+    };
 
     bcrtt.connect = function(host, port, auth, ssl, success, failure) {
         bcrtt.auth = auth;
@@ -109,7 +115,9 @@ function BrainCloudRttComms () {
 
                 request.data.auth = bcrtt.auth;
 
-                console.log("WS SEND: " + JSON.stringify(request));
+                if (bcrtt._debugEnabled) {
+                    console.log("WS SEND: " + JSON.stringify(request));
+                }
 
                 bcrtt.socket.send(JSON.stringify(request));
             }
@@ -154,7 +162,9 @@ function BrainCloudRttComms () {
                     data: null
                 };
 
-                console.log("WS SEND: " + JSON.stringify(request));
+                if (bcrtt._debugEnabled) {
+                    console.log("WS SEND: " + JSON.stringify(request));
+                }
 
                 bcrtt.socket.send(JSON.stringify(request));
             }, DEFAULT_RTT_HEARTBEAT * 1000);
@@ -162,7 +172,9 @@ function BrainCloudRttComms () {
     }
 
     bcrtt.onRecv = function(result) {
-        console.log("WS RECV: " + JSON.stringify(result));
+        if (bcrtt._debugEnabled) {
+            console.log("WS RECV: " + JSON.stringify(result));
+        }
 
         if (bcrtt.callbacks[result.service]) {
             bcrtt.callbacks[result.service](result);
@@ -184,7 +196,9 @@ function BrainCloudRttComms () {
         if (!bcrtt.isEnabled) {
             bcrtt.isEnabled = true;
             bcrtt.rttRegistration.requestClientConnection(function(result) {
-                console.log(result);
+                if (bcrtt._debugEnabled) {
+                    console.log(result);
+                }
                 if (result.status == 200) {
                     for (var i = 0; i < result.data.endpoints.length; ++i) {
                         var endpoint = result.data.endpoints[i];

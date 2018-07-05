@@ -292,11 +292,13 @@ function BrainCloudClient() {
      */
     bcc.enableLogging = function(enableLogging) {
         bcc.brainCloudManager.setDebugEnabled(enableLogging);
+        bcc.brainCloudRttComms.setDebugEnabled(enableLogging);
     };
 
 // deprecated
     bcc.setDebugEnabled = function(debugEnabled) {
         bcc.brainCloudManager.setDebugEnabled(debugEnabled);
+        bcc.brainCloudRttComms.setDebugEnabled(debugEnabled);
     };
 
     /**
