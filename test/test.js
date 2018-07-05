@@ -82,17 +82,21 @@ function loadIDs()
     let lines = buffer.toString().split("\n");
     let ids = lines.reduce((ids, line) =>
     {
+
         let keyVal = line.split("=");
-        let key = keyVal[0].trim();
-        let value = keyVal[1].trim();
 
-        if (key === "serverUrl")
-        {
-            // In javascript we remove the "dispatcherv2" after the url
-            value = value.replace("/dispatcherv2", "");
+        if(keyVal[0] !== undefined && keyVal[1] !== undefined) {
+            let key = keyVal[0].trim();
+            let value = keyVal[1].trim();
+
+            if (key === "serverUrl")
+            {
+                // In javascript we remove the "dispatcherv2" after the url
+                value = value.replace("/dispatcherv2", "");
+            }
+
+            ids[key] = value;
         }
-
-        ids[key] = value;
 
         return ids;
     }, {});
