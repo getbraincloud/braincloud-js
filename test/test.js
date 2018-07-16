@@ -894,7 +894,10 @@ async function testEvent() {
         bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, result =>
         {
             equal(result.status, 200, JSON.stringify(result));
-            let found = !result.data.sent_events.every(event => event.evId !== eventId);
+            let found = result.data.incoming_events.reduce((ret, event) =>
+            {
+                return ret || (event.evId === eventId && event.fromPlayerId === UserA.profileId && event.toPlayerId === UserB.profileId);
+            }, false);
             equal(found, true, JSON.stringify(result));
             resolve_test();
         });
