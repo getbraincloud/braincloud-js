@@ -808,10 +808,7 @@ async function testEntity() {
 // Event unit tests
 ////////////////////////////////////////
 async function testEvent() {
-    module("Event", () =>
-    {
-        return setUpWithAuthenticate();
-    }, () =>
+    module("Event", null, () =>
     {
         return tearDownLogout();
     });
@@ -821,6 +818,7 @@ async function testEvent() {
 
     var eventId;
 
+    await setUpWithAuthenticate();
     await asyncTest("sendEvent()", 2, function() {
         var sendEventSemi = 0;
         bc.brainCloudClient.registerEventCallback(function() {
@@ -846,6 +844,7 @@ async function testEvent() {
                 });
     });
 
+    await setUpWithAuthenticate();
     await asyncTest("updateIncomingEventData()", function() {
         bc.event.updateIncomingEventData(
                 eventId,
@@ -856,6 +855,7 @@ async function testEvent() {
                 });
     });
 
+    await setUpWithAuthenticate();
     await asyncTest("deleteIncomingEvent()", function() {
         bc.event.deleteIncomingEvent(
                 eventId,
@@ -865,12 +865,39 @@ async function testEvent() {
                 });
     });
 
+    await setUpWithAuthenticate();
     await asyncTest("getEvents()", function() {
         bc.event.getEvents(
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
+    });
+
+    await setUpWithAuthenticate();
+    await asyncTest("sendEvent() to B", 1, function() {
+        bc.event.sendEvent(
+                UserB.profileId,
+                eventType,
+                {eventDataKey : 24 },
+                function(result) {
+                    console.log(result);
+                    eventId = result.data.evId;
+                    equal(result.status, 200, JSON.stringify(result));
+                        resolve_test();
+                });
+    });
+
+    // B read event
+    await asyncTest("userB recv event()", 2, () =>
+    {
+        bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, result =>
+        {
+            equal(result.status, 200, JSON.stringify(result));
+            let found = !result.data.sent_events.every(event => event.evId !== eventId);
+            equal(found, true, JSON.stringify(result));
+            resolve_test();
+        });
     });
 }
 
