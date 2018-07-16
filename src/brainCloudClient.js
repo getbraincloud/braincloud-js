@@ -25,6 +25,7 @@ function BrainCloudClient() {
         BCGlobalEntity.apply(bcc);
         BCGroup.apply(bcc);
         BCIdentity.apply(bcc);
+        BCLobby.apply(bcc);
         BCMail.apply(bcc);
         BCMatchMaking.apply(bcc);
         BCMessaging.apply(bcc);
@@ -64,6 +65,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.globalEntity = bcc.globalEntity;
         bcc.brainCloudManager.group = bcc.group;
         bcc.brainCloudManager.identity = bcc.identity;
+        bcc.brainCloudManager.lobby = bcc.lobby;
         bcc.brainCloudManager.mail = bcc.mail;
         bcc.brainCloudManager.matchMaking = bcc.matchMaking;
         bcc.brainCloudManager.messaging = bcc.messaging;
@@ -109,6 +111,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.globalEntity = bcc.brainCloudClient.globalEntity = bcc.brainCloudClient.globalEntity || {};
         bcc.brainCloudManager.group = bcc.brainCloudClient.group = bcc.brainCloudClient.group || {};
         bcc.brainCloudManager.identity = bcc.brainCloudClient.identity = bcc.brainCloudClient.identity || {};
+        bcc.brainCloudManager.lobby = bcc.brainCloudClient.lobby = bcc.brainCloudClient.lobby || {};
         bcc.brainCloudManager.mail = bcc.brainCloudClient.mail = bcc.brainCloudClient.mail || {};
         bcc.brainCloudManager.matchMaking = bcc.brainCloudClient.matchMaking = bcc.brainCloudClient.matchMaking || {};
         bcc.brainCloudManager.messaging = bcc.brainCloudClient.messaging = bcc.brainCloudClient.messaging || {};
