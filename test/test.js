@@ -4470,14 +4470,16 @@ async function testRTT()
     // Now test lobby callback
     {
         let lobbyId = null;
+        let apiReturned = false;
         let timeoutId = null;
         bc.brainCloudClient.registerRTTLobbyCallback(message =>
         {
             console.log(message);
-            if (message.service === "lobby" && message.operation === "INCOMING")
+            if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
             {
-                msgIdsReceived.push(message.data.msgId);
-                if (msgIdsReceived.find(msgId => msgId === msgIdExpected))
+                lobbyId = message.data.lobbyId;
+
+                if (apiReturned)
                 {
                     clearTimeout(timeoutId);
                     ok(true, "msgReceived");
@@ -4486,28 +4488,24 @@ async function testRTT()
             }
         });
 
-        await asyncTest("postChatMessage() while listning to the channel", 2, () =>
+        await asyncTest("createLobby() while listning to lobby callbacks", 2, () =>
         {
-            bc.chat.postChatMessageSimple(channelId, "Unit test message", true, result =>
+            // Wait 60 sec, and make sure we receive lobby callback
+            timeoutId = setTimeout(() => {
+                ok(false, "lobby RTT didn't received");
+                resolve_test();
+            }, 60000); // Give the server 60sec..
+
+            bc.lobby.createLobby("MATCH_UNRANKED", 0, null, false, {}, "all", {}, result =>
             {
                 equal(result.status, 200, "Expecting 200");
-
-                console.log("OUTPUT: \x1b[36m" + JSON.stringify(result) + "\x1b[0m");
-
-                if(result.data !== undefined) {
-                    msgIdExpected = result.data.msgId;
-
-                    // Wait 5sec, and make sure we receive that message
-                    timeoutId = setTimeout(() => {
-                            ok(msgIdsReceived.find(msgId => msgId === msgIdExpected), "msgReceived");
-                            resolve_test();
-                    }, 5000);
-                } else {
-                    ok(false, "msgReceived");
+                apiReturned = true;
+                if (lobbyId)
+                {
+                    clearTimeout(timeoutId);
+                    ok(true, "msgReceived");
                     resolve_test();
                 }
-
-
             });
         });
 
