@@ -4467,7 +4467,157 @@ async function testRTT()
         bc.brainCloudClient.deregisterAllRTTCallbacks();
     }
 
+    // Now test lobby callback
+    {
+        let lobbyId = null;
+        let timeoutId = null;
+        bc.brainCloudClient.registerRTTLobbyCallback(message =>
+        {
+            console.log(message);
+            if (message.service === "lobby" && message.operation === "INCOMING")
+            {
+                msgIdsReceived.push(message.data.msgId);
+                if (msgIdsReceived.find(msgId => msgId === msgIdExpected))
+                {
+                    clearTimeout(timeoutId);
+                    ok(true, "msgReceived");
+                    resolve_test();
+                }
+            }
+        });
+
+        await asyncTest("postChatMessage() while listning to the channel", 2, () =>
+        {
+            bc.chat.postChatMessageSimple(channelId, "Unit test message", true, result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+
+                console.log("OUTPUT: \x1b[36m" + JSON.stringify(result) + "\x1b[0m");
+
+                if(result.data !== undefined) {
+                    msgIdExpected = result.data.msgId;
+
+                    // Wait 5sec, and make sure we receive that message
+                    timeoutId = setTimeout(() => {
+                            ok(msgIdsReceived.find(msgId => msgId === msgIdExpected), "msgReceived");
+                            resolve_test();
+                    }, 5000);
+                } else {
+                    ok(false, "msgReceived");
+                    resolve_test();
+                }
+
+
+            });
+        });
+
+        bc.brainCloudClient.deregisterAllRTTCallbacks();
+    }
+
     await tearDownLogout();
+}
+
+////////////////////////////////////////
+// Lobby tests
+////////////////////////////////////////
+async function testLobby() {
+    module("Lobby", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    await asyncTest("findLobby()", 1, () =>
+    {
+        bc.lobby.findLobby("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, true, {}, "all", result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("createLobby()", 1, () =>
+    {
+        bc.lobby.createLobby("MATCH_UNRANKED", 0, null, true, {}, "all", {}, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("findOrCreateLobby()", 1, () =>
+    {
+        bc.lobby.findOrCreateLobby("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null,{},  true, {}, "all", result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getLobbyData()", 1, () =>
+    {
+        bc.lobby.getLobbyData("wrongLobbyId", result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("leaveLobby()", 1, () =>
+    {
+        bc.lobby.leaveLobby("wrongLobbyId", result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("removeMember()", 1, () =>
+    {
+        bc.lobby.removeMember("wrongLobbyId", "wrongConId", result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("sendSignal()", 1, () =>
+    {
+        bc.lobby.sendSignal("wrongLobbyId", {msg:"test"}, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("switchTeam()", 1, () =>
+    {
+        bc.lobby.switchTeam("wrongLobbyId", "all", result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("updateReady()", 1, () =>
+    {
+        bc.lobby.updateReady("wrongLobbyId", true, {}, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("updateSettings()", 1, () =>
+    {
+        bc.lobby.updateSettings("wrongLobbyId", {test:"me"}, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
 }
 
 async function run_tests()
@@ -4508,6 +4658,7 @@ async function run_tests()
     await testChat();
     await testMessaging();
     await testRTT();
+    await testLobby();
 }
 
 async function main()
@@ -4518,7 +4669,7 @@ async function main()
     console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + " passed\x1b[0m");
     console.log(fail_log.join("\n"));
 
-    setTimeout(function() { process.exit(test_count - test_passed); }, 5000);
+    process.exit(test_count - test_passed);
 }
 
 main();

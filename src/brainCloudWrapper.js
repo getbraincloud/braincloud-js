@@ -30,6 +30,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.globalEntity = bcw.brainCloudClient.globalEntity;
         bcw.group = bcw.brainCloudClient.group;
         bcw.identity = bcw.brainCloudClient.identity;
+        bcw.lobby = bcw.brainCloudClient.lobby;
         bcw.mail = bcw.brainCloudClient.mail;
         bcw.matchMaking = bcw.brainCloudClient.matchMaking;
         bcw.messaging = bcw.brainCloudClient.messaging;
