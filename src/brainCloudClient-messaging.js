@@ -15,13 +15,12 @@ function BCMessaging() {
     bc.messaging.OPERATION_MARK_MESSAGES_READ = "MARK_MESSAGES_READ";
     bc.messaging.OPERATION_SEND_MESSAGE = "SEND_MESSAGE";
     bc.messaging.OPERATION_SEND_MESSAGE_SIMPLE = "SEND_MESSAGE_SIMPLE";
-    bc.messaging.OPERATION_MARK_MESSAGES_READ = "MARK_MESSAGES_READ";
 
     /**
      * Deletes specified user messages on the server.
      *
      * Service Name - Messaging
-     * Service Operation - DeleteMessages
+     * Service Operation - DELETE_MESSAGES
      *
      * @param msgIds Arrays of message ids to delete.
      * @param callback The method to be invoked when the server response is received
@@ -44,7 +43,7 @@ function BCMessaging() {
      * Retrieve user's message boxes, including 'inbox', 'sent', etc.
      *
      * Service Name - Messaging
-     * Service Operation - GetMessageboxes
+     * Service Operation - GET_MESSAGE_BOXES
      *
      * @param callback The method to be invoked when the server response is received
      */
@@ -64,7 +63,7 @@ function BCMessaging() {
      * Returns count of user's 'total' messages and their 'unread' messages.
      *
      * Service Name - Messaging
-     * Service Operation - GetMessageCounts
+     * Service Operation - GET_MESSAGE_COUNTS
      *
      * @param callback The method to be invoked when the server response is received
      */
@@ -84,7 +83,7 @@ function BCMessaging() {
      * Retrieves list of specified messages.
      *
      * Service Name - Messaging
-     * Service Operation - GetMessages
+     * Service Operation - GET_MESSAGES
      *
      * @param msgIds Arrays of message ids to get.
      * @param callback The method to be invoked when the server response is received
@@ -107,7 +106,7 @@ function BCMessaging() {
      * Retrieves a page of messages.
      *
      * Service Name - Messaging
-     * Service Operation - GetMessagesPage
+     * Service Operation - GET_MESSAGES_PAGE
      *
      * @param context
      * @param callback The method to be invoked when the server response is received
@@ -129,7 +128,7 @@ function BCMessaging() {
      * Gets the page of messages from the server based on the encoded context and specified page offset.
      *
      * Service Name - Messaging
-     * Service Operation - GetMessagesPageOffset
+     * Service Operation - GET_MESSAGES_PAGE_OFFSET
      *
      * @param context
      * @param pageOffset
@@ -153,7 +152,7 @@ function BCMessaging() {
      * Marks list of user messages as read on the server.
      *
      * Service Name - Messaging
-     * Service Operation - SendMessage
+     * Service Operation - SEND_MESSAGE
      *
      * @param toProfileIds
      * @param messageText
@@ -163,7 +162,7 @@ function BCMessaging() {
     bc.messaging.sendMessage = function(toProfileIds, messageText, messageSubject, callback) {
         var message = {
             toProfileIds: toProfileIds,
-            content: {
+            contentJson: {
                 subject: messageSubject,
                 text: messageText
             }
@@ -181,7 +180,7 @@ function BCMessaging() {
      * Marks list of user messages as read on the server.
      *
      * Service Name - Messaging
-     * Service Operation - SendMessageSimple
+     * Service Operation - SEND_MESSAGE_SIMPLE
      *
      * @param toProfileIds
      * @param messageText
@@ -205,7 +204,7 @@ function BCMessaging() {
      * Marks list of user messages as read on the server.
      *
      * Service Name - Messaging
-     * Service Operation - MarkMessagesRead
+     * Service Operation - MARK_MESSAGES_READ
      *
      * @param msgbox
      * @param msgIds
