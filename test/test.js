@@ -324,12 +324,12 @@ async function asyncTest(name, expected, testFn)
 function passed(expr, log)
 {
     ++sub_testPass;
-    console.log("\x1b[36m" + test_name + " \x1b[32m[OK]\x1b[36m (" + expr + ")\x1b[0m");
+    console.log("\x1b[36m" + test_name + " \x1b[32m[OK]\x1b[36m (" + expr + ")\x1b[0m" + log);
 }
 
-function failed(expr, log)
+function failed(expr, logex)
 {
-    var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[36m (" + expr + ")\x1b[0m";
+    var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[36m (" + expr + ")\x1b[0m" + logex;
     fail_log.push(log);
     console.log(log);
 }
@@ -4577,7 +4577,7 @@ async function testLobby() {
 
     await asyncTest("findOrCreateLobby()", 1, () =>
     {
-        bc.lobby.findOrCreateLobby("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null,{},  true, {}, "all", result =>
+        bc.lobby.findOrCreateLobby("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();

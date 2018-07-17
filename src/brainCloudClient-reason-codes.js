@@ -518,7 +518,9 @@ function BCReasonCodes() {
 
 	bc.reasonCodes.LOBBY_FEATURE_NOT_CONFIGURED = 40622;
 
-	bc.reasonCodes.TOO_MANY_USERS_FOR_LOBBY_TYPE = 40623;
+	bc.reasonCodes.TOO_MANY_USERS_FOR_LOBBY_TYPE = 40624;
+
+	bc.reasonCodes.TOO_MANY_USERS_FOR_TEAM = 40623;
 
 }
 
