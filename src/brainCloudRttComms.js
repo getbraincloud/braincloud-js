@@ -47,11 +47,17 @@ function BrainCloudRttComms () {
     bcrtt.auth = {};
     bcrtt.callbacks = {};
     bcrtt._debugEnabled = false;
+    bcrtt.connectionId = null;
 
     bcrtt.setDebugEnabled = function(debugEnabled)
     {
         bcrtt._debugEnabled = debugEnabled;
     };
+
+    bcrtt.getRTTConnectionId = function()
+    {
+        return bcrtt.connectionId;
+    }
 
     bcrtt.connect = function(host, port, auth, ssl, success, failure) {
         bcrtt.auth = auth;
@@ -126,7 +132,8 @@ function BrainCloudRttComms () {
         bcrtt.socket.addEventListener('message', function(e) {
             if (bcrtt.isEnabled) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
                 var processResult = function(result) {
-                    if (result.operation == "CONNECT") {
+                    if (result.operation == "CONNECT" && result.service == "rtt") {
+                        bcrtt.connectionId = result.cxId;
                         bcrtt.startHeartbeat();
                         success(result);
                     }

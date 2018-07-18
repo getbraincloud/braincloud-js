@@ -223,6 +223,15 @@ function BrainCloudClient() {
     };
 
     /**
+     * Returns the RTT connection id. Share this with your friends to be able to join games together.
+     *
+     * @return {string} - The brainCloud RTT connection id for this user.
+     */
+    bcc.getRTTConnectionId = function() {
+        return bcc.brainCloudRttComms.getRTTConnectionId();
+    };
+
+    /**
      * Sets a callback handler for any out of band messages that come from
      * brainCloud (essentially any message sent from brainCloud that wasn't in
      * direct response to a client request).
