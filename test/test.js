@@ -4542,6 +4542,53 @@ async function testRTT()
         bc.brainCloudClient.deregisterAllRTTCallbacks();
     }
 
+    // Now test event callback
+    {
+        let eventId = null;
+        let apiReturned = false;
+        let timeoutId = null;
+        bc.brainCloudClient.registerRTTEventCallback(message =>
+        {
+            console.log(message);
+            if (message.service === "event")
+            {
+                eventId = message.data.evId;
+
+                if (apiReturned)
+                {
+                    clearTimeout(timeoutId);
+                    ok(true, "eventReceived");
+                    resolve_test();
+                }
+            }
+        });
+
+        await asyncTest("postEvent() while listning to lobby callbacks", 2, () =>
+        {
+            // Wait 60 sec, and make sure we receive lobby callback
+            timeoutId = setTimeout(() => {
+                ok(false, "event RTT didn't received");
+                resolve_test();
+            }, 60000); // Give the server 60sec..
+            bc.event.sendEvent(UserA.profileId, "test", {"testData" : 42 }, result =>
+            {
+                console.log(result);
+                eventId = result["data"]["evId"];
+
+                equal(result.status, 200, "Expecting 200");
+                apiReturned = true;
+                if (eventId)
+                {
+                    clearTimeout(timeoutId);
+                    ok(true, "eventReceived");
+                    resolve_test();
+                }
+            });
+        });
+
+        bc.brainCloudClient.deregisterAllRTTCallbacks();
+    }
+
     await tearDownLogout();
 }
 
