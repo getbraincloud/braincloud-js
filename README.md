@@ -8,6 +8,12 @@ If you haven't signed up or you want to log into the brainCloud portal, you can 
 
 https://portal.braincloudservers.com/
 
+## Releases
+
+Package | Description
+ ---- | ----
+[**brainCloudClient_js_X.X.X.X.zip**](https://github.com/getbraincloud/braincloud-js/releases) | 	JavaScript for web
+
 ## Troubleshooting
 
 Here are a few common errors that you may see on your first attempt to connect to brainCloud.
