@@ -12,7 +12,10 @@ https://portal.braincloudservers.com/
 
 Package | Description
  ---- | ----
-[**brainCloudClient_js_X.X.X.X.zip**](https://github.com/getbraincloud/braincloud-js/releases) | 	JavaScript for web
+[**brainCloudClient_js_3.8.0.355.zip**](https://github.com/getbraincloud/braincloud-js/releases) | 	JavaScript for web
+[**braincloud-node (3.8.0)**](https://www.npmjs.com/package/braincloud-node) | 	NPM package for Node
+
+
 
 ## Troubleshooting
 
