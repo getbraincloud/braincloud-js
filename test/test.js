@@ -4395,7 +4395,24 @@ async function testRTT()
             resolve_test();
         });
     });
-    
+
+    // Disable then re-enable
+    await asyncTest("enableRTT() again after disableRTT()", 1, () =>
+    {
+        bc.brainCloudClient.disableRTT();
+        bc.brainCloudClient.enableRTT(result =>
+        {
+            console.log(result);
+            equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
+            resolve_test();
+        }, error =>
+        {
+            console.log(error);
+            ok(false, error);
+            resolve_test();
+        });
+    });
+
     let channelId = "";
     await asyncTest("getChannelId()", 2, () =>
     {

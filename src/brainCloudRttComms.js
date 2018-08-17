@@ -59,7 +59,7 @@ function BrainCloudRttComms () {
         return bcrtt.connectionId;
     }
 
-    bcrtt.connect = function(host, port, auth, ssl, success, failure) {
+    bcrtt.connect = function(host, port, auth, ssl) {
         bcrtt.auth = auth;
 
         // build url with auth as arguments
@@ -77,86 +77,90 @@ function BrainCloudRttComms () {
         }
 
         bcrtt.socket = new WebSocket(uri);
+        bcrtt.socket.addEventListener('error', bcrtt.onSocketError);
+        bcrtt.socket.addEventListener('close', bcrtt.onSocketClose);
+        bcrtt.socket.addEventListener('open', bcrtt.onSocketOpen);
+        bcrtt.socket.addEventListener('message', bcrtt.onSocketMessage);
+    }
 
-        bcrtt.socket.addEventListener('error', function(e) {
-            if (bcrtt.isEnabled) { // Don't spam errors if we get multiple ones
-                failure("error");
-            }
+    bcrtt.onSocketError = function(e) {
+        if (bcrtt.isEnabled) { // Don't spam errors if we get multiple ones
+            bcrtt.connectCallback.failure("error");
+        }
 
-            bcrtt.disableRTT();
-        });
+        bcrtt.disableRTT();
+    }
 
-        bcrtt.socket.addEventListener('close', function(e) {
-            if (bcrtt.isEnabled) { // Don't spam errors if we get multiple ones
-                failure("close");
-            }
+    bcrtt.onSocketClose = function(e) {
+        if (bcrtt.isEnabled) { // Don't spam errors if we get multiple ones
+            bcrtt.connectCallback.failure("close");
+        }
 
-            bcrtt.disableRTT();
-        });
+        bcrtt.disableRTT();
+    }
 
-        bcrtt.socket.addEventListener('open', function(e) {
-            if (bcrtt.isEnabled) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
-                // Yay!
-                console.log("WebSocket connection established");
+    bcrtt.onSocketOpen = function(e) {
+        if (bcrtt.isEnabled) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
+            // Yay!
+            console.log("WebSocket connection established");
 
-                // Send a connect request
-                var request = {
-                    operation: "CONNECT",
-                    service: "rtt",
-                    data: {
-                        appId: bcrtt.brainCloudClient.getAppId(),
-                        profileId: bcrtt.brainCloudClient.getProfileId(),
-                        sessionId: bcrtt.brainCloudClient.getSessionId(),
-                        system: {
-                            protocol: "ws",
-                            platform: "WEB"
-                        }
+            // Send a connect request
+            var request = {
+                operation: "CONNECT",
+                service: "rtt",
+                data: {
+                    appId: bcrtt.brainCloudClient.getAppId(),
+                    profileId: bcrtt.brainCloudClient.getProfileId(),
+                    sessionId: bcrtt.brainCloudClient.getSessionId(),
+                    system: {
+                        protocol: "ws",
+                        platform: "WEB"
                     }
-                };
-
-                var browserName = getBrowserName();
-                if (browserName) {
-                    request.data.system.browser = browserName;
                 }
+            };
 
-                request.data.auth = bcrtt.auth;
-
-                if (bcrtt._debugEnabled) {
-                    console.log("WS SEND: " + JSON.stringify(request));
-                }
-
-                bcrtt.socket.send(JSON.stringify(request));
+            var browserName = getBrowserName();
+            if (browserName) {
+                request.data.system.browser = browserName;
             }
-        });
 
-        bcrtt.socket.addEventListener('message', function(e) {
-            if (bcrtt.isEnabled) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
-                var processResult = function(result) {
-                    if (result.operation == "CONNECT" && result.service == "rtt") {
-                        bcrtt.connectionId = result.cxId;
-                        bcrtt.startHeartbeat();
-                        success(result);
-                    }
-                    else {
-                        bcrtt.onRecv(result);
-                    }
-                };
+            request.data.auth = bcrtt.auth;
 
-                if (typeof e.data === "string") {
-                    processResult(e.data);
-                } else if (typeof FileReader !== 'undefined') {
-                    // Web Browser
-                    var reader = new FileReader();
-                    reader.onload = function() {
-                        processResult(JSON.parse(reader.result));
-                    }
-                    reader.readAsText(e.data);
-                } else {
-                    // Node.js
-                    processResult(JSON.parse(e.data));
-                }
+            if (bcrtt._debugEnabled) {
+                console.log("WS SEND: " + JSON.stringify(request));
             }
-        });
+
+            bcrtt.socket.send(JSON.stringify(request));
+        }
+    }
+
+    bcrtt.onSocketMessage = function(e) {
+        if (bcrtt.isEnabled) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
+            var processResult = function(result) {
+                if (result.operation == "CONNECT" && result.service == "rtt") {
+                    bcrtt.connectionId = result.cxId;
+                    bcrtt.startHeartbeat();
+                    bcrtt.connectCallback.success(result);
+                }
+                else {
+                    bcrtt.onRecv(result);
+                }
+            };
+
+            if (typeof e.data === "string") {
+                processResult(e.data);
+            } else if (typeof FileReader !== 'undefined') {
+                // Web Browser
+                var reader = new FileReader();
+                reader.onload = function() {
+                    processResult(JSON.parse(reader.result));
+                }
+                reader.readAsText(e.data);
+            } else {
+                // Node.js
+                processResult(JSON.parse(e.data));
+            }
+        }
     }
 
     bcrtt.startHeartbeat = function() {
@@ -201,6 +205,10 @@ function BrainCloudRttComms () {
      */
     bcrtt.enableRTT = function(success, failure) {
         if (!bcrtt.isEnabled) {
+            bcrtt.connectCallback = {
+                success: success,
+                failure: failure
+            }
             bcrtt.isEnabled = true;
             bcrtt.rttRegistration.requestClientConnection(function(result) {
                 if (bcrtt._debugEnabled) {
@@ -210,7 +218,7 @@ function BrainCloudRttComms () {
                     for (var i = 0; i < result.data.endpoints.length; ++i) {
                         var endpoint = result.data.endpoints[i];
                         if (endpoint.protocol === "ws") {
-                            bcrtt.connect(endpoint.host, endpoint.port, result.data.auth, endpoint.ssl, success, failure);
+                            bcrtt.connect(endpoint.host, endpoint.port, result.data.auth, endpoint.ssl);
                             return;
                         }
                     }
@@ -219,11 +227,11 @@ function BrainCloudRttComms () {
                     result.status = 0;
                     result.status_message = "WebSocket endpoint missing";
                     bcrtt.isEnabled = false;
-                    failure(result);
+                    bcrtt.connectCallback.failure(result);
                 }
                 else {
                     bcrtt.isEnabled = false;
-                    failure(result);
+                    bcrtt.connectCallback.failure(result);
                 }
             });
         }
@@ -233,7 +241,7 @@ function BrainCloudRttComms () {
      * Disables Real Time event for this session.
      */
     bcrtt.disableRTT = function() {
-        isEnabled = false;
+        bcrtt.isEnabled = false;
 
         if (bcrtt.heartbeatId) {
             clearInterval(bcrtt.heartbeatId);
@@ -241,6 +249,10 @@ function BrainCloudRttComms () {
         }
 
         if (bcrtt.socket) {
+            bcrtt.socket.removeEventListener('error', bcrtt.onSocketError);
+            bcrtt.socket.removeEventListener('close', bcrtt.onSocketClose);
+            bcrtt.socket.removeEventListener('open', bcrtt.onSocketOpen);
+            bcrtt.socket.removeEventListener('message', bcrtt.onSocketMessage);
             bcrtt.socket.close();
             bcrtt.socket = null;
         }
