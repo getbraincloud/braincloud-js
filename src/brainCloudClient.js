@@ -34,6 +34,7 @@ function BrainCloudClient() {
         BCPlayerState.apply(bcc);
         BCPlayerStatistics.apply(bcc);
         BCPlayerStatisticsEvent.apply(bcc);
+        BCPresence.apply(bcc);
         BCProducts.apply(bcc);
         BCProfanity.apply(bcc);
         BCPushNotifications.apply(bcc);
@@ -74,6 +75,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.playerState = bcc.playerState;
         bcc.brainCloudManager.playerStatistics = bcc.playerStatistics;
         bcc.brainCloudManager.playerStatisticsEvent = bcc.playerStatisticsEvent;
+        bcc.brainCloudManager.presence = bcc.precense;
         bcc.brainCloudManager.product = bcc.product;
         bcc.brainCloudManager.profanity = bcc.profanity;
         bcc.brainCloudManager.pushNotification = bcc.pushNotification;
@@ -120,6 +122,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.playerState = bcc.brainCloudClient.playerState = bcc.brainCloudClient.playerState || {};
         bcc.brainCloudManager.playerStatistics = bcc.brainCloudClient.playerStatistics = bcc.brainCloudClient.playerStatistics || {};
         bcc.brainCloudManager.playerStatisticsEvent = bcc.brainCloudClient.playerStatisticsEvent = bcc.brainCloudClient.playerStatisticsEvent || {};
+        bcc.brainCloudManager.presence = bcc.brainCloudClient.presence = bcc.brainCloudClient.presence || {};
         bcc.brainCloudManager.product = bcc.brainCloudClient.product = bcc.brainCloudClient.product || {};
         bcc.brainCloudManager.profanity = bcc.brainCloudClient.profanity = bcc.brainCloudClient.profanity || {};
         bcc.brainCloudManager.pushNotification = bcc.brainCloudClient.pushNotification = bcc.brainCloudClient.pushNotification || {};
