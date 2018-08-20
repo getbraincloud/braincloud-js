@@ -4712,6 +4712,26 @@ async function testLobby() {
     });
 }
 
+async function testPresence()
+{
+    module("Presence", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    await asyncTest("registerListenersForGroup()", 1, () =>
+    {
+        bc.presence.registerListenersForGroup("bad_group_id", true, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -4751,6 +4771,7 @@ async function run_tests()
     await testMessaging();
     await testRTT();
     await testLobby();
+    await testPresence();
 }
 
 async function main()
