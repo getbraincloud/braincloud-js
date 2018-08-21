@@ -485,6 +485,19 @@ function BrainCloudClient() {
     }
 
     /**
+     * Listen to real time presence events.
+     * 
+     * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
+     * Only one presence callback can be registered at a time. Calling this a second time will override the previous callback.
+     */
+    bcc.registerRTTPresenceCallback = function(callback) {
+        bcc.brainCloudRttComms.registerRTTCallback(bcc.SERVICE_PRESENCE, callback);
+    }
+    bcc.deregisterRTTPresenceCallback = function() {
+        bcc.brainCloudRttComms.deregisterRTTCallback(bcc.SERVICE_PRESENCE);
+    }
+
+    /**
      * Clear all set RTT callbacks
      */
     bcc.deregisterAllRTTCallbacks = function() {
