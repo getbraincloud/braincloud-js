@@ -3476,6 +3476,7 @@ async function testTournament() {
         return tearDownLogout();
     });
 
+    var _divSetId = "testDivSet";
     var _tournamentCode = "testTournament";
     var _leaderboardId = "testTournamentLeaderboard";
     var _version = 0;
@@ -3500,6 +3501,47 @@ async function testTournament() {
             ok(true, JSON.stringify(result));
             _version = result.data.versionId;
             equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getDivisionInfo()", 2, function() {
+        bc.tournament.getDivisionInfo(
+        _divSetId,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getDivisions()", 2, function() {
+        bc.tournament.getDivisions(
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("joinDivision()", 2, function() {
+        bc.tournament.joinDivision(
+        _divSetId,
+        _tournamentCode,
+        0,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("leaveDivisionInstance()", 2, function() {
+        bc.tournament.leaveDivisionInstance(
+        _divSetId,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 400, "Expecting 400");
             resolve_test();
         });
     });

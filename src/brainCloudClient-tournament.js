@@ -7,8 +7,12 @@ function BCTournament() {
 	bc.SERVICE_TOURNAMENT = "tournament";
 
 	bc.tournament.OPERATION_CLAIM_TOURNAMENT_REWARD = "CLAIM_TOURNAMENT_REWARD";
+	bc.tournament.OPERATION_GET_DIVISION_INFO = "GET_DIVISION_INFO";
+	bc.tournament.OPERATION_GET_MY_DIVISIONS = "GET_MY_DIVISIONS";
 	bc.tournament.OPERATION_GET_TOURNAMENT_STATUS = "GET_TOURNAMENT_STATUS";
+	bc.tournament.OPERATION_JOIN_DIVISION = "JOIN_DIVISION";
 	bc.tournament.OPERATION_JOIN_TOURNAMENT = "JOIN_TOURNAMENT";
+	bc.tournament.OPERATION_LEAVE_DIVISION_INSTANCE = "LEAVE_DIVISION_INSTANCE";
 	bc.tournament.OPERATION_LEAVE_TOURNAMENT = "LEAVE_TOURNAMENT";
 	bc.tournament.OPERATION_POST_TOURNAMENT_SCORE = "POST_TOURNAMENT_SCORE";
 	bc.tournament.OPERATION_POST_TOURNAMENT_SCORE_WITH_RESULTS = "POST_TOURNAMENT_SCORE_WITH_RESULTS";
@@ -39,6 +43,51 @@ function BCTournament() {
 		});
 	};
 
+	
+	/**
+	 * Get info of the division
+	 * Generally called before JoinDivision() in the case there are multiple tournaments,
+	 * or if the user is shown information to make choice as to whether to join a tournament
+	 *
+	 * Service Name - tournament
+	 * Service Operation - OPERATION_GET_DIVISIONS_INFO
+	 *
+	 * @param divSetId The division id
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.tournament.getDivisionInfo = function(divSetId, callback)
+	{
+		var message = {
+			divSetId : divSetId,
+		};
+		
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_TOURNAMENT,
+			operation : bc.tournament.OPERATION_GET_DIVISION_INFO,
+			data : message,
+			callback : callback
+		})
+	};
+
+	/**
+	 * Get the divisions
+	 * Returns a list of the player's recently active divisions.
+	 *
+	 * Service Name - tournament
+	 * Service Operation - OPERATION_GET_MY_DIVISIONS
+	 *
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.tournament.getMyDivisions = function(callback)
+	{
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_TOURNAMENT,
+			operation : bc.tournament.OPERATION_GET_MY_DIVISIONS,
+			data : null,
+			callback : callback
+		})
+	};
+
 	/**
 	 * Get tournament status associated with a leaderboard
 	 *
@@ -61,6 +110,34 @@ function BCTournament() {
 			data : message,
 			callback : callback
 		});
+	};
+
+	/**
+	 * Join a division
+	 * If joining a tournament requires a fee, it is possible to fail at joining a division
+	 *
+	 * Service Name - tournament
+	 * Service Operation - OPERATION_JOIN_DIVISION
+	 *
+	 * @param divSetId the division id
+	 * @param tournamentCode tournament to join
+	 * @param initialScore initial score for the user
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.tournament.joinDivision = function(divSetId, tournamentCode, initialScore, callback)
+	{
+		var message = {
+			divSetId : divSetId,
+			tournamentCode : tournamentCode,
+			initialScore : initialScore
+		};
+		
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_TOURNAMENT,
+			operation : bc.tournament.OPERATION_JOIN_DIVISION,
+			data : message,
+			callback : callback
+		})
 	};
 
 	/**
@@ -88,6 +165,31 @@ function BCTournament() {
 			data : message,
 			callback : callback
 		});
+	};
+
+	/**
+	 * Leave a division
+	 * Removes player from division instance, and ensures division instance removed from 
+	 * player's division list
+	 *
+	 * Service Name - tournament
+	 * Service Operation - OPERATION_LEAVE_DIVISION_INSTANCE
+	 *
+	 * @param leaderboardId the leaderboard for the tournament
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.tournament.leaveDivisionInstance = function(leaderboardId, callback)
+	{
+		var message = {
+			leaderboardId : leaderboardId,
+		};
+		
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_TOURNAMENT,
+			operation : bc.tournament.OPERATION_LEAVE_DIVISION_INSTANCE,
+			data : message,
+			callback : callback
+		})
 	};
 
 	/**
