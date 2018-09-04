@@ -58,7 +58,7 @@ function BCTournament() {
 	bc.tournament.getDivisionInfo = function(divSetId, callback)
 	{
 		var message = {
-			divSetId : divSetId,
+			divSetId : divSetId
 		};
 		
 		bc.brainCloudManager.sendRequest({
