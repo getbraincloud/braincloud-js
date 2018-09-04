@@ -181,7 +181,7 @@ function BCTournament() {
 	bc.tournament.leaveDivisionInstance = function(leaderboardId, callback)
 	{
 		var message = {
-			leaderboardId : leaderboardId,
+			leaderboardId : leaderboardId
 		};
 		
 		bc.brainCloudManager.sendRequest({
