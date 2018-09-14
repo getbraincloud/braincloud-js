@@ -2780,7 +2780,7 @@ async function testVirtualCurrency() {
         bc.virtualCurrency.getParentCurrency("_invalid_id_", "_invalid_level_", result =>
         {
             equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
-            equal(result.reason_code, bc.reasonCodes.MISSING_USER_PARENT, "Expected MISSING_USER_PARENT");
+            equal(result.reason_code, bc.reasonCodes.MISSING_PLAYER_PARENT, "Expected MISSING_PLAYER_PARENT");
             resolve_test();
         });
     });
@@ -3876,8 +3876,8 @@ async function testComms() {
 
     let expiryTimeout = 0;
 
-    await asyncTest("readServerTime()", 3, function() {
-        bc.time.readServerTime(function(result) {
+    await asyncTest("readPlayerState()", 3, function() {
+        bc.playerState.readPlayerState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 403, "Expecting 403");
             equal(result.reason_code, 40304, "Expecting 40304 - NO_SESSION");
@@ -3894,8 +3894,8 @@ async function testComms() {
                 });
     });
 
-    await asyncTest("readServerTime()", 2, function() {
-        bc.time.readServerTime(function(result) {
+    await asyncTest("readPlayerState()", 2, function() {
+        bc.playerState.readPlayerState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -3903,11 +3903,11 @@ async function testComms() {
     });
 
     await asyncTest("Timeout test (With HeartBeat)", 2, function() {
-        bc.time.readServerTime(function(result) {
+        bc.playerState.readPlayerState(function(result) {
             equal(result.status, 200, "Expecting 200");
             console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
             setTimeout(function() {
-                bc.time.readServerTime(function(result) {
+                bc.playerState.readPlayerState(function(result) {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
@@ -3916,12 +3916,12 @@ async function testComms() {
     });
 
     await asyncTest("Timeout test (Without HeartBeat)", 3, function() {
-        bc.time.readServerTime(function(result) {
+        bc.playerState.readPlayerState(function(result) {
             equal(result.status, 200, "Expecting 200");
             console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
             bc.brainCloudClient.stopHeartBeat();
             setTimeout(function() {
-                bc.time.readServerTime(function(result) {
+                bc.playerState.readPlayerState(function(result) {
                     equal(result.status, 403, "Expecting 403");
                     equal(result.reason_code, 40303, "Expecting 40303");
                     resolve_test();
@@ -3959,8 +3959,8 @@ async function testComms() {
     });
 
     // Do a normal call after this to make sure things are still up and running nicely
-    await asyncTest("readServerTime()", 2, function() {
-        bc.time.readServerTime(function(result) {
+    await asyncTest("readPlayerState()", 2, function() {
+        bc.playerState.readPlayerState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
             resolve_test();
