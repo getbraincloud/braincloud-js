@@ -205,7 +205,7 @@ function BCPresence() {
     bc.presence.setVisibility = function(visible, callback)
     {
         var message = {
-            visible: visible,
+            visible: visible
         };
 
         bc.brainCloudManager.sendRequest({
