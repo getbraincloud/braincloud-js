@@ -41,6 +41,8 @@ function BrainCloudWrapper(wrapperName) {
         bcw.playerStatisticsEvent = bcw.brainCloudClient.playerStatisticsEvent;
         bcw.presence = bcw.brainCloudClient.presence;
         bcw.product = bcw.brainCloudClient.product;
+        bcw.virtualCurrency = bcw.brainCloudClient.virtualCurrency;
+        bcw.appStore = bcw.brainCloudClient.appStore;
         bcw.profanity = bcw.brainCloudClient.profanity;
         bcw.pushNotification = bcw.brainCloudClient.pushNotification;
         bcw.reasonCodes = bcw.brainCloudClient.reasonCodes;

@@ -4,6 +4,7 @@ function BCStatusCodes() {
 	bc.statusCodes = {};
 
 	bc.statusCodes.OK = 200;
+	bc.statusCodes.BAD_REQUEST = 400;
 	bc.statusCodes.FORBIDDEN = 403;
 	bc.statusCodes.INTERNAL_SERVER_ERROR = 500;
 
