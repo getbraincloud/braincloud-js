@@ -69,8 +69,8 @@ function BCReasonCodes() {
     bc.reasonCodes.ENTITY_VERSION_MISMATCH = 40344;
     bc.reasonCodes.MISSING_RECORD = 40345;
     bc.reasonCodes.INSUFFICIENT_PERMISSIONS = 40346;
-    bc.reasonCodes.INVALID_DATABASE_FIELD_NAME = 40347;
     bc.reasonCodes.MISSING_IN_QUERY = 40347;
+    bc.reasonCodes.INVALID_DATABASE_FIELD_NAME = 40347;
     bc.reasonCodes.RECORD_EXPIRED = 40348;
     bc.reasonCodes.INVALID_WHERE = 40349;
     bc.reasonCodes.S3_ERROR = 40350;
