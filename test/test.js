@@ -2757,6 +2757,114 @@ async function testProduct() {
     });
 }
 
+async function testVirtualCurrency() {
+    module("VirtualCurrency", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    await asyncTest("getCurrency()", 1, () =>
+    {
+        bc.virtualCurrency.getCurrency("_invalid_id_", result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getParentCurrency()", 2, () =>
+    {
+        bc.virtualCurrency.getParentCurrency("_invalid_id_", "_invalid_level_", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.MISSING_USER_PARENT, "Expected MISSING_USER_PARENT");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getPeerCurrency()", 2, () =>
+    {
+        bc.virtualCurrency.getPeerCurrency("_invalid_id_", "_invalid_peer_code_", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.PROFILE_PEER_NOT_FOUND, "Expected PROFILE_PEER_NOT_FOUND");
+            resolve_test();
+        });
+    });
+}
+
+async function testAppStore() {
+    module("AppStore", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    await asyncTest("verifyPurchase()", 2, () =>
+    {
+        bc.appStore.verifyPurchase("_invalid_store_id_", {}, result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getEligiblePromotions()", 1, () =>
+    {
+        bc.appStore.getEligiblePromotions(result =>
+        {
+            equal(result.status, 200, "Expected 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getSalesInventory()", 2, () =>
+    {
+        bc.appStore.getSalesInventory("_invalid_store_id_", "_invalid_user_currency_", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getSalesInventoryByCategory()", 2, () =>
+    {
+        bc.appStore.getSalesInventoryByCategory("_invalid_store_id_", "_invalid_user_currency_", "_invalid_category_", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("startPurchase()", 2, () =>
+    {
+        bc.appStore.startPurchase("_invalid_store_id_", {}, result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("finalizePurchase()", 2, () =>
+    {
+        bc.appStore.finalizePurchase("_invalid_store_id_", "_invalid_transaction_id_", {}, result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+}
+
 ////////////////////////////////////////
 // Profanity unit tests
 ////////////////////////////////////////
@@ -4797,6 +4905,8 @@ async function run_tests()
     await testPlayerStatisticsEvent();
     await testPlayerStatistics();
     await testProduct();
+    await testVirtualCurrency();
+    await testAppStore();
     await testProfanity();
     await testPushNotification();
     await testRedemptionCode();
