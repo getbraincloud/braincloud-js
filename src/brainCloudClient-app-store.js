@@ -136,7 +136,7 @@ function BCAppStore() {
     * - windowsPhone
     * - googlePlay
     * @param purchaseData specific data for purchasing 2 staged purchases
-    * @param in_callback The method to be invoked when the server response is received
+    * @param callback The method to be invoked when the server response is received
     */
     bc.appStore.startPurchase = function(storeId, purchaseData, callback) {
         var message = {
