@@ -11,17 +11,17 @@ function BCVirtualCurrency() {
     bc.virtualCurrency.OPERATION_GET_PEER_CURRENCY = "GET_PEER_VC";
 
     /**
-     * Retrieve the user's currency account. Optional parameters: currencyType (if retrieving all currencies).
+     * Retrieve the user's currency account. Optional parameters: vcId (if retrieving all currencies).
      *
      * Service Name - VirtualCurrency
      * Service Operation - GetCurrency
      *
-     * @param currencyType
+     * @param vcId
      * @param callback The method to be invoked when the server response is received
      */
-    bc.virtualCurrency.getCurrency = function(currencyType, callback) {
+    bc.virtualCurrency.getCurrency = function(vcId, callback) {
         var message = {
-            vcId: currencyType
+            vcId: vcId
         };
         
         bc.brainCloudManager.sendRequest({
@@ -33,18 +33,18 @@ function BCVirtualCurrency() {
     };
 
     /**
-     * Retrieve the parent user's currency account. Optional parameters: currencyType (if retrieving all currencies).
+     * Retrieve the parent user's currency account. Optional parameters: vcId (if retrieving all currencies).
      *
      * Service Name - VirtualCurrency
      * Service Operation - GetParentCurrency
      *
-     * @param currencyType
+     * @param vcId
      * @param levelName
      * @param callback The method to be invoked when the server response is received
     */
-    bc.virtualCurrency.getParentCurrency = function(currencyType, levelName, callback) {
+    bc.virtualCurrency.getParentCurrency = function(vcId, levelName, callback) {
         var message = {
-            vcId: currencyType,
+            vcId: vcId,
             levelName: levelName
         };
         
@@ -66,9 +66,9 @@ function BCVirtualCurrency() {
      * @param peerCode
      * @param callback The method to be invoked when the server response is received
     */
-    bc.virtualCurrency.getPeerCurrency = function(currencyType, peerCode, callback) {
+    bc.virtualCurrency.getPeerCurrency = function(vcId, peerCode, callback) {
         var message = {
-            vcId: currencyType,
+            vcId: vcId,
             peerCode: peerCode
         };
         
@@ -90,13 +90,13 @@ function BCVirtualCurrency() {
      *
      *  @deprecated For security reasons calling this API from the client is not recommended, and is rejected at the server by default. To over-ride, enable the 'Allow Currency Calls from Client' compatibility setting in the Design Portal.
      *
-     * @param currencyType
+     * @param vcId
      * @param amount
      * @param callback The method to be invoked when the server response is received
      */
-    bc.virtualCurrency.awardCurrency = function(currencyType, amount, callback) {
+    bc.virtualCurrency.awardCurrency = function(vcId, amount, callback) {
         var message = {
-            vcId: currencyType,
+            vcId: vcId,
             vcAmount: amount
         };
         bc.brainCloudManager.sendRequest({
@@ -121,12 +121,12 @@ function BCVirtualCurrency() {
      * @param peerCode
      * @param callback The method to be invoked when the server response is received
      */
-    bc.virtualCurrency.consumeCurrency = function(currencyType, amount, callback) {
+    bc.virtualCurrency.consumeCurrency = function(vcId, amount, callback) {
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_VIRTUAL_CURRENCY,
             operation: bc.product.OPERATION_CONSUME_PLAYER_VC,
             data: {
-                vcId: currencyType,
+                vcId: vcId,
                 vcAmount: amount
             },
             callback: callback
