@@ -2794,6 +2794,26 @@ async function testVirtualCurrency() {
             resolve_test();
         });
     });
+
+    var currencyType = "credits";
+
+    await asyncTest("awardCurrency()", 2, function() {
+        bc.virtualCurrency.awardCurrency(currencyType, 200, function(
+            result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 403, "Expecting 403");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("consumeCurrency()", 2, function() {
+        bc.virtualCurrency.consumeCurrency(currencyType, 100,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 403, "Expecting 403");
+                resolve_test();
+            });
+    });
 }
 
 async function testAppStore() {
