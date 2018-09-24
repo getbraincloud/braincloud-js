@@ -3447,6 +3447,17 @@ async function testSocialLeaderboard() {
                 });
     });
 
+    await asyncTest("getSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getSocialLeaderboardByVersion(leaderboardName,
+                true, 
+                0, 
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("getMultiSocialLeaderboard()", 2, function() {
         bc.socialLeaderboard.getMultiSocialLeaderboard(
                 [ leaderboardName, "testDynamicJs" ],
@@ -3496,6 +3507,19 @@ async function testSocialLeaderboard() {
             });
     });
 
+        //expecting 500 because not implemented on server yet.
+    await asyncTest("getGroupSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getGroupSocialLeaderboardByVersion(
+            leaderboardName,
+            groupId,
+            0,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
             groupId,
@@ -3511,6 +3535,19 @@ async function testSocialLeaderboard() {
         bc.socialLeaderboard.getPlayersSocialLeaderboard(
                 leaderboardName,
                 [ UserA.profileId, UserB.profileId ],
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    //expecting 500 at the moment because theyr not implemented on the server
+    await asyncTest("getPlayersSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getPlayersSocialLeaderboardByVersion(
+                leaderboardName,
+                [ UserA.profileId, UserB.profileId ],
+                0,
                 function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3623,8 +3660,8 @@ async function testTournament() {
         });
     });
 
-    await asyncTest("getDivisions()", 2, function() {
-        bc.tournament.getDivisions(
+    await asyncTest("getMyDivisions()", 2, function() {
+        bc.tournament.getMyDivisions(
         function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -4872,6 +4909,53 @@ async function testPresence()
         return tearDownLogout();
     });
 
+    await asyncTest("forcePush()", 1, () =>
+    {
+        bc.presence.forcePush(result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getPresenceOfFriends()", 1, () =>
+    {
+        bc.presence.getPresenceOfFriends("brainCloud", true, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getPresenceOfGroup()", 1, () =>
+    {
+        bc.presence.getPresenceOfGroup("testPlatform", true, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getPresenceOfUsers()", 1, () =>
+    {
+        var testArray = ["aaa-bbb-ccc", "bbb-ccc-ddd"];
+
+        bc.presence.getPresenceOfUsers(testArray, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("registerListenersForFriends()", 1, () =>
+    {
+        bc.presence.registerListenersForFriends("brainCloud", true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     await asyncTest("registerListenersForGroup()", 1, () =>
     {
         bc.presence.registerListenersForGroup("bad_group_id", true, result =>
@@ -4880,6 +4964,46 @@ async function testPresence()
             resolve_test();
         });
     });
+
+    await asyncTest("registerListenersForProfiles()", 1, () =>
+    {
+        var testArray = ["aaa-bbb-ccc", "bbb-ccc-ddd"];
+
+        bc.presence.registerListenersForProfiles(testArray, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("setVisibility()", 1, () =>
+    {
+        bc.presence.setVisibility(true, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    
+    await asyncTest("stopListening()", 1, () =>
+    {
+        bc.presence.stopListening(result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("updateActivity()", 1, () =>
+    {
+        bc.presence.updateActivity("testJSON", result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
 }
 
 async function run_tests()
@@ -4904,6 +5028,7 @@ async function run_tests()
     await testPlayerState();
     await testPlayerStatisticsEvent();
     await testPlayerStatistics();
+    await testPresence();
     await testProduct();
     await testVirtualCurrency();
     await testAppStore();
@@ -4923,7 +5048,6 @@ async function run_tests()
     await testMessaging();
     await testRTT();
     await testLobby();
-    await testPresence();
 }
 
 async function main()
