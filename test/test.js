@@ -3467,6 +3467,17 @@ async function testSocialLeaderboard() {
                 });
     });
 
+    await asyncTest("getSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getSocialLeaderboardByVersion(leaderboardName,
+                true, 
+                0, 
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("getMultiSocialLeaderboard()", 2, function() {
         bc.socialLeaderboard.getMultiSocialLeaderboard(
                 [ leaderboardName, "testDynamicJs" ],
@@ -3516,6 +3527,19 @@ async function testSocialLeaderboard() {
             });
     });
 
+        //expecting 500 because not implemented on server yet.
+    await asyncTest("getGroupSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getGroupSocialLeaderboardByVersion(
+            leaderboardName,
+            groupId,
+            0,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
             groupId,
@@ -3531,6 +3555,19 @@ async function testSocialLeaderboard() {
         bc.socialLeaderboard.getPlayersSocialLeaderboard(
                 leaderboardName,
                 [ UserA.profileId, UserB.profileId ],
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    //expecting 500 at the moment because theyr not implemented on the server
+    await asyncTest("getPlayersSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getPlayersSocialLeaderboardByVersion(
+                leaderboardName,
+                [ UserA.profileId, UserB.profileId ],
+                0,
                 function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
