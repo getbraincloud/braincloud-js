@@ -13,12 +13,15 @@ function BCSocialLeaderboard() {
 	bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC = "POST_SCORE_DYNAMIC";
 	bc.socialLeaderboard.OPERATION_RESET = "RESET";
 	bc.socialLeaderboard.OPERATION_GET_SOCIAL_LEADERBOARD = "GET_SOCIAL_LEADERBOARD";
+	bc.socialLeaderboard.OPERATION_GET_SOCIAL_LEADERBOARD_BY_VERSION = "GET_SOCIAL_LEADERBOARD_BY_VERSION";
 	bc.socialLeaderboard.OPERATION_GET_MULTI_SOCIAL_LEADERBOARD = "GET_MULTI_SOCIAL_LEADERBOARD";
 	bc.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_PAGE = "GET_GLOBAL_LEADERBOARD_PAGE";
 	bc.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_VIEW = "GET_GLOBAL_LEADERBOARD_VIEW";
 	bc.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_VERSIONS = "GET_GLOBAL_LEADERBOARD_VERSIONS";
 	bc.socialLeaderboard.OPERATION_GET_GROUP_SOCIAL_LEADERBOARD = "GET_GROUP_SOCIAL_LEADERBOARD";
+	bc.socialLeaderboard.OPERATION_GET_GROUP_SOCIAL_LEADERBOARD_BY_VERSION = "GET_GROUP_SOCIAL_LEADERBOARD_BY_VERSION";
 	bc.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD = "GET_PLAYERS_SOCIAL_LEADERBOARD";
+	bc.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD_BY_VERSION = "GET_PLAYERS_SOCIAL_LEADERBOARD_BY_VERSION";
 	bc.socialLeaderboard.OPERATION_LIST_ALL_LEADERBOARDS = "LIST_ALL_LEADERBOARDS";
 	bc.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_ENTRY_COUNT = "GET_GLOBAL_LEADERBOARD_ENTRY_COUNT";
 	bc.socialLeaderboard.OPERATION_REMOVE_PLAYER_SCORE = "REMOVE_PLAYER_SCORE";
@@ -227,6 +230,43 @@ function BCSocialLeaderboard() {
 	};
 
 	/**
+	 * Method returns the social leaderboard by version. A player's social leaderboard is
+	 * comprised of players who are recognized as being your friend.
+	 * For now, this applies solely to Facebook connected players who are
+	 * friends with the logged in player (who also must be Facebook connected).
+	 * In the future this will expand to other identification means (such as
+	 * Game Centre, Google circles etc).
+	 *
+	 * Leaderboards entries contain the player's score and optionally, some user-defined
+	 * data associated with the score. The currently logged in player will also
+	 * be returned in the social leaderboard.
+	 *
+	 * Note: If no friends have played the game, the bestScore, createdAt, updatedAt
+	 * will contain NULL.
+	 *
+	 * @param leaderboardId The id of the leaderboard to retrieve
+	 * @param replaceName If true, the currently logged in player's name will be replaced
+	 * by the string "You".
+	 * @param versionId the version of the social leaderboard
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 */
+	bc.socialLeaderboard.getSocialLeaderboardByVersion = function(
+		leaderboardId, replaceName, versionId, callback) {
+		bc.brainCloudManager
+			.sendRequest({
+				service : bc.SERVICE_LEADERBOARD,
+				operation : bc.socialLeaderboard.OPERATION_GET_SOCIAL_LEADERBOARD_BY_VERSION,
+				data : {
+					leaderboardId : leaderboardId,
+					replaceName : replaceName,
+					versionId : versionId
+				},
+				callback : callback
+			});
+	};
+
+	/**
 	 * Reads multiple social leaderboards.
 	 *
 	 * @param leaderboardIds An array of leaderboard ID strings.
@@ -411,6 +451,32 @@ function BCSocialLeaderboard() {
 		});
 	}
 
+	/** 
+	 * Retrieve the social leaderboard for a group by its version.
+	 *
+	 * Service Name - leaderboard
+	 * Service Operation - GET_GROUP_SOCIAL_LEADERBOARD_BY_VERSION
+	 *
+	 * @param leaderboardId The leaderboard to retreive
+	 * @param groupId The ID of the group
+	 * @param versionId the version of the leaderboard
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.socialLeaderboard.getGroupSocialLeaderboardByVersion = function(leaderboardId, groupId, versionId, callback) {
+		var message = {
+			leaderboardId : leaderboardId,
+			groupId : groupId,
+			versionId : versionId
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_LEADERBOARD,
+			operation : bc.socialLeaderboard.OPERATION_GET_GROUP_SOCIAL_LEADERBOARD_BY_VERSION,
+			data : message,
+			callback : callback
+		});
+	}
+
 	/**
 	 * Retrieve the social leaderboard for a group.
 	 *
@@ -430,6 +496,32 @@ function BCSocialLeaderboard() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_LEADERBOARD,
 			operation : bc.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD,
+			data : message,
+			callback : callback
+		});
+	}
+
+	/**
+	 * Retrieve the social leaderboard for a player by the version.
+	 *
+	 * Service Name - leaderboard
+	 * Service Operation - GET_PLAYER_SOCIAL_LEADERBOARD_BY_VERSION
+	 *
+	 * @param leaderboardId The leaderboard to retrieve
+	 * @param profileIds The IDs of the players
+	 * @param versionId The version of the leaderboard
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.socialLeaderboard.getPlayersSocialLeaderboardByVersion = function(leaderboardId, profileIds, versionId, callback) {
+		var message = {
+			leaderboardId : leaderboardId,
+			profileIds : profileIds,
+			versionId : versionId
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_LEADERBOARD,
+			operation : bc.socialLeaderboard.OPERATION_GET_PLAYERS_SOCIAL_LEADERBOARD_BY_VERSION,
 			data : message,
 			callback : callback
 		});
