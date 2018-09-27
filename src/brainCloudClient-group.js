@@ -737,7 +737,7 @@ function BCGroup() {
 
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_GROUP,
-            operation : bc.group.SET_GROUP_OPEN,
+            operation : bc.group.OPERATION_SET_GROUP_OPEN,
             data : message,
             callback : callback
         });

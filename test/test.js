@@ -1892,6 +1892,18 @@ async function testGroup() {
                 });
     });
 
+    await asyncTest("setGroupOpen()", 2, function() {
+        
+        bc.group.setGroupOpen(
+                groupId,
+                true,
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
                 groupId,
