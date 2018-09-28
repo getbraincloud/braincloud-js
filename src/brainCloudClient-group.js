@@ -743,30 +743,6 @@ function BCGroup() {
         });
     };
 
-    /**
-     * Set a group's access conditions.
-     *
-     * Service Name - group
-     * Service Operation - UPDATE_GROUP_ACL
-     *
-     * @param groupId ID of the group.
-     * @param acl The group's access control list. A null ACL implies default
-     * @param callback The method to be invoked when the server response is received
-     */
-    bc.group.updateGroupAcl = function(groupId, acl, callback) {
-        var message = {
-            groupId : groupId,
-            acl : acl
-        };
-
-        bc.brainCloudManager.sendRequest({
-            service : bc.SERVICE_GROUP,
-            operation : bc.group.OPERATION_UPDATE_GROUP_ACL,
-            data : message,
-            callback : callback
-        });
-    };
-
 	/**
 	 * Updates a group's data.
 	 *
