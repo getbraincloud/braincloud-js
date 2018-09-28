@@ -747,7 +747,7 @@ function BCGroup() {
      * Set a group's access conditions.
      *
      * Service Name - group
-     * Service Operation - UPDATE_GROUP_DATA
+     * Service Operation - UPDATE_GROUP_ACL
      *
      * @param groupId ID of the group.
      * @param acl The group's access control list. A null ACL implies default
