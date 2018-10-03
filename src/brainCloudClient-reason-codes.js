@@ -361,6 +361,10 @@ function BCReasonCodes() {
     bc.reasonCodes.DIVISION_SET_MAX_SIZE_REACHED = 40636;
     bc.reasonCodes.DIVISION_SET_INFO_ERROR = 40637;
     bc.reasonCodes.DIVISION_SET_API_MUST_BE_USED = 40638;
+    bc.reasonCodes.API_CALL_REJECTED = 40639;
+    bc.reasonCodes.LEADERBOARD_TOURNAMENT_TEMPLATE_ONLY = 40640;
+    bc.reasonCodes.INVALID_TOURNAMENT_JOB_ID = 40641;
+    bc.reasonCodes.LEADERBOARD_ROTATION_ERROR = 40642;
     bc.reasonCodes.INVALID_STORE_ID = 40700;
     bc.reasonCodes.METHOD_DEPRECATED = 40701;
     bc.reasonCodes.NO_TWITTER_CONSUMER_KEY = 500001;
