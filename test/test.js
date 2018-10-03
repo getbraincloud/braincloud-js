@@ -2711,7 +2711,7 @@ async function testProduct() {
         bc.product.awardCurrency(currencyType, 200, function(
                 result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 403, "Expecting 403");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
@@ -2720,7 +2720,7 @@ async function testProduct() {
         bc.product.consumeCurrency(currencyType, 100,
                 function(result) {
                     ok(true, JSON.stringify(result));
-                    equal(result.status, 403, "Expecting 403");
+                    equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
     });
@@ -2763,7 +2763,7 @@ async function testProduct() {
     await asyncTest("resetCurrency()", 2, function() {
         bc.product.resetCurrency(function(result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 403, "Expecting 403");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
@@ -2813,7 +2813,7 @@ async function testVirtualCurrency() {
         bc.virtualCurrency.awardCurrency(currencyType, 200, function(
             result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 403, "Expecting 403");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
@@ -2822,7 +2822,7 @@ async function testVirtualCurrency() {
         bc.virtualCurrency.consumeCurrency(currencyType, 100,
             function(result) {
                 ok(true, JSON.stringify(result));
-                equal(result.status, 403, "Expecting 403");
+                equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
     });
