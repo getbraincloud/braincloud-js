@@ -34,6 +34,8 @@ function BCGroup() {
 	bc.group.OPERATION_REJECT_GROUP_INVITATION = "REJECT_GROUP_INVITATION";
 	bc.group.OPERATION_REJECT_GROUP_JOIN_REQUEST = "REJECT_GROUP_JOIN_REQUEST";
 	bc.group.OPERATION_REMOVE_GROUP_MEMBER = "REMOVE_GROUP_MEMBER";
+    bc.group.OPERATION_SET_GROUP_OPEN = "SET_GROUP_OPEN";
+	bc.group.OPERATION_UPDATE_GROUP_ACL = "UPDATE_GROUP_ACL";
 	bc.group.OPERATION_UPDATE_GROUP_DATA = "UPDATE_GROUP_DATA";
 	bc.group.OPERATION_UPDATE_GROUP_ENTITY = "UPDATE_GROUP_ENTITY_DATA";
 	bc.group.OPERATION_UPDATE_GROUP_MEMBER = "UPDATE_GROUP_MEMBER";
@@ -716,6 +718,30 @@ function BCGroup() {
 			callback : callback
 		});
 	};
+
+    /**
+     * Set whether a group is open (true) or closed (false).
+     *
+     * Service Name - group
+     * Service Operation - SET_GROUP_OPEN
+     *
+     * @param groupId ID of the group.
+     * @param isOpenGroup true if group is open; false if closed
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.group.setGroupOpen = function(groupId, isOpenGroup, callback) {
+        var message = {
+            groupId : groupId,
+            isOpenGroup : isOpenGroup
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_GROUP,
+            operation : bc.group.OPERATION_SET_GROUP_OPEN,
+            data : message,
+            callback : callback
+        });
+    };
 
 	/**
 	 * Updates a group's data.
