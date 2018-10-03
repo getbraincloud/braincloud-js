@@ -149,7 +149,7 @@ function BCMessaging() {
     };
 
     /**
-     * Marks list of user messages as read on the server.
+     * Sends a message with specified 'subject' and 'text' to list of users.
      *
      * Service Name - Messaging
      * Service Operation - SEND_MESSAGE
@@ -177,7 +177,7 @@ function BCMessaging() {
     };
 
     /**
-     * Marks list of user messages as read on the server.
+     * Sends a simple message to specified list of users.
      *
      * Service Name - Messaging
      * Service Operation - SEND_MESSAGE_SIMPLE

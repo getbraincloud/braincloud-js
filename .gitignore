@@ -1,6 +1,7 @@
 *.swp
 autobuild/artifacts
 ids.txt
+ids_prod.txt
 node_modules/
 
 \.idea/

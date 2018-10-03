@@ -34,7 +34,10 @@ function BrainCloudClient() {
         BCPlayerState.apply(bcc);
         BCPlayerStatistics.apply(bcc);
         BCPlayerStatisticsEvent.apply(bcc);
+        BCPresence.apply(bcc);
         BCProducts.apply(bcc);
+        BCVirtualCurrency.apply(bcc);
+        BCAppStore.apply(bcc);
         BCProfanity.apply(bcc);
         BCPushNotifications.apply(bcc);
         BCReasonCodes.apply(bcc);
@@ -74,7 +77,10 @@ function BrainCloudClient() {
         bcc.brainCloudManager.playerState = bcc.playerState;
         bcc.brainCloudManager.playerStatistics = bcc.playerStatistics;
         bcc.brainCloudManager.playerStatisticsEvent = bcc.playerStatisticsEvent;
+        bcc.brainCloudManager.presence = bcc.precense;
         bcc.brainCloudManager.product = bcc.product;
+        bcc.brainCloudManager.virtualCurrency = bcc.virtualCurrency;
+        bcc.brainCloudManager.appStore = bcc.appStore;
         bcc.brainCloudManager.profanity = bcc.profanity;
         bcc.brainCloudManager.pushNotification = bcc.pushNotification;
         bcc.brainCloudManager.reasonCodes = bcc.reasonCodes;
@@ -120,7 +126,10 @@ function BrainCloudClient() {
         bcc.brainCloudManager.playerState = bcc.brainCloudClient.playerState = bcc.brainCloudClient.playerState || {};
         bcc.brainCloudManager.playerStatistics = bcc.brainCloudClient.playerStatistics = bcc.brainCloudClient.playerStatistics || {};
         bcc.brainCloudManager.playerStatisticsEvent = bcc.brainCloudClient.playerStatisticsEvent = bcc.brainCloudClient.playerStatisticsEvent || {};
+        bcc.brainCloudManager.presence = bcc.brainCloudClient.presence = bcc.brainCloudClient.presence || {};
         bcc.brainCloudManager.product = bcc.brainCloudClient.product = bcc.brainCloudClient.product || {};
+        bcc.brainCloudManager.virtualCurrency = bcc.brainCloudClient.virtualCurrency = bcc.brainCloudClient.virtualCurrency || {};
+        bcc.brainCloudManager.appStore = bcc.brainCloudClient.appStore = bcc.brainCloudClient.appStore || {};
         bcc.brainCloudManager.profanity = bcc.brainCloudClient.profanity = bcc.brainCloudClient.profanity || {};
         bcc.brainCloudManager.pushNotification = bcc.brainCloudClient.pushNotification = bcc.brainCloudClient.pushNotification || {};
         bcc.brainCloudManager.reasonCodes = bcc.brainCloudClient.reasonCodes = bcc.brainCloudClient.reasonCodes || {};
@@ -138,7 +147,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "3.8.1";
+    bcc.version = "3.9.0";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -479,6 +488,19 @@ function BrainCloudClient() {
     }
     bcc.deregisterRTTLobbyCallback = function() {
         bcc.brainCloudRttComms.deregisterRTTCallback(bcc.SERVICE_LOBBY);
+    }
+
+    /**
+     * Listen to real time presence events.
+     * 
+     * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
+     * Only one presence callback can be registered at a time. Calling this a second time will override the previous callback.
+     */
+    bcc.registerRTTPresenceCallback = function(callback) {
+        bcc.brainCloudRttComms.registerRTTCallback(bcc.SERVICE_PRESENCE, callback);
+    }
+    bcc.deregisterRTTPresenceCallback = function() {
+        bcc.brainCloudRttComms.deregisterRTTCallback(bcc.SERVICE_PRESENCE);
     }
 
     /**

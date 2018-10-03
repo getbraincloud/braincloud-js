@@ -1892,6 +1892,18 @@ async function testGroup() {
                 });
     });
 
+    await asyncTest("setGroupOpen()", 2, function() {
+        
+        bc.group.setGroupOpen(
+                groupId,
+                true,
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
                 groupId,
@@ -2699,7 +2711,7 @@ async function testProduct() {
         bc.product.awardCurrency(currencyType, 200, function(
                 result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 403, "Expecting 403");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
@@ -2708,7 +2720,7 @@ async function testProduct() {
         bc.product.consumeCurrency(currencyType, 100,
                 function(result) {
                     ok(true, JSON.stringify(result));
-                    equal(result.status, 403, "Expecting 403");
+                    equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
     });
@@ -2751,7 +2763,135 @@ async function testProduct() {
     await asyncTest("resetCurrency()", 2, function() {
         bc.product.resetCurrency(function(result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 403, "Expecting 403");
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+}
+
+async function testVirtualCurrency() {
+    module("VirtualCurrency", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    await asyncTest("getCurrency()", 1, () =>
+    {
+        bc.virtualCurrency.getCurrency("_invalid_id_", result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getParentCurrency()", 2, () =>
+    {
+        bc.virtualCurrency.getParentCurrency("_invalid_id_", "_invalid_level_", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.MISSING_PLAYER_PARENT, "Expected MISSING_PLAYER_PARENT");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getPeerCurrency()", 2, () =>
+    {
+        bc.virtualCurrency.getPeerCurrency("_invalid_id_", "_invalid_peer_code_", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.PROFILE_PEER_NOT_FOUND, "Expected PROFILE_PEER_NOT_FOUND");
+            resolve_test();
+        });
+    });
+
+    var currencyType = "credits";
+
+    await asyncTest("awardCurrency()", 2, function() {
+        bc.virtualCurrency.awardCurrency(currencyType, 200, function(
+            result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("consumeCurrency()", 2, function() {
+        bc.virtualCurrency.consumeCurrency(currencyType, 100,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+}
+
+async function testAppStore() {
+    module("AppStore", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    await asyncTest("verifyPurchase()", 2, () =>
+    {
+        bc.appStore.verifyPurchase("_invalid_store_id_", {}, result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getEligiblePromotions()", 1, () =>
+    {
+        bc.appStore.getEligiblePromotions(result =>
+        {
+            equal(result.status, 200, "Expected 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getSalesInventory()", 2, () =>
+    {
+        bc.appStore.getSalesInventory("_invalid_store_id_", "_invalid_user_currency_", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getSalesInventoryByCategory()", 2, () =>
+    {
+        bc.appStore.getSalesInventoryByCategory("_invalid_store_id_", "_invalid_user_currency_", "_invalid_category_", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("startPurchase()", 2, () =>
+    {
+        bc.appStore.startPurchase("_invalid_store_id_", {}, result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("finalizePurchase()", 2, () =>
+    {
+        bc.appStore.finalizePurchase("_invalid_store_id_", "_invalid_transaction_id_", {}, result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
             resolve_test();
         });
     });
@@ -3339,6 +3479,17 @@ async function testSocialLeaderboard() {
                 });
     });
 
+    await asyncTest("getSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getSocialLeaderboardByVersion(leaderboardName,
+                true, 
+                0, 
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("getMultiSocialLeaderboard()", 2, function() {
         bc.socialLeaderboard.getMultiSocialLeaderboard(
                 [ leaderboardName, "testDynamicJs" ],
@@ -3388,6 +3539,18 @@ async function testSocialLeaderboard() {
             });
     });
 
+    await asyncTest("getGroupSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getGroupSocialLeaderboardByVersion(
+            leaderboardName,
+            groupId,
+            0,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
             groupId,
@@ -3403,6 +3566,18 @@ async function testSocialLeaderboard() {
         bc.socialLeaderboard.getPlayersSocialLeaderboard(
                 leaderboardName,
                 [ UserA.profileId, UserB.profileId ],
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+    
+    await asyncTest("getPlayersSocialLeaderboardByVersion()", 2, function() {
+        bc.socialLeaderboard.getPlayersSocialLeaderboardByVersion(
+                leaderboardName,
+                [ UserA.profileId, UserB.profileId ],
+                0,
                 function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3476,6 +3651,7 @@ async function testTournament() {
         return tearDownLogout();
     });
 
+    var _divSetId = "testDivSet";
     var _tournamentCode = "testTournament";
     var _leaderboardId = "testTournamentLeaderboard";
     var _version = 0;
@@ -3500,6 +3676,47 @@ async function testTournament() {
             ok(true, JSON.stringify(result));
             _version = result.data.versionId;
             equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getDivisionInfo()", 2, function() {
+        bc.tournament.getDivisionInfo(
+        _divSetId,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getMyDivisions()", 2, function() {
+        bc.tournament.getMyDivisions(
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("joinDivision()", 2, function() {
+        bc.tournament.joinDivision(
+        _divSetId,
+        _tournamentCode,
+        0,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("leaveDivisionInstance()", 2, function() {
+        bc.tournament.leaveDivisionInstance(
+        _divSetId,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 400, "Expecting 400");
             resolve_test();
         });
     });
@@ -3726,8 +3943,8 @@ async function testComms() {
 
     let expiryTimeout = 0;
 
-    await asyncTest("readServerTime()", 3, function() {
-        bc.time.readServerTime(function(result) {
+    await asyncTest("readPlayerState()", 3, function() {
+        bc.playerState.readPlayerState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 403, "Expecting 403");
             equal(result.reason_code, 40304, "Expecting 40304 - NO_SESSION");
@@ -3744,8 +3961,8 @@ async function testComms() {
                 });
     });
 
-    await asyncTest("readServerTime()", 2, function() {
-        bc.time.readServerTime(function(result) {
+    await asyncTest("readPlayerState()", 2, function() {
+        bc.playerState.readPlayerState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -3753,11 +3970,11 @@ async function testComms() {
     });
 
     await asyncTest("Timeout test (With HeartBeat)", 2, function() {
-        bc.time.readServerTime(function(result) {
+        bc.playerState.readPlayerState(function(result) {
             equal(result.status, 200, "Expecting 200");
             console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
             setTimeout(function() {
-                bc.time.readServerTime(function(result) {
+                bc.playerState.readPlayerState(function(result) {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
@@ -3766,12 +3983,12 @@ async function testComms() {
     });
 
     await asyncTest("Timeout test (Without HeartBeat)", 3, function() {
-        bc.time.readServerTime(function(result) {
+        bc.playerState.readPlayerState(function(result) {
             equal(result.status, 200, "Expecting 200");
             console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
             bc.brainCloudClient.stopHeartBeat();
             setTimeout(function() {
-                bc.time.readServerTime(function(result) {
+                bc.playerState.readPlayerState(function(result) {
                     equal(result.status, 403, "Expecting 403");
                     equal(result.reason_code, 40303, "Expecting 40303");
                     resolve_test();
@@ -3809,8 +4026,8 @@ async function testComms() {
     });
 
     // Do a normal call after this to make sure things are still up and running nicely
-    await asyncTest("readServerTime()", 2, function() {
-        bc.time.readServerTime(function(result) {
+    await asyncTest("readPlayerState()", 2, function() {
+        bc.playerState.readPlayerState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -4712,6 +4929,113 @@ async function testLobby() {
     });
 }
 
+async function testPresence()
+{
+    module("Presence", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    });
+
+    await asyncTest("forcePush()", 1, () =>
+    {
+        bc.presence.forcePush(result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getPresenceOfFriends()", 1, () =>
+    {
+        bc.presence.getPresenceOfFriends("brainCloud", true, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getPresenceOfGroup()", 1, () =>
+    {
+        bc.presence.getPresenceOfGroup("testPlatform", true, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getPresenceOfUsers()", 1, () =>
+    {
+        var testArray = ["aaa-bbb-ccc", "bbb-ccc-ddd"];
+
+        bc.presence.getPresenceOfUsers(testArray, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("registerListenersForFriends()", 1, () =>
+    {
+        bc.presence.registerListenersForFriends("brainCloud", true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("registerListenersForGroup()", 1, () =>
+    {
+        bc.presence.registerListenersForGroup("bad_group_id", true, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("registerListenersForProfiles()", 1, () =>
+    {
+        var testArray = ["aaa-bbb-ccc", "bbb-ccc-ddd"];
+
+        bc.presence.registerListenersForProfiles(testArray, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("setVisibility()", 1, () =>
+    {
+        bc.presence.setVisibility(true, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    
+    await asyncTest("stopListening()", 1, () =>
+    {
+        bc.presence.stopListening(result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("updateActivity()", 1, () =>
+    {
+        bc.presence.updateActivity("testJSON", result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -4734,7 +5058,10 @@ async function run_tests()
     await testPlayerState();
     await testPlayerStatisticsEvent();
     await testPlayerStatistics();
+    await testPresence();
     await testProduct();
+    await testVirtualCurrency();
+    await testAppStore();
     await testProfanity();
     await testPushNotification();
     await testRedemptionCode();
