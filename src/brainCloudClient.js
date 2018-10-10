@@ -182,6 +182,29 @@ function BrainCloudClient() {
         bcc.brainCloudManager.initialize(appId, secret, appVersion);
     };
 
+    bcc.initializeWithApps = function(defaultAppId, secretMap, appVersion) {
+        function isBlank(str) {
+            return (!str || /^\s*$/.test(str));
+        };
+
+        var appId = defaultAppId;
+        var secret = secretMap[appId];
+
+        var error = null;
+        if (isBlank(secret))
+            error = "secret was null or empty";
+        else if (isBlank(appId))
+            error = "appId was null or empty";
+        else if (isBlank(appVersion))
+            error = "appVersion was null or empty";
+        if (error != null) {
+            console.log("ERROR | Failed to initialize brainCloud - " + error);
+            return;
+        }
+
+        bcc.brainCloudManager.initializeWithApps(defaultAppId, secretMap, appVersion);
+    };
+
     /**
      * Initializes the identity service with the most recently
      * used profile id and saved anonymous installation id
