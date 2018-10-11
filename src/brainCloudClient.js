@@ -147,7 +147,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "3.9.0";
+    bcc.version = "3.9.1";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -180,6 +180,29 @@ function BrainCloudClient() {
         }
 
         bcc.brainCloudManager.initialize(appId, secret, appVersion);
+    };
+
+    bcc.initializeWithApps = function(defaultAppId, secretMap, appVersion) {
+        function isBlank(str) {
+            return (!str || /^\s*$/.test(str));
+        };
+
+        var appId = defaultAppId;
+        var secret = secretMap[appId];
+
+        var error = null;
+        if (isBlank(secret))
+            error = "secret was null or empty";
+        else if (isBlank(appId))
+            error = "appId was null or empty";
+        else if (isBlank(appVersion))
+            error = "appVersion was null or empty";
+        if (error != null) {
+            console.log("ERROR | Failed to initialize brainCloud - " + error);
+            return;
+        }
+
+        bcc.brainCloudManager.initializeWithApps(defaultAppId, secretMap, appVersion);
     };
 
     /**

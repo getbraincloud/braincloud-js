@@ -25,6 +25,7 @@ function BrainCloudManager ()
 
     bcm._appId = "";
     bcm._secret = "";
+    bcm._secretMap = {};
     bcm._serverUrl = "https://sharedprod.braincloudservers.com";
     bcm._dispatcherUrl = bcm._serverUrl + "/dispatcherv2";
     bcm._fileUploadUrl = bcm._serverUrl + "/uploader";
@@ -52,6 +53,17 @@ function BrainCloudManager ()
     {
         bcm._appId = appId;
         bcm._secret = secret;
+        bcm._secretMap = {};
+        bcm._secretMap[appId] = secret;
+        bcm._appVersion = appVersion;
+        bcm._isInitialized = true;
+    };
+
+    bcm.initializeWithApps = function(defaultAppId, secretMap, appVersion)
+    {
+        bcm._appId = defaultAppId;
+        bcm._secret = secretMap[defaultAppId];
+        bcm._secretMap = secretMap;
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
     };
@@ -375,6 +387,11 @@ function BrainCloudManager ()
                     if (data.profileId)
                     {
                         bcm.authentication.profileId = data.profileId;
+                    }
+                    if (data.switchToAppId)
+                    {
+                        bcm._appId = data.switchToAppId;
+                        bcm._secret = bcm._secretMap[data.switchToAppId];
                     }
                 }
 
