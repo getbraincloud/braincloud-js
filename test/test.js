@@ -4407,7 +4407,7 @@ async function testMessaging()
         bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
         {
             equal(result.status, 200, "Expecting 200");
-            bc.messaging.sendMessage([UserB.profileId], "Hello World!", "Important - Please Read", result =>
+            bc.messaging.sendMessage([UserB.profileId], {text: "Hello World!", subject: "Important - Please Read"}, result =>
             {
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
