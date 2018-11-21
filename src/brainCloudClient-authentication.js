@@ -346,22 +346,22 @@ function BCAuthentication() {
 		};
 		//console.log("Request: " + JSON.stringify(request));
 		bc.brainCloudManager.sendRequest(request);
-	};
-
+    };
+    
 	/**
 	 * Authenticate the user using a Pase userid and authentication token
 	 *
 	 * Service Name - Authenticate
 	 * Service Operation - Authenticate
 	 *
-	 * @param userId braincloud profileId
-	 * @param token The handoff token
+	 * @param handoffId braincloud handoff Id generated from cloud script
+	 * @param securityToken The security token entered by the user
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.authentication.authenticateHandoff = function(profileId, token, callback) {
+	bc.authentication.authenticateHandoff = function(handoffId, securityToken, callback) {
 		bc.authentication.authenticate(
-			profileId,
-			token,
+			handoffId,
+			securityToken,
 			bc.authentication.AUTHENTICATION_TYPE_HANDOFF,
 			null,
 			false,
