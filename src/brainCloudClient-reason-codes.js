@@ -367,6 +367,7 @@ function BCReasonCodes() {
     bc.reasonCodes.LEADERBOARD_ROTATION_ERROR = 40642;
     bc.reasonCodes.INVALID_STORE_ID = 40700;
     bc.reasonCodes.METHOD_DEPRECATED = 40701;
+    bc.reasonCodes.INVALID_BILLING_PROVIDER_ID = 40702;
     bc.reasonCodes.NO_TWITTER_CONSUMER_KEY = 500001;
     bc.reasonCodes.NO_TWITTER_CONSUMER_SECRET = 500002;
     bc.reasonCodes.INVALID_CONFIGURATION = 500003;
