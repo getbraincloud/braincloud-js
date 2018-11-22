@@ -19,6 +19,7 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_STEAM = "Steam";
 	bc.authentication.AUTHENTICATION_TYPE_TWITTER = "Twitter";
 	bc.authentication.AUTHENTICATION_TYPE_PARSE = "Parse";
+	bc.authentication.AUTHENTICATION_TYPE_HANDOFF = "Handoff";
 
 	bc.authentication.profileId = "";
 	bc.authentication.anonymousId = "";
@@ -345,6 +346,26 @@ function BCAuthentication() {
 		};
 		//console.log("Request: " + JSON.stringify(request));
 		bc.brainCloudManager.sendRequest(request);
+    };
+    
+	/**
+	 * Authenticate the user using a Pase userid and authentication token
+	 *
+	 * Service Name - Authenticate
+	 * Service Operation - Authenticate
+	 *
+	 * @param handoffId braincloud handoff Id generated from cloud script
+	 * @param securityToken The security token entered by the user
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.authentication.authenticateHandoff = function(handoffId, securityToken, callback) {
+		bc.authentication.authenticate(
+			handoffId,
+			securityToken,
+			bc.authentication.AUTHENTICATION_TYPE_HANDOFF,
+			null,
+			false,
+			callback);
 	};
 
 	/** Method allows a caller to authenticate with bc. Note that

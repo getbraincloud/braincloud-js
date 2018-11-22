@@ -107,6 +107,7 @@ function loadIDs()
     SERVER_URL = ids.serverUrl;
     PARENT_LEVEL_NAME = ids.parentLevelName;
     CHILD_APP_ID = ids.childAppId;
+    CHILD_SECRET = ids.childSecret;
     PEER_NAME = ids.peerName;
 
     console.log("ids.txt:");
@@ -116,6 +117,7 @@ function loadIDs()
     console.log("  SERVER_URL: " + SERVER_URL);
     console.log("  PARENT_LEVEL_NAME: " + PARENT_LEVEL_NAME);
     console.log("  CHILD_APP_ID: " + CHILD_APP_ID);
+    console.log("  CHILD_SECRET: " + CHILD_SECRET);
     console.log("  PEER_NAME: " + PEER_NAME);
 }
 
@@ -146,7 +148,10 @@ function initializeClient()
     bc.brainCloudClient.setDebugEnabled(true);
 
     //initialize with our game id, secret and game version
-    bc.brainCloudClient.initialize(GAME_ID, SECRET, GAME_VERSION);
+    var secretMap = {};
+    secretMap[GAME_ID] = SECRET;
+    secretMap[CHILD_APP_ID] = CHILD_SECRET;
+    bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
 
     // point to internal (default is sharedprod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
@@ -561,6 +566,16 @@ async function testAuthentication() {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
+    });
+
+    await asyncTest("authenticateHandoff()", 2, function() {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateHandoff("_invalid_profileId_", "_invalid_handoff_token_", function(result) {
+                equal(result.status, bc.statusCodes.FORBIDDEN);
+                equal(result.reason_code, bc.reasonCodes.TOKEN_DOES_NOT_MATCH_USER);
+                resolve_test();
+            });
     });
 }
 
@@ -4402,7 +4417,7 @@ async function testMessaging()
         bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
         {
             equal(result.status, 200, "Expecting 200");
-            bc.messaging.sendMessage([UserB.profileId], "Hello World!", "Important - Please Read", result =>
+            bc.messaging.sendMessage([UserB.profileId], {text: "Hello World!", subject: "Important - Please Read"}, result =>
             {
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();

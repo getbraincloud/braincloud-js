@@ -119,6 +119,10 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.initialize(appId, secret, appVersion);
     };
 
+    bcw.initializeWithApps = function(defaultAppId, secretMap, appVersion) {
+        bcw.brainCloudClient.initialize(defaultAppId, secretMap, appVersion);
+    };
+
     bcw.getStoredAnonymousId = function() {
         var prefix = wrapperName === "" ? "" : wrapperName + ".";
         return localStorage.getItem(prefix + "anonymousId");
