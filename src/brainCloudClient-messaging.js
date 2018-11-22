@@ -159,13 +159,10 @@ function BCMessaging() {
      * @param messageSubject
      * @param callback The method to be invoked when the server response is received
      */
-    bc.messaging.sendMessage = function(toProfileIds, messageText, messageSubject, callback) {
+    bc.messaging.sendMessage = function(toProfileIds, content, callback) {
         var message = {
             toProfileIds: toProfileIds,
-            contentJson: {
-                subject: messageSubject,
-                text: messageText
-            }
+            contentJson: content
         };
 
         bc.brainCloudManager.sendRequest({

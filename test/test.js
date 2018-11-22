@@ -567,6 +567,16 @@ async function testAuthentication() {
                     resolve_test();
                 });
     });
+
+    await asyncTest("authenticateHandoff()", 2, function() {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateHandoff("_invalid_profileId_", "_invalid_handoff_token_", function(result) {
+                equal(result.status, bc.statusCodes.FORBIDDEN);
+                equal(result.reason_code, bc.reasonCodes.TOKEN_DOES_NOT_MATCH_USER);
+                resolve_test();
+            });
+    });
 }
 
 ////////////////////////////////////////
@@ -4407,7 +4417,7 @@ async function testMessaging()
         bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
         {
             equal(result.status, 200, "Expecting 200");
-            bc.messaging.sendMessage([UserB.profileId], "Hello World!", "Important - Please Read", result =>
+            bc.messaging.sendMessage([UserB.profileId], {text: "Hello World!", subject: "Important - Please Read"}, result =>
             {
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
