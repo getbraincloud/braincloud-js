@@ -3956,6 +3956,48 @@ async function testComms() {
 
     module("Comms", null, null);
 
+    // Test bundling (Not really a test, it just goes through and we verify in the log)
+    // Uncomment this, and comment out other tests in this function.
+    // await asyncTest("Bundle", function()
+    // {
+    //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+    //     {
+    //         let cnt = 0;
+
+    //         setTimeout(() =>
+    //         {
+    //             // Bundle 3 messages together
+    //             bc.playerState.readPlayerState(result =>
+    //             {
+    //                 ++cnt;
+    //                 if (cnt === 3)
+    //                 {
+    //                     equal(true, true, "");
+    //                     resolve_test();
+    //                 }
+    //             });
+    //             bc.playerState.readPlayerState(result =>
+    //             {
+    //                 ++cnt;
+    //                 if (cnt === 3)
+    //                 {
+    //                     equal(true, true, "");
+    //                     resolve_test();
+    //                 }
+    //             });
+    //             bc.playerState.readPlayerState(result =>
+    //             {
+    //                 ++cnt;
+    //                 if (cnt === 3)
+    //                 {
+    //                     equal(true, true, "");
+    //                     resolve_test();
+    //                 }
+    //             });
+    //         }, 1000);
+    //     });
+    // });
+
     let expiryTimeout = 0;
 
     await asyncTest("readPlayerState()", 3, function() {
