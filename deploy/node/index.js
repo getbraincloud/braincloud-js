@@ -56,6 +56,6 @@ XMLHttpRequest.DONE = 4;
 
 CryptoJS.MD5 = require('md5');
 
-exports.XMLHttpRequest4Upload = require('./lib/xmlHttpRequest4Upload.js').XMLHttpRequest4Upload;
+exports.XMLHttpRequest4Upload = require('./xmlHttpRequest4Upload.js').XMLHttpRequest4Upload;
 exports.BrainCloudWrapper = bc.BrainCloudWrapper
 exports.BrainCloudClient = bc.BrainCloudClient
