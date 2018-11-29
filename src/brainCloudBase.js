@@ -22,6 +22,7 @@ function BrainCloudManager ()
     bcm._jsonedQueue = "";
     bcm._idleTimeout = 30;
     bcm._heartBeatIntervalId = null;
+    bcm._bundlerIntervalId = null;
 
     bcm._appId = "";
     bcm._secret = "";
@@ -34,6 +35,7 @@ function BrainCloudManager ()
 
     bcm._useJQuery = true;
     bcm._requestInProgress = false;
+    bcm._bundleDelayActive = false;
 
     bcm._statusCodeCache = 403;
     bcm._reasonCodeCache = 40304;
@@ -258,9 +260,17 @@ function BrainCloudManager ()
         bcm.debugLog("SendRequest: " + JSON.stringify(request));
 
         bcm._sendQueue.push(request);
-        if (!bcm._requestInProgress)
+        if (!bcm._requestInProgress && !bcm._bundleDelayActive)
         {
-            bcm.processQueue();
+            // We can exploit the fact that JS is single threaded and process
+            // the queue 1 "frame" later. This way if the user is doing many
+            // consecussive calls they will be bundled
+            bcm._bundleDelayActive = true;
+            setTimeout(() =>
+            {
+                bcm._bundleDelayActive = false;
+                bcm.processQueue();
+            }, 0);
         }
     };
 
@@ -705,6 +715,9 @@ function BrainCloudManager ()
     {
         if (bcm._sendQueue.length > 0)
         {
+            // Uncomment if you want to debug bundles
+            // bcm.debugLog("---BUNDLE---: " + JSON.stringify(bcm._sendQueue));
+
             bcm._inProgressQueue = [];
             var itemsProcessed;
             for (itemsProcessed = 0; itemsProcessed < bcm._sendQueue.length; ++itemsProcessed)
