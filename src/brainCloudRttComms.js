@@ -1,5 +1,5 @@
 if (typeof WebSocket === 'undefined') {
-    var WebSocket = require('isomorphic-ws');
+    var WebSocket = require('ws');
 }
 
 var DEFAULT_RTT_HEARTBEAT = 10; // Seconds

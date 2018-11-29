@@ -1,6 +1,6 @@
 {
   "name": "braincloud-react",
-  "version": "3.9.3",
+  "version": "3.9.5",
   "description": " brainCloud client for React",
   "main": "index.js",
   "directories": {
