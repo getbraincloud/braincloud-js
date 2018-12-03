@@ -11,7 +11,7 @@ if (typeof window === "undefined" || window === null) {
     window = {}
 }
 if (!window.XMLHttpRequest) {
-    window.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+    window.XMLHttpRequest = require("xmlhttprequest-ssl").XMLHttpRequest;
     XMLHttpRequest = window.XMLHttpRequest;
 
     XMLHttpRequest.UNSENT = 0;
