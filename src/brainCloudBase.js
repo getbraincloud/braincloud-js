@@ -25,7 +25,7 @@ if (!window.XMLHttpRequest) {
 if (typeof localStorage === "undefined" || localStorage === null) {
     var LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
     os = require('os');
-    const configDir = os.homedir() + "/.bciot";
+    var configDir = os.homedir() + "/.bciot";
     localStorage = new LocalStorage(configDir);
 }
 
