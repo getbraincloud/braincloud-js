@@ -15,7 +15,7 @@ npm i git+ssh://git@bitbucket.org:bitheadsinc/braincloud-node.git
 ## Usage 
 
 ```javascript
-var bc = require("braincloud-node")
+var bc = require("braincloud")
 
 function authenticated(response) {
     console.log("Did get Authenticated to profileId:" + response.data.profileId);
@@ -24,8 +24,6 @@ function authenticated(response) {
     _bc.brainCloudClient.file.prepareFileUpload("tests","dummyFile",shareable,replaceIfExists,)
 }
 _bc = new bc.BrainCloudWrapper("_mainWrapper");
-// This Node implementation does not use jQuery so turn it off.
-_bc.brainCloudManager.useJQuery(false);
 
 secret = "aaaaaaaa-bbbb-0000-cccc-111111111111";
 appId = "00000";

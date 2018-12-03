@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "braincloud": "file:../deploy/node",
     "fs": "0.0.1-security",
+    "get-user-locale": "^1.1.1",
     "isomorphic-ws": "^4.0.1",
     "najax": "^1.0.4",
     "ws": "^5.2.1",

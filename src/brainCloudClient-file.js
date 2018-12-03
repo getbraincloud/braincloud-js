@@ -1,3 +1,11 @@
+// FormData
+if (typeof window === "undefined" || window === null) {
+    window = {}
+}
+if (!window.FormData) {
+    window.FormData = require('form-data');
+    FormData = window.FormData;
+}
 
 function BCFile() {
     var bc = this;
