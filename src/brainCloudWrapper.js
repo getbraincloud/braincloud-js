@@ -6,6 +6,15 @@
  * persisted upon successful authentication. When authenticating, any stored anonymous/profile ids will
  * be sent to the server. This strategy is useful when using anonymous authentication.
  */
+
+// Local storage
+if (typeof localStorage === "undefined" || localStorage === null) {
+    var LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
+    os = require('os');
+    const configDir = os.homedir() + "/.bciot";
+    localStorage = new LocalStorage(configDir);
+}
+
 function BrainCloudWrapper(wrapperName) {
 
     var bcw = this;

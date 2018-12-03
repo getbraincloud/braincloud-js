@@ -147,7 +147,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "3.9.5";
+    bcc.version = "3.9.6";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -343,17 +343,6 @@ function BrainCloudClient() {
     bcc.setDebugEnabled = function(debugEnabled) {
         bcc.brainCloudManager.setDebugEnabled(debugEnabled);
         bcc.brainCloudRttComms.setDebugEnabled(debugEnabled);
-    };
-
-    /**
-     * Set this flag to use (or not use) jquery as the underlying
-     * mechanism to execute http calls. By default, this is true.
-     *
-     * @param useJQuery
-     * {boolean} - True to use JQuery, false otherwise.
-     */
-    bcc.useJQuery = function(value) {
-        bcc.brainCloudManager.useJQuery(value);
     };
 
     /**
