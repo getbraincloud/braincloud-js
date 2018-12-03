@@ -14,6 +14,7 @@
     "get-user-locale": "^1.1.1",
     "isomorphic-ws": "^4.0.1",
     "najax": "^1.0.4",
-    "ws": "^5.2.1"
+    "ws": "^5.2.1",
+    "xmlhttprequest": "^1.8.0"
   }
 }
