@@ -1,8 +1,33 @@
-// Inspired by: http://enterprisejquery.com/2010/10/how-good-c-habits-can-encourage-bad-javascript-habits-part-1/
-// Requires that jquery has been loaded as well...
-// The variable that will contain the AB Test data retrieved from S3.
-var abTestData;
+// MD5
+if (typeof CryptoJS === "undefined" || CryptoJS === null) {
+    CryptoJS = {};
+}
+if (!CryptoJS.MD5) {
+    CryptoJS.MD5 = require('md5');
+}
 
+// XMLHttpRequest
+if (typeof window === "undefined" || window === null) {
+    window = {}
+}
+if (!window.XMLHttpRequest) {
+    window.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+    XMLHttpRequest = window.XMLHttpRequest;
+
+    XMLHttpRequest.UNSENT = 0;
+    XMLHttpRequest.OPENED = 1;
+    XMLHttpRequest.HEADERS_RECEIVED = 2;
+    XMLHttpRequest.LOADING = 3;
+    XMLHttpRequest.DONE = 4;
+}
+
+// Local storage
+if (typeof localStorage === "undefined" || localStorage === null) {
+    var LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
+    os = require('os');
+    var configDir = os.homedir() + "/.bciot";
+    localStorage = new LocalStorage(configDir);
+}
 
 function BrainCloudManager ()
 {
@@ -22,6 +47,7 @@ function BrainCloudManager ()
     bcm._jsonedQueue = "";
     bcm._idleTimeout = 30;
     bcm._heartBeatIntervalId = null;
+    bcm._bundlerIntervalId = null;
 
     bcm._appId = "";
     bcm._secret = "";
@@ -32,8 +58,8 @@ function BrainCloudManager ()
     bcm._appVersion = "";
     bcm._debugEnabled = false;
 
-    bcm._useJQuery = true;
     bcm._requestInProgress = false;
+    bcm._bundleDelayActive = false;
 
     bcm._statusCodeCache = 403;
     bcm._reasonCodeCache = 40304;
@@ -218,11 +244,6 @@ function BrainCloudManager ()
         bcm._debugEnabled = debugEnabled;
     };
 
-    bcm.useJQuery = function(value)
-    {
-        bcm._useJQuery = value;
-    };
-
     bcm.isInitialized = function()
     {
         return bcm._isInitialized;
@@ -258,9 +279,17 @@ function BrainCloudManager ()
         bcm.debugLog("SendRequest: " + JSON.stringify(request));
 
         bcm._sendQueue.push(request);
-        if (!bcm._requestInProgress)
+        if (!bcm._requestInProgress && !bcm._bundleDelayActive)
         {
-            bcm.processQueue();
+            // We can exploit the fact that JS is single threaded and process
+            // the queue 1 "frame" later. This way if the user is doing many
+            // consecussive calls they will be bundled
+            bcm._bundleDelayActive = true;
+            setTimeout(function()
+            {
+                bcm._bundleDelayActive = false;
+                bcm.processQueue();
+            }, 0);
         }
     };
 
@@ -562,149 +591,123 @@ function BrainCloudManager ()
 
     bcm.performQuery = function()
     {
-        if (bcm._useJQuery)
-        {
-            bcm._requestInProgress = true;
-            bcm._loader = jQuery.ajax({
-                timeout: 15000,
-                url: bcm._dispatcherUrl,
-                type: "POST",
-                contentType: "application/json",
-                dataType: "json",
-                beforeSend: bcm.setHeader,
-                data: bcm._jsonedQueue
-            })
-            .done(function(response)
-            {
-                bcm.handleSuccessResponse(response);
+        clearTimeout(bcm.xml_timeoutId);
+        bcm.xml_timeoutId = null;
 
-                bcm._loader = null;
-                bcm._requestInProgress = false;
-                // Now call bcm.processQueue again if there is more data...
-                bcm.processQueue();
-            })
-            .fail(function(jqXhr, textStatus, errorThrown)
-            {
-                bcm.retry();
-            });
+        bcm._requestInProgress = true;
+        var xmlhttp;
+        if (window.XMLHttpRequest)
+        {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
         }
         else
         {
-            clearTimeout(bcm.xml_timeoutId);
-            bcm.xml_timeoutId = null;
+            // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
 
-            bcm._requestInProgress = true;
-            var xmlhttp;
-            if (window.XMLHttpRequest)
+        xmlhttp.ontimeout_bc = function()
+        {
+            if (xmlhttp.readyState < 4)
             {
-                // code for IE7+, Firefox, Chrome, Opera, Safari
-                xmlhttp = new XMLHttpRequest();
+                xmlhttp.hasTimedOut = true;
+                xmlhttp.abort();
+                xmlhttp.hasTimedOut = null;
+
+                bcm.xml_timeoutId = null;
+
+                bcm.debugLog("timeout", false);
+                bcm.retry();
             }
-            else
+        }
+
+        xmlhttp.onreadystatechange = function()
+        {
+            if (xmlhttp.hasTimedOut)
             {
-                // code for IE6, IE5
-                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                return;
             }
 
-            xmlhttp.ontimeout_bc = function()
+            if (xmlhttp.readyState == XMLHttpRequest.DONE)
             {
-                if (xmlhttp.readyState < 4)
+                clearTimeout(bcm.xml_timeoutId);
+                bcm.xml_timeoutId = null;
+
+                bcm.debugLog("response status : " + xmlhttp.status);
+                bcm.debugLog("response : " + xmlhttp.responseText);
+
+                if (xmlhttp.status == 200)
                 {
-                    xmlhttp.hasTimedOut = true;
-                    xmlhttp.abort();
-                    xmlhttp.hasTimedOut = null;
+                    var response = JSON.parse(xmlhttp.responseText);
 
-                    bcm.xml_timeoutId = null;
+                    bcm.handleSuccessResponse(response);
 
-                    bcm.debugLog("timeout", false);
-                    bcm.retry();
+                    bcm._requestInProgress = false;
+                    bcm.processQueue();
                 }
-            }
-
-            xmlhttp.onreadystatechange = function()
-            {
-                if (xmlhttp.hasTimedOut)
+                else if (xmlhttp.status == 503)
                 {
+                    bcm.debugLog("packet in progress", false);
+                    bcm.retry();
                     return;
                 }
-
-                if (xmlhttp.readyState == XMLHttpRequest.DONE)
+                else
                 {
-                    clearTimeout(bcm.xml_timeoutId);
-                    bcm.xml_timeoutId = null;
-
-                    bcm.debugLog("response status : " + xmlhttp.status);
-                    bcm.debugLog("response : " + xmlhttp.responseText);
-
-                    if (xmlhttp.status == 200)
+                    try
                     {
-                        var response = JSON.parse(xmlhttp.responseText);
-
-                        bcm.handleSuccessResponse(response);
-
-                        bcm._requestInProgress = false;
-                        bcm.processQueue();
-                    }
-                    else if (xmlhttp.status == 503)
-                    {
-                        bcm.debugLog("packet in progress", false);
-                        bcm.retry();
-                        return;
-                    }
-                    else
-                    {
-                        try
+                        var errorResponse = JSON.parse(xmlhttp.responseText);
+                        if (errorResponse["reason_code"])
                         {
-                            var errorResponse = JSON.parse(xmlhttp.responseText);
-                            if (errorResponse["reason_code"])
-                            {
-                                reasonCode = errorResponse["reason_code"];
-                            }
-                            if (errorResponse["status_message"])
-                            {
-                                statusMessage = errorResponse["status_message"];
-                            }
-                            else
-                            {
-                                statusMessage = xmlhttp.responseText;
-                            }
+                            reasonCode = errorResponse["reason_code"];
                         }
-                        catch (e)
+                        if (errorResponse["status_message"])
                         {
-                            reasonCode = 0;
+                            statusMessage = errorResponse["status_message"];
+                        }
+                        else
+                        {
                             statusMessage = xmlhttp.responseText;
                         }
+                    }
+                    catch (e)
+                    {
+                        reasonCode = 0;
+                        statusMessage = xmlhttp.responseText;
+                    }
 
-                        // TODO: New error handling will split out the parts... for now
-                        // just send back the response text.
-                        var errorMessage = xmlhttp.responseText;
-                        bcm.debugLog("Failed", true);
+                    // TODO: New error handling will split out the parts... for now
+                    // just send back the response text.
+                    var errorMessage = xmlhttp.responseText;
+                    bcm.debugLog("Failed", true);
 
-                        if ((bcm._errorCallback != undefined) &&
-                            (typeof bcm._errorCallback == 'function'))
-                        {
-                            bcm._errorCallback(errorMessage);
-                        }
+                    if ((bcm._errorCallback != undefined) &&
+                        (typeof bcm._errorCallback == 'function'))
+                    {
+                        bcm._errorCallback(errorMessage);
                     }
                 }
-            }; // end inner function
+            }
+        }; // end inner function
 
-            // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
-            bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, 15000);
+        // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
+        bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, 15000);
 
-            xmlhttp.open("POST", bcm._dispatcherUrl, true);
-            xmlhttp.setRequestHeader("Content-type", "application/json");
-            var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
-            xmlhttp.setRequestHeader("X-SIG", sig);
-            xmlhttp.setRequestHeader('X-APPID', bcm._appId);
-            xmlhttp.send(bcm._jsonedQueue);
-        }
+        xmlhttp.open("POST", bcm._dispatcherUrl, true);
+        xmlhttp.setRequestHeader("Content-type", "application/json");
+        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        xmlhttp.setRequestHeader("X-SIG", sig);
+        xmlhttp.setRequestHeader('X-APPID', bcm._appId);
+        xmlhttp.send(bcm._jsonedQueue);
     }
 
     bcm.processQueue = function()
     {
         if (bcm._sendQueue.length > 0)
         {
+            // Uncomment if you want to debug bundles
+            // bcm.debugLog("---BUNDLE---: " + JSON.stringify(bcm._sendQueue));
+
             bcm._inProgressQueue = [];
             var itemsProcessed;
             for (itemsProcessed = 0; itemsProcessed < bcm._sendQueue.length; ++itemsProcessed)

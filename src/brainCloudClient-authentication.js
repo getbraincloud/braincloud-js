@@ -1,3 +1,13 @@
+// User language
+if (typeof window === "undefined" || window === null) {
+    window = {}
+}
+if (!window.navigator) {
+    window.navigator = {}
+}
+if (!window.navigator.userLanguage && !window.navigator.language) {
+    window.navigator.userLanguage = require('get-user-locale').getUserLocale();
+}
 
 function BCAuthentication() {
 	var bc = this;

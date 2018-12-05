@@ -1,21 +1,9 @@
 # brainCloud NodeJS client
 
-
-## Install
-
-```
-npm i braincloud-node
-```
-or if still in development
-
-```
-npm i git+ssh://git@bitbucket.org:bitheadsinc/braincloud-node.git
-```
-
 ## Usage 
 
 ```javascript
-var bc = require("braincloud-node")
+var bc = require("braincloud")
 
 function authenticated(response) {
     console.log("Did get Authenticated to profileId:" + response.data.profileId);
@@ -24,8 +12,6 @@ function authenticated(response) {
     _bc.brainCloudClient.file.prepareFileUpload("tests","dummyFile",shareable,replaceIfExists,)
 }
 _bc = new bc.BrainCloudWrapper("_mainWrapper");
-// This Node implementation does not use jQuery so turn it off.
-_bc.brainCloudManager.useJQuery(false);
 
 secret = "aaaaaaaa-bbbb-0000-cccc-111111111111";
 appId = "00000";
@@ -41,7 +27,7 @@ _bc.authenticateAnonymous(authenticated);
 
 ### File Upload
 
-The file upload works slightly different in this implementation. Instead of using **XMLHttpRequest** you need to use **XMLHttpRequest4Upload**. Also the file object passed into *uploadFile* call needs to be a Read Stream from the nodes fs module.
+The file upload works slightly different in this implementation if not used in the web. Instead of using **XMLHttpRequest** you need to use **XMLHttpRequest4Upload**. Also the file object passed into *uploadFile* call needs to be a Read Stream from the nodes fs module.
 
 ```javascript
 var fs = require("fs")
@@ -62,9 +48,8 @@ _bc.brainCloudClient.file.prepareFileUpload("test2", fileName, shareable, replac
 }
 ...
 ```
-Only load and error listeners are triggered in this implementations.
+Only `load` and `error` listeners are triggered in this implementations.
 
 ### Sessions
 
 Sessions are not maintained across executions of scripts. i.e. Each script must initialy login. 
-

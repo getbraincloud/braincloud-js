@@ -1,29 +1,17 @@
 const fs = require('fs');
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-var jQuery = {
-    ajax: require('najax')
-};
-
-XMLHttpRequest.UNSENT = 0;
-XMLHttpRequest.OPENED = 1;
-XMLHttpRequest.HEADERS_RECEIVED = 2;
-XMLHttpRequest.LOADING = 3;
-XMLHttpRequest.DONE = 4;
+const BC = require('braincloud');
 
 console.log("--- Running JS unit tests ---");
 
 var fail_log = [];
 
-var type = process.argv[2];
-var filters = process.argv[3];
-console.log("type: " + type);
+var filters = process.argv[2];
 console.log("filters: " + filters);
 
 var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
 
 var DEFAULT_TIMEOUT = 5000;
-var use_jquery = false;
 
 var GAME_ID = "";
 var SECRET = "";
@@ -34,47 +22,7 @@ var CHILD_APP_ID = "";
 var PEER_NAME = "";
 loadIDs();
 
-// brainCloud and jquery expects this to exist globally
-var window = {
-    navigator: {
-        userLanguage: "en-US"
-    },
-    XMLHttpRequest: true,
-    document: {}
-};
-
-// Load third parties used by brainCloud
-eval(fs.readFileSync("./CryptoJS-3.0.2.min.js").toString());
-
-var storageItems = {};
-var localStorage = {
-    setItem: (key, value) =>
-    {
-        storageItems[key] = value;
-    },
-    getItem: (key) =>
-    {
-        return storageItems[key];
-    }
-};
-
-// We cannot put this next block of code in a function. BC Scripts need to be eval in global score
-console.log("BC lib:");
-let files = fs.readdirSync("../src/");
-for (var i = 0; i < files.length; ++i)
-{
-    let file = files[i];
-    let extension = file.split(".").pop();
-    if (extension.toLowerCase() === "js")
-    {
-        console.log("  Loading BC file: " + file);
-        eval(fs.readFileSync("../src/" + file).toString());
-    }
-}
-
-var bc = new BrainCloudWrapper("PlayerOne");
-
-// QUnit.config.reorder = false;
+var bc = new BC.BrainCloudWrapper("PlayerOne");
 
 function loadIDs()
 {
@@ -142,7 +90,7 @@ function createUser(prefix, randomId)
 
 function initializeClient()
 {
-    bc = new BrainCloudWrapper("PlayerOne");
+    bc = new BC.BrainCloudWrapper("PlayerOne");
 
     // we want to log debug messages
     bc.brainCloudClient.setDebugEnabled(true);
@@ -155,8 +103,6 @@ function initializeClient()
 
     // point to internal (default is sharedprod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
-
-    bc.brainCloudClient.useJQuery(use_jquery);
 
     bc.brainCloudClient.authentication.clearSavedProfileId();
 }
@@ -253,7 +199,7 @@ async function asyncTest(name, expected, testFn)
         expected = 1;
     }
     
-    test_name = (use_jquery ? "(JQUERY) " : "") + module_name + " : " + name;
+    test_name = module_name + " : " + name;
 
     if (!isModuleRunnable)
     {
@@ -3956,6 +3902,48 @@ async function testComms() {
 
     module("Comms", null, null);
 
+    // Test bundling (Not really a test, it just goes through and we verify in the log)
+    // Uncomment this, and comment out other tests in this function.
+    // await asyncTest("Bundle", function()
+    // {
+    //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+    //     {
+    //         let cnt = 0;
+
+    //         setTimeout(() =>
+    //         {
+    //             // Bundle 3 messages together
+    //             bc.playerState.readPlayerState(result =>
+    //             {
+    //                 ++cnt;
+    //                 if (cnt === 3)
+    //                 {
+    //                     equal(true, true, "");
+    //                     resolve_test();
+    //                 }
+    //             });
+    //             bc.playerState.readPlayerState(result =>
+    //             {
+    //                 ++cnt;
+    //                 if (cnt === 3)
+    //                 {
+    //                     equal(true, true, "");
+    //                     resolve_test();
+    //                 }
+    //             });
+    //             bc.playerState.readPlayerState(result =>
+    //             {
+    //                 ++cnt;
+    //                 if (cnt === 3)
+    //                 {
+    //                     equal(true, true, "");
+    //                     resolve_test();
+    //                 }
+    //             });
+    //         }, 1000);
+    //     });
+    // });
+
     let expiryTimeout = 0;
 
     await asyncTest("readPlayerState()", 3, function() {
@@ -4064,6 +4052,48 @@ async function testFile() {
         return tearDownLogout();
     });
 
+    // Upload file
+    await asyncTest("uploadFile", 2, function()
+    {
+        var fileSize = fs.statSync("README.md").size;
+        bc.file.prepareFileUpload("test", "README.md", true, true, fileSize, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            if (result.status == 200)
+            {
+                let uploadId = result.data.fileDetails.uploadId;
+                let xhr = new BC.XMLHttpRequest4Upload();
+                let file = fs.createReadStream("README.md");
+                file.size = fileSize;
+
+                xhr.addEventListener("load", result =>
+                {
+                    if (result.statusCode === 200)
+                    {
+                        ok(true, "done file upload");
+                    }
+                    else
+                    {
+                        ok(false, "Failed upload " + result.statusMessage);
+                    }
+                    resolve_test();
+                });
+
+                xhr.addEventListener("error", result =>
+                {
+                    ok(false, error);
+                    resolve_test();
+                });
+                
+                bc.file.uploadFile(xhr, file, uploadId);
+            }
+            else
+            {
+                resolve_test();
+            }
+        });
+    });
+
     await asyncTest("listUserFiles(\"\", true)", 2, function() {
         bc.file.listUserFiles("", true, function(result) {
             ok(true, JSON.stringify(result));
@@ -4112,8 +4142,6 @@ async function testWrapper()
 
     // point to internal (default is sharedprod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
-
-    bc.brainCloudClient.useJQuery(use_jquery);
 
 
     await asyncTest("authenticateAnonymous()", 2, function() {
@@ -5097,7 +5125,6 @@ async function run_tests()
 
 async function main()
 {
-    use_jquery = type === "jquery";
     await run_tests();
 
     console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + " passed\x1b[0m");
