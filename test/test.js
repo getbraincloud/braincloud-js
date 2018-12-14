@@ -4564,7 +4564,7 @@ async function testMessaging()
         bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, function(result)
         {
             equal(result.status, 200, "Expecting 200");
-            bc.messaging.getMessages("inbox", [msgId], result =>
+            bc.messaging.getMessages("inbox", [msgId], true, result =>
             {
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
