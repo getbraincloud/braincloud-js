@@ -1003,6 +1003,31 @@ async function testFriend() {
             resolve_test();
         });
     });
+
+    await asyncTest("findUsersByUniversalIdStartingWith()", 2, function() {
+        bc.friend.findUsersByUniversalIdStartingWith("completelyRandomName", 30, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("findUsersByNameStartingWith()", 2, function() {
+        bc.friend.findUsersByNameStartingWith("completelyRandomUniversalId", 30, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    //still needs to be added.
+    await asyncTest("findUserByExactUniversalId()", 2, function() {
+        bc.friend.findUserByExactUniversalId("completelyRandomUniversalId", function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
