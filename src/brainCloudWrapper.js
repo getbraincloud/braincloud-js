@@ -737,6 +737,43 @@ function BrainCloudWrapper(wrapperName) {
         return identitiesCallback;
     };
 
+	/**
+	 * Reset Email password - sends a password reset email to the specified address
+	 *
+	 * Service Name - authenticationV2
+	 * Operation - ResetEmailPassword
+	 *
+	 * @param email {string} - The email address to send the reset email to.
+	 * @param responseHandler {function} - The user callback method
+	 *
+	 * Note the follow error reason codes:
+	 *
+	 * SECURITY_ERROR (40209) - If the email address cannot be found.
+	 */
+	bc.authentication.resetEmailPassword = function(email, responseHandler) {
+		bcw.brainCloudClient.authentication.resetEmailPassword(email, responseHandler);
+    };
+
+	/**
+	 * Reset Email password with service parameters - sends a password reset email to the specified address
+	 *
+	 * Service Name - authenticationV2
+	 * Operation - ResetEmailPasswordAdvanced
+	 *
+     * @param appId {string} - The application Id
+	 * @param email {string} - The email address to send the reset email to.
+     * @param serviceParams {json} - Parameters to send to the email service. See the documentation for
+	 *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
+	 * @param responseHandler {function} - The user callback method
+	 *
+	 * Note the follow error reason codes:
+	 *
+	 * SECURITY_ERROR (40209) - If the email address cannot be found.
+	 */
+	bc.authentication.resetEmailPasswordAdvanced = function(emailAddress, serviceParams, responseHandler) {
+        bcw.brainCloudClient.resetEmailPasswordAdvanced(emailAddress, serviceParams, responseHandler);
+    };
+
     /** Method authenticates the user using universal credentials
      *
      * @param responseHandler {function} - The user callback method
