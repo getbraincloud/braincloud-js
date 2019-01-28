@@ -4300,7 +4300,7 @@ async function testWrapper()
 
     });
 
-    await asyncTest("resetEmailPasswordWrapperTest()", function() {
+    await asyncTest("resetEmailPassword()", function() {
         bc.resetEmailPassword(
             "braincloudunittest@gmail.com",
             function(result) {
@@ -4309,7 +4309,7 @@ async function testWrapper()
         });
     });
 
-    await asyncTest("resetEmailPasswordAdvancedWrapperTest()", 2, function() {
+    await asyncTest("resetEmailPasswordAdvanced()", 2, function() {
         bc.resetEmailPasswordAdvanced(
         "braincloudunittest@gmail.com",
         {

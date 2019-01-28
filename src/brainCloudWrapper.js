@@ -750,7 +750,7 @@ function BrainCloudWrapper(wrapperName) {
 	 *
 	 * SECURITY_ERROR (40209) - If the email address cannot be found.
 	 */
-	bc.authentication.resetEmailPassword = function(email, responseHandler) {
+	bcw.resetEmailPassword = function(email, responseHandler) {
 		bcw.brainCloudClient.authentication.resetEmailPassword(email, responseHandler);
     };
 
@@ -770,8 +770,8 @@ function BrainCloudWrapper(wrapperName) {
 	 *
 	 * SECURITY_ERROR (40209) - If the email address cannot be found.
 	 */
-	bc.authentication.resetEmailPasswordAdvanced = function(emailAddress, serviceParams, responseHandler) {
-        bcw.brainCloudClient.resetEmailPasswordAdvanced(emailAddress, serviceParams, responseHandler);
+	bcw.resetEmailPasswordAdvanced = function(emailAddress, serviceParams, responseHandler) {
+        bcw.brainCloudClient.authentication.resetEmailPasswordAdvanced(emailAddress, serviceParams, responseHandler);
     };
 
     /** Method authenticates the user using universal credentials
