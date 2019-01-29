@@ -1024,7 +1024,7 @@ async function testFriend() {
     await asyncTest("findUserByExactUniversalId()", 2, function() {
         bc.friend.findUserByExactUniversalId("completelyRandomUniversalId", function(result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 400, "Expecting 400");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });

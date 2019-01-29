@@ -241,8 +241,7 @@ function BCFriend() {
 			service: bc.SERVICE_FRIEND,
 			operation: bc.friend.OPERATION_FIND_USER_BY_EXACT_UNIVERSAL_ID,
 			data: {
-				searchText: searchText,
-				maxResults: maxResults
+				searchText: searchText
 			},
 			callback: callback
 		});
