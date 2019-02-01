@@ -451,6 +451,13 @@ function BrainCloudClient() {
     }
 
     /**
+     * Returns true if RTT is enabled
+     */
+    bcc.getRTTEnabled = function() {
+        return bcc.brainCloudRttComms.isRTTEnabled();
+    }
+
+    /**
      * Listen to real time events.
      * 
      * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
