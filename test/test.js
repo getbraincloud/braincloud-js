@@ -1024,7 +1024,7 @@ async function testFriend() {
     await asyncTest("findUserByExactUniversalId()", 2, function() {
         bc.friend.findUserByExactUniversalId("completelyRandomUniversalId", function(result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 400, "Expecting 400");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
@@ -4298,6 +4298,42 @@ async function testWrapper()
 
             });
 
+    });
+
+    await asyncTest("resetEmailPassword()", function() {
+        bc.resetEmailPassword(
+            "braincloudunittest@gmail.com",
+            function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+        });
+    });
+
+    await asyncTest("resetEmailPasswordAdvanced()", 2, function() {
+        bc.resetEmailPasswordAdvanced(
+        "braincloudunittest@gmail.com",
+        {
+            fromAddress: "fromAddress",
+            fromName: "fromName",
+            replyToAddress: "replyToAddress",
+            replyToName: "replyToName",
+            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            subject: "subject",
+            body: "Body goes here",
+            substitutions: {
+                [":name"]: "John Doe",
+                [":resetLink"]: "www.dummuyLink.io"
+            },
+            categories: [
+                "category1",
+                "category2"
+            ]
+        },
+        function(result) {
+            equal(result.status, 400);
+            equal(result.reason_code, bc.reasonCodes.INVALID_FROM_ADDRESS);
+            resolve_test();
+        });
     });
 
 }
