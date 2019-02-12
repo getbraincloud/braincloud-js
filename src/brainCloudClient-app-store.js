@@ -109,7 +109,7 @@ function BCAppStore() {
             storeId: storeId,
             category: category,
             priceInfoCriteria: {
-                user_currency: userCurrency
+                userCurrency: userCurrency
             }
         };
         

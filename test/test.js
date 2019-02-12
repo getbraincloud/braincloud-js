@@ -189,6 +189,7 @@ function module(name, beforeFn, afterFn)
     module_beforeFn = beforeFn;
     module_afterFn = afterFn;
     isModuleRunnable = filters ? name.match(new RegExp(filters, "i")) : true;
+    return isModuleRunnable;
 }
 
 async function asyncTest(name, expected, testFn)
@@ -305,13 +306,13 @@ function greaterEq(actual, expected, log)
 
 async function testKillSwitch()
 {
-    module("Test Misc", () =>
+    if (!module("Test Misc", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("testKillSwitch()", function() {
         var killSwitchCount = 0;
@@ -339,13 +340,13 @@ async function testKillSwitch()
 
 async function testAsyncMatch()
 {
-    module("Async Match", () =>
+    if (!module("Async Match", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var platform = "BC";
 
@@ -476,13 +477,13 @@ async function testAsyncMatch()
 // Authentication tests
 ////////////////////////////////////////
 async function testAuthentication() {
-    module("Authentication", () =>
+    if (!module("Authentication", () =>
     {
         initializeClient();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("authenticateAnonymous()", function() {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
@@ -514,6 +515,33 @@ async function testAuthentication() {
                 });
     });
 
+    await asyncTest("resetEmailPasswordAdvanced()", 2, function() {
+        bc.brainCloudClient.authentication.resetEmailPasswordAdvanced(
+                "braincloudunittest@gmail.com",
+                {
+                    fromAddress: "fromAddress",
+                    fromName: "fromName",
+                    replyToAddress: "replyToAddress",
+                    replyToName: "replyToName",
+                    templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+                    subject: "subject",
+                    body: "Body goes here",
+                    substitutions: {
+                      [":name"]: "John Doe",
+                      [":resetLink"]: "www.dummuyLink.io"
+                    },
+                    categories: [
+                      "category1",
+                      "category2"
+                    ]
+                },
+                function(result) {
+                    equal(result.status, 400);
+                    equal(result.reason_code, bc.reasonCodes.INVALID_FROM_ADDRESS);
+                    resolve_test();
+                });
+    });
+
     await asyncTest("authenticateHandoff()", 2, function() {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
@@ -529,13 +557,13 @@ async function testAuthentication() {
 // DataStream unit tests
 ////////////////////////////////////////
 async function testDataStream() {
-    module("DataStream", () =>
+    if (!module("DataStream", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("customPageEvent()", function() {
         bc.dataStream.customPageEvent("testPage", {
@@ -569,13 +597,13 @@ async function testDataStream() {
 // Entity unit tests
 ////////////////////////////////////////
 async function testEntity() {
-    module("Entity", () =>
+    if (!module("Entity", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var entityId = "";
     var entityType = "BUILDING";
@@ -769,10 +797,10 @@ async function testEntity() {
 // Event unit tests
 ////////////////////////////////////////
 async function testEvent() {
-    module("Event", null, () =>
+    if (!module("Event", null, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var eventType = "test";
     var eventDataKey = "testData";
@@ -869,13 +897,13 @@ async function testEvent() {
 // Friend tests
 ////////////////////////////////////////
 async function testFriend() {
-    module("Friend", () =>
+    if (!module("Friend", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("getProfileInfoForCredential()", 2, function() {
         bc.friend.getProfileInfoForCredential(
@@ -975,19 +1003,44 @@ async function testFriend() {
             resolve_test();
         });
     });
+
+    await asyncTest("findUsersByUniversalIdStartingWith()", 2, function() {
+        bc.friend.findUsersByUniversalIdStartingWith("completelyRandomName", 30, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("findUsersByNameStartingWith()", 2, function() {
+        bc.friend.findUsersByNameStartingWith("completelyRandomUniversalId", 30, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    //still needs to be added.
+    await asyncTest("findUserByExactUniversalId()", 2, function() {
+        bc.friend.findUserByExactUniversalId("completelyRandomUniversalId", function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
 // Gamification unit tests
 ////////////////////////////////////////
 async function testGamification() {
-    module("Gamification", () =>
+    if (!module("Gamification", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var achievementId1 = "testAchievements01";
     var achievementId2 = "testAchievements02";
@@ -1167,13 +1220,13 @@ async function testGamification() {
 // Global App unit tests
 ////////////////////////////////////////
 async function testGlobalApp() {
-    module("GlobalApp", () =>
+    if (!module("GlobalApp", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("readProperties()", function() {
         bc.globalApp.readProperties(
@@ -1188,13 +1241,13 @@ async function testGlobalApp() {
 // GlobalStatistics unit tests
 ////////////////////////////////////////
 async function testGlobalStatistics() {
-    module("GlobalStatistics", () =>
+    if (!module("GlobalStatistics", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("incrementGlobalStats()", function() {
         bc.globalStatistics.incrementGlobalStats({
@@ -1249,13 +1302,13 @@ async function testGlobalStatistics() {
 ////////////////////////////////////////
 
 async function testGlobalEntity() {
-    module("GlobalEntity", () =>
+    if (!module("GlobalEntity", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var entityId = "";
     var version = -1;
@@ -1433,7 +1486,7 @@ async function testGlobalEntity() {
 // Group tests
 ////////////////////////////////////////
 async function testGroup() {
-    module("Group", () =>
+    if (!module("Group", () =>
     {
         return setUpWithAuthenticate(userToAuth.name, userToAuth.password).then(function() {
             userToAuth = UserA;
@@ -1441,7 +1494,7 @@ async function testGroup() {
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var userToAuth = UserA;
     var testData = { "test": 1234 };
@@ -1921,13 +1974,13 @@ async function testGroup() {
 // Identity tests
 ////////////////////////////////////////
 async function testIdentity() {
-    module("Identity", () =>
+    if (!module("Identity", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("attachFacebookId()", 2, function() {
         bc.identity.attachFacebookIdentity("test",
@@ -2020,13 +2073,13 @@ async function testIdentity() {
 // Mail tests
 ////////////////////////////////////////
 async function testMail() {
-    module("Mail", () =>
+    if (!module("Mail", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("updateContactEmail()", 2, function() {
         bc.playerState.updateContactEmail(
@@ -2085,13 +2138,13 @@ async function testMail() {
 // Matchmaking tests
 ////////////////////////////////////////
 async function testMatchMaking() {
-    module("MatchMaking", () =>
+    if (!module("MatchMaking", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("disableMatchMaking()", 2, function() {
         bc.matchMaking.disableMatchMaking(function(result) {
@@ -2236,13 +2289,13 @@ async function testMatchMaking() {
 // One Way Match tests
 ////////////////////////////////////////
 async function testOneWayMatch() {
-    module("OneWayMatch", () =>
+    if (!module("OneWayMatch", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var streamId;
 
@@ -2295,13 +2348,13 @@ async function testOneWayMatch() {
 // Playback Stream tests
 ////////////////////////////////////////
 async function testPlaybackStream() {
-    module("PlaybackStream", () =>
+    if (!module("PlaybackStream", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var streamId;
 
@@ -2396,26 +2449,27 @@ async function testPlaybackStream() {
 // Player State tests
 ////////////////////////////////////////
 async function testPlayerState() {
-    module("PlayerStateNoLogout", () =>
+    if (module("PlayerStateNoLogout", () =>
     {
         return setUpWithAuthenticate();
-    }, null);
-
-    await asyncTest("deletePlayer()", function() {
-        bc.playerState.deletePlayer(function(result) {
-            equal(result.status, 200, JSON.stringify(result));
-            bc.brainCloudClient.resetCommunication();
-            resolve_test();
+    }, null))
+    {
+        await asyncTest("deletePlayer()", function() {
+            bc.playerState.deletePlayer(function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+                bc.brainCloudClient.resetCommunication();
+                resolve_test();
+            });
         });
-    });
+    }
 
-    module("PlayerState", () =>
+    if (!module("PlayerState", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("updatePlayerName()", function() {
         bc.playerState.updatePlayerName("junit", function(
@@ -2499,13 +2553,13 @@ async function testPlayerState() {
 // Player Statistics Event tests
 ////////////////////////////////////////
 async function testPlayerStatisticsEvent() {
-    module("PlayerStatisticsEvent", () =>
+    if (!module("PlayerStatisticsEvent", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var eventId1 = "testEvent01";
     var eventId2 = "rewardCredits";
@@ -2565,13 +2619,13 @@ async function testPlayerStatisticsEvent() {
 ////////////////////////////////////////
 async function testPlayerStatistics() {
 
-    module("PlayerStatistics", () =>
+    if (!module("PlayerStatistics", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("getNextExperienceLevel()", function() {
         bc.playerStatistics.getNextExperienceLevel(function(
@@ -2656,13 +2710,13 @@ async function testPlayerStatistics() {
 // Product unit tests
 ////////////////////////////////////////
 async function testProduct() {
-    module("Product", () =>
+    if (!module("Product", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var currencyType = "credits";
     var platform = "windows";
@@ -2731,13 +2785,13 @@ async function testProduct() {
 }
 
 async function testVirtualCurrency() {
-    module("VirtualCurrency", () =>
+    if (!module("VirtualCurrency", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("getCurrency()", 1, () =>
     {
@@ -2790,13 +2844,13 @@ async function testVirtualCurrency() {
 }
 
 async function testAppStore() {
-    module("AppStore", () =>
+    if (!module("AppStore", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("verifyPurchase()", 2, () =>
     {
@@ -2862,13 +2916,13 @@ async function testAppStore() {
 // Profanity unit tests
 ////////////////////////////////////////
 async function testProfanity() {
-    module("Profanity", () =>
+    if (!module("Profanity", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("profanityCheck()", 2, function() {
         bc.profanity.profanityCheck("shitbird fly away", "en", true, true, true, function(
@@ -2903,13 +2957,13 @@ async function testProfanity() {
 // Push notification unit tests
 ////////////////////////////////////////
 async function testPushNotification() {
-    module("PushNotification", () =>
+    if (!module("PushNotification", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("deregisterAllPushNotificationDeviceTokens()", 2, function() {
         bc.pushNotification.deregisterAllPushNotificationDeviceTokens(function(
@@ -3106,13 +3160,13 @@ async function testPushNotification() {
 // Redemption Code unit tests
 ////////////////////////////////////////
 async function testRedemptionCode() {
-    module("RedemptionCode", () =>
+    if (!module("RedemptionCode", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var _lastCodeUsedStatName = "lastCodeUsed";
     var _codeType = "default";
@@ -3155,13 +3209,13 @@ async function testRedemptionCode() {
 // S3 Handling tests
 ////////////////////////////////////////
 async function testS3Handling() {
-    module("S3Handling", () =>
+    if (!module("S3Handling", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("getUpdatedFiles()", 2, function() {
         bc.s3Handling.getUpdatedFiles("test", [{
@@ -3199,13 +3253,13 @@ async function testS3Handling() {
 // Script tests
 ////////////////////////////////////////
 async function testScript() {
-    module("Script", () =>
+    if (!module("Script", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var scriptName = "testScript";
     var peerScriptName = "TestPeerScriptPublic";
@@ -3303,13 +3357,13 @@ async function testScript() {
 // SocialLeaderboard unit tests
 ////////////////////////////////////////
 async function testSocialLeaderboard() {
-    module("SocialLeaderboard", () =>
+    if (!module("SocialLeaderboard", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var leaderboardName = "testLeaderboard";
 
@@ -3583,13 +3637,13 @@ async function testSocialLeaderboard() {
 // Time unit tests
 ////////////////////////////////////////
 async function testTime() {
-    module("Time", () =>
+    if (!module("Time", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("readServerTime()", 2, function() {
         bc.time.readServerTime(function(result) {
@@ -3604,13 +3658,13 @@ async function testTime() {
 // Tournament unit tests
 ////////////////////////////////////////
 async function testTournament() {
-    module("Tournament", () =>
+    if (!module("Tournament", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     var _divSetId = "testDivSet";
     var _tournamentCode = "testTournament";
@@ -3762,7 +3816,7 @@ async function testSharedIdentity() {
 
     initializeClient();
 
-    module("SharedIdentity", null, null);
+    if (!module("SharedIdentity", null, null)) return;
 
     var currencyType = "credits";
     var scriptName = "testScript";
@@ -3900,7 +3954,7 @@ async function testComms() {
 
     initializeClient();
 
-    module("Comms", null, null);
+    if (!module("Comms", null, null)) return;
 
     // Test bundling (Not really a test, it just goes through and we verify in the log)
     // Uncomment this, and comment out other tests in this function.
@@ -4044,13 +4098,13 @@ async function testComms() {
 // File unit tests
 ////////////////////////////////////////
 async function testFile() {
-    module("File", () =>
+    if (!module("File", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     // Upload file
     await asyncTest("uploadFile", 2, function()
@@ -4132,7 +4186,7 @@ async function testFile() {
 ////////////////////////////////////////
 async function testWrapper()
 {
-    module("Wrapper", null, null);
+    if (!module("Wrapper", null, null)) return;
 
     // we want to log debug messages
     bc.brainCloudClient.setDebugEnabled(true);
@@ -4246,17 +4300,53 @@ async function testWrapper()
 
     });
 
+    await asyncTest("resetEmailPassword()", function() {
+        bc.resetEmailPassword(
+            "braincloudunittest@gmail.com",
+            function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+        });
+    });
+
+    await asyncTest("resetEmailPasswordAdvanced()", 2, function() {
+        bc.resetEmailPasswordAdvanced(
+        "braincloudunittest@gmail.com",
+        {
+            fromAddress: "fromAddress",
+            fromName: "fromName",
+            replyToAddress: "replyToAddress",
+            replyToName: "replyToName",
+            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            subject: "subject",
+            body: "Body goes here",
+            substitutions: {
+                [":name"]: "John Doe",
+                [":resetLink"]: "www.dummuyLink.io"
+            },
+            categories: [
+                "category1",
+                "category2"
+            ]
+        },
+        function(result) {
+            equal(result.status, 400);
+            equal(result.reason_code, bc.reasonCodes.INVALID_FROM_ADDRESS);
+            resolve_test();
+        });
+    });
+
 }
 
 async function testChat()
 {
-    module("Chat", () =>
+    if (!module("Chat", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     let channelId = "";
 
@@ -4435,7 +4525,7 @@ async function testMessaging()
 {
     initializeClient();
 
-    module("Messaging", null, null);
+    if (!module("Messaging", null, null)) return;
 
     await setUpWithAuthenticate();
     await tearDownLogout();
@@ -4535,7 +4625,7 @@ async function testMessaging()
         bc.brainCloudClient.authentication.authenticateUniversal(UserB.name, UserB.password, true, function(result)
         {
             equal(result.status, 200, "Expecting 200");
-            bc.messaging.getMessages("inbox", [msgId], result =>
+            bc.messaging.getMessages("inbox", [msgId], true, result =>
             {
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
@@ -4627,7 +4717,7 @@ async function testMessaging()
 
 async function testRTT()
 {
-    module("RTT", null, null);
+    if (!module("RTT", null, null)) return;
 
     initializeClient();
     await setUpWithAuthenticate();
@@ -4873,13 +4963,13 @@ async function testRTT()
 // Lobby tests
 ////////////////////////////////////////
 async function testLobby() {
-    module("Lobby", () =>
+    if (!module("Lobby", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("findLobby()", 1, () =>
     {
@@ -4974,13 +5064,13 @@ async function testLobby() {
 
 async function testPresence()
 {
-    module("Presence", () =>
+    if (!module("Presence", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
     {
         return tearDownLogout();
-    });
+    })) return;
 
     await asyncTest("forcePush()", 1, () =>
     {

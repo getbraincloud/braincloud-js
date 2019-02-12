@@ -79,19 +79,36 @@ function BCMessaging() {
         });
     };
 
+    ///**
+    // * DEPRECATED - USE GETMESSAGES WITH MARKMESSAGEREAD... JS doesn't allow overload
+    // * Retrieves list of specified messages.
+    // *
+    // * Service Name - Messaging
+    // * Service Operation - GET_MESSAGES
+    // *
+    // * @param msgIds Arrays of message ids to get.
+    // * @param callback The method to be invoked when the server response is received
+    // */
+    // bc.messaging.getMessages = function(msgbox, msgIds, callback) {
+    //    getMessages(msgbox, msgIds, false, callback);
+    //};
+    
     /**
      * Retrieves list of specified messages.
      *
      * Service Name - Messaging
      * Service Operation - GET_MESSAGES
      *
+     * @param msgbox where the msg comes from ex. inbox
      * @param msgIds Arrays of message ids to get.
+     * @param markMessageRead mark the messagesyou get as read
      * @param callback The method to be invoked when the server response is received
      */
-    bc.messaging.getMessages = function(msgbox, msgIds, callback) {
+    bc.messaging.getMessages = function(msgbox, msgIds, markMessageRead, callback) {
         var message = {
             msgbox: msgbox,
-            msgIds: msgIds
+            msgIds: msgIds,
+            markMessageRead: markMessageRead 
         };
 
         bc.brainCloudManager.sendRequest({

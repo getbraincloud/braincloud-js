@@ -258,6 +258,14 @@ function BrainCloudRttComms () {
         }
     }
 
+    /**
+     * Returns true is RTT is enabled.
+     */
+    bcrtt.isRTTEnabled = function()
+    {
+        return bcrtt.isEnabled;
+    }
+
     bcrtt.registerRTTCallback = function(serviceName, callback) {
         bcrtt.callbacks[serviceName] = callback;
     }

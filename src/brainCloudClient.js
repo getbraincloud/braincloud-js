@@ -147,7 +147,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "3.10.0";
+    bcc.version = "3.11.0";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -448,6 +448,13 @@ function BrainCloudClient() {
      */
     bcc.disableRTT = function() {
         bcc.brainCloudRttComms.disableRTT();
+    }
+
+    /**
+     * Returns true if RTT is enabled
+     */
+    bcc.getRTTEnabled = function() {
+        return bcc.brainCloudRttComms.isRTTEnabled();
     }
 
     /**

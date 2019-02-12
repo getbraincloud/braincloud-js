@@ -18,6 +18,7 @@ function BCAuthentication() {
 
 	bc.authentication.OPERATION_AUTHENTICATE = "AUTHENTICATE";
 	bc.authentication.OPERATION_RESET_EMAIL_PASSWORD = "RESET_EMAIL_PASSWORD";
+	bc.authentication.OPERATION_RESET_EMAIL_PASSWORD_ADVANCED = "RESET_EMAIL_PASSWORD_ADVANCED";
 
 	bc.authentication.AUTHENTICATION_TYPE_ANONYMOUS = "Anonymous";
 	bc.authentication.AUTHENTICATION_TYPE_EMAIL = "Email";
@@ -355,6 +356,38 @@ function BCAuthentication() {
 
 		};
 		//console.log("Request: " + JSON.stringify(request));
+		bc.brainCloudManager.sendRequest(request);
+    };
+
+	/**
+	 * Reset Email password with service parameters - sends a password reset email to the specified address
+	 *
+	 * Service Name - authenticationV2
+	 * Operation - ResetEmailPassword
+	 *
+     * @param appId {string} - The application Id
+	 * @param email {string} - The email address to send the reset email to.
+     * @param serviceParams {json} - Parameters to send to the email service. See the documentation for
+	 *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
+	 * @param responseHandler {function} - The user callback method
+	 *
+	 * Note the follow error reason codes:
+	 *
+	 * SECURITY_ERROR (40209) - If the email address cannot be found.
+	 */
+	bc.authentication.resetEmailPasswordAdvanced = function(emailAddress, serviceParams, responseHandler) {
+		var appId = bc.brainCloudManager.getAppId();
+
+		var request = {
+			service: bc.SERVICE_AUTHENTICATION,
+			operation: bc.authentication.OPERATION_RESET_EMAIL_PASSWORD_ADVANCED,
+			data: {
+                gameId: appId,
+                emailAddress: emailAddress,
+				serviceParams: serviceParams
+            },
+            callback: responseHandler
+		};
 		bc.brainCloudManager.sendRequest(request);
     };
     

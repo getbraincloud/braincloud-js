@@ -24,6 +24,9 @@ function BCFriend() {
 	bc.friend.OPERATION_GET_USERS_ONLINE_STATUS = "GET_USERS_ONLINE_STATUS";
 	bc.friend.OPERATION_FIND_USERS_BY_EXACT_NAME = "FIND_USERS_BY_EXACT_NAME";
 	bc.friend.OPERATION_FIND_USERS_BY_SUBSTR_NAME = "FIND_USERS_BY_SUBSTR_NAME";
+	bc.friend.OPERATION_FIND_USERS_BY_NAME_STARTING_WITH = "FIND_USERS_BY_NAME_STARTING_WITH";
+	bc.friend.OPERATION_FIND_USERS_BY_UNIVERSAL_ID_STARTING_WITH = "FIND_USERS_BY_UNIVERSAL_ID_STARTING_WITH";
+	bc.friend.OPERATION_FIND_USER_BY_EXACT_UNIVERSAL_ID = "FIND_USER_BY_EXACT_UNIVERSAL_ID";
 
 	bc.friend.friendPlatform = Object.freeze({ All : "All",  BrainCloud : "brainCloud",  Facebook : "Facebook" });
 
@@ -214,10 +217,7 @@ function BCFriend() {
 	};
 
 	/**
-	 * Retrieves profile information for the partial matches of the specified text.
-	 *
-	 * @param searchText Universal ID text on which to search.
-	 * @param maxResults Maximum number of results to return.
+	 * @deprecated Use findUserByExactUniversalId
 	 */
 	bc.friend.findUserByUniversalId = function(searchText, maxResults, callback) {
 		bc.brainCloudManager.sendRequest({
@@ -226,6 +226,22 @@ function BCFriend() {
 			data: {
 				searchText: searchText,
 				maxResults: maxResults
+			},
+			callback: callback
+		});
+	};
+	
+	/** Retrieves profile information for the partial matches of the specified text.
+	 *
+	 * @param searchText Universal ID text on which to search.
+	 * @param maxResults Maximum number of results to return.
+	 */
+	bc.friend.findUserByExactUniversalId = function(searchText, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_FRIEND,
+			operation: bc.friend.OPERATION_FIND_USER_BY_EXACT_UNIVERSAL_ID,
+			data: {
+				searchText: searchText
 			},
 			callback: callback
 		});
@@ -330,6 +346,51 @@ function BCFriend() {
 		});
 	};
 
+	/**
+	 * Retrieves profile information for users whose names starts with search text. 
+	 * Optional parameter macResults allows you to search an amount of names. 
+	 *
+	 * Service Name - friend
+	 * Service Operation - FIND_USERS_BY_NAME_STARTING_WITH
+	 *
+	 * @param searchText Collection of profile IDs.
+	 * @param maxResults how many names you want to return.
+	 * @param callback Method to be invoked when the server response is received.
+	 */
+	bc.friend.findUsersByNameStartingWith  = function(searchText, maxResults, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_FRIEND,
+			operation: bc.friend.OPERATION_FIND_USERS_BY_NAME_STARTING_WITH,
+			data: {
+				searchText: searchText,
+				maxResults: maxResults
+			},
+			callback: callback
+		});
+	};
+
+	/**
+	 * Retrieves profile information for users whose universal ID starts with search text. 
+	 * Optional parameter maxResults lets you search for a number of Universal IDs. 
+	 *
+	 * Service Name - friend
+	 * Service Operation - FIND_USERS_BY_UNIVERSAL_ID_STARTING_WITH
+	 *
+	 * @param searchText Collection of profile IDs.
+	 * @param maxResults how many names you want to return.
+	 * @param callback Method to be invoked when the server response is received.
+	 */
+	bc.friend.findUsersByUniversalIdStartingWith  = function(searchText, maxResults, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_FRIEND,
+			operation: bc.friend.OPERATION_FIND_USERS_BY_UNIVERSAL_ID_STARTING_WITH,
+			data: {
+				searchText: searchText,
+				maxResults: maxResults
+			},
+			callback: callback
+		});
+	};
 }
 
 BCFriend.apply(window.brainCloudClient = window.brainCloudClient || {});
