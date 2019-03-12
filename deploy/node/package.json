@@ -32,6 +32,7 @@
   "homepage": "https://portal.braincloudservers.com",
   "files": [
     "index.js",
+    "react-native.js",
     "package.json",
     "lib/*",
     "README.md"

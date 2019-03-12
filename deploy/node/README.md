@@ -23,6 +23,27 @@ console.log("Authenticating anonymously to brainCloud");
 _bc.authenticateAnonymous(authenticated);
 ```
 
+**React-Native Usage**
+
+```javascript
+import { BrainCloudWrapper } from 'braincloud/react-native';
+
+_bc = new bc.BrainCloudWrapper("_myApp");
+
+secret = "aaaaaaaa-bbbb-0000-cccc-111111111111";
+appId = "00000";
+
+console.log("Initializing brainCloud");
+_bc.initialize(appId, secret, "1.0.0");
+
+console.log("Authenticating anonymously to brainCloud");
+ _bc.authenticateAnonymous(function (response) {
+     if (response.status === 200) {
+         console.log("Did get Authenticated to profileId:" + response.data.profileId);
+     }
+});
+
+```
 ## Implementation notes
 
 ### File Upload
