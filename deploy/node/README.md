@@ -1,5 +1,15 @@
 # brainCloud NodeJS client
 
+## Installation
+
+```bash
+yarn add braincloud
+# or
+npm install braincloud
+```
+
+NOTE: peer dependency of reac-native is only needed when used within a React-Native application, see below.
+
 ## Usage 
 
 ```javascript
@@ -70,6 +80,9 @@ _bc.brainCloudClient.file.prepareFileUpload("test2", fileName, shareable, replac
 ...
 ```
 Only `load` and `error` listeners are triggered in this implementations.
+
+
+File upload is not yet supported in **React-Native**.
 
 ### Sessions
 
