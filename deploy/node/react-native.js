@@ -1,5 +1,12 @@
-import { AsyncStorage } from "react-native"
 
+try {
+    var AsyncStorage = require('react-native').AsyncStorage
+} catch (er) {
+    AsyncStorage = { 
+        getItem: () => {},
+        setItem: () => {}
+    };
+}
 /* 
  *   BrainCloudClient expect localStorage to be available as a
  *   synchronous API, this will simulate the minimum required 
