@@ -8,7 +8,7 @@ yarn add braincloud
 npm install braincloud
 ```
 
-NOTE: peer dependency of reac-native is only needed when used within a React-Native application, see below.
+NOTE: peer dependency of ***@react-native-community/async-storage*** is only needed when used within a React-Native application, see below.
 
 ## Usage 
 
@@ -54,6 +54,9 @@ console.log("Authenticating anonymously to brainCloud");
 });
 
 ```
+See  https://github.com/react-native-community/react-native-async-storage for additional information on AsyncStorage.
+
+
 ## Implementation notes
 
 ### File Upload

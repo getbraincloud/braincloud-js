@@ -1,6 +1,6 @@
 
 try {
-    var AsyncStorage = require('react-native').AsyncStorage
+    var AsyncStorage = require('@react-native-community/async-storage').AsyncStorage
 } catch (er) {
     AsyncStorage = { 
         getItem: () => {},
