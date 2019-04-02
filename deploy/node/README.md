@@ -1,5 +1,15 @@
 # brainCloud NodeJS client
 
+## Installation
+
+```bash
+yarn add braincloud
+# or
+npm install braincloud
+```
+
+NOTE: peer dependency of ***@react-native-community/async-storage*** is only needed when used within a React-Native application, see below.
+
 ## Usage 
 
 ```javascript
@@ -22,6 +32,30 @@ _bc.initialize(appId, secret, "1.0.0");
 console.log("Authenticating anonymously to brainCloud");
 _bc.authenticateAnonymous(authenticated);
 ```
+
+**React-Native Usage**
+
+```javascript
+import { BrainCloudWrapper } from 'braincloud/react-native';
+
+_bc = new bc.BrainCloudWrapper("_myApp");
+
+secret = "aaaaaaaa-bbbb-0000-cccc-111111111111";
+appId = "00000";
+
+console.log("Initializing brainCloud");
+_bc.initialize(appId, secret, "1.0.0");
+
+console.log("Authenticating anonymously to brainCloud");
+ _bc.authenticateAnonymous(function (response) {
+     if (response.status === 200) {
+         console.log("Did get Authenticated to profileId:" + response.data.profileId);
+     }
+});
+
+```
+See  https://github.com/react-native-community/react-native-async-storage for additional information on AsyncStorage.
+
 
 ## Implementation notes
 
@@ -49,6 +83,9 @@ _bc.brainCloudClient.file.prepareFileUpload("test2", fileName, shareable, replac
 ...
 ```
 Only `load` and `error` listeners are triggered in this implementations.
+
+
+File upload is not yet supported in **React-Native**.
 
 ### Sessions
 
