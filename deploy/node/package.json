@@ -21,6 +21,9 @@
   ],
   "author": "Mario Couture <marioc@bitheads.com>",
   "license": "Apache-2.0",
+  "peerDependencies": {
+    "@react-native-community/async-storage": "*"
+  },
   "dependencies": {
     "form-data": "^2.3.2",
     "get-user-locale": "^1.1.1",
@@ -32,6 +35,7 @@
   "homepage": "https://portal.braincloudservers.com",
   "files": [
     "index.js",
+    "react-native.js",
     "package.json",
     "lib/*",
     "README.md"
