@@ -515,17 +515,16 @@ async function testAuthentication() {
                 });
     });
 
-    await asyncTest("resetEmailPasswordAdvanced()", 2, function() {
+
+    await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.brainCloudClient.authentication.resetEmailPasswordAdvanced(
                 "braincloudunittest@gmail.com",
                 {
-                    fromAddress: "fromAddress",
+                    fromAddress: "braincloudunittest@gmail.com",
                     fromName: "fromName",
-                    replyToAddress: "replyToAddress",
+                    replyToAddress: "braincloudunittest@gmail.com",
                     replyToName: "replyToName",
                     templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
-                    subject: "subject",
-                    body: "Body goes here",
                     substitutions: {
                       [":name"]: "John Doe",
                       [":resetLink"]: "www.dummuyLink.io"
@@ -536,8 +535,7 @@ async function testAuthentication() {
                     ]
                 },
                 function(result) {
-                    equal(result.status, 400);
-                    equal(result.reason_code, bc.reasonCodes.INVALID_FROM_ADDRESS);
+                    equal(result.status, 200,  JSON.stringify(result));
                     resolve_test();
                 });
     });
@@ -3186,7 +3184,19 @@ async function testRedemptionCode() {
         );
     });
 
-    await asyncTest("redeemCode()", 2, function() {
+    await asyncTest("redeemCode()", 4, function() {
+        bc.globalStatistics.incrementGlobalStats(
+            {
+                lastCodeUsed : "+1"
+            },
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                _codeToRedeem = result.data.statistics.lastCodeUsed.toString();
+                resolve_test();
+            }
+        );
+
         bc.redemptionCode.redeemCode(_codeToRedeem, _codeType, null,
             function(result) {
                 ok(true, JSON.stringify(result));
@@ -4309,29 +4319,26 @@ async function testWrapper()
         });
     });
 
-    await asyncTest("resetEmailPasswordAdvanced()", 2, function() {
+    await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.resetEmailPasswordAdvanced(
-        "braincloudunittest@gmail.com",
-        {
-            fromAddress: "fromAddress",
-            fromName: "fromName",
-            replyToAddress: "replyToAddress",
-            replyToName: "replyToName",
-            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
-            subject: "subject",
-            body: "Body goes here",
-            substitutions: {
-                [":name"]: "John Doe",
-                [":resetLink"]: "www.dummuyLink.io"
+            "braincloudunittest@gmail.com",
+            {
+                fromAddress: "braincloudunittest@gmail.com",
+                fromName: "fromName",
+                replyToAddress: "braincloudunittest@gmail.com",
+                replyToName: "replyToName",
+                templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+                substitutions: {
+                  [":name"]: "John Doe",
+                  [":resetLink"]: "www.dummuyLink.io"
+                },
+                categories: [
+                  "category1",
+                  "category2"
+                ]
             },
-            categories: [
-                "category1",
-                "category2"
-            ]
-        },
         function(result) {
-            equal(result.status, 400);
-            equal(result.reason_code, bc.reasonCodes.INVALID_FROM_ADDRESS);
+            equal(result.status, 200, JSON.stringify(result));
             resolve_test();
         });
     });
