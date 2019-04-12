@@ -20,11 +20,11 @@ java -jar ../tools/closure/compiler.jar --js ../deploy/node/lib/brainCloudClient
 
 pushd ../test
 echo "serverUrl=https://sharedprod.braincloudservers.com/dispatcherv2" >ids.txt
-echo "appId=20001" >>ids.txt
-echo "secret=4e51b45c-030e-4f21-8457-dc53c9a0ed5f" >>ids.txt
+echo "appId=12011" >>ids.txt
+echo "secret=a32cb6c7-e5eb-4095-b94e-2bfb1a7473f2" >>ids.txt
 echo "version=1.0.0" >>ids.txt
-echo "childAppId=20005" >>ids.txt
-echo "childSecret=f8cec1cf-2f95-4989-910c-8caf598f83db" >>ids.txt
+echo "childAppId=12109" >>ids.txt
+echo "childSecret=7c929b87-ed3d-4e1c-bb43-b2dc09ecc2b1" >>ids.txt
 echo "parentLevelName=Master" >>ids.txt
 echo "peerName=peerapp" >>ids.txt
 npm install
