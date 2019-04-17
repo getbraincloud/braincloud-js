@@ -508,7 +508,7 @@ async function testAuthentication() {
 
     await asyncTest("resetEmailPassword()", function() {
         bc.brainCloudClient.authentication.resetEmailPassword(
-                "braincloudunittest@gmail.com",
+                "ryanr@bitheads.com",
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
@@ -518,11 +518,11 @@ async function testAuthentication() {
 
     await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.brainCloudClient.authentication.resetEmailPasswordAdvanced(
-                "braincloudunittest@gmail.com",
+                "ryanr@bitheads.com",
                 {
-                    fromAddress: "braincloudunittest@gmail.com",
+                    fromAddress: "ryanr@bitheads.com",
                     fromName: "fromName",
-                    replyToAddress: "braincloudunittest@gmail.com",
+                    replyToAddress: "ryanr@bitheads.com",
                     replyToName: "replyToName",
                     templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
                     substitutions: {
@@ -3243,9 +3243,8 @@ async function testS3Handling() {
         bc.s3Handling.getFileList("test", function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
-
-            fileId = result.data.fileDetails[0].fileId;
             resolve_test();
+            fileId = result.data.fileDetails[0].fileId;
         });
     });
 
@@ -4312,7 +4311,7 @@ async function testWrapper()
 
     await asyncTest("resetEmailPassword()", function() {
         bc.resetEmailPassword(
-            "braincloudunittest@gmail.com",
+            "ryanr@bitheads.com",
             function(result) {
                 equal(result.status, 200, JSON.stringify(result));
                 resolve_test();
@@ -4321,11 +4320,11 @@ async function testWrapper()
 
     await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.resetEmailPasswordAdvanced(
-            "braincloudunittest@gmail.com",
+            "ryanr@bitheads.com",
             {
-                fromAddress: "braincloudunittest@gmail.com",
+                fromAddress: "ryanr@bitheads.com",
                 fromName: "fromName",
-                replyToAddress: "braincloudunittest@gmail.com",
+                replyToAddress: "ryanr@bitheads.com",
                 replyToName: "replyToName",
                 templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
                 substitutions: {
