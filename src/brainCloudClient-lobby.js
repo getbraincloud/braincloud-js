@@ -11,6 +11,7 @@ function BCLobby() {
     bc.lobby.OPERATION_FIND_OR_CREATE_LOBBY = "FIND_OR_CREATE_LOBBY";
     bc.lobby.OPERATION_GET_LOBBY_DATA = "GET_LOBBY_DATA";
     bc.lobby.OPERATION_LEAVE_LOBBY = "LEAVE_LOBBY";
+    bc.lobby.OPERATION_JOIN_LOBBY = "JOIN_LOBBY";
     bc.lobby.OPERATION_REMOVE_MEMBER = "REMOVE_MEMBER";
     bc.lobby.OPERATION_SEND_SIGNAL = "SEND_SIGNAL";
     bc.lobby.OPERATION_SWITCH_TEAM = "SWITCH_TEAM";
@@ -165,6 +166,35 @@ function BCLobby() {
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_LOBBY,
             operation: bc.lobby.OPERATION_LEAVE_LOBBY,
+            data: data,
+            callback: callback
+        });
+    };
+
+    /**
+     * Causes the caller to join the specified lobby.
+     *
+     * Service Name - Lobby
+     * Service Operation - JOIN_LOBBY
+     *
+     * @param lobbyId Id of chosen lobby.
+     * @param isReady initial ready status of this user
+     * @param extraJson Initial extra-data about this user
+     * @param teamCode specified team code
+     * @param otherUserCxIds Array fo other users (ie party members) to add to the lobby as well. Constrains things so only lobbies with room for all players will be considered. 
+     */
+    bc.lobby.joinLobby = function(lobbyId, isReady, extraJson, teamCode, otherUserCxIds, callback) {
+        var data = {
+            lobbyId: lobbyId,
+            isReady: isReady,
+            extraJson: extraJson, 
+            teamCode: teamCode,
+            otherUserCxIds: otherUserCxIds
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_LOBBY,
+            operation: bc.lobby.OPERATION_JOIN_LOBBY,
             data: data,
             callback: callback
         });

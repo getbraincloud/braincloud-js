@@ -1427,6 +1427,14 @@ async function testGlobalEntity() {
         });
     });
 
+    await asyncTest("updateEntityIndexedId()", function() {
+        bc.globalEntity.updateEntityIndexedId(entityId, 1, indexId, function(
+                result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
     await asyncTest("updateEntityOwnerAndAcl()", function() {
         bc.globalEntity.updateEntityOwnerAndAcl(entityId, -1, UserA.profileId, { other: 2 },  function(
                 result) {
@@ -2820,6 +2828,15 @@ async function testVirtualCurrency() {
         });
     });
 
+    await asyncTest("resetCurrency()", 1, () =>
+    {
+        bc.virtualCurrency.resetCurrency(result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     var currencyType = "credits";
 
     await asyncTest("awardCurrency()", 2, function() {
@@ -3954,6 +3971,20 @@ async function testSharedIdentity() {
             resolve_test();
         });
     });
+
+    await asyncTest("attachNonLoginUniversalId()", function() {
+        bc.identity.attachNonLoginUniversalId("braincloudtest@gmail.com", function(result) {
+            equal(result.status, 403, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("updateUniversalLoginId()", function() {
+        bc.identity.updateUniversalIdLogin("braincloudtest@gmail.com", function(result) {
+            equal(result.status, 403, JSON.stringify(result));
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
@@ -5016,6 +5047,16 @@ async function testLobby() {
     await asyncTest("leaveLobby()", 1, () =>
     {
         bc.lobby.leaveLobby("wrongLobbyId", result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("joinLobby()", 1, () =>
+    {
+        //bc.lobby.joinLobby("20001:4v4:1", true, "{}", "red", otherUserCxIds, &tr);
+        bc.lobby.joinLobby("wrongLobbyId", true, {}, "red", null, result =>
         {
             equal(result.status, 400, "Expecting 400");
             resolve_test();
