@@ -20,6 +20,7 @@ function BCGlobalEntity() {
 	bc.globalEntity.OPERATION_GET_PAGE_BY_OFFSET = "GET_PAGE_BY_OFFSET";
 	bc.globalEntity.OPERATION_INCREMENT_GLOBAL_ENTITY_DATA = "INCREMENT_GLOBAL_ENTITY_DATA";
 	bc.globalEntity.OPERATION_GET_RANDOM_ENTITIES_MATCHING = "GET_RANDOM_ENTITIES_MATCHING";
+	bc.globalEntity.OPERATION_UPDATE_ENTITY_INDEXED_ID = "UPDATE_INDEXED_ID";
 	bc.globalEntity.OPERATION_UPDATE_ENTITY_OWNER_AND_ACL = "UPDATE_ENTITY_OWNER_AND_ACL";
 	bc.globalEntity.OPERATION_MAKE_SYSTEM_ENTITY = "MAKE_SYSTEM_ENTITY";
 
@@ -408,6 +409,33 @@ function BCGlobalEntity() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_GLOBAL_ENTITY,
 			operation : bc.globalEntity.OPERATION_GET_RANDOM_ENTITIES_MATCHING,
+			data : message,
+			callback : callback
+		});
+	};
+
+	/**
+	 * Method updates an existing entity's Owner and ACL on the server.
+	 *
+	 * Service Name - globalEntity
+	 * Service Operation - UPDATE_ENTITY_OWNER_AND_ACL
+	 *
+	 * @param entityId The entity ID
+	 * @param version The version of the entity to update
+	 * @param entityIndexedId the id index of the entity
+	 * @param callback The callback object
+	 */
+	bc.globalEntity.updateEntityIndexedId = function(entityId, version, entityIndexedId, callback)
+	{
+		var message = {
+			entityId : entityId,
+			version : version,
+			entityIndexedId: entityIndexedId,
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_GLOBAL_ENTITY,
+			operation : bc.globalEntity.OPERATION_UPDATE_ENTITY_INDEXED_ID,
 			data : message,
 			callback : callback
 		});

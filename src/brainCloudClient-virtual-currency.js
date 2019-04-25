@@ -9,6 +9,7 @@ function BCVirtualCurrency() {
     bc.virtualCurrency.OPERATION_GET_CURRENCY = "GET_PLAYER_VC";
     bc.virtualCurrency.OPERATION_GET_PARENT_CURRENCY = "GET_PARENT_VC";
     bc.virtualCurrency.OPERATION_GET_PEER_CURRENCY = "GET_PEER_VC";
+    bc.virtualCurrency.OPERATION_RESET_PLAYER_VC = "RESET_PLAYER_VC";
 
     bc.virtualCurrency.OPERATION_AWARD_VC = "AWARD_VC";
     bc.virtualCurrency.OPERATION_CONSUME_PLAYER_VC = "CONSUME_VC";
@@ -132,6 +133,22 @@ function BCVirtualCurrency() {
                 vcId: vcId,
                 vcAmount: vcAmount
             },
+            callback: callback
+        });
+    };
+
+    /**
+     * Resets the current player's currency
+     *
+     * Service Name - VirtualCurrency
+     * Service Operation - ResetCurrency
+     *      
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.virtualCurrency.resetCurrency = function(callback) {
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_VIRTUAL_CURRENCY,
+            operation: bc.virtualCurrency.OPERATION_RESET_PLAYER_VC,
             callback: callback
         });
     };
