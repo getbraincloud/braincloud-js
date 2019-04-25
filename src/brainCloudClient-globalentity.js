@@ -430,7 +430,7 @@ function BCGlobalEntity() {
 		var message = {
 			entityId : entityId,
 			version : version,
-			entityIndexedId: entityIndexedId,
+			entityIndexedId: entityIndexedId
 		};
 
 		bc.brainCloudManager.sendRequest({
