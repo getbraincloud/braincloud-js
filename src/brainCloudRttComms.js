@@ -37,9 +37,10 @@ function getBrowserName() {
     return null;
 }
 
-function BrainCloudRttComms () {
+function BrainCloudRttComms (m_client) {
     var bcrtt = this;
 
+    bcrtt.m_client = m_client;
     bcrtt.name = "BrainCloudRttComms";
     bcrtt.socket = null;
     bcrtt.heartbeatId = null;
@@ -210,7 +211,7 @@ function BrainCloudRttComms () {
                 failure: failure
             }
             bcrtt.isEnabled = true;
-            bcrtt.rttRegistration.requestClientConnection(function(result) {
+            m_client.rttService.requestClientConnection(function(result) {
                 if (bcrtt._debugEnabled) {
                     console.log(result);
                 }

@@ -4761,7 +4761,7 @@ async function testRTT()
 
     await asyncTest("requestClientConnection()", 1, () =>
     {
-        bc.rttRegistration.requestClientConnection(result =>
+        bc.rttService.requestClientConnection(result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -4770,7 +4770,7 @@ async function testRTT()
 
     await asyncTest("enableRTT()", 1, () =>
     {
-        bc.brainCloudClient.enableRTT(result =>
+        bc.rttService.enableRTT(result =>
         {
             console.log(result);
             equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
@@ -4786,8 +4786,8 @@ async function testRTT()
     // Disable then re-enable
     await asyncTest("enableRTT() again after disableRTT()", 1, () =>
     {
-        bc.brainCloudClient.disableRTT();
-        bc.brainCloudClient.enableRTT(result =>
+        bc.rttService.disableRTT();
+        bc.rttService.enableRTT(result =>
         {
             console.log(result);
             equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
@@ -4818,7 +4818,7 @@ async function testRTT()
     // Test sending a chat message without being connected to the channel and make sure we are not getting anything
     {
         let msgReceived = false;
-        bc.brainCloudClient.registerRTTChatCallback(message =>
+        bc.rttService.registerRTTChatCallback(message =>
         {
             if (message.service === "chat" && message.operation === "INCOMING")
             {
@@ -4841,7 +4841,7 @@ async function testRTT()
             });
         });
 
-        bc.brainCloudClient.deregisterAllRTTCallbacks();
+        bc.rttService.deregisterAllRTTCallbacks();
     }
 
     // Connect to the channel
@@ -4859,7 +4859,7 @@ async function testRTT()
         let msgIdExpected = null;
         let msgIdsReceived = [];
         let timeoutId = null;
-        bc.brainCloudClient.registerRTTChatCallback(message =>
+        bc.rttService.registerRTTChatCallback(message =>
         {
             if (message.service === "chat" && message.operation === "INCOMING")
             {
@@ -4898,7 +4898,7 @@ async function testRTT()
             });
         });
 
-        bc.brainCloudClient.deregisterAllRTTCallbacks();
+        bc.rttService.deregisterAllRTTCallbacks();
     }
 
     // Now test lobby callback
@@ -4906,7 +4906,7 @@ async function testRTT()
         let lobbyId = null;
         let apiReturned = false;
         let timeoutId = null;
-        bc.brainCloudClient.registerRTTLobbyCallback(message =>
+        bc.rttService.registerRTTLobbyCallback(message =>
         {
             console.log(message);
             if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
@@ -4943,7 +4943,7 @@ async function testRTT()
             });
         });
 
-        bc.brainCloudClient.deregisterAllRTTCallbacks();
+        bc.rttService.deregisterAllRTTCallbacks();
     }
 
     // Now test event callback
@@ -4951,7 +4951,7 @@ async function testRTT()
         let eventId = null;
         let apiReturned = false;
         let timeoutId = null;
-        bc.brainCloudClient.registerRTTEventCallback(message =>
+        bc.rttService.registerRTTEventCallback(message =>
         {
             console.log(message);
             if (message.service === "event")
@@ -4990,7 +4990,7 @@ async function testRTT()
             });
         });
 
-        bc.brainCloudClient.deregisterAllRTTCallbacks();
+        bc.rttService.deregisterAllRTTCallbacks();
     }
 
     await tearDownLogout();
