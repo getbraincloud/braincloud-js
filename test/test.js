@@ -538,7 +538,43 @@ async function testAuthentication() {
                     equal(result.status, 200,  JSON.stringify(result));
                     resolve_test();
                 });
-    });
+            });
+
+    //NO SESSION!?
+    // await asyncTest("resetUniversalIdPassword()", function() {
+    //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
+    //         UserA.password, true, function(result) {
+    //             equal(result.status, 200, JSON.stringify(result));
+    //             resolve_test();
+    //         });
+
+    //     bc.brainCloudClient.authentication.resetUniversalIdPassword(
+    //         UserA.playerId,
+    //         function(result) {
+    //         equal(result.status, 200, JSON.stringify(result));
+    //         resolve_test();
+    //         });
+    // });
+
+
+    // await asyncTest("resetUniversalIdPasswordAdvanced()", function() {
+    
+    //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
+    //         UserA.password, true, function(result) {
+    //             equal(result.status, 200, JSON.stringify(result));
+    //             resolve_test();
+    //         });
+
+    //     content = "{\"templateId\": \"d-template-id-guid\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
+
+    //     bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
+    //         UserA.playerId,
+    //         content,
+    //         function(result) {
+    //         equal(result.status, 200,  JSON.stringify(result));
+    //         resolve_test();
+    //         });
+    // });
 
     await asyncTest("authenticateHandoff()", 2, function() {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
@@ -5106,6 +5142,32 @@ async function testLobby() {
             equal(result.status, 400, "Expecting 400");
             resolve_test();
         });
+    });
+
+    await asyncTest("updateSettings()", 1, () =>
+    {
+        bc.rttService.enableRTT(result =>
+            {
+                console.log(result);
+                equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
+                resolve_test();
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //need to come back to this test. When I send a bad cxId, it actually sends the parameter cxId to the server. But when I send a proper 
+                //cxId, it only sends the lobbyType and no cxId parameter, so it always says that the cxId parameter is missing. 
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                bc.lobby.cancelFindRequest("wrongLobbyId", "badcxId", result =>
+                {
+                    equal(result.status, 400, "Expecting 400");
+                    resolve_test();
+                });
+
+            }, error =>
+            {
+                console.log(error);
+                ok(false, error);
+                resolve_test();
+            });
     });
 }
 

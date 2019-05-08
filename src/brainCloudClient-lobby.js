@@ -17,6 +17,7 @@ function BCLobby() {
     bc.lobby.OPERATION_SWITCH_TEAM = "SWITCH_TEAM";
     bc.lobby.OPERATION_UPDATE_READY = "UPDATE_READY";
     bc.lobby.OPERATION_UPDATE_SETTINGS = "UPDATE_SETTINGS";
+    bc.lobby.OPERATION_CANCEL_FIND_REQUEST = "CANCEL_FIND_REQUEST";
 
     /**
      * Creates a new lobby.
@@ -314,6 +315,23 @@ function BCLobby() {
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_LOBBY,
             operation: bc.lobby.OPERATION_UPDATE_SETTINGS,
+            data: data,
+            callback: callback
+        });
+    };
+
+    /// <summary>
+    /// Cancel this members Find, Join and Searching of Lobbies
+    /// </summary>
+    bc.lobby.cancelFindRequest = function(lobbyType, cxId, callback) {
+        var data = {
+            lobbyType: lobbyType,
+            cxId: cxId
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_LOBBY,
+            operation: bc.lobby.OPERATION_CANCEL_FIND_REQUEST,
             data: data,
             callback: callback
         });
