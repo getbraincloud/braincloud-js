@@ -3025,8 +3025,8 @@ async function testPushNotification() {
         });
     });
 
-    await asyncTest("registerPushNotificationToken()", 2, function() {
-        bc.pushNotification.registerPushNotificationToken("IOS", "GARBAGE_TOKEN", function(
+    await asyncTest("registerPushNotificationDeviceToken()", 2, function() {
+        bc.pushNotification.registerPushNotificationDeviceToken("IOS", "GARBAGE_TOKEN", function(
                 result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
