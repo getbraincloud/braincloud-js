@@ -83,7 +83,7 @@ function BCRTT() {
      * Only one lobby callback can be registered at a time. Calling this a second time will override the previous callback.
      */
     bc.rttService.registerRTTLobbyCallback = function(callback) {
-        bcc.brainCloudRttComms.registerRTTCallback(bc.SERVICE_LOBBY, callback);
+        bc.brainCloudRttComms.registerRTTCallback(bc.SERVICE_LOBBY, callback);
     }
     bc.rttService.deregisterRTTLobbyCallback = function() {
         bc.brainCloudRttComms.deregisterRTTCallback(bc.SERVICE_LOBBY);
