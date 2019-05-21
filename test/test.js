@@ -541,40 +541,27 @@ async function testAuthentication() {
             });
 
     //NO SESSION!?
-    // await asyncTest("resetUniversalIdPassword()", function() {
-    //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-    //         UserA.password, true, function(result) {
-    //             equal(result.status, 200, JSON.stringify(result));
-    //             resolve_test();
-    //         });
-
-    //     bc.brainCloudClient.authentication.resetUniversalIdPassword(
-    //         UserA.playerId,
-    //         function(result) {
-    //         equal(result.status, 200, JSON.stringify(result));
-    //         resolve_test();
-    //         });
-    // });
+    await asyncTest("resetUniversalIdPassword()", function() {
+        bc.brainCloudClient.authentication.resetUniversalIdPassword(
+            UserA.id,
+            function(result) {
+            equal(result.status, 403);
+            resolve_test();
+            });
+    });
 
 
-    // await asyncTest("resetUniversalIdPasswordAdvanced()", function() {
-    
-    //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-    //         UserA.password, true, function(result) {
-    //             equal(result.status, 200, JSON.stringify(result));
-    //             resolve_test();
-    //         });
+    await asyncTest("resetUniversalIdPasswordAdvanced()", function() {
+        content = "{\"templateId\": \"d-template-id-guid\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
 
-    //     content = "{\"templateId\": \"d-template-id-guid\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
-
-    //     bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
-    //         UserA.playerId,
-    //         content,
-    //         function(result) {
-    //         equal(result.status, 200,  JSON.stringify(result));
-    //         resolve_test();
-    //         });
-    // });
+        bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
+            UserA.id,
+            content,
+            function(result) {
+            equal(result.status, 403);
+            resolve_test();
+            });
+    });
 
     await asyncTest("authenticateHandoff()", 2, function() {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());

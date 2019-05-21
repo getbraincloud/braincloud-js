@@ -2,7 +2,7 @@ if (typeof WebSocket === 'undefined') {
     WebSocket = require('ws');
 }
 
-var DEFAULT_RTT_HEARTBEAT = 10; // Seconds
+var DEFAULT_RTT_HEARTBEAT; // Seconds
 
 function getBrowserName() {
     // Opera 8.0+
@@ -140,6 +140,7 @@ function BrainCloudRttComms (m_client) {
             var processResult = function(result) {
                 if (result.operation == "CONNECT" && result.service == "rtt") {
                     bcrtt.connectionId = result.cxId;
+                    DEFAULT_RTT_HEARTBEAT = result.data.heartbeatSeconds; //make default heartbeat match the heartbeat the server gives us
                     bcrtt.startHeartbeat();
                     bcrtt.connectCallback.success(result);
                 }
@@ -179,7 +180,7 @@ function BrainCloudRttComms (m_client) {
                 }
 
                 bcrtt.socket.send(JSON.stringify(request));
-            }, DEFAULT_RTT_HEARTBEAT * 1000);
+            }, 1000 * DEFAULT_RTT_HEARTBEAT);
         }
     }
 
