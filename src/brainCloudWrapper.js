@@ -121,7 +121,7 @@ function BrainCloudWrapper(wrapperName) {
     };
 
     bcw.initializeWithApps = function(defaultAppId, secretMap, appVersion) {
-        bcw.brainCloudClient.initialize(defaultAppId, secretMap, appVersion);
+        bcw.brainCloudClient.initializeWithApps(defaultAppId, secretMap, appVersion);
     };
 
     bcw.getStoredAnonymousId = function() {
