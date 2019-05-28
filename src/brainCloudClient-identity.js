@@ -31,6 +31,8 @@ function BCIdentity() {
 	bc.identity.OPERATION_ATTACH_PEER_PROFILE = "ATTACH_PEER_PROFILE";
 	bc.identity.OPERATION_DETACH_PEER = "DETACH_PEER";
 	bc.identity.OPERATION_GET_PEER_PROFILES = "GET_PEER_PROFILES";
+	bc.identity.OPERATION_ATTACH_NONLOGIN_UNIVERSAL = "ATTACH_NONLOGIN_UNIVERSAL";
+	bc.identity.OPERATION_UPDATE_UNIVERSAL_LOGIN = "UPDATE_UNIVERSAL_LOGIN";
 
 	bc.identity.authenticationType = Object.freeze({
 		anonymous : "Anonymous",
@@ -512,6 +514,46 @@ function BCIdentity() {
 	bc.identity.switchToSingletonChildProfile = function(childAppId, forceCreate, callback) {
 
 		bc.identity.switchToChildProfileInternal(null, childAppId, forceCreate, true, callback);
+	};
+
+	/**
+	 * Updates univeral id of the current profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - UPDATE_UNIVERSAL_LOGIN
+	 *
+	 * @param externalId user id
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.identity.updateUniversalIdLogin = function(externalId, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_IDENTITY,
+			operation: bc.identity.OPERATION_UPDATE_UNIVERSAL_LOGIN,
+			data: {
+				externalId : externalId
+			},
+			callback: callback
+		});
+	};
+
+	/**
+	 * Attaches a univeral id to the current profile with no login capability.
+	 * 
+	 * Service Name - Identity
+	 * Service Operation - ATTACH_NONLOGIN_UNIVERSAL
+	 *
+	 * @param externalId user id
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.identity.attachNonLoginUniversalId = function(externalId, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_IDENTITY,
+			operation: bc.identity.OPERATION_ATTACH_NONLOGIN_UNIVERSAL,
+			data: {
+				externalId : externalId
+			},
+			callback: callback
+		});
 	};
 
 	/**

@@ -508,24 +508,23 @@ async function testAuthentication() {
 
     await asyncTest("resetEmailPassword()", function() {
         bc.brainCloudClient.authentication.resetEmailPassword(
-                "braincloudunittest@gmail.com",
+                "ryanr@bitheads.com",
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
     });
 
-    await asyncTest("resetEmailPasswordAdvanced()", 2, function() {
+
+    await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.brainCloudClient.authentication.resetEmailPasswordAdvanced(
-                "braincloudunittest@gmail.com",
+                "ryanr@bitheads.com",
                 {
-                    fromAddress: "fromAddress",
+                    fromAddress: "ryanr@bitheads.com",
                     fromName: "fromName",
-                    replyToAddress: "replyToAddress",
+                    replyToAddress: "ryanr@bitheads.com",
                     replyToName: "replyToName",
                     templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
-                    subject: "subject",
-                    body: "Body goes here",
                     substitutions: {
                       [":name"]: "John Doe",
                       [":resetLink"]: "www.dummuyLink.io"
@@ -536,10 +535,32 @@ async function testAuthentication() {
                     ]
                 },
                 function(result) {
-                    equal(result.status, 400);
-                    equal(result.reason_code, bc.reasonCodes.INVALID_FROM_ADDRESS);
+                    equal(result.status, 200,  JSON.stringify(result));
                     resolve_test();
                 });
+            });
+
+    //NO SESSION!?
+    await asyncTest("resetUniversalIdPassword()", function() {
+        bc.brainCloudClient.authentication.resetUniversalIdPassword(
+            UserA.id,
+            function(result) {
+            equal(result.status, 403);
+            resolve_test();
+            });
+    });
+
+
+    await asyncTest("resetUniversalIdPasswordAdvanced()", function() {
+        content = "{\"templateId\": \"d-template-id-guid\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
+
+        bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
+            UserA.id,
+            content,
+            function(result) {
+            equal(result.status, 403);
+            resolve_test();
+            });
     });
 
     await asyncTest("authenticateHandoff()", 2, function() {
@@ -1424,6 +1445,14 @@ async function testGlobalEntity() {
         bc.globalEntity.getListCount({
             "data.buildName" : "bob"
         }, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("updateEntityIndexedId()", function() {
+        bc.globalEntity.updateEntityIndexedId(entityId, 1, indexId, function(
+                result) {
             equal(result.status, 200, JSON.stringify(result));
             resolve_test();
         });
@@ -2822,6 +2851,15 @@ async function testVirtualCurrency() {
         });
     });
 
+    await asyncTest("resetCurrency()", 1, () =>
+    {
+        bc.virtualCurrency.resetCurrency(result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     var currencyType = "credits";
 
     await asyncTest("awardCurrency()", 2, function() {
@@ -2974,8 +3012,8 @@ async function testPushNotification() {
         });
     });
 
-    await asyncTest("registerPushNotificationToken()", 2, function() {
-        bc.pushNotification.registerPushNotificationToken("IOS", "GARBAGE_TOKEN", function(
+    await asyncTest("registerPushNotificationDeviceToken()", 2, function() {
+        bc.pushNotification.registerPushNotificationDeviceToken("IOS", "GARBAGE_TOKEN", function(
                 result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -3186,7 +3224,19 @@ async function testRedemptionCode() {
         );
     });
 
-    await asyncTest("redeemCode()", 2, function() {
+    await asyncTest("redeemCode()", 4, function() {
+        bc.globalStatistics.incrementGlobalStats(
+            {
+                lastCodeUsed : "+1"
+            },
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                _codeToRedeem = result.data.statistics.lastCodeUsed.toString();
+                resolve_test();
+            }
+        );
+
         bc.redemptionCode.redeemCode(_codeToRedeem, _codeType, null,
             function(result) {
                 ok(true, JSON.stringify(result));
@@ -3233,9 +3283,8 @@ async function testS3Handling() {
         bc.s3Handling.getFileList("test", function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
-
-            fileId = result.data.fileDetails[0].fileId;
             resolve_test();
+            fileId = result.data.fileDetails[0].fileId;
         });
     });
 
@@ -3945,6 +3994,20 @@ async function testSharedIdentity() {
             resolve_test();
         });
     });
+
+    await asyncTest("attachNonLoginUniversalId()", function() {
+        bc.identity.attachNonLoginUniversalId("braincloudtest@gmail.com", function(result) {
+            equal(result.status, 403, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("updateUniversalLoginId()", function() {
+        bc.identity.updateUniversalIdLogin("braincloudtest@gmail.com", function(result) {
+            equal(result.status, 403, JSON.stringify(result));
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
@@ -4302,36 +4365,33 @@ async function testWrapper()
 
     await asyncTest("resetEmailPassword()", function() {
         bc.resetEmailPassword(
-            "braincloudunittest@gmail.com",
+            "ryanr@bitheads.com",
             function(result) {
                 equal(result.status, 200, JSON.stringify(result));
                 resolve_test();
         });
     });
 
-    await asyncTest("resetEmailPasswordAdvanced()", 2, function() {
+    await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.resetEmailPasswordAdvanced(
-        "braincloudunittest@gmail.com",
-        {
-            fromAddress: "fromAddress",
-            fromName: "fromName",
-            replyToAddress: "replyToAddress",
-            replyToName: "replyToName",
-            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
-            subject: "subject",
-            body: "Body goes here",
-            substitutions: {
-                [":name"]: "John Doe",
-                [":resetLink"]: "www.dummuyLink.io"
+            "ryanr@bitheads.com",
+            {
+                fromAddress: "ryanr@bitheads.com",
+                fromName: "fromName",
+                replyToAddress: "ryanr@bitheads.com",
+                replyToName: "replyToName",
+                templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+                substitutions: {
+                  [":name"]: "John Doe",
+                  [":resetLink"]: "www.dummuyLink.io"
+                },
+                categories: [
+                  "category1",
+                  "category2"
+                ]
             },
-            categories: [
-                "category1",
-                "category2"
-            ]
-        },
         function(result) {
-            equal(result.status, 400);
-            equal(result.reason_code, bc.reasonCodes.INVALID_FROM_ADDRESS);
+            equal(result.status, 200, JSON.stringify(result));
             resolve_test();
         });
     });
@@ -4724,7 +4784,7 @@ async function testRTT()
 
     await asyncTest("requestClientConnection()", 1, () =>
     {
-        bc.rttRegistration.requestClientConnection(result =>
+        bc.rttService.requestClientConnection(result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -4733,7 +4793,7 @@ async function testRTT()
 
     await asyncTest("enableRTT()", 1, () =>
     {
-        bc.brainCloudClient.enableRTT(result =>
+        bc.rttService.enableRTT(result =>
         {
             console.log(result);
             equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
@@ -4749,8 +4809,8 @@ async function testRTT()
     // Disable then re-enable
     await asyncTest("enableRTT() again after disableRTT()", 1, () =>
     {
-        bc.brainCloudClient.disableRTT();
-        bc.brainCloudClient.enableRTT(result =>
+        bc.rttService.disableRTT();
+        bc.rttService.enableRTT(result =>
         {
             console.log(result);
             equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
@@ -4781,7 +4841,7 @@ async function testRTT()
     // Test sending a chat message without being connected to the channel and make sure we are not getting anything
     {
         let msgReceived = false;
-        bc.brainCloudClient.registerRTTChatCallback(message =>
+        bc.rttService.registerRTTChatCallback(message =>
         {
             if (message.service === "chat" && message.operation === "INCOMING")
             {
@@ -4804,7 +4864,7 @@ async function testRTT()
             });
         });
 
-        bc.brainCloudClient.deregisterAllRTTCallbacks();
+        bc.rttService.deregisterAllRTTCallbacks();
     }
 
     // Connect to the channel
@@ -4822,7 +4882,7 @@ async function testRTT()
         let msgIdExpected = null;
         let msgIdsReceived = [];
         let timeoutId = null;
-        bc.brainCloudClient.registerRTTChatCallback(message =>
+        bc.rttService.registerRTTChatCallback(message =>
         {
             if (message.service === "chat" && message.operation === "INCOMING")
             {
@@ -4861,7 +4921,7 @@ async function testRTT()
             });
         });
 
-        bc.brainCloudClient.deregisterAllRTTCallbacks();
+        bc.rttService.deregisterAllRTTCallbacks();
     }
 
     // Now test lobby callback
@@ -4869,7 +4929,7 @@ async function testRTT()
         let lobbyId = null;
         let apiReturned = false;
         let timeoutId = null;
-        bc.brainCloudClient.registerRTTLobbyCallback(message =>
+        bc.rttService.registerRTTLobbyCallback(message =>
         {
             console.log(message);
             if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
@@ -4906,7 +4966,7 @@ async function testRTT()
             });
         });
 
-        bc.brainCloudClient.deregisterAllRTTCallbacks();
+        bc.rttService.deregisterAllRTTCallbacks();
     }
 
     // Now test event callback
@@ -4914,7 +4974,7 @@ async function testRTT()
         let eventId = null;
         let apiReturned = false;
         let timeoutId = null;
-        bc.brainCloudClient.registerRTTEventCallback(message =>
+        bc.rttService.registerRTTEventCallback(message =>
         {
             console.log(message);
             if (message.service === "event")
@@ -4953,7 +5013,7 @@ async function testRTT()
             });
         });
 
-        bc.brainCloudClient.deregisterAllRTTCallbacks();
+        bc.rttService.deregisterAllRTTCallbacks();
     }
 
     await tearDownLogout();
@@ -5016,6 +5076,16 @@ async function testLobby() {
         });
     });
 
+    await asyncTest("joinLobby()", 1, () =>
+    {
+        //bc.lobby.joinLobby("20001:4v4:1", true, "{}", "red", otherUserCxIds, &tr);
+        bc.lobby.joinLobby("wrongLobbyId", true, {}, "red", null, result =>
+        {
+            equal(result.status, 400, "Expecting 400");
+            resolve_test();
+        });
+    });
+
     await asyncTest("removeMember()", 1, () =>
     {
         bc.lobby.removeMember("wrongLobbyId", "wrongConId", result =>
@@ -5059,6 +5129,32 @@ async function testLobby() {
             equal(result.status, 400, "Expecting 400");
             resolve_test();
         });
+    });
+
+    await asyncTest("updateSettings()", 1, () =>
+    {
+        bc.rttService.enableRTT(result =>
+            {
+                console.log(result);
+                equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
+                resolve_test();
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //need to come back to this test. When I send a bad cxId, it actually sends the parameter cxId to the server. But when I send a proper 
+                //cxId, it only sends the lobbyType and no cxId parameter, so it always says that the cxId parameter is missing. 
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                bc.lobby.cancelFindRequest("wrongLobbyId", "badcxId", result =>
+                {
+                    equal(result.status, 400, "Expecting 400");
+                    resolve_test();
+                });
+
+            }, error =>
+            {
+                console.log(error);
+                ok(false, error);
+                resolve_test();
+            });
     });
 }
 
