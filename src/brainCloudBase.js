@@ -377,7 +377,8 @@ function BrainCloudManager ()
                 var data = messages[c].data;
 
                 // A session id or a profile id could potentially come back in any messages
-                if (data)
+                //only save cached session and profile id when its an authentication or identity service being used. 
+                if (data && (bcm._inProgressQueue[c].service == "authenticationV2" || bcm._inProgressQueue[c].service == "identity"))
                 {
                     if (data.sessionId)
                     {

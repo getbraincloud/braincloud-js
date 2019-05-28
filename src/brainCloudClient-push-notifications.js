@@ -56,6 +56,16 @@ function BCPushNotifications() {
 		});
 	};
 
+	
+
+
+	/**
+     * @deprecated Use registerPushNotificationDeviceToken() instead - Removal after September 1 2020
+     */
+	bc.pushNotification.registerPushNotificationToken = function(deviceType, deviceToken, callback) {
+		registerPushNotificationDeviceToken(deviceType, deviceToken, callback);
+	};
+
 	/**
 	 * Registers the given device token with the server to enable this device
 	 * to receive push notifications.
@@ -65,7 +75,7 @@ function BCPushNotifications() {
 	 *   On IOS, this is obtained using the application:didRegisterForRemoteNotificationsWithDeviceToken callback
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.pushNotification.registerPushNotificationToken = function(deviceType, deviceToken, callback) {
+	bc.pushNotification.registerPushNotificationDeviceToken = function(deviceType, deviceToken, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_PUSH_NOTIFICATION,
 			operation: bc.pushNotification.OPERATION_REGISTER,
