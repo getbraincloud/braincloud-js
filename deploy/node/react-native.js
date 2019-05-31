@@ -15,6 +15,13 @@ try {
 localStorageData ={};
 
 try {
+  let BackgroundTimer  = require('react-native-background-timer').default;
+  customSetInterval = (func, interval) => BackgroundTimer.setInterval(func,interval);
+} catch {
+  customSetInterval = undefined;
+}
+
+try {
     AsyncStorage.getItem("@AppData", function (err, result) {
       if (result) {
         localStorageData = JSON.parse(result);
