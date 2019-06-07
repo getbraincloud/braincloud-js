@@ -17,7 +17,7 @@ localStorageData ={};
 try {
   let BackgroundTimer  = require('react-native-background-timer').default;
   customSetInterval = (func, interval) => BackgroundTimer.setInterval(func,interval);
-} catch {
+} catch(e) {
   customSetInterval = undefined;
 }
 
