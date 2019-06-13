@@ -27,6 +27,14 @@ function BCSocialLeaderboard() {
 	bc.socialLeaderboard.OPERATION_REMOVE_PLAYER_SCORE = "REMOVE_PLAYER_SCORE";
 	bc.socialLeaderboard.OPERATION_GET_PLAYER_SCORE = "GET_PLAYER_SCORE";
 	bc.socialLeaderboard.OPERATION_GET_PLAYER_SCORES_FROM_LEADERBOARDS = "GET_PLAYER_SCORES_FROM_LEADERBOARDS";
+	bc.socialLeaderboard.OPERATION_POST_GROUP_SCORE = "POST_GROUP_SCORE";
+	bc.socialLeaderboard.OPERATION_REMOVE_GROUP_SCORE = "REMOVE_GROUP_SCORE";
+	bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW = "GET_GROUP_LEADERBOARD_VIEW";
+	bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW_BY_VERSION = "GET_GROUP_LEADERBOARD_VIEW_BY_VERSION";
+
+
+
+
 
 // Constant helper values
 	bc.socialLeaderboard.leaderboardType = Object.freeze({ HIGH_VALUE : "HIGH_VALUE", CUMULATIVE : "CUMULATIVE", LAST_VALUE : "LAST_VALUE", LOW_VALUE : "LOW_VALUE"});
@@ -614,6 +622,125 @@ function BCSocialLeaderboard() {
 		});
 	}
 
+	/**
+	 * Posts score to Group's leaderboard - Note the user must be a member of the group
+	 *
+	 * Service Name - leaderboard
+	 * Service Operation - POST_SCORE_TO_GROUP_LEADERBOARD
+	 *
+	 * @param leaderboardId the id of the leaderboard
+	 * @param groupId the group's id
+	 * @param score the score you wish to post
+	 * @param otherData extra json data
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.socialLeaderboard.postScoreToGroupLeaderboard = function(leaderboardId, groupId, score, otherData, callback) {
+		var message = {
+			leaderboardId : leaderboardId,
+			groupId : groupId,
+			score : score
+		};
+		
+		if (otherData)
+		{
+			message["data"] = otherData;
+		}
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_LEADERBOARD,
+			operation : bc.socialLeaderboard.OPERATION_POST_GROUP_SCORE,
+			data : message,
+			callback : callback
+		});
+	}
+
+	/**
+	 * Removes score from group leaderboard
+	 *
+	 * Service Name - leaderboard
+	 * Service Operation - REMOVE_GROUP_SCORE
+	 *
+	 * @param leaderboardId the id of the leaderboard
+	 * @param groupId the group's id
+	 * @param versionId the version
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.socialLeaderboard.removeGroupScore = function(leaderboardId, groupId, versionId, callback) {
+		var message = {
+			leaderboardId : leaderboardId,
+			groupId : groupId,
+			versionId : versionId
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_LEADERBOARD,
+			operation : bc.socialLeaderboard.OPERATION_REMOVE_GROUP_SCORE,
+			data : message,
+			callback : callback
+		});
+	}
+
+	/**
+	 * Retrieve a view of the group leaderboard surrounding the current group.
+	 *
+	 * Service Name - leaderboard
+	 * Service Operation - GET_GROUP_LEADERBOARD_VIEW
+	 *
+	 * @param leaderboardId the id of the leaderboard
+	 * @param groupId the group's id
+	 * @param sort the sort order
+	 * @param beforeCount count of players before current player to include
+	 * @param afterCount count of players after current player to include
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.socialLeaderboard.getGroupLeaderboardView = function(leaderboardId, groupId, sort, beforeCount, afterCount, callback) {
+		var message = {
+			leaderboardId : leaderboardId,
+			groupId : groupId,
+			sort : sort,
+			beforeCount : beforeCount,
+			afterCount : afterCount
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_LEADERBOARD,
+			operation : bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW,
+			data : message,
+			callback : callback
+		});
+	}
+
+	/**
+	 * Retrieve a view of the group leaderboard surrounding the current group by the version
+	 *
+	 * Service Name - leaderboard
+	 * Service Operation - GET_GROUP_LEADERBOARD_VIEW
+	 *
+	 * @param leaderboardId the id of the leaderboard
+	 * @param groupId the group's id
+	 * @param sort the sort order
+	 * @param beforeCount count of players before current player to include
+	 * @param afterCount count of players after current player to include
+	 * @param versionId the version
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.socialLeaderboard.getGroupLeaderboardViewByVersion = function(leaderboardId, groupId, versionId, sort, beforeCount, afterCount, callback) {
+		var message = {
+			leaderboardId : leaderboardId,
+			groupId : groupId,
+			versionId : versionId,
+			sort : sort,
+			beforeCount : beforeCount,
+			afterCount : afterCount
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_LEADERBOARD,
+			operation : bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW,
+			data : message,
+			callback : callback
+		});
+	}
 }
 
 BCSocialLeaderboard.apply(window.brainCloudClient = window.brainCloudClient || {});
