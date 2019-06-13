@@ -3617,59 +3617,59 @@ async function testSocialLeaderboard() {
     });
 /////////////////////////////
 
-    // await asyncTest("postScoreToGroupLeaderboard())", 2, function() {
-    //     bc.socialLeaderboard.postScoreToGroupLeaderboard(
-    //         groupLeaderboard,
-    //         groupId,
-    //         0,
-    //         { test : "asdf"},
-    //         function(result) {
-    //             ok(true, JSON.stringify(result));
-    //             equal(result.status, 200, "Expecting 200");
-    //             resolve_test();
-    //         });
-    // });
+    await asyncTest("postScoreToGroupLeaderboard())", 2, function() {
+        bc.socialLeaderboard.postScoreToGroupLeaderboard(
+            groupLeaderboard,
+            groupId,
+            0,
+            { test : "asdf"},
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
 
-    // await asyncTest("removeGroupScore())", 2, function() {
-    //     bc.socialLeaderboard.removeGroupScore(
-    //         groupLeaderboard,
-    //         groupId,
-    //         -1,
-    //         function(result) {
-    //             ok(true, JSON.stringify(result));
-    //             equal(result.status, 200, "Expecting 200");
-    //             resolve_test();
-    //         });
-    // });
+    await asyncTest("removeGroupScore())", 2, function() {
+        bc.socialLeaderboard.removeGroupScore(
+            groupLeaderboard,
+            groupId,
+            -1,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
 
-    // await asyncTest("getGroupLeaderboardView())", 2, function() {
-    //     bc.socialLeaderboard.getGroupLeaderboardView(
-    //         groupLeaderboard,
-    //         groupId,
-    //         bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
-    //         5,
-    //         5,
-    //         function(result) {
-    //             ok(true, JSON.stringify(result));
-    //             equal(result.status, 200, "Expecting 200");
-    //             resolve_test();
-    //         });
-    // });
+    await asyncTest("getGroupLeaderboardView())", 2, function() {
+        bc.socialLeaderboard.getGroupLeaderboardView(
+            groupLeaderboard,
+            groupId,
+            bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+            5,
+            5,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
 
-    // await asyncTest("getGroupLeaderboardViewByVersion())", 2, function() {
-    //     bc.socialLeaderboard.getGroupLeaderboardViewByVersion(
-    //         groupLeaderboard,
-    //         groupId,
-    //         1,
-    //         bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
-    //         5,
-    //         5,
-    //         function(result) {
-    //             ok(true, JSON.stringify(result));
-    //             equal(result.status, 200, "Expecting 200");
-    //             resolve_test();
-    //         });
-    // });
+    await asyncTest("getGroupLeaderboardViewByVersion())", 2, function() {
+        bc.socialLeaderboard.getGroupLeaderboardViewByVersion(
+            groupLeaderboard,
+            groupId,
+            1,
+            bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+            5,
+            5,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
     
 /////////////////////////
     await asyncTest("deleteGroup()", 2, function() {
