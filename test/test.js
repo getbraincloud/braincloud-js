@@ -3415,7 +3415,7 @@ async function testSocialLeaderboard() {
     })) return;
 
     var leaderboardName = "testLeaderboard";
-    var groupLeaderboard = "testGroupLeaderboard";
+    var groupLeaderboard = "groupLeaderboardConfig";
 
     await asyncTest("getGlobalLeaderboardPage()", 2, function() {
         bc.socialLeaderboard.getGlobalLeaderboardPage(
