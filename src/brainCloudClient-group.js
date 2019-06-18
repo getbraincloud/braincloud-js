@@ -40,6 +40,8 @@ function BCGroup() {
 	bc.group.OPERATION_UPDATE_GROUP_ENTITY = "UPDATE_GROUP_ENTITY_DATA";
 	bc.group.OPERATION_UPDATE_GROUP_MEMBER = "UPDATE_GROUP_MEMBER";
 	bc.group.OPERATION_UPDATE_GROUP_NAME = "UPDATE_GROUP_NAME";
+	bc.group.OPERATION_UPDATE_GROUP_SUMMARY_DATA = "UPDATE_GROUP_SUMMARY_DATA";
+	bc.group.OPERATION_GET_RANDOM_GROUPS_MATCHING = "GET_RANDOM_GROUPS_MATCHING";
 
 // Constant helper values
 	bc.group.role = Object.freeze({ owner : "OWNER", admin : "ADMIN", member : "MEMBER", other : "OTHER"});
@@ -210,6 +212,52 @@ function BCGroup() {
 		if(data) message.data = data;
 		if(ownerAttributes) message.ownerAttributes = ownerAttributes;
 		if(defaultMemberAttributes) message.defaultMemberAttributes = defaultMemberAttributes;
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_GROUP,
+			operation : bc.group.OPERATION_CREATE_GROUP,
+			data : message,
+			callback : callback
+		});
+	};
+
+	/**
+	 * Create a group with Summary data.
+	 *
+	 * Service Name - group
+	 * Service Operation - CREATE_GROUP
+	 *
+	 * @param name Name of the group.
+	 * @param groupType Name of the type of group.
+	 * @param isOpenGroup true if group is open; false if closed.
+	 * @param acl The group's access control list. A null ACL implies default.
+	 * @param ownerAttributes Attributes for the group owner (current member).
+	 * @param defaultMemberAttributes Default attributes for group members.
+	 * @param data Custom application data.
+	 * @param summaryData summary
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.group.createGroup = function(
+		name,
+		groupType,
+		isOpenGroup,
+		acl,
+		data,
+		ownerAttributes,
+		defaultMemberAttributes,
+		summaryData,
+		callback) {
+		var message = {
+			groupType : groupType
+		};
+
+		if(name) message.name = name;
+		if(isOpenGroup) message.isOpenGroup = isOpenGroup;
+		if(acl) message.acl = acl;
+		if(data) message.data = data;
+		if(ownerAttributes) message.ownerAttributes = ownerAttributes;
+		if(defaultMemberAttributes) message.defaultMemberAttributes = defaultMemberAttributes;
+		if(summaryData) message.summaryData = summaryData;
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_GROUP,
@@ -845,6 +893,56 @@ function BCGroup() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_GROUP,
 			operation : bc.group.OPERATION_UPDATE_GROUP_NAME,
+			data : message,
+			callback : callback
+		});
+	};
+
+	/**
+	 * Update a group's summary data
+	 *
+	 * Service Name - group
+	 * Service Operation - UPDATE_GROUP_SUMMARY_DATA
+	 *
+	 * @param groupId ID of the group.
+	 * @param version the version
+	 * @param summaryData Name to apply.
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.group.updateGroupName = function(groupId, version, summaryData, callback) {
+		var message = {
+			groupId : groupId,
+			version : version,
+			summaryData : summaryData
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_GROUP,
+			operation : bc.group.OPERATION_UPDATE_GROUP_SUMMARY_DATA,
+			data : message,
+			callback : callback
+		});
+	};
+
+	/**
+	 * Gets a list of up to maxReturn randomly selected groups from the server based on the where condition.
+	 *
+	 * Service Name - group
+	 * Service Operation - UPDATE_GROUP_SUMMARY_DATA
+	 *
+	 * @param where where to get
+	 * @param maxReturn how many groups to return
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.group.getRandomGroupsMatching = function(where, maxReturn, callback) {
+		var message = {
+			where : where,
+			maxReturn : maxReturn
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_GROUP,
+			operation : bc.group.OPERATION_GET_RANDOM_GROUPS_MATCHING,
 			data : message,
 			callback : callback
 		});
