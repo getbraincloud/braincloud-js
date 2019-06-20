@@ -237,7 +237,7 @@ function BCGroup() {
 	 * @param summaryData summary
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.group.createGroup = function(
+	bc.group.createGroupWithSummaryData = function(
 		name,
 		groupType,
 		isOpenGroup,

@@ -1547,22 +1547,22 @@ async function testGroup() {
                 });
     });
 
-    // await asyncTest("createGroupWithSummaryData()", 2, function() {
-    //     bc.group.createGroup("test",
-    //             "test",
-    //             false,
-    //             null,
-    //             null,
-    //             { test : "asdf"},
-    //             null,
-    //             { summary : "asdf"},
-    //             function(result) {
-    //                 groupId = result.data.groupId;
-    //                 ok(true, JSON.stringify(result));
-    //                 equal(result.status, 200, "Expecting 200");
-    //                 resolve_test();
-    //             });
-    // });
+    await asyncTest("createGroupWithSummaryData()", 2, function() {
+        bc.group.createGroupWithSummaryData("test",
+                "test",
+                false,
+                null,
+                null,
+                { test : "asdf"},
+                null,
+                { summary : "asdf"},
+                function(result) {
+                    groupId = result.data.groupId;
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
 
     await asyncTest("readGroupData()", 2, function() {
         bc.group.readGroupData(
@@ -2004,26 +2004,26 @@ async function testGroup() {
                 });
     });
 
-    // await asyncTest("GetRandomGroupsMatching()", 2, function() {
-    //     bc.group.getRandomGroupsMatching("{\"groupType\": \"BLUE\"}",
-    //             20,
-    //             function(result) {
-    //                 ok(true, JSON.stringify(result));
-    //                 equal(result.status, 200, "Expecting 200");
-    //                 resolve_test();
-    //             });
-    // });   
+    await asyncTest("GetRandomGroupsMatching()", 2, function() {
+        bc.group.getRandomGroupsMatching({ groupType : "BLUE"},
+                20,
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });   
 
-    // await asyncTest("UpdateGroupSummaryData()", 2, function() {
-    //     bc.group.updateGroupSummaryData(groupId,
-    //             1,
-    //             "{\"test\": \"123\"}",
-    //             function(result) {
-    //                 ok(true, JSON.stringify(result));
-    //                 equal(result.status, 200, "Expecting 200");
-    //                 resolve_test();
-    //             });
-    // });   
+    await asyncTest("UpdateGroupSummaryData()", 2, function() {
+        bc.group.updateGroupSummaryData(groupId,
+                1,
+                { summary : "asdf"},
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });   
 
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
