@@ -909,7 +909,7 @@ function BCGroup() {
 	 * @param summaryData Name to apply.
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.group.updateGroupName = function(groupId, version, summaryData, callback) {
+	bc.group.updateGroupSummaryData = function(groupId, version, summaryData, callback) {
 		var message = {
 			groupId : groupId,
 			version : version,
