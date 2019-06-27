@@ -36,7 +36,7 @@ _bc.authenticateAnonymous(authenticated);
 **React-Native Usage**
 
 ```javascript
-import { BrainCloudWrapper } from 'braincloud/react-native';
+import { BrainCloudWrapper } from 'braincloud';
 
 _bc = new bc.BrainCloudWrapper("_myApp");
 
