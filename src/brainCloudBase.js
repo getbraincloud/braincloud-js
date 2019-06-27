@@ -2,6 +2,7 @@
 function BrainCloudManager ()
 {
     var bcm = this;
+    _setInterval = typeof customSetInterval === 'function' ? customSetInterval : setInterval;
 
     bcm.name = "BrainCloudManager";
 
@@ -318,7 +319,7 @@ function BrainCloudManager ()
     bcm.startHeartBeat = function()
     {
         bcm.stopHeartBeat();
-        bcm._heartBeatIntervalId = setInterval(function()
+        bcm._heartBeatIntervalId = _setInterval(function()
         {
             bcm.sendRequest({
                 service : "heartbeat",
