@@ -4979,8 +4979,8 @@ async function testRTT()
         let timeoutId = null;
         bc.rttService.registerRTTChatCallback(message =>
         {
-            if (message.service === "chat" && message.operation === "INCOMING")
-            {
+            //if (message.service === "chat" && message.operation === "INCOMING")
+            //{
                 msgIdsReceived.push(message.data.msgId);
                 if (msgIdsReceived.find(msgId => msgId === msgIdExpected))
                 {
@@ -4988,7 +4988,7 @@ async function testRTT()
                     ok(true, "msgReceived");
                     resolve_test();
                 }
-            }
+            //}
         });
 
         await asyncTest("postChatMessage() while listning to the channel", 2, () =>
@@ -5027,8 +5027,8 @@ async function testRTT()
         bc.rttService.registerRTTLobbyCallback(message =>
         {
             console.log(message);
-            if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
-            {
+            //if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
+            //{
                 lobbyId = message.data.lobbyId;
 
                 if (apiReturned)
@@ -5037,7 +5037,7 @@ async function testRTT()
                     ok(true, "msgReceived");
                     resolve_test();
                 }
-            }
+            //}
         });
 
         await asyncTest("createLobby() while listning to lobby callbacks", 2, () =>
