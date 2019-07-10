@@ -4979,8 +4979,8 @@ async function testRTT()
         let timeoutId = null;
         bc.rttService.registerRTTChatCallback(message =>
         {
-            if (message.service === "chat" && message.operation === "INCOMING")
-            {
+            //if (message.service === "chat" && message.operation === "INCOMING")
+            //{
                 msgIdsReceived.push(message.data.msgId);
                 if (msgIdsReceived.find(msgId => msgId === msgIdExpected))
                 {
@@ -4988,7 +4988,7 @@ async function testRTT()
                     ok(true, "msgReceived");
                     resolve_test();
                 }
-            }
+            //}
         });
 
         await asyncTest("postChatMessage() while listning to the channel", 2, () =>
@@ -5027,8 +5027,8 @@ async function testRTT()
         bc.rttService.registerRTTLobbyCallback(message =>
         {
             console.log(message);
-            if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
-            {
+            //if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
+            //{
                 lobbyId = message.data.lobbyId;
 
                 if (apiReturned)
@@ -5037,7 +5037,7 @@ async function testRTT()
                     ok(true, "msgReceived");
                     resolve_test();
                 }
-            }
+            //}
         });
 
         await asyncTest("createLobby() while listning to lobby callbacks", 2, () =>
@@ -5226,7 +5226,7 @@ async function testLobby() {
         });
     });
 
-    await asyncTest("updateSettings()", 1, () =>
+    await asyncTest("cancelFindRequest()", 1, () =>
     {
         bc.rttService.enableRTT(result =>
             {
@@ -5234,13 +5234,9 @@ async function testLobby() {
                 equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
                 resolve_test();
 
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //need to come back to this test. When I send a bad cxId, it actually sends the parameter cxId to the server. But when I send a proper 
-                //cxId, it only sends the lobbyType and no cxId parameter, so it always says that the cxId parameter is missing. 
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                bc.lobby.cancelFindRequest("wrongLobbyId", "badcxId", result =>
+                bc.lobby.cancelFindRequest("MATCH_UNRANKED", bc.rttService.getRTTConnectionId() + "", result =>
                 {
-                    equal(result.status, 400, "Expecting 400");
+                    equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
 
