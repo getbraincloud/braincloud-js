@@ -5226,7 +5226,7 @@ async function testLobby() {
         });
     });
 
-    await asyncTest("updateSettings()", 1, () =>
+    await asyncTest("cancelFindRequest()", 1, () =>
     {
         bc.rttService.enableRTT(result =>
             {
@@ -5234,13 +5234,9 @@ async function testLobby() {
                 equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
                 resolve_test();
 
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //need to come back to this test. When I send a bad cxId, it actually sends the parameter cxId to the server. But when I send a proper 
-                //cxId, it only sends the lobbyType and no cxId parameter, so it always says that the cxId parameter is missing. 
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                bc.lobby.cancelFindRequest("wrongLobbyId", "badcxId", result =>
+                bc.lobby.cancelFindRequest("MATCH_UNRANKED", bc.rttService.getRTTConnectionId() + "", result =>
                 {
-                    equal(result.status, 400, "Expecting 400");
+                    equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
 
