@@ -23,7 +23,7 @@
   "author": "Mario Couture <marioc@bitheads.com>",
   "license": "Apache-2.0",
   "peerDependencies": {
-    "@react-native-community/async-storage": "^2.4.2",
+    "@react-native-community/async-storage": "^1.4.2",
     "react-native-background-timer":"^2.1.1",
     "react-native":"^0.59.8"
   },
