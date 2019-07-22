@@ -38,6 +38,13 @@ function BCRTT() {
     }
 
     /**
+     * Returns RTT connectionId
+     */
+    bc.rttService.getRTTConnectionId = function() {
+        return bc.brainCloudRttComms.getRTTConnectionId();
+    }
+
+    /**
      * Listen to real time events.
      * 
      * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.

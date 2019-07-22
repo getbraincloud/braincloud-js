@@ -1547,6 +1547,23 @@ async function testGroup() {
                 });
     });
 
+    await asyncTest("createGroupWithSummaryData()", 2, function() {
+        bc.group.createGroupWithSummaryData("test",
+                "test",
+                false,
+                null,
+                null,
+                { test : "asdf"},
+                null,
+                { summary : "asdf"},
+                function(result) {
+                    groupId = result.data.groupId;
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("readGroupData()", 2, function() {
         bc.group.readGroupData(
                 groupId,
@@ -1986,6 +2003,27 @@ async function testGroup() {
                     resolve_test();
                 });
     });
+
+    await asyncTest("GetRandomGroupsMatching()", 2, function() {
+        bc.group.getRandomGroupsMatching({ groupType : "BLUE"},
+                20,
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });   
+
+    await asyncTest("UpdateGroupSummaryData()", 2, function() {
+        bc.group.updateGroupSummaryData(groupId,
+                1,
+                { summary : "asdf"},
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });   
 
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
@@ -3415,6 +3453,7 @@ async function testSocialLeaderboard() {
     })) return;
 
     var leaderboardName = "testLeaderboard";
+    var groupLeaderboard = "groupLeaderboardConfig";
 
     await asyncTest("getGlobalLeaderboardPage()", 2, function() {
         bc.socialLeaderboard.getGlobalLeaderboardPage(
@@ -3614,7 +3653,63 @@ async function testSocialLeaderboard() {
                 resolve_test();
             });
     });
+/////////////////////////////
 
+    await asyncTest("postScoreToGroupLeaderboard())", 2, function() {
+        bc.socialLeaderboard.postScoreToGroupLeaderboard(
+            groupLeaderboard,
+            groupId,
+            0,
+            { test : "asdf"},
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("removeGroupScore())", 2, function() {
+        bc.socialLeaderboard.removeGroupScore(
+            groupLeaderboard,
+            groupId,
+            -1,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getGroupLeaderboardView())", 2, function() {
+        bc.socialLeaderboard.getGroupLeaderboardView(
+            groupLeaderboard,
+            groupId,
+            bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+            5,
+            5,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getGroupLeaderboardViewByVersion())", 2, function() {
+        bc.socialLeaderboard.getGroupLeaderboardViewByVersion(
+            groupLeaderboard,
+            groupId,
+            1,
+            bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+            5,
+            5,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+    
+/////////////////////////
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
             groupId,
@@ -4884,8 +4979,8 @@ async function testRTT()
         let timeoutId = null;
         bc.rttService.registerRTTChatCallback(message =>
         {
-            if (message.service === "chat" && message.operation === "INCOMING")
-            {
+            //if (message.service === "chat" && message.operation === "INCOMING")
+            //{
                 msgIdsReceived.push(message.data.msgId);
                 if (msgIdsReceived.find(msgId => msgId === msgIdExpected))
                 {
@@ -4893,7 +4988,7 @@ async function testRTT()
                     ok(true, "msgReceived");
                     resolve_test();
                 }
-            }
+            //}
         });
 
         await asyncTest("postChatMessage() while listning to the channel", 2, () =>
@@ -4932,8 +5027,8 @@ async function testRTT()
         bc.rttService.registerRTTLobbyCallback(message =>
         {
             console.log(message);
-            if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
-            {
+            //if (message.service === "lobby" && message.operation === "MEMBER_JOIN")
+            //{
                 lobbyId = message.data.lobbyId;
 
                 if (apiReturned)
@@ -4942,7 +5037,7 @@ async function testRTT()
                     ok(true, "msgReceived");
                     resolve_test();
                 }
-            }
+            //}
         });
 
         await asyncTest("createLobby() while listning to lobby callbacks", 2, () =>
@@ -5131,7 +5226,7 @@ async function testLobby() {
         });
     });
 
-    await asyncTest("updateSettings()", 1, () =>
+    await asyncTest("cancelFindRequest()", 1, () =>
     {
         bc.rttService.enableRTT(result =>
             {
@@ -5139,13 +5234,9 @@ async function testLobby() {
                 equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
                 resolve_test();
 
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //need to come back to this test. When I send a bad cxId, it actually sends the parameter cxId to the server. But when I send a proper 
-                //cxId, it only sends the lobbyType and no cxId parameter, so it always says that the cxId parameter is missing. 
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                bc.lobby.cancelFindRequest("wrongLobbyId", "badcxId", result =>
+                bc.lobby.cancelFindRequest("MATCH_UNRANKED", bc.rttService.getRTTConnectionId() + "", result =>
                 {
-                    equal(result.status, 400, "Expecting 400");
+                    equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
 
