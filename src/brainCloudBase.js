@@ -103,6 +103,10 @@ function BrainCloudManager ()
 
     bcm.setSessionId = function(sessionId)
     {
+        if(sessionId !== null || sessionId !== "")
+        {
+            bcm._isAuthenticated = true;
+        }
         bcm._sessionId = sessionId;
     };
 
@@ -475,7 +479,7 @@ function BrainCloudManager ()
                     bcm._statusMessageCache = messages[c].status_message;
                 }
 
-                console.log("STATUSCodes:" + bcm.statusCodes.CLIENT_NETWORK_ERROR);
+                bcm.debugLog("STATUSCodes:" + bcm.statusCodes.CLIENT_NETWORK_ERROR);
                 bcm.updateKillSwitch(bcm._inProgressQueue[c].service, bcm._inProgressQueue[c].operation, statusCode)
             }
 

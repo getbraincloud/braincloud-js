@@ -1,6 +1,6 @@
 {
   "name": "braincloud",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": " brainCloud client for NodeJS",
   "main": "index.js",
   "react-native": "react-native.js",
@@ -24,8 +24,8 @@
   "license": "Apache-2.0",
   "peerDependencies": {
     "@react-native-community/async-storage": "^2.4.2",
-    "react-native-background-timer":"^2.1.1",
-    "react-native":"^0.59.8"
+    "react-native-background-timer": "^2.1.1",
+    "react-native": "^0.59.8"
   },
   "dependencies": {
     "form-data": "^2.3.2",
