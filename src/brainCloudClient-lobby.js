@@ -323,10 +323,10 @@ function BCLobby() {
     /// <summary>
     /// Cancel this members Find, Join and Searching of Lobbies
     /// </summary>
-    bc.lobby.cancelFindRequest = function(lobbyType, cxId, callback) {
+    bc.lobby.cancelFindRequest = function(lobbyType, callback) {
         var data = {
             lobbyType: lobbyType,
-            cxId: cxId
+            cxId: bc.rttService.getRTTConnectionId()
         };
 
         bc.brainCloudManager.sendRequest({

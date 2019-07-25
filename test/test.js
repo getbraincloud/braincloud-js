@@ -5234,7 +5234,7 @@ async function testLobby() {
                 equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
                 resolve_test();
 
-                bc.lobby.cancelFindRequest("MATCH_UNRANKED", bc.rttService.getRTTConnectionId() + "", result =>
+                bc.lobby.cancelFindRequest("MATCH_UNRANKED", result =>
                 {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
