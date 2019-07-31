@@ -528,22 +528,23 @@ function BCLobby() {
             //for(const [key, value] of m_regionPingData.entries())
             for(var key in m_regionPingData)
             {
-                for(var i = 0; i < Object.keys(m_regionPingData).length; i++)
-                {   
-                    console.log("PINGING " + key);
-                    //the value
-                    regionInner = m_regionPingData[key];
-                    if(regionInner.has("type") && regionInner.get("type") == "PING")
-                    {
-                        //
-                        m_cachedPingResponses[key] = new Array();
-                        targetStr = regionInner.get("target");
+                console.log("PINGING " + key);
+                //the value
+                //regionInner = m_regionPingData.get(key);
+                regionInner = m_regionPingData[String(key)];
+                console.log(regionInner);
+                //if(regionInner.has("type") && regionInner.get("type") == "PING")
+                if(regionInner[String("type")] != null && regionInner[String("type")] == " PING")
+                {
+                    console.log("In the loop!");
+                    //
+                    m_cachedPingResponses[key] = new Array();
+                    targetStr = regionInner.get("target");
 
-                        //js is single threaded, so there shouldn't be a need for a mutex
-                        for(var i = 0; i < MAX_PING_CALLS; i++)
-                        { 
-                            m_regionTargetsToProcess.push(Object.assign(keyvaluepair, {key: targetStr}));
-                        }
+                    //js is single threaded, so there shouldn't be a need for a mutex
+                    for(var i = 0; i < MAX_PING_CALLS; i++)
+                    { 
+                        m_regionTargetsToProcess.push(Object.assign(keyvaluepair, {key: targetStr}));
                     }
                 }
             }
