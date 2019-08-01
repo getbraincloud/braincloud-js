@@ -519,7 +519,6 @@ function BCLobby() {
         var regionInner = new Map();
         // string targetStr = ""; 
         var targetStr; 
-        var keyvaluepair;
 
         if(Object.keys(m_regionPingData).length > 0)
         {
@@ -534,17 +533,24 @@ function BCLobby() {
                 regionInner = m_regionPingData[String(key)];
                 console.log(regionInner);
                 //if(regionInner.has("type") && regionInner.get("type") == "PING")
-                if(regionInner[String("type")] != null && regionInner[String("type")] == " PING")
+                console.log(regionInner[String("type")]);
+                if(regionInner[String("type")] !== null && regionInner[String("type")] === "PING")
                 {
                     console.log("In the loop!");
-                    //
-                    m_cachedPingResponses[key] = new Array();
-                    targetStr = regionInner.get("target");
+                    
+                    var tempArr = new Array();
+                    m_cachedPingResponses[key] = tempArr;
+                    //targetStr = regionInner.get("target");
+                    targetStr = regionInner[String("target")];
+
 
                     //js is single threaded, so there shouldn't be a need for a mutex
                     for(var i = 0; i < MAX_PING_CALLS; i++)
                     { 
-                        m_regionTargetsToProcess.push(Object.assign(keyvaluepair, {key: targetStr}));
+                        //m_regionTargetsToProcess.push(Object.assign(keyvaluepair, {key: targetStr}));
+                        var keyvaluepair = new Map();
+                        keyvaluepair.set(key, targetStr)
+                        m_regionTargetsToProcess.push(keyvaluepair);
                     }
                 }
             }
@@ -562,34 +568,62 @@ function BCLobby() {
 
     function pingNextItemToProcess()
     {
+        console.log("PINGING NEXT ITEM TO PROCESS");
         if(m_regionTargetsToProcess.length > 0)
         {
             var region; 
+            var target;
+            var tempArr = new Array();
             for(var i = 0; i < NUM_PING_CALLS_IN_PARRALLEL && m_regionTargetsToProcess.length > 0; i++)
             {
-                region = m_regionTargetsToProcess[0].key;
-                pingHost(region, target, m_cachedPingResponses[region].length);
+                //THIS SEEMS TO BE THE ONLY WAY THAT WORKS?!???!!
+                //I've tried... so... many... things...
+                for (const k of m_regionTargetsToProcess[0].keys())
+                {
+                    region = k;
+                    target = m_regionTargetsToProcess[0].get(String(region));
+                    console.log(region);
+                    console.log(target);
+                }
+                
+                map = new Map();
+                map = m_cachedPingResponses;
+                console.log(m_cachedPingResponses);
+
+                tempArr = m_cachedPingResponses[String(region)];
+                console.log(tempArr);
+                console.log(tempArr.length);
+
+                pingHost(region, target, tempArr.length);
                 m_regionTargetsToProcess.shift();
             }
         }
         else if (Object.keys(m_regionPingData).length == Object.keys(PingData).length && m_pingRegionSuccessCallback != null)
         {
-
+            console.log("NICCCCCCCCCCCCCCCE IT WORKS!")
         }
     }
 
     function pingHost(region, target, index)
     {
+        console.log("PINGING HOST NOW... REGION: " + region + " TARGET: " + target);
+        console.log("INDEX: " + index);
+
         m_pingTime = m_dateTime.getTime();
+        console.log("TIME" + m_pingTime);
+        
         var httpRequest = new XMLHttpRequest();
         targetURL = "http://" + target;
         httpRequest.onreadystatechange = function()
         {
-            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+            console.log("CHECKING STATE");
+            if (httpRequest.readyState == 4 && httpRequest.status == 200)
             {
+                console.log("STATE IS 200")
                 handlePingResponse(region, pingTime, index);
             }
         }
+        console.log("DO WE GET HERE?");
         httpRequest.open("GET", targetURL, true);
         httpRequest.send(null);
 
@@ -621,6 +655,7 @@ function BCLobby() {
             totalAccumulated -= highestValue;
             PingData.set(region, totalAccumulated / (numElements - 1))
         }
+
         pingNextItemToProcess();
     }
 
