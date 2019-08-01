@@ -25,6 +25,7 @@ function BrainCloudClient() {
         BCGlobalEntity.apply(bcc);
         BCGroup.apply(bcc);
         BCIdentity.apply(bcc);
+        BCItemCatalog.apply(bcc);
         BCLobby.apply(bcc);
         BCMail.apply(bcc);
         BCMatchMaking.apply(bcc);

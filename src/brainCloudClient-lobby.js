@@ -584,16 +584,9 @@ function BCLobby() {
                     target = m_regionTargetsToProcess[0].get(String(region));
                     console.log(region);
                     console.log(target);
-                }
-                
-                map = new Map();
-                map = m_cachedPingResponses;
-                console.log(m_cachedPingResponses);
+                };
 
                 tempArr = m_cachedPingResponses[String(region)];
-                console.log(tempArr);
-                console.log(tempArr.length);
-
                 pingHost(region, target, tempArr.length);
                 m_regionTargetsToProcess.shift();
             }
@@ -611,9 +604,10 @@ function BCLobby() {
 
         m_pingTime = m_dateTime.getTime();
         console.log("TIME" + m_pingTime);
-        
+
         var httpRequest = new XMLHttpRequest();
         targetURL = "http://" + target;
+
         httpRequest.onreadystatechange = function()
         {
             console.log("CHECKING STATE");
@@ -623,13 +617,22 @@ function BCLobby() {
                 handlePingResponse(region, pingTime, index);
             }
         }
-        console.log("DO WE GET HERE?");
+
+        httpRequest.onload = () => console.log(httpRequest.responseText);
+
+        console.log("OPENNING AND SENDING");
         httpRequest.open("GET", targetURL, true);
         httpRequest.send(null);
-
+        //not hitting this :/
+        console.log(httpRequest.responseText);
 
         //var response = JSON.parse(xmlhttp.responseText);
         //bcm.handleSuccessResponse(response);
+    }
+
+    function ProcessRequest()
+    {
+        
     }
 
     function handlePingResponse(region, responseTime, index)
