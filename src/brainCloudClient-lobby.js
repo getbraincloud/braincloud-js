@@ -603,14 +603,20 @@ function BCLobby() {
         console.log("INDEX: " + index);
 
         m_pingTime = m_dateTime.getTime();
-        console.log("TIME" + m_pingTime);
+        console.log("TIME: " + m_pingTime);
 
-        var httpRequest = new XMLHttpRequest();
-        targetURL = "http://" + target;
+        // var httpRequest = new XMLHttpRequest();
+        targetURL = "https://" + target;
+
+        console.log(targetURL);
+
+        httpRequest = new XMLHttpRequest();
 
         httpRequest.onreadystatechange = function()
         {
             console.log("CHECKING STATE");
+            console.log(httpRequest.status);
+            console.log(httpRequest.readyState);
             if (httpRequest.readyState == 4 && httpRequest.status == 200)
             {
                 console.log("STATE IS 200")
@@ -618,21 +624,11 @@ function BCLobby() {
             }
         }
 
-        httpRequest.onload = () => console.log(httpRequest.responseText);
-
         console.log("OPENNING AND SENDING");
         httpRequest.open("GET", targetURL, true);
-        httpRequest.send(null);
-        //not hitting this :/
-        console.log(httpRequest.responseText);
-
-        //var response = JSON.parse(xmlhttp.responseText);
-        //bcm.handleSuccessResponse(response);
-    }
-
-    function ProcessRequest()
-    {
-        
+        httpRequest.setRequestHeader("Access-Control-Allow-Origin","*");
+        console.log(httpRequest);
+        httpRequest.send();
     }
 
     function handlePingResponse(region, responseTime, index)

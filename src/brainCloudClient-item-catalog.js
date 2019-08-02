@@ -70,7 +70,7 @@ function BCItemCatalog() {
 	 * @param pageOffset
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.identitemCatalogity.getCatalogItemsPageOffset = function(context, pageOffset, callback) {
+	bc.itemCatalog.getCatalogItemsPageOffset = function(context, pageOffset, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_ITEMCATALOG,
 			operation: bc.itemCatalog.GET_CATALOG_ITEMS_PAGE_OFFSET,
