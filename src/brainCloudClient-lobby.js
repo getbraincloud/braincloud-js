@@ -25,7 +25,7 @@ function BCLobby() {
     bc.lobby.OPERATION_GET_REGIONS_FOR_LOBBIES = "GET_REGIONS_FOR_LOBBIES";
 
     //variables for ping data 
-    var PingData = new Map();
+    var pingData = new Map();
     var m_regionPingData = new Map();
     var m_cachedPingResponses = new Map();
     var m_regionTargetsToProcess = new Array();
@@ -514,39 +514,31 @@ function BCLobby() {
     {
         console.log("WE'RE PINGING REGIONS!");
         // // now we have the region ping data, we can start pinging each region and its defined target, if its a PING type.
-        // Dictionary<string, object> regionInner = null;
         var regionInner = new Map();
-        // string targetStr = ""; 
         var targetStr; 
 
         if(Object.keys(m_regionPingData).length > 0)
         {
             console.log("THERES PING DATA!");
-            //for(var key of m_regionPingData)
-            //for(const [key, value] of m_regionPingData.entries())
+
             for(var key in m_regionPingData)
             {
                 console.log("PINGING " + key);
-                //the value
-                //regionInner = m_regionPingData.get(key);
                 regionInner = m_regionPingData[String(key)];
                 console.log(regionInner);
-                //if(regionInner.has("type") && regionInner.get("type") == "PING")
                 console.log(regionInner[String("type")]);
+
                 if(regionInner[String("type")] !== null && regionInner[String("type")] === "PING")
                 {
                     console.log("In the loop!");
                     
                     var tempArr = new Array();
                     m_cachedPingResponses[key] = tempArr;
-                    //targetStr = regionInner.get("target");
                     targetStr = regionInner[String("target")];
 
-
-                    //js is single threaded, so there shouldn't be a need for a mutex
+                    //js is single threaded, so there shouldn't be  need for a mutex
                     for(var i = 0; i < MAX_PING_CALLS; i++)
                     { 
-                        //m_regionTargetsToProcess.push(Object.assign(keyvaluepair, {key: targetStr}));
                         var keyvaluepair = new Map();
                         keyvaluepair.set(key, targetStr)
                         m_regionTargetsToProcess.push(keyvaluepair);
@@ -558,10 +550,7 @@ function BCLobby() {
         }
         else
         {
-            if(callback == null)
-            {
-                console.error("no ping data");
-            }
+            bc.brainCloudManager.fakeErrorResponse(bc.statusCodes.BAD_REQUEST, bc.reasonCodes.MISSING_REQUIRED_PARAMETER, "No Regions to Ping. Please call GetRegionsForLobbies and await the response before calling PingRegions");
         }
     };
 
@@ -569,7 +558,7 @@ function BCLobby() {
     {
         console.log("PINGING NEXT ITEM TO PROCESS");
         console.log("LENGTH OF REGION PING DATA MAP " + Object.keys(m_regionPingData).length);
-        console.log("LENGTH OF PING DATA MAP " + PingData.size);
+        console.log("LENGTH OF PING DATA MAP " + Object.keys(pingData).length);
         if(m_regionTargetsToProcess.length > 0)
         {
             var region; 
@@ -578,8 +567,6 @@ function BCLobby() {
             console.log("We have this many region targets to process: " + m_regionTargetsToProcess.length);
             for(var i = 0; i < NUM_PING_CALLS_IN_PARRALLEL && m_regionTargetsToProcess.length > 0; i++)
             {
-                //THIS SEEMS TO BE THE ONLY WAY THAT WORKS?!???!!
-                //I've tried... so... many... things...
                 for (const k of m_regionTargetsToProcess[0].keys())
                 {
                     region = k;
@@ -598,9 +585,9 @@ function BCLobby() {
                 pingHost(region, target, tempArr.length);
             }
         }
-        else if (Object.keys(m_regionPingData).length == PingData.size /*&& m_pingRegionSuccessCallback != null*/)
+        else if (Object.keys(m_regionPingData).length == Object.keys(pingData).length)
         {
-            console.log("NICCCCCCCCCCCCCCCE IT WORKS!")
+            console.log("pingData Ready");
         }
     }
 
@@ -626,7 +613,6 @@ function BCLobby() {
             console.log("CHECKING STATE");
             console.log(httpRequest.status);
             console.log(httpRequest.readyState);
-            //handlePingResponse(region, m_pingTime, index);
             if (httpRequest.readyState == 4 && httpRequest.status == 200)
             {
                 console.log("STATE IS 200");
@@ -637,8 +623,7 @@ function BCLobby() {
         httpRequest.setRequestHeader("Access-Control-Allow-Origin",":*");
         httpRequest.setRequestHeader("Access-Control-Allow-Headers",":*");
         httpRequest.setRequestHeader("Content-type", targetURL);
-        //httpRequest.setRequestHeader("Access-Control-Allow-Methods", "GET, POST, PUT");
-        //console.log(httpRequest);
+
         httpRequest.send();
         console.log("Sending");
     }
@@ -674,9 +659,10 @@ function BCLobby() {
             }
             totalAccumulated -= highestValue;
             console.log("The calculated PING: " + totalAccumulated/(numElements - 1));
-            PingData.set(region, totalAccumulated / (numElements - 1));
-            console.log(PingData);
-            console.log("LENGTH OF PING DATA MAP " + PingData.size);
+            pingData[region] = totalAccumulated / (numElements -1);
+            //pingData.set(region, totalAccumulated / (numElements - 1));
+            console.log(pingData);
+            console.log("LENGTH OF PING DATA MAP " + Object.keys(pingData).length);
         }
 
         pingNextItemToProcess();
@@ -685,11 +671,10 @@ function BCLobby() {
 
     function attachPingDataAndSend(data, operation, callback)
     {
-        var hasPingData = PingData != null && PingData.length > 0;
-        if(hasPingData)
+        if(pingData != null && Object.keys(pingData).length > 0)
         {
             console.log("SENDING BECAUSE HAS PING DATA");
-            data.PingData = PingData;
+            data.pingData = pingData;
 
             bc.brainCloudManager.sendRequest({
                 service: bc.SERVICE_LOBBY,
@@ -700,7 +685,7 @@ function BCLobby() {
         }
         else
         {
-            console.error("no ping data");
+            bc.brainCloudManager.fakeErrorResponse(bc.statusCodes.BAD_REQUEST, bc.reasonCodes.MISSING_REQUIRED_PARAMETER, "Required Parameter 'pingData' is missing. Please ensure 'pingData' exists by first calling GetRegionsForLobbies and PingRegions, and waiting for response before proceeding.");
         }
     }
 }

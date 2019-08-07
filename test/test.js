@@ -5247,34 +5247,6 @@ async function testLobby() {
                 resolve_test();
             });
     });
-
-    await asyncTest("testGetRegions()", 1, () =>
-    {
-        bc.rttService.enableRTT(result =>
-            {
-                console.log(result);
-                equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
-                resolve_test();
-
-                var test = new Array();
-                test.push("MATCH_UNRANKED");
-                test.push("4v4");
-
-                bc.lobby.getRegionsForLobbies(test, result =>
-                {
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-
-               // bc.lobby.pingRegions();
-
-            }, error =>
-            {
-                console.log(error);
-                ok(false, error);
-                resolve_test();
-        });
-    });
 }
 
 async function testPresence()
