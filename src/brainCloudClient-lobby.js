@@ -32,7 +32,7 @@ function BCLobby() {
     var MAX_PING_CALLS = 4;
     var NUM_PING_CALLS_IN_PARRALLEL = 1;
     var m_dateTime = new Date();
-    var m_pingTime;
+    var m_startTime;
 
     /**
      * Creates a new lobby.
@@ -574,7 +574,7 @@ function BCLobby() {
             var region; 
             var target;
             var tempArr = new Array();
-            console.log(m_regionTargetsToProcess.length);
+            console.log("We have this many region targets to process: " + m_regionTargetsToProcess.length);
             for(var i = 0; i < NUM_PING_CALLS_IN_PARRALLEL && m_regionTargetsToProcess.length > 0; i++)
             {
                 //THIS SEEMS TO BE THE ONLY WAY THAT WORKS?!???!!
@@ -583,13 +583,17 @@ function BCLobby() {
                 {
                     region = k;
                     target = m_regionTargetsToProcess[0].get(String(region));
-                    console.log(region);
-                    console.log(target);
+                    console.log("The Region: " + region);
+                    console.log("The Target URL: " + target);
                 };
 
                 tempArr = m_cachedPingResponses[String(region)];
-                console.log("SSSSSSSSSSSSSSSSSSSSS" + tempArr);
+                console.log("Cached responses Array: " + tempArr);
+
+                console.log("we had this many to process " + m_regionTargetsToProcess.length);
                 m_regionTargetsToProcess.shift();
+                console.log("we NOW have this many to process " + m_regionTargetsToProcess.length);
+                console.log("the targets to process still: " + m_regionTargetsToProcess);
                 pingHost(region, target, tempArr.length);
             }
         }
@@ -604,8 +608,8 @@ function BCLobby() {
         console.log("PINGING HOST NOW... REGION: " + region + " TARGET: " + target);
         console.log("INDEX: " + index);
 
-        m_pingTime = m_dateTime.getTime();
-        console.log("TIME: " + m_pingTime);
+        m_startTime = m_dateTime.getTime();
+        console.log("TIME: " + m_startTime);
 
         targetURL = "https://" + target;
         console.log(targetURL);
@@ -624,8 +628,8 @@ function BCLobby() {
             //handlePingResponse(region, m_pingTime, index);
             if (httpRequest.readyState == 4 && httpRequest.status == 200)
             {
-                handlePingResponse(region, m_pingTime, index);
                 console.log("STATE IS 200");
+                handlePingResponse(region, m_startTime, index);
             }
         }
 
@@ -638,13 +642,15 @@ function BCLobby() {
         console.log("Sending");
     }
 
-    function handlePingResponse(region, responseTime, index)
+    function handlePingResponse(region, startTime, index)
     {
-        console.log(responseTime);
-        m_pingTime = m_dateTime.getTime() - responseTime;
-        //m_cachedPingResponses[region][index].set(region, m_pingTime);
-        m_cachedPingResponses[String(region)][index] = m_pingTime;
-        console.log(m_cachedPingResponses[String(region)][index]);
+        console.log(startTime + "start time");
+        console.log("the time now " + m_dateTime.getTime());
+        var time = m_dateTime.getTime() - startTime; 
+        console.log("TIME TOOK TO PING " + time);
+
+        m_cachedPingResponses[String(region)][index] = time;
+        console.log("PING DATA: " + m_cachedPingResponses[String(region)][index]);
         console.log("length of Cache " + m_cachedPingResponses[String(region)].length);
 
         if(m_cachedPingResponses[String(region)].length == MAX_PING_CALLS)
@@ -677,6 +683,7 @@ function BCLobby() {
         var hasPingData = PingData != null && PingData.length > 0;
         if(hasPingData)
         {
+            console.log("SENDING BECAUSE HAS PING DATA");
             data.PingData = PingData;
 
             bc.brainCloudManager.sendRequest({
