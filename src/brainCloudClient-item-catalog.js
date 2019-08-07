@@ -6,11 +6,10 @@ function BCItemCatalog() {
 
 	bc.SERVICE_ITEMCATALOG = "itemCatalog";
 
-	bc.itemCatalog.OPERATION_ATTACH = "ATTACH";
+	bc.itemCatalog.OPERATION_GET_CATALOG_ITEM_DEFINITION = "GET_CATALOG_ITEM_DEFINITION";
+	bc.itemCatalog.OPERATION_GET_CATALOG_ITEMS_PAGE = "GET_CATALOG_ITEMS_PAGE";
+	bc.itemCatalog.OPERATION_GET_CATALOG_ITEMS_PAGE_OFFSET = "GET_CATALOG_ITEMS_PAGE_OFFSET";
 
-	bc.itemCatalog.authenticationType = Object.freeze({
-		anonymous : "Anonymous"
-	});
 
 	/**
 	 * Reads an existing item definition from the server, with language fields
@@ -25,7 +24,7 @@ function BCItemCatalog() {
 	bc.itemCatalog.getCatalogItemDefinition = function(defId, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_ITEMCATALOG,
-			operation: bc.itemCatalog.GET_CATALOG_ITEM_DEFINITION,
+			operation: bc.itemCatalog.OPERATION_GET_CATALOG_ITEM_DEFINITION,
 			data: {
 				defId : defId
 			},
@@ -48,7 +47,7 @@ function BCItemCatalog() {
 	bc.itemCatalog.getCatalogItemsPage = function(context, searchCriteria, sortCriteria, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_ITEMCATALOG,
-			operation: bc.itemCatalog.GET_CATALOG_ITEMS_PAGE,
+			operation: bc.itemCatalog.OPERATION_GET_CATALOG_ITEMS_PAGE,
 			data: {
 				context : context,
 				searchCriteria : searchCriteria,
@@ -73,7 +72,7 @@ function BCItemCatalog() {
 	bc.itemCatalog.getCatalogItemsPageOffset = function(context, pageOffset, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_ITEMCATALOG,
-			operation: bc.itemCatalog.GET_CATALOG_ITEMS_PAGE_OFFSET,
+			operation: bc.itemCatalog.OPERATION_GET_CATALOG_ITEMS_PAGE_OFFSET,
 			data: {
 				context : context,
 				pageOffset : pageOffset

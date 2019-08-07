@@ -5356,6 +5356,62 @@ async function testPresence()
 
 }
 
+//EXPECT FAIL ONLY FOR NOW UNTIL ITEM PAGE IS COMPLETE
+async function testItemCatalog()
+{
+    if (!module("ItemCatalog", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    await asyncTest("GetCatalogItemDefinition()", () =>
+    {
+        bc.itemCatalog.getCatalogItemDefinition("sword001", result =>
+        {
+            equal(result.status, 400, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetCatalogItemsPage()", () =>
+    {
+        var pagination = "{\"rowsPerPage\": \"50\",\"pageNumber\": \"1\"}";
+        var searchCriteria = "{\"category\": \"sword\"}";
+        var sortCriteria = "{\"createdAt\": \"1\",\"updatedAt\": \"-1\"}";
+        bc.itemCatalog.getCatalogItemsPage(pagination, searchCriteria, sortCriteria, result =>
+        {
+            equal(result.status, 400, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetCatalogItemsPage()", () =>
+    {
+        var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJlbnRpdHlUeXBlIjp7IiRyZWdleCI6Ii4qaWxkLioiLCIkb3B0";
+        bc.itemCatalog.getCatalogItemsPageOffset(context, 1, result =>
+        {
+            equal(result.status, 400, "Expecting 200");
+            resolve_test();
+        });
+    });
+}
+
+async function testUserInventoryManagement()
+{
+    if (!module("UserInventoryManagement", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -5398,6 +5454,8 @@ async function run_tests()
     await testMessaging();
     await testRTT();
     await testLobby();
+    await testItemCatalog();
+    await testUserInventoryManagement();
 }
 
 async function main()

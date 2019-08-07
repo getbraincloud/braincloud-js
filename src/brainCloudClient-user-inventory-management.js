@@ -7,8 +7,11 @@ function BCUserInventoryManagement() {
 	bc.SERVICE_USER_INVENTORY_MANAGEMENT = "userInventoryManagement";
 
 	bc.userInventoryManagement.OPERATION_AWARD_USER_ITEM = "AWARD_USER_ITEM";
-	bc.userInventoryManagement.OPERATION_AWARD_USER_ITEM = "AWARD_USER_ITEM";
-
+	bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY = "GET_USER_INVENTORY";
+	bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE = "GET_USER_INVENTORY_PAGE";
+	bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET = "GET_USER_INVENTORY_PAGE_OFFSET";
+	bc.userInventoryManagement.OPERATION_GET_USER_ITEM = "GET_USER_ITEM";
+	bc.userInventoryManagement.OPERATION_PURCHASE_USER_ITEM = "PURCHASE_USER_ITEM";
 
 	/**
 	 * Allows item(s) to be awarded to a user without collecting
