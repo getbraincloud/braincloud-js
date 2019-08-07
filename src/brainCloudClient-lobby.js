@@ -660,7 +660,6 @@ function BCLobby() {
             totalAccumulated -= highestValue;
             console.log("The calculated PING: " + totalAccumulated/(numElements - 1));
             pingData[region] = totalAccumulated / (numElements -1);
-            //pingData.set(region, totalAccumulated / (numElements - 1));
             console.log(pingData);
             console.log("LENGTH OF PING DATA MAP " + Object.keys(pingData).length);
         }
