@@ -31,7 +31,6 @@ function BCLobby() {
     var m_regionTargetsToProcess = new Array();
     var MAX_PING_CALLS = 4;
     var NUM_PING_CALLS_IN_PARRALLEL = 1;
-    var m_dateTime = new Date();
     var m_startTime;
 
     /**
@@ -561,7 +560,7 @@ function BCLobby() {
         {
             if(callback == null)
             {
-
+                console.error("no ping data");
             }
         }
     };
@@ -569,6 +568,8 @@ function BCLobby() {
     function pingNextItemToProcess()
     {
         console.log("PINGING NEXT ITEM TO PROCESS");
+        console.log("LENGTH OF REGION PING DATA MAP " + Object.keys(m_regionPingData).length);
+        console.log("LENGTH OF PING DATA MAP " + PingData.size);
         if(m_regionTargetsToProcess.length > 0)
         {
             var region; 
@@ -597,7 +598,7 @@ function BCLobby() {
                 pingHost(region, target, tempArr.length);
             }
         }
-        else if (Object.keys(m_regionPingData).length == Object.keys(PingData).length && m_pingRegionSuccessCallback != null)
+        else if (Object.keys(m_regionPingData).length == PingData.size /*&& m_pingRegionSuccessCallback != null*/)
         {
             console.log("NICCCCCCCCCCCCCCCE IT WORKS!")
         }
@@ -608,7 +609,7 @@ function BCLobby() {
         console.log("PINGING HOST NOW... REGION: " + region + " TARGET: " + target);
         console.log("INDEX: " + index);
 
-        m_startTime = m_dateTime.getTime();
+        m_startTime = new Date();
         console.log("TIME: " + m_startTime);
 
         targetURL = "https://" + target;
@@ -645,8 +646,7 @@ function BCLobby() {
     function handlePingResponse(region, startTime, index)
     {
         console.log(startTime + "start time");
-        console.log("the time now " + m_dateTime.getTime());
-        var time = m_dateTime.getTime() - startTime; 
+        var time = new Date().getTime() - startTime.getTime(); 
         console.log("TIME TOOK TO PING " + time);
 
         m_cachedPingResponses[String(region)][index] = time;
@@ -656,6 +656,8 @@ function BCLobby() {
         if(m_cachedPingResponses[String(region)].length == MAX_PING_CALLS)
         {
             console.log("Our cache is bigger than max ping calls");
+            tempArr = m_cachedPingResponses[String(region)];
+            console.log("Here's our cache : " + tempArr);
             var totalAccumulated = 0;
             var highestValue = 0;
             var pingResponse = 0;
@@ -671,7 +673,10 @@ function BCLobby() {
                 }
             }
             totalAccumulated -= highestValue;
-            PingData.set(region, totalAccumulated / (numElements - 1))
+            console.log("The calculated PING: " + totalAccumulated/(numElements - 1));
+            PingData.set(region, totalAccumulated / (numElements - 1));
+            console.log(PingData);
+            console.log("LENGTH OF PING DATA MAP " + PingData.size);
         }
 
         pingNextItemToProcess();
