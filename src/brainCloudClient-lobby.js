@@ -574,6 +574,7 @@ function BCLobby() {
             var region; 
             var target;
             var tempArr = new Array();
+            console.log(m_regionTargetsToProcess.length);
             for(var i = 0; i < NUM_PING_CALLS_IN_PARRALLEL && m_regionTargetsToProcess.length > 0; i++)
             {
                 //THIS SEEMS TO BE THE ONLY WAY THAT WORKS?!???!!
@@ -587,8 +588,9 @@ function BCLobby() {
                 };
 
                 tempArr = m_cachedPingResponses[String(region)];
-                pingHost(region, target, tempArr.length);
+                console.log("SSSSSSSSSSSSSSSSSSSSS" + tempArr);
                 m_regionTargetsToProcess.shift();
+                pingHost(region, target, tempArr.length);
             }
         }
         else if (Object.keys(m_regionPingData).length == Object.keys(PingData).length && m_pingRegionSuccessCallback != null)
@@ -605,46 +607,57 @@ function BCLobby() {
         m_pingTime = m_dateTime.getTime();
         console.log("TIME: " + m_pingTime);
 
-        // var httpRequest = new XMLHttpRequest();
         targetURL = "https://" + target;
-
         console.log(targetURL);
-
-        httpRequest = new XMLHttpRequest();
+        
+        var httpRequest = new XMLHttpRequest();
+        
+        console.log("OPENNING AND SENDING");
+        httpRequest.open("GET", targetURL, true);
+        console.log("OPENED");
 
         httpRequest.onreadystatechange = function()
         {
             console.log("CHECKING STATE");
             console.log(httpRequest.status);
             console.log(httpRequest.readyState);
+            //handlePingResponse(region, m_pingTime, index);
             if (httpRequest.readyState == 4 && httpRequest.status == 200)
             {
-                console.log("STATE IS 200")
-                handlePingResponse(region, pingTime, index);
+                handlePingResponse(region, m_pingTime, index);
+                console.log("STATE IS 200");
             }
         }
 
-        console.log("OPENNING AND SENDING");
-        httpRequest.open("GET", targetURL, true);
-        httpRequest.setRequestHeader("Access-Control-Allow-Origin","*");
-        console.log(httpRequest);
+        httpRequest.setRequestHeader("Access-Control-Allow-Origin",":*");
+        httpRequest.setRequestHeader("Access-Control-Allow-Headers",":*");
+        httpRequest.setRequestHeader("Content-type", targetURL);
+        //httpRequest.setRequestHeader("Access-Control-Allow-Methods", "GET, POST, PUT");
+        //console.log(httpRequest);
         httpRequest.send();
+        console.log("Sending");
     }
 
     function handlePingResponse(region, responseTime, index)
     {
+        console.log(responseTime);
         m_pingTime = m_dateTime.getTime() - responseTime;
-        m_cachedPingResponses[region][index].set(region, m_pingTime);
+        //m_cachedPingResponses[region][index].set(region, m_pingTime);
+        m_cachedPingResponses[String(region)][index] = m_pingTime;
+        console.log(m_cachedPingResponses[String(region)][index]);
+        console.log("length of Cache " + m_cachedPingResponses[String(region)].length);
 
-        if(m_cachedPingResponses[region].length == MAX_PING_CALLS)
+        if(m_cachedPingResponses[String(region)].length == MAX_PING_CALLS)
         {
+            console.log("Our cache is bigger than max ping calls");
             var totalAccumulated = 0;
             var highestValue = 0;
             var pingResponse = 0;
-            var numElements = m_cachedPingResponses[region].length;
+            var numElements = m_cachedPingResponses[String(region)].length;
             for(var i = 0; i < numElements; i++)
             {  
-                pingResponse = m_cachedPingResponses[region][i];
+                console.log("we are now looping through the ping calls for the region");
+                pingResponse = m_cachedPingResponses[String(region)][i];
                 totalAccumulated += pingResponse;
                 if(pingResponse > highestValue)
                 {
