@@ -164,7 +164,7 @@ function BCLobby() {
             teamCode: teamCode
         };
 
-        attachPingDataAndSend(data, )
+        attachPingDataAndSend(data, bc.lobby.OPERATION_FIND_LOBBY_WITH_PING_DATA, callback);
     };
 
     /**
