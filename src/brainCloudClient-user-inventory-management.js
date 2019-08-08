@@ -12,6 +12,7 @@ function BCUserInventoryManagement() {
 	bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET = "GET_USER_INVENTORY_PAGE_OFFSET";
 	bc.userInventoryManagement.OPERATION_GET_USER_ITEM = "GET_USER_ITEM";
 	bc.userInventoryManagement.OPERATION_PURCHASE_USER_ITEM = "PURCHASE_USER_ITEM";
+	bc.userInventoryManagement.OPERATION_USE_USER_ITEM = "USE_USER_ITEM";
 
 	/**
 	 * Allows item(s) to be awarded to a user without collecting
@@ -85,11 +86,9 @@ function BCUserInventoryManagement() {
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.getUserInventoryPage = function(context, searchCriteria, sortCriteria, includeDef, callback) {
+	bc.userInventoryManagement.getUserInventoryPage = function(context, includeDef, callback) {
 		var message = {
 			context : context,
-			searchCriteria : searchCriteria,
-			sortCriteria : sortCriteria,
 			includeDef : includeDef
 		};
 
@@ -184,6 +183,34 @@ function BCUserInventoryManagement() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
 			operation : bc.tournament.OPERATION_PURCHASE_USER_ITEM,
+			data : message,
+			callback : callback
+		});
+	};
+
+	/**
+	 * Uses the specified item, potentially consuming it.
+	 *
+	 * Service Name - userInventoryManagement
+	 * Service Operation - USE_USER_ITEM
+	 *
+	 * @param itemId
+	 * @param version
+	 * @param newItemData
+	 * @param includeDef 
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.userInventoryManagement.useUserItem = function(itemId, version, newItemData, includeDef, callback) {
+		var message = {
+			itemId : itemId,
+			version : version,
+			newItemData : newItemData,
+			includeDef : includeDef
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			operation : bc.tournament.OPERATION_USE_USER_ITEM,
 			data : message,
 			callback : callback
 		});

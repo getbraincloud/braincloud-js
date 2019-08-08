@@ -44,14 +44,12 @@ function BCItemCatalog() {
 	 * @param sortCriteria
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.itemCatalog.getCatalogItemsPage = function(context, searchCriteria, sortCriteria, callback) {
+	bc.itemCatalog.getCatalogItemsPage = function(context, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_ITEMCATALOG,
 			operation: bc.itemCatalog.OPERATION_GET_CATALOG_ITEMS_PAGE,
 			data: {
 				context : context,
-				searchCriteria : searchCriteria,
-				sortCriteria : sortCriteria
 			},
 			callback: callback
 		});
