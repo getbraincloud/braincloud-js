@@ -24,15 +24,6 @@ function BCLobby() {
     bc.lobby.OPERATION_CANCEL_FIND_REQUEST = "CANCEL_FIND_REQUEST";
     bc.lobby.OPERATION_GET_REGIONS_FOR_LOBBIES = "GET_REGIONS_FOR_LOBBIES";
 
-    //variables for ping data 
-    var pingData = new Map();
-    var m_regionPingData = new Map();
-    var m_cachedPingResponses = new Map();
-    var m_regionTargetsToProcess = new Array();
-    var MAX_PING_CALLS = 4;
-    var NUM_PING_CALLS_IN_PARRALLEL = 1;
-    var m_startTime;
-
     /**
      * Creates a new lobby.
      * 
@@ -596,9 +587,6 @@ function BCLobby() {
         console.log("PINGING HOST NOW... REGION: " + region + " TARGET: " + target);
         console.log("INDEX: " + index);
 
-        m_startTime = new Date();
-        console.log("TIME: " + m_startTime);
-
         targetURL = "https://" + target;
         console.log(targetURL);
         
@@ -616,7 +604,7 @@ function BCLobby() {
             if (httpRequest.readyState == 4 && httpRequest.status == 200)
             {
                 console.log("STATE IS 200");
-                handlePingResponse(region, m_startTime, index);
+                handlePingResponse(region, index);
             }
         }
 
@@ -624,16 +612,17 @@ function BCLobby() {
         httpRequest.setRequestHeader("Access-Control-Allow-Headers",":*");
         httpRequest.setRequestHeader("Content-type", targetURL);
 
+        m_cachedPingResponses[String(region)].push(new Date());
+
         httpRequest.send();
         console.log("Sending");
     }
 
-    function handlePingResponse(region, startTime, index)
+    function handlePingResponse(region, index)
     {
-        console.log(startTime + "start time");
-        var time = new Date().getTime() - startTime.getTime(); 
+        //console.log(startTime + "start time");
+        var time = new Date().getTime() - m_cachedPingResponses[String(region)][index]; 
         console.log("TIME TOOK TO PING " + time);
-
         m_cachedPingResponses[String(region)][index] = time;
         console.log("PING DATA: " + m_cachedPingResponses[String(region)][index]);
         console.log("length of Cache " + m_cachedPingResponses[String(region)].length);
@@ -687,6 +676,14 @@ function BCLobby() {
             bc.brainCloudManager.fakeErrorResponse(bc.statusCodes.BAD_REQUEST, bc.reasonCodes.MISSING_REQUIRED_PARAMETER, "Required Parameter 'pingData' is missing. Please ensure 'pingData' exists by first calling GetRegionsForLobbies and PingRegions, and waiting for response before proceeding.");
         }
     }
+
+    //variables for ping data 
+    var pingData = new Map();
+    var m_regionPingData = new Map();
+    var m_cachedPingResponses = new Map();
+    var m_regionTargetsToProcess = new Array();
+    var MAX_PING_CALLS = 4;
+    var NUM_PING_CALLS_IN_PARRALLEL = 1;
 }
 
 BCLobby.apply(window.brainCloudClient = window.brainCloudClient || {});
