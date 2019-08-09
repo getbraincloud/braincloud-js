@@ -23,6 +23,7 @@ function BCLobby() {
     bc.lobby.OPERATION_UPDATE_SETTINGS = "UPDATE_SETTINGS";
     bc.lobby.OPERATION_CANCEL_FIND_REQUEST = "CANCEL_FIND_REQUEST";
     bc.lobby.OPERATION_GET_REGIONS_FOR_LOBBIES = "GET_REGIONS_FOR_LOBBIES";
+    bc.lobby.OPERATION_PING_REGIONS = "PING_REGIONS";
 
     /**
      * Creates a new lobby.
@@ -497,8 +498,13 @@ function BCLobby() {
             console.log(num2);
             console.log(m_regionPingData["eu-west-1"]);
 
-            bc.lobby.pingRegions();
+            bc.lobby.pingRegions(celebrate); //<-------------------------- for testing
         }
+    };
+
+    function celebrate()
+    {
+        console.log("YASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
     };
 
     bc.lobby.pingRegions = function(callback)
@@ -507,6 +513,23 @@ function BCLobby() {
         // // now we have the region ping data, we can start pinging each region and its defined target, if its a PING type.
         var regionInner = new Map();
         var targetStr; 
+
+        //set pingRegionsSuccessCallback 
+
+        if(callback == null)
+        {
+            console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYOURE NULL");
+        }
+        
+        if(callback != null)
+        {
+            console.log("NNNNNNNNOTTTTTTTTTTTTTTTT NULLLLLLLLLLL" + callback);
+            pingRegionsSuccessCallback = callback;
+            console.log("DID IT WORK??? " + pingRegionsSuccessCallback);
+        }
+
+
+        //console.log(this.lobby.pingRegionsSuccessCallback);
 
         if(Object.keys(m_regionPingData).length > 0)
         {
@@ -576,11 +599,23 @@ function BCLobby() {
                 pingHost(region, target, tempArr.length);
             }
         }
-        else if (Object.keys(m_regionPingData).length == Object.keys(pingData).length)
+        else if (Object.keys(m_regionPingData).length == Object.keys(pingData).length && pingRegionsSuccessCallback != null)
         {
             console.log("pingData Ready");
+            if(pingRegionsSuccessCallback != null)
+            {
+                pingRegionsSuccessCallback();
+            }
         }
     }
+
+    // bc.lobby.pingRegionsSuccessCallback = function(result) 
+    // {
+    //     if (result.status == 200) 
+    //     {
+    //         console.log("pingData Ready");
+    //     }
+    // };
 
     function pingHost(region, target, index)
     {
@@ -684,6 +719,7 @@ function BCLobby() {
     var m_regionTargetsToProcess = new Array();
     var MAX_PING_CALLS = 4;
     var NUM_PING_CALLS_IN_PARRALLEL = 1;
+    var pingRegionsSuccessCallback;
 }
 
 BCLobby.apply(window.brainCloudClient = window.brainCloudClient || {});
