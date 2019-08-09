@@ -488,64 +488,35 @@ function BCLobby() {
 
     bc.lobby.getRegionsForLobbiesCallback = function(result) 
     {
+        //upon a successful getRegionsForLobbies call
         if (result.status == 200) 
         {
+            //set the regionPingData that was found
             m_regionPingData = result.data.regionPingData;
-            var num2 = Object.keys(m_regionPingData).length;
-
-            //test - the numbers are working properly here. 
-            console.log(m_regionPingData);
-            console.log(num2);
-            console.log(m_regionPingData["eu-west-1"]);
-
-            bc.lobby.pingRegions(celebrate); //<-------------------------- for testing
         }
-    };
-
-    function celebrate()
-    {
-        console.log("YASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
     };
 
     bc.lobby.pingRegions = function(callback)
     {
-        console.log("WE'RE PINGING REGIONS!");
         // // now we have the region ping data, we can start pinging each region and its defined target, if its a PING type.
         var regionInner = new Map();
         var targetStr; 
 
-        //set pingRegionsSuccessCallback 
-
-        if(callback == null)
-        {
-            console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYOURE NULL");
-        }
-        
+        //check if client passed in own callback
         if(callback != null)
-        {
-            console.log("NNNNNNNNOTTTTTTTTTTTTTTTT NULLLLLLLLLLL" + callback);
             pingRegionsSuccessCallback = callback;
-            console.log("DID IT WORK??? " + pingRegionsSuccessCallback);
-        }
 
-
-        //console.log(this.lobby.pingRegionsSuccessCallback);
-
+        //if there is ping data
         if(Object.keys(m_regionPingData).length > 0)
         {
-            console.log("THERES PING DATA!");
-
             for(var key in m_regionPingData)
             {
-                console.log("PINGING " + key);
                 regionInner = m_regionPingData[String(key)];
-                console.log(regionInner);
-                console.log(regionInner[String("type")]);
 
+                //check all the regions and see if the data is of type PING
                 if(regionInner[String("type")] !== null && regionInner[String("type")] === "PING")
                 {
-                    console.log("In the loop!");
-                    
+                    //update our cache with the regions we come across so we can store ping values in individual arrays
                     var tempArr = new Array();
                     m_cachedPingResponses[key] = tempArr;
                     targetStr = regionInner[String("target")];
@@ -553,55 +524,54 @@ function BCLobby() {
                     //js is single threaded, so there shouldn't be  need for a mutex
                     for(var i = 0; i < MAX_PING_CALLS; i++)
                     { 
+                        //take the regions and targets and prepare them to be tested
                         var keyvaluepair = new Map();
                         keyvaluepair.set(key, targetStr)
                         m_regionTargetsToProcess.push(keyvaluepair);
                     }
                 }
             }
-
+            //start the pinging
             pingNextItemToProcess();
         }
         else
         {
+            //theres no regions for pinging
             bc.brainCloudManager.fakeErrorResponse(bc.statusCodes.BAD_REQUEST, bc.reasonCodes.MISSING_REQUIRED_PARAMETER, "No Regions to Ping. Please call GetRegionsForLobbies and await the response before calling PingRegions");
         }
     };
 
     function pingNextItemToProcess()
     {
-        console.log("PINGING NEXT ITEM TO PROCESS");
-        console.log("LENGTH OF REGION PING DATA MAP " + Object.keys(m_regionPingData).length);
-        console.log("LENGTH OF PING DATA MAP " + Object.keys(pingData).length);
+        //check there's regions to process
         if(m_regionTargetsToProcess.length > 0)
         {
             var region; 
             var target;
             var tempArr = new Array();
-            console.log("We have this many region targets to process: " + m_regionTargetsToProcess.length);
             for(var i = 0; i < NUM_PING_CALLS_IN_PARRALLEL && m_regionTargetsToProcess.length > 0; i++)
             {
+                //isolating the needed regiona nd target from the list we need to process
                 for (const k of m_regionTargetsToProcess[0].keys())
                 {
                     region = k;
                     target = m_regionTargetsToProcess[0].get(String(region));
-                    console.log("The Region: " + region);
-                    console.log("The Target URL: " + target);
                 };
 
+                //using tempArr to more easily acquire length of the current region we're identifying in cachedPingResponses
                 tempArr = m_cachedPingResponses[String(region)];
-                console.log("Cached responses Array: " + tempArr);
-
-                console.log("we had this many to process " + m_regionTargetsToProcess.length);
+                
+                //reorganising array and removing the first element
                 m_regionTargetsToProcess.shift();
-                console.log("we NOW have this many to process " + m_regionTargetsToProcess.length);
-                console.log("the targets to process still: " + m_regionTargetsToProcess);
                 pingHost(region, target, tempArr.length);
             }
         }
-        else if (Object.keys(m_regionPingData).length == Object.keys(pingData).length && pingRegionsSuccessCallback != null)
+        else if (Object.keys(m_regionPingData).length == Object.keys(pingData).length)
         {
+            //ping is ready
             console.log("pingData Ready");
+
+            //if they passed in a callback, be sure to call it back
             if(pingRegionsSuccessCallback != null)
             {
                 pingRegionsSuccessCallback();
@@ -609,71 +579,51 @@ function BCLobby() {
         }
     }
 
-    // bc.lobby.pingRegionsSuccessCallback = function(result) 
-    // {
-    //     if (result.status == 200) 
-    //     {
-    //         console.log("pingData Ready");
-    //     }
-    // };
-
     function pingHost(region, target, index)
     {
-        console.log("PINGING HOST NOW... REGION: " + region + " TARGET: " + target);
-        console.log("INDEX: " + index);
-
+        //setup our target
         targetURL = "https://" + target;
-        console.log(targetURL);
         
+        //make our http request
         var httpRequest = new XMLHttpRequest();
-        
-        console.log("OPENNING AND SENDING");
         httpRequest.open("GET", targetURL, true);
-        console.log("OPENED");
 
         httpRequest.onreadystatechange = function()
         {
-            console.log("CHECKING STATE");
-            console.log(httpRequest.status);
-            console.log(httpRequest.readyState);
+            //check state 
             if (httpRequest.readyState == 4 && httpRequest.status == 200)
             {
-                console.log("STATE IS 200");
                 handlePingResponse(region, index);
             }
         }
 
+        //avoid CORS and other header issues
         httpRequest.setRequestHeader("Access-Control-Allow-Origin",":*");
         httpRequest.setRequestHeader("Access-Control-Allow-Headers",":*");
         httpRequest.setRequestHeader("Content-type", targetURL);
 
+        //store a start time for each region to allow parallel
         m_cachedPingResponses[String(region)].push(new Date());
 
         httpRequest.send();
-        console.log("Sending");
     }
 
     function handlePingResponse(region, index)
     {
-        //console.log(startTime + "start time");
+        //calculate the difference in time between getting here and the time a start time was stored for the region
         var time = new Date().getTime() - m_cachedPingResponses[String(region)][index]; 
-        console.log("TIME TOOK TO PING " + time);
         m_cachedPingResponses[String(region)][index] = time;
-        console.log("PING DATA: " + m_cachedPingResponses[String(region)][index]);
-        console.log("length of Cache " + m_cachedPingResponses[String(region)].length);
 
+        //we've reached our desired number of ping calls, so now we need to do some logic to get the average ping
         if(m_cachedPingResponses[String(region)].length == MAX_PING_CALLS)
         {
-            console.log("Our cache is bigger than max ping calls");
             tempArr = m_cachedPingResponses[String(region)];
-            console.log("Here's our cache : " + tempArr);
             var totalAccumulated = 0;
             var highestValue = 0;
             var pingResponse = 0;
             var numElements = m_cachedPingResponses[String(region)].length;
             for(var i = 0; i < numElements; i++)
             {  
-                console.log("we are now looping through the ping calls for the region");
                 pingResponse = m_cachedPingResponses[String(region)][i];
                 totalAccumulated += pingResponse;
                 if(pingResponse > highestValue)
@@ -682,12 +632,9 @@ function BCLobby() {
                 }
             }
             totalAccumulated -= highestValue;
-            console.log("The calculated PING: " + totalAccumulated/(numElements - 1));
             pingData[region] = totalAccumulated / (numElements -1);
-            console.log(pingData);
-            console.log("LENGTH OF PING DATA MAP " + Object.keys(pingData).length);
         }
-
+        //move onto the next one
         pingNextItemToProcess();
     }
 
@@ -696,7 +643,6 @@ function BCLobby() {
     {
         if(pingData != null && Object.keys(pingData).length > 0)
         {
-            console.log("SENDING BECAUSE HAS PING DATA");
             data.pingData = pingData;
 
             bc.brainCloudManager.sendRequest({
