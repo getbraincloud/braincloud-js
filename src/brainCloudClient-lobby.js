@@ -187,7 +187,7 @@ function BCLobby() {
             settings: settings,
             isReady: isReady,
             extraJson: extraJson,
-            teamCode: teamCode,
+            teamCode: teamCode
         };
 
         bc.brainCloudManager.sendRequest({
@@ -643,6 +643,7 @@ function BCLobby() {
     {
         if(pingData != null && Object.keys(pingData).length > 0)
         {
+            //make sure to add the ping data tot he data being sent
             data.pingData = pingData;
 
             bc.brainCloudManager.sendRequest({
