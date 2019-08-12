@@ -470,7 +470,6 @@ function BCLobby() {
     ///<summary>
     bc.lobby.getRegionsForLobbies = function(lobbyTypes, callback)
     {
-        console.log("GETTING REGIONS!");
         var data = {
             lobbyTypes: lobbyTypes
         };
@@ -493,7 +492,14 @@ function BCLobby() {
         {
             //set the regionPingData that was found
             m_regionPingData = result.data.regionPingData;
+
+            bc.lobby.pingRegions(celebrate); ////////////////////////////// test
         }
+    };
+
+    function celebrate()
+    {
+        console.log("YASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");////////////////////////test
     };
 
     bc.lobby.pingRegions = function(callback)
@@ -526,7 +532,7 @@ function BCLobby() {
                     { 
                         //take the regions and targets and prepare them to be tested
                         var keyvaluepair = new Map();
-                        keyvaluepair.set(key, targetStr)
+                        keyvaluepair.set(key, targetStr);
                         m_regionTargetsToProcess.push(keyvaluepair);
                     }
                 }
@@ -543,9 +549,11 @@ function BCLobby() {
 
     function pingNextItemToProcess()
     {
+        console.log("ping"); ///////////////////test
         //check there's regions to process
         if(m_regionTargetsToProcess.length > 0)
         {
+            console.log(m_regionTargetsToProcess); //////////////////test
             var region; 
             var target;
             var tempArr = new Array();
@@ -566,16 +574,10 @@ function BCLobby() {
                 pingHost(region, target, tempArr.length);
             }
         }
-        else if (Object.keys(m_regionPingData).length == Object.keys(pingData).length)
+        else if (Object.keys(m_regionPingData).length == Object.keys(pingData).length && pingRegionsSuccessCallback != null && pingRegionsSuccessCallback != undefined)
         {
-            //ping is ready
-            console.log("pingData Ready");
-
-            //if they passed in a callback, be sure to call it back
-            if(pingRegionsSuccessCallback != null)
-            {
-                pingRegionsSuccessCallback();
-            }
+            pingRegionsSuccessCallback();
+            console.log(pingData);//////////////////test
         }
     }
 
@@ -603,7 +605,7 @@ function BCLobby() {
         httpRequest.setRequestHeader("Content-type", targetURL);
 
         //store a start time for each region to allow parallel
-        m_cachedPingResponses[String(region)].push(new Date());
+        m_cachedPingResponses[String(region)].push(new Date().getTime());
 
         httpRequest.send();
     }
@@ -632,8 +634,9 @@ function BCLobby() {
                 }
             }
             totalAccumulated -= highestValue;
-            pingData[region] = totalAccumulated / (numElements -1);
+            pingData[region] = totalAccumulated / (numElements -1);   
         }
+
         //move onto the next one
         pingNextItemToProcess();
     }
@@ -665,7 +668,7 @@ function BCLobby() {
     var m_cachedPingResponses = new Map();
     var m_regionTargetsToProcess = new Array();
     var MAX_PING_CALLS = 4;
-    var NUM_PING_CALLS_IN_PARRALLEL = 1;
+    var NUM_PING_CALLS_IN_PARRALLEL = 2;
     var pingRegionsSuccessCallback;
 }
 
