@@ -492,19 +492,14 @@ function BCLobby() {
         {
             //set the regionPingData that was found
             m_regionPingData = result.data.regionPingData;
-
-            bc.lobby.pingRegions(celebrate); ////////////////////////////// test
         }
-    };
-
-    function celebrate()
-    {
-        console.log("YASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");////////////////////////test
     };
 
     bc.lobby.pingRegions = function(callback)
     {
-        // // now we have the region ping data, we can start pinging each region and its defined target, if its a PING type.
+        //now we have the region ping data, we can start pinging each region and its defined target, if its a PING type.
+        m_cachedPingResponses.clear();
+        pingData = {};
         var regionInner = new Map();
         var targetStr; 
 
@@ -549,14 +544,11 @@ function BCLobby() {
 
     function pingNextItemToProcess()
     {
-        console.log("ping"); ///////////////////test
         //check there's regions to process
         if(m_regionTargetsToProcess.length > 0)
         {
-            console.log(m_regionTargetsToProcess); //////////////////test
             var region; 
             var target;
-            var tempArr = new Array();
             for(var i = 0; i < NUM_PING_CALLS_IN_PARRALLEL && m_regionTargetsToProcess.length > 0; i++)
             {
                 //isolating the needed regiona nd target from the list we need to process
@@ -567,17 +559,16 @@ function BCLobby() {
                 };
 
                 //using tempArr to more easily acquire length of the current region we're identifying in cachedPingResponses
-                tempArr = m_cachedPingResponses[String(region)];
+                m_cachedRegionArr = m_cachedPingResponses[String(region)];
                 
                 //reorganising array and removing the first element
                 m_regionTargetsToProcess.shift();
-                pingHost(region, target, tempArr.length);
+                pingHost(region, target, m_cachedRegionArr.length);
             }
         }
         else if (Object.keys(m_regionPingData).length == Object.keys(pingData).length && pingRegionsSuccessCallback != null && pingRegionsSuccessCallback != undefined)
         {
             pingRegionsSuccessCallback();
-            console.log(pingData);//////////////////test
         }
     }
 
@@ -586,6 +577,9 @@ function BCLobby() {
         //setup our target
         targetURL = "https://" + target;
         
+        //store a start time for each region to allow parallel
+        m_cachedPingResponses[String(region)].push(new Date().getTime());
+
         //make our http request
         var httpRequest = new XMLHttpRequest();
         httpRequest.open("GET", targetURL, true);
@@ -604,9 +598,6 @@ function BCLobby() {
         httpRequest.setRequestHeader("Access-Control-Allow-Headers",":*");
         httpRequest.setRequestHeader("Content-type", targetURL);
 
-        //store a start time for each region to allow parallel
-        m_cachedPingResponses[String(region)].push(new Date().getTime());
-
         httpRequest.send();
     }
 
@@ -617,13 +608,12 @@ function BCLobby() {
         m_cachedPingResponses[String(region)][index] = time;
 
         //we've reached our desired number of ping calls, so now we need to do some logic to get the average ping
-        if(m_cachedPingResponses[String(region)].length == MAX_PING_CALLS)
+        if(m_cachedPingResponses[String(region)].length == MAX_PING_CALLS && index == MAX_PING_CALLS - 1)
         {
-            tempArr = m_cachedPingResponses[String(region)];
             var totalAccumulated = 0;
             var highestValue = 0;
             var pingResponse = 0;
-            var numElements = m_cachedPingResponses[String(region)].length;
+            var numElements = m_cachedRegionArr.length;
             for(var i = 0; i < numElements; i++)
             {  
                 pingResponse = m_cachedPingResponses[String(region)][i];
@@ -640,7 +630,6 @@ function BCLobby() {
         //move onto the next one
         pingNextItemToProcess();
     }
-
 
     function attachPingDataAndSend(data, operation, callback)
     {
@@ -666,6 +655,7 @@ function BCLobby() {
     var pingData = new Map();
     var m_regionPingData = new Map();
     var m_cachedPingResponses = new Map();
+    var m_cachedRegionArr = new Array();
     var m_regionTargetsToProcess = new Array();
     var MAX_PING_CALLS = 4;
     var NUM_PING_CALLS_IN_PARRALLEL = 2;
