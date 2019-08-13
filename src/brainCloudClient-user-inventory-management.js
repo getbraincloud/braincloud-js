@@ -14,7 +14,7 @@ function BCUserInventoryManagement() {
 	bc.userInventoryManagement.OPERATION_GET_USER_ITEM = "GET_USER_ITEM";
 	bc.userInventoryManagement.OPERATION_GIVE_USER_ITEM_TO = "GIVE_USER_ITEM_TO";
 	bc.userInventoryManagement.OPERATION_PURCHASE_USER_ITEM = "PURCHASE_USER_ITEM";
-	bc.userInventoryManagement.OPERATION_RECEIVE_USER_ITEM_FROM = "RECEVIE_USER_ITEM_FROM";
+	bc.userInventoryManagement.OPERATION_RECEIVE_USER_ITEM_FROM = "RECEIVE_USER_ITEM_FROM";
 	bc.userInventoryManagement.OPERATION_SELL_USER_ITEM = "SELL_USER_ITEM";
 	bc.userInventoryManagement.OPERATION_UPDATE_USER_ITEM_DATA = "UPDATE_USER_ITEM_DATA";
 	bc.userInventoryManagement.OPERATION_USE_USER_ITEM = "USE_USER_ITEM";
@@ -42,7 +42,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_AWARD_USER_ITEM,
+			operation : bc.userInventoryManagement.OPERATION_AWARD_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -72,7 +72,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_DROP_USER_ITEM,
+			operation : bc.userInventoryManagement.OPERATION_DROP_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -100,7 +100,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_GET_USER_INVENTORY,
+			operation : bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY,
 			data : message,
 			callback : callback
 		});
@@ -129,7 +129,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_GET_USER_INVENTORY_PAGE,
+			operation : bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE,
 			data : message,
 			callback : callback
 		});
@@ -159,7 +159,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET,
+			operation : bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET,
 			data : message,
 			callback : callback
 		});
@@ -186,7 +186,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_GET_USER_ITEM,
+			operation : bc.userInventoryManagement.OPERATION_GET_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -214,7 +214,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_GIVE_USER_ITEM_TO,
+			operation : bc.userInventoryManagement.OPERATION_GIVE_USER_ITEM_TO,
 			data : message,
 			callback : callback
 		});
@@ -245,7 +245,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_PURCHASE_USER_ITEM,
+			operation : bc.userInventoryManagement.OPERATION_PURCHASE_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -266,12 +266,12 @@ function BCUserInventoryManagement() {
 	bc.userInventoryManagement.receiveUserItemFrom = function(profileId, itemId, callback) {
 		var message = {
 			profileId : profileId,
-			itemIs : itemId
+			itemId : itemId
 		};
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_RECEIVE_USER_ITEM_FROM,
+			operation : bc.userInventoryManagement.OPERATION_RECEIVE_USER_ITEM_FROM,
 			data : message,
 			callback : callback
 		});
@@ -305,7 +305,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_SELL_USER_ITEM,
+			operation : bc.userInventoryManagement.OPERATION_SELL_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -331,7 +331,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_UPDATE_USER_ITEM_DATA,
+			operation : bc.userInventoryManagement.OPERATION_UPDATE_USER_ITEM_DATA,
 			data : message,
 			callback : callback
 		});
@@ -359,7 +359,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.tournament.OPERATION_USE_USER_ITEM,
+			operation : bc.userInventoryManagement.OPERATION_USE_USER_ITEM,
 			data : message,
 			callback : callback
 		});

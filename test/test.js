@@ -5356,7 +5356,6 @@ async function testPresence()
 
 }
 
-//EXPECT FAIL ONLY FOR NOW UNTIL ITEM PAGE IS COMPLETE
 async function testItemCatalog()
 {
     if (!module("ItemCatalog", () =>
@@ -5371,7 +5370,7 @@ async function testItemCatalog()
     {
         bc.itemCatalog.getCatalogItemDefinition("sword001", result =>
         {
-            equal(result.status, 400, "Expecting 200");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
@@ -5396,93 +5395,130 @@ async function testItemCatalog()
 
     await asyncTest("GetCatalogItemsPageOffset()", 1, () =>
     {
-        var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJlbnRpdHlUeXBlIjp7IiRyZWdleCI6Ii4qaWxkLioiLCIkb3B0";
+        var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJnYW1lSWQiOiIyMDAwMSJ9LCJzb3J0Q3JpdGVyaWEiOnt9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoxMDAsInBhZ2VOdW1iZXIiOm51bGx9LCJvcHRpb25zIjpudWxsfQ";
         bc.itemCatalog.getCatalogItemsPageOffset(context, 1, result =>
         {
-            equal(result.status, 400, "Expecting 200");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
 }
 
-// async function testUserInventoryManagement()
-// {
-//     if (!module("UserInventoryManagement", () =>
-//     {
-//         return setUpWithAuthenticate();
-//     }, () =>
-//     {
-//         return tearDownLogout();
-//     })) return;
+async function testUserInventoryManagement()
+{
+    let itemId;
+    let itemIdToGet;
+    let item3;
 
-//     await asyncTest("AwardUserItem()", () =>
-//     {
-//         bc.userInventoryManagement.awardUserItem("sword001", 1, true, result =>
-//         {
-//             equal(result.status, 400, "Expecting 200");
-//             resolve_test();
-//         });
-//     });
+    if (!module("UserInventoryManagement", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
 
-//     await asyncTest("GetUserInventory()", () =>
-//     {
-//         var criteria = "{\"itemData.bonus\": \"1\"}";
-//         bc.userInventoryManagement.awardUserItem(criteria, true, result =>
-//         {
-//             equal(result.status, 400, "Expecting 200");
-//             resolve_test();
-//         });
-//     });
+    await asyncTest("AwardUserItem() and Drop", () =>
+    {
+        bc.userInventoryManagement.awardUserItem("sword001", 3, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            //grab an itemID
+            itemId = Object.keys(result.data.items)[0];
+            itemIdToGet = Object.keys(result.data.items)[1];
+            item3 = Object.keys(result.data.items)[2];
+            resolve_test();
+        });
+    });
 
-//     await asyncTest("GetUserInventoryPage()", 1, () =>
-//     {
-//         var context = new Map();
+    await asyncTest("DropUserItem()", () =>
+    {
+        bc.userInventoryManagement.dropUserItem(itemId, 1, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 
-//         context["pagination"] = new Map();
-//         context["pagination"].set(new"rowsPerPage", 50);
-//         context["pagination"].set("pageNumber", 1);
-//         context["searchCriteria"] = new Map().set("category", "sword");
-//         context["sortCriteria"] = new Map().set("createdAt", 1);
-//         context["sortCriteria"].set("updatedAt", -1);
-//         var pagination = "{\"rowsPerPage\": \"50\",\"pageNumber\": \"1\"}";
-//         var searchCriteria = "{\"category\": \"sword\"}";
-//         var sortCriteria = "{\"createdAt\": \"1\",\"updatedAt\": \"-1\"}";
-//         var context = "{\"context\":"
-//             + "{\"pagination\":" + pagination + ","
-//             + "{\"searchCriteria\":" + searchCriteria + ","
-//             + "{\"sortCriteria\":" + sortCriteria
-//             + "\"}"
-//         bc.itemCatalog.getUserInventoryPage(context, true, result =>
-//         {
-//             equal(result.status, 400, "Expecting 200");
-//             resolve_test();
-//         });
-//     });
+    await asyncTest("GetUserInventory()", () =>
+    {
+        var criteria = new Map();
+        criteria.set("itemData.bonus", 1);
+        bc.userInventoryManagement.getUserInventory(criteria, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 
-    // await asyncTest("GetUserInventoryPageOffset()", 1, () =>
+    await asyncTest("GetUserInventoryPage()", 1, () =>
+    {
+        var context = new Map();
+
+        context["pagination"] = new Map();
+        context["pagination"].set("rowsPerPage", 50);
+        context["pagination"].set("pageNumber", 1);
+        context["searchCriteria"] = new Map().set("category", "sword");
+        context["sortCriteria"] = new Map().set("createdAt", 1);
+        context["sortCriteria"].set("updatedAt", -1);
+        bc.userInventoryManagement.getUserInventoryPage(context, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetUserInventoryPageOffset()", 1, () =>
+    {
+        var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJnYW1lSWQiOiIyMDAwMSIsInBsYXllcklkIjoiZTZiN2Q2NTEtYWIxZC00MDllLTgwMjktOTNhZDcxYWI4OTRkIiwiZ2lmdGVkVG8iOm51bGx9LCJzb3J0Q3JpdGVyaWEiOnt9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoxMDAsInBhZ2VOdW1iZXIiOm51bGx9LCJvcHRpb25zIjpudWxsfQ";
+        bc.userInventoryManagement.getUserInventoryPageOffset(context, 1, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetUserItem())", 1, () =>
+    {
+        bc.userInventoryManagement.getUserItem(itemIdToGet, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GiveUserItemTo())", 1, () =>
+    {
+        bc.userInventoryManagement.giveUserItemTo(UserB.profileId, itemIdToGet, 1, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("PurchaseUserItem())", 1, () =>
+    {
+        bc.userInventoryManagement.purchaseUserItem("sword001", 1, null, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    // await asyncTest("ReceiveUserItemFrom())", 1, () =>
     // {
-    //     var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJlbnRpdHlUeXBlIjp7IiRyZWdleCI6Ii4qaWxkLioiLCIkb3B0";
-    //     bc.itemCatalog.getUserInventoryPageOffset(context, 1, true, result =>
+    //     bc.userInventoryManagement.receiveUserItemFrom(UserB.profileId, itemIdToGet, result =>
     //     {
-    //         equal(result.status, 400, "Expecting 200");
+    //         equal(result.status, 200, "Expecting 200");
     //         resolve_test();
     //     });
     // });
 
-    // await asyncTest("GetUserItem())", 1, () =>
+    // await asyncTest("SellUserItem())", 1, () =>
     // {
-    //     bc.itemCatalog.getUserItem("aaa-bbb-ccc-ddd", true, result =>
+    //     bc.userInventoryManagement.sellUserItem(itemIdToGet, 0, 1, null, true, result =>
     //     {
-    //         equal(result.status, 400, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
-
-    // await asyncTest("PurchaseUserItem())", 1, () =>
-    // {
-    //     bc.itemCatalog.purchaseUserItem("sword001", 1, null, true, result =>
-    //     {
-    //         equal(result.status, 400, "Expecting 200");
+    //         equal(result.status, 200, "Expecting 200");
     //         resolve_test();
     //     });
     // });
@@ -5490,12 +5526,22 @@ async function testItemCatalog()
     // await asyncTest("UseUserItem())", 1, () =>
     // {
     //     var newItemData = new Map();
-    //     bc.itemCatalog.useUserItem("aaa-bbb-ccc-ddd", 1, newItemData, true, result =>
+    //     bc.userInventoryManagement.useUserItem("aaa-bbb-ccc-ddd", 1, newItemData, true, result =>
     //     {
-    //         equal(result.status, 400, "Expecting 200");
+    //         equal(result.status, 200, "Expecting 200");
     //         resolve_test();
     //     });
     // });
+
+    // // await asyncTest("UseUserItem())", 1, () =>
+    // // {
+    // //     var newItemData = new Map();
+    // //     bc.userInventoryManagement.useUserItem("aaa-bbb-ccc-ddd", 1, newItemData, true, result =>
+    // //     {
+    // //         equal(result.status, 200, "Expecting 200");
+    // //         resolve_test();
+    // //     });
+    // // });
 }
 
 async function run_tests()
