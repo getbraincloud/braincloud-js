@@ -5405,59 +5405,59 @@ async function testItemCatalog()
     });
 }
 
-async function testUserInventoryManagement()
-{
-    if (!module("UserInventoryManagement", () =>
-    {
-        return setUpWithAuthenticate();
-    }, () =>
-    {
-        return tearDownLogout();
-    })) return;
+// async function testUserInventoryManagement()
+// {
+//     if (!module("UserInventoryManagement", () =>
+//     {
+//         return setUpWithAuthenticate();
+//     }, () =>
+//     {
+//         return tearDownLogout();
+//     })) return;
 
-    // // await asyncTest("AwardUserItem()", () =>
-    // // {
-    // //     bc.userInventoryManagement.awardUserItem("sword001", 1, true, result =>
-    // //     {
-    // //         equal(result.status, 400, "Expecting 200");
-    // //         resolve_test();
-    // //     });
-    // // });
+//     await asyncTest("AwardUserItem()", () =>
+//     {
+//         bc.userInventoryManagement.awardUserItem("sword001", 1, true, result =>
+//         {
+//             equal(result.status, 400, "Expecting 200");
+//             resolve_test();
+//         });
+//     });
 
-    // // await asyncTest("GetUserInventory()", () =>
-    // // {
-    // //     var criteria = "{\"itemData.bonus\": \"1\"}";
-    // //     bc.userInventoryManagement.awardUserItem(criteria, true, result =>
-    // //     {
-    // //         equal(result.status, 400, "Expecting 200");
-    // //         resolve_test();
-    // //     });
-    // // });
+//     await asyncTest("GetUserInventory()", () =>
+//     {
+//         var criteria = "{\"itemData.bonus\": \"1\"}";
+//         bc.userInventoryManagement.awardUserItem(criteria, true, result =>
+//         {
+//             equal(result.status, 400, "Expecting 200");
+//             resolve_test();
+//         });
+//     });
 
-    // await asyncTest("GetUserInventoryPage()", 1, () =>
-    // {
-    //     var context = new Map();
+//     await asyncTest("GetUserInventoryPage()", 1, () =>
+//     {
+//         var context = new Map();
 
-    //     context["pagination"] = new Map();
-    //     context["pagination"].set(new"rowsPerPage", 50);
-    //     context["pagination"].set("pageNumber", 1);
-    //     context["searchCriteria"] = new Map().set("category", "sword");
-    //     context["sortCriteria"] = new Map().set("createdAt", 1);
-    //     context["sortCriteria"].set("updatedAt", -1);
-    //     // var pagination = "{\"rowsPerPage\": \"50\",\"pageNumber\": \"1\"}";
-    //     // var searchCriteria = "{\"category\": \"sword\"}";
-    //     // var sortCriteria = "{\"createdAt\": \"1\",\"updatedAt\": \"-1\"}";
-    //     // var context = "{\"context\":"
-    //     //     + "{\"pagination\":" + pagination + ","
-    //     //     + "{\"searchCriteria\":" + searchCriteria + ","
-    //     //     + "{\"sortCriteria\":" + sortCriteria
-    //     //     + "\"}"
-    //     bc.itemCatalog.getUserInventoryPage(context, true, result =>
-    //     {
-    //         equal(result.status, 400, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+//         context["pagination"] = new Map();
+//         context["pagination"].set(new"rowsPerPage", 50);
+//         context["pagination"].set("pageNumber", 1);
+//         context["searchCriteria"] = new Map().set("category", "sword");
+//         context["sortCriteria"] = new Map().set("createdAt", 1);
+//         context["sortCriteria"].set("updatedAt", -1);
+//         var pagination = "{\"rowsPerPage\": \"50\",\"pageNumber\": \"1\"}";
+//         var searchCriteria = "{\"category\": \"sword\"}";
+//         var sortCriteria = "{\"createdAt\": \"1\",\"updatedAt\": \"-1\"}";
+//         var context = "{\"context\":"
+//             + "{\"pagination\":" + pagination + ","
+//             + "{\"searchCriteria\":" + searchCriteria + ","
+//             + "{\"sortCriteria\":" + sortCriteria
+//             + "\"}"
+//         bc.itemCatalog.getUserInventoryPage(context, true, result =>
+//         {
+//             equal(result.status, 400, "Expecting 200");
+//             resolve_test();
+//         });
+//     });
 
     // await asyncTest("GetUserInventoryPageOffset()", 1, () =>
     // {

@@ -480,19 +480,14 @@ function BCLobby() {
             operation: bc.lobby.OPERATION_GET_REGIONS_FOR_LOBBIES,
             data: data,
             callback: function(result) {
-                bc.lobby.getRegionsForLobbiesCallback(result);
+                //upon a successful getRegionsForLobbies call
+                if (result.status == 200) 
+                {
+                    //set the regionPingData that was found
+                    m_regionPingData = result.data.regionPingData;
+                }
             }
         })
-    };
-
-    bc.lobby.getRegionsForLobbiesCallback = function(result) 
-    {
-        //upon a successful getRegionsForLobbies call
-        if (result.status == 200) 
-        {
-            //set the regionPingData that was found
-            m_regionPingData = result.data.regionPingData;
-        }
     };
 
     bc.lobby.pingRegions = function(callback)
@@ -604,11 +599,13 @@ function BCLobby() {
     function handlePingResponse(region, index)
     {
         //calculate the difference in time between getting here and the time a start time was stored for the region
-        var time = new Date().getTime() - m_cachedPingResponses[String(region)][index]; 
-        m_cachedPingResponses[String(region)][index] = time;
+        var regionArr = m_cachedPingResponses[String(region)];
+        var time = new Date().getTime() - regionArr[index]; 
+        //Js passes by rference, so m_cachedPingResponses will be updated with this
+        regionArr[index] = time;
 
         //we've reached our desired number of ping calls, so now we need to do some logic to get the average ping
-        if(m_cachedPingResponses[String(region)].length == MAX_PING_CALLS && index == MAX_PING_CALLS - 1)
+        if(regionArr.length == MAX_PING_CALLS && index == MAX_PING_CALLS - 1)
         {
             var totalAccumulated = 0;
             var highestValue = 0;
@@ -616,7 +613,7 @@ function BCLobby() {
             var numElements = m_cachedRegionArr.length;
             for(var i = 0; i < numElements; i++)
             {  
-                pingResponse = m_cachedPingResponses[String(region)][i];
+                pingResponse = regionArr[index];
                 totalAccumulated += pingResponse;
                 if(pingResponse > highestValue)
                 {
