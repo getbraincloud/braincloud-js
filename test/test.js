@@ -5409,6 +5409,7 @@ async function testUserInventoryManagement()
     let itemId;
     let itemIdToGet;
     let item3;
+    let item4;
 
     if (!module("UserInventoryManagement", () =>
     {
@@ -5420,13 +5421,14 @@ async function testUserInventoryManagement()
 
     await asyncTest("AwardUserItem() and Drop", () =>
     {
-        bc.userInventoryManagement.awardUserItem("sword001", 3, true, result =>
+        bc.userInventoryManagement.awardUserItem("sword001", 4, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             //grab an itemID
             itemId = Object.keys(result.data.items)[0];
             itemIdToGet = Object.keys(result.data.items)[1];
             item3 = Object.keys(result.data.items)[2];
+            item4 = Object.keys(result.data.items)[3];
             resolve_test();
         });
     });
@@ -5505,43 +5507,45 @@ async function testUserInventoryManagement()
         });
     });
 
-    // await asyncTest("ReceiveUserItemFrom())", 1, () =>
-    // {
-    //     bc.userInventoryManagement.receiveUserItemFrom(UserB.profileId, itemIdToGet, result =>
-    //     {
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+    await asyncTest("ReceiveUserItemFrom())", 1, () =>
+    {
+        bc.userInventoryManagement.receiveUserItemFrom(UserB.profileId, itemIdToGet, result =>
+        {
+            //40660
+            equal(result.status, 400, "Cannot receive item gift from self");
+            resolve_test();
+        });
+    });
 
-    // await asyncTest("SellUserItem())", 1, () =>
-    // {
-    //     bc.userInventoryManagement.sellUserItem(itemIdToGet, 0, 1, null, true, result =>
-    //     {
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+    await asyncTest("SellUserItem())", 1, () =>
+    {
+        bc.userInventoryManagement.sellUserItem(item3, 1, 1, null, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 
-    // await asyncTest("UseUserItem())", 1, () =>
-    // {
-    //     var newItemData = new Map();
-    //     bc.userInventoryManagement.useUserItem("aaa-bbb-ccc-ddd", 1, newItemData, true, result =>
-    //     {
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+    await asyncTest("UpdateUserItemData())", 1, () =>
+    {
+        var newItemData = new Map();
+        bc.userInventoryManagement.updateUserItemData(item4, 1, newItemData, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 
-    // // await asyncTest("UseUserItem())", 1, () =>
-    // // {
-    // //     var newItemData = new Map();
-    // //     bc.userInventoryManagement.useUserItem("aaa-bbb-ccc-ddd", 1, newItemData, true, result =>
-    // //     {
-    // //         equal(result.status, 200, "Expecting 200");
-    // //         resolve_test();
-    // //     });
-    // // });
+    await asyncTest("UseUserItem())", 1, () =>
+    {
+        var newItemData = new Map();
+        newItemData.set("test", "testing");
+        bc.userInventoryManagement.useUserItem(item4, 2, newItemData, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 }
 
 async function run_tests()

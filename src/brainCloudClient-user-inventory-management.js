@@ -323,16 +323,16 @@ function BCUserInventoryManagement() {
 	 * @param callback The method to be invoked when the server response is received
 	 */
 	bc.userInventoryManagement.updateUserItemData = function(itemId, version, newItemData, callback) {
-		var message = {
+		var data = {
 			itemId : itemId,
 			version : version,
-			newItemData : newItemData
+			newItemData: newItemData
 		};
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
 			operation : bc.userInventoryManagement.OPERATION_UPDATE_USER_ITEM_DATA,
-			data : message,
+			data : data,
 			callback : callback
 		});
 	};
@@ -350,7 +350,7 @@ function BCUserInventoryManagement() {
 	 * @param callback The method to be invoked when the server response is received
 	 */
 	bc.userInventoryManagement.useUserItem = function(itemId, version, newItemData, includeDef, callback) {
-		var message = {
+		var data = {
 			itemId : itemId,
 			version : version,
 			newItemData : newItemData,
@@ -360,7 +360,7 @@ function BCUserInventoryManagement() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
 			operation : bc.userInventoryManagement.OPERATION_USE_USER_ITEM,
-			data : message,
+			data : data,
 			callback : callback
 		});
 	};
