@@ -5356,6 +5356,198 @@ async function testPresence()
 
 }
 
+async function testItemCatalog()
+{
+    if (!module("ItemCatalog", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    await asyncTest("GetCatalogItemDefinition()", 1, () =>
+    {
+        bc.itemCatalog.getCatalogItemDefinition("sword001", result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetCatalogItemsPage()", 1, () =>
+    {
+        var context = new Map();
+
+        context["pagination"] = new Map();
+        context["pagination"].set("rowsPerPage", 50);
+        context["pagination"].set("pageNumber", 1);
+        context["searchCriteria"] = new Map().set("category", "sword");
+        context["sortCriteria"] = new Map().set("createdAt", 1);
+        context["sortCriteria"].set("updatedAt", -1);
+
+        bc.itemCatalog.getCatalogItemsPage(context, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetCatalogItemsPageOffset()", 1, () =>
+    {
+        var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJnYW1lSWQiOiIyMDAwMSJ9LCJzb3J0Q3JpdGVyaWEiOnt9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoxMDAsInBhZ2VOdW1iZXIiOm51bGx9LCJvcHRpb25zIjpudWxsfQ";
+        bc.itemCatalog.getCatalogItemsPageOffset(context, 1, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+}
+
+async function testUserInventoryManagement()
+{
+    let itemId;
+    let itemIdToGet;
+    let item3;
+    let item4;
+
+    if (!module("UserInventoryManagement", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    await asyncTest("AwardUserItem() and Drop", () =>
+    {
+        bc.userInventoryManagement.awardUserItem("sword001", 4, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            //grab an itemID
+            itemId = Object.keys(result.data.items)[0];
+            itemIdToGet = Object.keys(result.data.items)[1];
+            item3 = Object.keys(result.data.items)[2];
+            item4 = Object.keys(result.data.items)[3];
+            resolve_test();
+        });
+    });
+
+    await asyncTest("DropUserItem()", () =>
+    {
+        bc.userInventoryManagement.dropUserItem(itemId, 1, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetUserInventory()", () =>
+    {
+        var criteria = new Map();
+        criteria.set("itemData.bonus", 1);
+        bc.userInventoryManagement.getUserInventory(criteria, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetUserInventoryPage()", 1, () =>
+    {
+        var context = new Map();
+
+        context["pagination"] = new Map();
+        context["pagination"].set("rowsPerPage", 50);
+        context["pagination"].set("pageNumber", 1);
+        context["searchCriteria"] = new Map().set("category", "sword");
+        context["sortCriteria"] = new Map().set("createdAt", 1);
+        context["sortCriteria"].set("updatedAt", -1);
+        bc.userInventoryManagement.getUserInventoryPage(context, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetUserInventoryPageOffset()", 1, () =>
+    {
+        var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJnYW1lSWQiOiIyMDAwMSIsInBsYXllcklkIjoiZTZiN2Q2NTEtYWIxZC00MDllLTgwMjktOTNhZDcxYWI4OTRkIiwiZ2lmdGVkVG8iOm51bGx9LCJzb3J0Q3JpdGVyaWEiOnt9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoxMDAsInBhZ2VOdW1iZXIiOm51bGx9LCJvcHRpb25zIjpudWxsfQ";
+        bc.userInventoryManagement.getUserInventoryPageOffset(context, 1, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetUserItem())", 1, () =>
+    {
+        bc.userInventoryManagement.getUserItem(itemIdToGet, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GiveUserItemTo())", 1, () =>
+    {
+        bc.userInventoryManagement.giveUserItemTo(UserB.profileId, itemIdToGet, 1, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("PurchaseUserItem())", 1, () =>
+    {
+        bc.userInventoryManagement.purchaseUserItem("sword001", 1, null, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("ReceiveUserItemFrom())", 1, () =>
+    {
+        bc.userInventoryManagement.receiveUserItemFrom(UserB.profileId, itemIdToGet, result =>
+        {
+            //40660
+            equal(result.status, 400, "Cannot receive item gift from self");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("SellUserItem())", 1, () =>
+    {
+        bc.userInventoryManagement.sellUserItem(item3, 1, 1, null, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("UpdateUserItemData())", 1, () =>
+    {
+        var newItemData = new Map();
+        bc.userInventoryManagement.updateUserItemData(item4, 1, newItemData, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("UseUserItem())", 1, () =>
+    {
+        var newItemData = new Map();
+        newItemData.set("test", "testing");
+        bc.userInventoryManagement.useUserItem(item4, 2, newItemData, true, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -5398,6 +5590,8 @@ async function run_tests()
     await testMessaging();
     await testRTT();
     await testLobby();
+    await testItemCatalog();
+    await testUserInventoryManagement();
 }
 
 async function main()
