@@ -49,7 +49,7 @@ function BCItemCatalog() {
 			service: bc.SERVICE_ITEMCATALOG,
 			operation: bc.itemCatalog.OPERATION_GET_CATALOG_ITEMS_PAGE,
 			data: {
-				context : context,
+				context : context
 			},
 			callback: callback
 		});

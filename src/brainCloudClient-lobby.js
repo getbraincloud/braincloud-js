@@ -546,13 +546,10 @@ function BCLobby() {
             var target;
             for(var i = 0; i < NUM_PING_CALLS_IN_PARRALLEL && m_regionTargetsToProcess.length > 0; i++)
             {
-                //isolating the needed regiona nd target from the list we need to process
-                for (const k of m_regionTargetsToProcess[0].keys())
-                {
-                    region = k;
-                    target = m_regionTargetsToProcess[0].get(String(region));
-                };
-
+                var key = m_regionTargetsToProcess[0].keys();
+                region = key.next().value;
+                target = m_regionTargetsToProcess[0].get(String(region));
+                
                 //using tempArr to more easily acquire length of the current region we're identifying in cachedPingResponses
                 m_cachedRegionArr = m_cachedPingResponses[String(region)];
                 
