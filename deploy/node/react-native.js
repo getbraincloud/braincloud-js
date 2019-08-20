@@ -3,8 +3,8 @@ try {
     var AsyncStorage = require('@react-native-community/async-storage').default
 } catch (er) {
     AsyncStorage = { 
-        getItem: () => {},
-        setItem: () => {}
+        getItem: function() {},
+        setItem: function() {}
     };
 }
 /* 
@@ -12,11 +12,12 @@ try {
  *   synchronous API, this will simulate the minimum required 
  *   functions and use AsyncStorage to persist the data. 
  */
-localStorageData ={};
+var localStorageData = {};
+var customSetInterval = null;
 
 try {
-  let BackgroundTimer  = require('react-native-background-timer').default;
-  customSetInterval = (func, interval) => BackgroundTimer.setInterval(func,interval);
+  const BackgroundTimer = require('react-native-background-timer').default;
+  customSetInterval = function(func, interval) { BackgroundTimer.setInterval(func,interval); };
 } catch(e) {
   customSetInterval = undefined;
 }
@@ -36,24 +37,27 @@ try {
     reject(reason);
   }
   
-  localStorage = {
-    getItem(key) {
-      value = null;
-      if (localStorageData.hasOwnProperty(key)) {
-        value = localStorageData[key];
+  if (typeof localStorage === 'undefined') {
+    localStorage = {
+      getItem: function(key) {
+        value = null;
+        if (localStorageData.hasOwnProperty(key)) {
+          value = localStorageData[key];
+        }
+        return value;
+      },
+      setItem: function(key, value) {
+        localStorageData[key] = value;
+        AsyncStorage.setItem("@AppData", JSON.stringify(localStorageData), function (error) {
+          if (error)
+            console.error("Persisted localStorage returned " + JSON.stringify(error));  
+        });
       }
-      return value;
-    },
-    setItem(key, value) {
-      localStorageData[key] = value;
-      AsyncStorage.setItem("@AppData", JSON.stringify(localStorageData), function (error) {
-        if (error)
-          console.error("Persisted localStorage returned " + JSON.stringify(error));  
-      });
     }
-  }
+3  }
 
 // MD5
+var CryptoJS = require('crypto-js');
 if (typeof CryptoJS === "undefined" || CryptoJS === null) {
     CryptoJS = {};
 }
