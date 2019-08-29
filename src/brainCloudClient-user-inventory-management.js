@@ -18,6 +18,9 @@ function BCUserInventoryManagement() {
 	bc.userInventoryManagement.OPERATION_SELL_USER_ITEM = "SELL_USER_ITEM";
 	bc.userInventoryManagement.OPERATION_UPDATE_USER_ITEM_DATA = "UPDATE_USER_ITEM_DATA";
 	bc.userInventoryManagement.OPERATION_USE_USER_ITEM = "USE_USER_ITEM";
+	bc.userInventoryManagement.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN = "PUBLISH_USER_ITEM_TO_BLOCKCHAIN";
+	bc.userInventoryManagement.OPERATION_REFRESH_BLOCKCHAIN_USER_ITEMS = "REFRESH_BLOCKCHAIN_USER_ITEMS";
+
 
 	/**
 	 * Allows item(s) to be awarded to a user without collecting
@@ -360,6 +363,49 @@ function BCUserInventoryManagement() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
 			operation : bc.userInventoryManagement.OPERATION_USE_USER_ITEM,
+			data : data,
+			callback : callback
+		});
+	};
+
+	/**
+	 * Publishes the specified item to the item management attached blockchain. Results are reported asynchronously via an RTT event.
+	 *
+	 * Service Name - userInventoryManagement
+	 * Service Operation - PUBLISH_USER_ITEM_TO_BLOCKCHAIN
+	 *
+	 * @param itemId
+	 * @param version
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.userInventoryManagement.publishUserItemToBlockchain = function(itemId, version, callback) {
+		var data = {
+			itemId : itemId,
+			version : version,
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			operation : bc.userInventoryManagement.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN,
+			data : data,
+			callback : callback
+		});
+	};
+
+	/**
+	 * Syncs the caller's user items with the item management attached blockchain. Results are reported asynchronously via an RTT event	 *
+	 * Service Name - userInventoryManagement
+	 * Service Operation - REFRESH_BLOCKCHAIN_USER_ITMES
+	 *
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.userInventoryManagement.refreshBlockhainUserItems = function(callback) {
+		var data = {
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			operation : bc.userInventoryManagement.OPERATION_REFRESH_BLOCKCHAIN_USER_ITEMS,
 			data : data,
 			callback : callback
 		});

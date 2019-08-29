@@ -5410,6 +5410,7 @@ async function testUserInventoryManagement()
     let itemIdToGet;
     let item3;
     let item4;
+    let item5;
 
     if (!module("UserInventoryManagement", () =>
     {
@@ -5421,7 +5422,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("AwardUserItem() and Drop", () =>
     {
-        bc.userInventoryManagement.awardUserItem("sword001", 4, true, result =>
+        bc.userInventoryManagement.awardUserItem("sword001", 5, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             //grab an itemID
@@ -5429,6 +5430,7 @@ async function testUserInventoryManagement()
             itemIdToGet = Object.keys(result.data.items)[1];
             item3 = Object.keys(result.data.items)[2];
             item4 = Object.keys(result.data.items)[3];
+            item5 = Object.keys(result.data.items)[4];
             resolve_test();
         });
     });
@@ -5546,6 +5548,24 @@ async function testUserInventoryManagement()
             resolve_test();
         });
     });
+
+    // await asyncTest("PublishUserItemToBlockchain())", 1, () =>
+    // {
+    //     bc.userInventoryManagement.publishUserItemToBlockchain(item5, 1, result =>
+    //     {
+    //         equal(result.status, 200, "Expecting 200");
+    //         resolve_test();
+    //     });
+    // });
+
+    // await asyncTest("refreshBlockhainUserItems())", 1, () =>
+    // {
+    //     bc.userInventoryManagement.refreshBlockhainUserItems(result =>
+    //     {
+    //         equal(result.status, 200, "Expecting 200");
+    //         resolve_test();
+    //     });
+    // });
 }
 
 async function run_tests()

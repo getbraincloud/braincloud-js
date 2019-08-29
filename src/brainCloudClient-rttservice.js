@@ -7,6 +7,12 @@ function BCRTT() {
     bc.SERVICE_RTT= "rttRegistration";
 
     bc.rttService.OPERATION_REQUEST_CLIENT_CONNECTION = "REQUEST_CLIENT_CONNECTION";
+    bc.rttService.SERVICE_EVENT = "event";
+    bc.rttService.SERVICE_CHAT = "chat";
+    bc.rttService.SERVICE_LOBBY = "lobby";
+    bc.rttService.SERVICE_MESSAGING = "messaging";
+    bc.rttService.SERVICE_PRESENCE = "presence";
+    bc.rttService.SERVICE_USER_INVENTORY_MANAGEMENT = "userInventoryManagement";
 
         /**
      * Enables Real Time event for this session.
@@ -51,10 +57,10 @@ function BCRTT() {
      * Only one event callback can be registered at a time. Calling this a second time will override the previous callback.
      */
     bc.rttService.registerRTTEventCallback = function(callback) {
-        bc.brainCloudRttComms.registerRTTCallback(bc.SERVICE_EVENT, callback);
+        bc.brainCloudRttComms.registerRTTCallback(bc.rttService.SERVICE_EVENT, callback);
     }
     bc.rttService.deregisterRTTEventCallback = function() {
-        bc.brainCloudRttComms.deregisterRTTCallback(bc.SERVICE_EVENT);
+        bc.brainCloudRttComms.deregisterRTTCallback(bc.rttService.SERVICE_EVENT);
     }
 
     /**
@@ -64,10 +70,10 @@ function BCRTT() {
      * Only one chat callback can be registered at a time. Calling this a second time will override the previous callback.
      */
     bc.rttService.registerRTTChatCallback = function(callback) {
-        bc.brainCloudRttComms.registerRTTCallback(bc.SERVICE_CHAT, callback);
+        bc.brainCloudRttComms.registerRTTCallback(bc.rttService.SERVICE_CHAT, callback);
     }
     bc.rttService.deregisterRTTChatCallback = function() {
-        bc.brainCloudRttComms.deregisterRTTCallback(bc.SERVICE_CHAT);
+        bc.brainCloudRttComms.deregisterRTTCallback(bc.rttService.SERVICE_CHAT);
     }
 
     /**
@@ -77,10 +83,10 @@ function BCRTT() {
      * Only one messaging callback can be registered at a time. Calling this a second time will override the previous callback.
      */
     bc.rttService.registerRTTMessagingCallback = function(callback) {
-        bc.brainCloudRttComms.registerRTTCallback(bc.SERVICE_MESSAGING, callback);
+        bc.brainCloudRttComms.registerRTTCallback(bc.rttService.SERVICE_MESSAGING, callback);
     }
     bc.rttService.deregisterRTTMessagingCallback = function() {
-        bc.brainCloudRttComms.deregisterRTTCallback(bc.SERVICE_MESSAGING);
+        bc.brainCloudRttComms.deregisterRTTCallback(bc.rttService.SERVICE_MESSAGING);
     }
 
     /**
@@ -90,10 +96,10 @@ function BCRTT() {
      * Only one lobby callback can be registered at a time. Calling this a second time will override the previous callback.
      */
     bc.rttService.registerRTTLobbyCallback = function(callback) {
-        bc.brainCloudRttComms.registerRTTCallback(bc.SERVICE_LOBBY, callback);
+        bc.brainCloudRttComms.registerRTTCallback(bc.rttService.SERVICE_LOBBY, callback);
     }
     bc.rttService.deregisterRTTLobbyCallback = function() {
-        bc.brainCloudRttComms.deregisterRTTCallback(bc.SERVICE_LOBBY);
+        bc.brainCloudRttComms.deregisterRTTCallback(bc.rttService.SERVICE_LOBBY);
     }
 
     /**
@@ -103,10 +109,23 @@ function BCRTT() {
      * Only one presence callback can be registered at a time. Calling this a second time will override the previous callback.
      */
     bc.rttService.registerRTTPresenceCallback = function(callback) {
-        bc.brainCloudRttComms.registerRTTCallback(bc.SERVICE_PRESENCE, callback);
+        bc.brainCloudRttComms.registerRTTCallback(bc.rttService.SERVICE_PRESENCE, callback);
     }
     bc.rttService.deregisterRTTPresenceCallback = function() {
-        bc.brainCloudRttComms.deregisterRTTCallback(bc.SERVICE_PRESENCE);
+        bc.brainCloudRttComms.deregisterRTTCallback(bc.rttService.SERVICE_PRESENCE);
+    }
+
+        /**
+     * Listen to real time presence events.
+     * 
+     * Notes: RTT must be enabled for this app, and enableRTT must have been successfully called.
+     * Only one presence callback can be registered at a time. Calling this a second time will override the previous callback.
+     */
+    bc.rttService.registerRTTBlockchainRefresh = function(callback) {
+        bc.brainCloudRttComms.registerRTTCallback(bc.rttService.SERVICE_USER_INVENTORY_MANAGEMENT, callback);
+    }
+    bc.rttService.deregisterRTTPresenceCallback = function() {
+        bc.brainCloudRttComms.deregisterRTTCallback(bc.rttService.SERVICE_USER_INVENTORY_MANAGEMENT);
     }
 
     /**
