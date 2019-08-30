@@ -5549,23 +5549,29 @@ async function testUserInventoryManagement()
         });
     });
 
-    // await asyncTest("PublishUserItemToBlockchain())", 1, () =>
-    // {
-    //     bc.userInventoryManagement.publishUserItemToBlockchain(item5, 1, result =>
-    //     {
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+    await asyncTest("PublishUserItemToBlockchain())", 1, () =>
+    {
+        // bc.userInventoryManagement.publishUserItemToBlockchain(item5, 1, result =>
+        // {
+        //     equal(result.status, 200, "Expecting 200");
+        //     resolve_test();
+        // });
 
-    // await asyncTest("refreshBlockhainUserItems())", 1, () =>
-    // {
-    //     bc.userInventoryManagement.refreshBlockchainUserItems(result =>
-    //     {
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+        bc.userInventoryManagement.publishUserItemToBlockchain("InvalidForNow", 1, result =>
+            {
+                equal(result.status, 400, "Expecting 400");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("refreshBlockhainUserItems())", 1, () =>
+    {
+        bc.userInventoryManagement.refreshBlockchainUserItems(result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 }
 
 async function run_tests()
