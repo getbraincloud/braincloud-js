@@ -399,7 +399,7 @@ function BCUserInventoryManagement() {
 	 *
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.refreshBlockhainUserItems = function(callback) {
+	bc.userInventoryManagement.refreshBlockchainUserItems = function(callback) {
 		var data = {
 		};
 

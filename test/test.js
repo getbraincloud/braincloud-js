@@ -5560,7 +5560,7 @@ async function testUserInventoryManagement()
 
     // await asyncTest("refreshBlockhainUserItems())", 1, () =>
     // {
-    //     bc.userInventoryManagement.refreshBlockhainUserItems(result =>
+    //     bc.userInventoryManagement.refreshBlockchainUserItems(result =>
     //     {
     //         equal(result.status, 200, "Expecting 200");
     //         resolve_test();
