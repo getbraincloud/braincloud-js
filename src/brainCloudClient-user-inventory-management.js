@@ -381,7 +381,7 @@ function BCUserInventoryManagement() {
 	bc.userInventoryManagement.publishUserItemToBlockchain = function(itemId, version, callback) {
 		var data = {
 			itemId : itemId,
-			version : version,
+			version : version
 		};
 
 		bc.brainCloudManager.sendRequest({
