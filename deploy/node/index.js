@@ -1,3 +1,7 @@
+var _setInterval = null;
+
+var CryptoJS = require('crypto-js');
+
 // MD5
 if (typeof CryptoJS === "undefined" || CryptoJS === null) {
     CryptoJS = {};
@@ -11,22 +15,43 @@ if (typeof window === "undefined" || window === null) {
     window = {}
 }
 if (!window.XMLHttpRequest) {
-    window.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-    XMLHttpRequest = window.XMLHttpRequest;
-
-    XMLHttpRequest.UNSENT = 0;
-    XMLHttpRequest.OPENED = 1;
-    XMLHttpRequest.HEADERS_RECEIVED = 2;
-    XMLHttpRequest.LOADING = 3;
-    XMLHttpRequest.DONE = 4;
+    try {
+        window.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+        XMLHttpRequest = window.XMLHttpRequest;
+    
+        XMLHttpRequest.UNSENT = 0;
+        XMLHttpRequest.OPENED = 1;
+        XMLHttpRequest.HEADERS_RECEIVED = 2;
+        XMLHttpRequest.LOADING = 3;
+        XMLHttpRequest.DONE = 4;
+    } catch (err) {
+        window.XMLHttpRequest = null;
+    }
 }
 
 // Local storage
 if (typeof localStorage === "undefined" || localStorage === null) {
-    var LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
-    os = require('os');
-    var configDir = os.homedir() + "/.bciot";
-    localStorage = new LocalStorage(configDir);
+    var LocalStorage = null;
+    try {
+        LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
+    } catch (err) {
+        LocalStorage = null;
+    }
+
+    var os = null;
+    if (LocalStorage) {
+        try {
+            os = require('os');
+        } catch (err) {
+            os = null;
+        }
+    }
+
+    var configDir = null;
+    if (LocalStorage && os) {
+        var configDir = os.homedir() + "/.bciot";
+        localStorage = new LocalStorage(configDir);
+    }
 }
 
 var bc = require("./lib/brainCloudClient.concat.js")

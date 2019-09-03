@@ -7,6 +7,8 @@
  * be sent to the server. This strategy is useful when using anonymous authentication.
  */
 
+var getIdentitiesCallback = null;
+
 function BrainCloudWrapper(wrapperName) {
 
     var bcw = this;
