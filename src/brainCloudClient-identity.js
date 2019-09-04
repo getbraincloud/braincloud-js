@@ -17,6 +17,7 @@ function BCIdentity() {
 	bc.SERVICE_IDENTITY = "identity";
 
 	bc.identity.OPERATION_ATTACH = "ATTACH";
+	bc.identity.OPERATION_ATTACH_BLOCKCHAIN = "ATTACH_BLOCKCHAIN";
 	bc.identity.OPERATION_MERGE = "MERGE";
 	bc.identity.OPERATION_DETACH = "DETACH";
 	bc.identity.OPERATION_SWITCH_TO_CHILD_PROFILE = "SWITCH_TO_CHILD_PROFILE";
@@ -41,6 +42,7 @@ function BCIdentity() {
 		facebook : "Facebook",
 		gameCenter : "GameCenter",
 		steam : "Steam",
+		blockChain : "BlockChain",
 		google : "Google",
 		twitter : "Twitter",
 		parse : "Parse",
@@ -311,6 +313,53 @@ function BCIdentity() {
 	bc.identity.detachSteamIdentity = function(steamId, continueAnon, callback) {
 		bc.identity.detachIdentity(steamId, bc.authentication.AUTHENTICATION_TYPE_STEAM, continueAnon, callback);
 	};
+
+	// /**
+	//  * Attaches the given block chain public key identity to the current profile.
+	//  *
+	//  * Service Name - Identity
+	//  * Service Operation - Attach
+	//  *
+	//  * @param blockchainConfig
+	//  * @param publicKey 
+	//  * @param callback The method to be invoked when the server response is received
+	//  *
+	//  * Errors to watch for:  SWITCHING_PROFILES - this means that the email address you provided
+	//  * already points to a different profile.  You will likely want to offer the player the
+	//  * choice to *SWITCH* to that profile, or *MERGE* the profiles.
+	//  *
+	//  * To switch profiles, call ClearSavedProfileID() and then call AuthenticateSteam().
+	//  */
+	// bc.identity.attachBlockchainIdentity = function(blockchainConfig, publicKey, callback) {
+	// 	bc.brainCloudManager.sendRequest({
+	// 		service: bc.SERVICE_IDENTITY,
+	// 		operation: bc.identity.OPERATION_ATTACH,
+	// 		data: {
+	// 			blockchainConfig : blockchainConfig,
+	// 			publicKey : publicKey,
+	// 			authenticationType : bc.identity.authenticationType.blockChain
+	// 		},
+	// 		callback: callback
+	// 	});
+	// 	bc.identity.attachIdentity(blockchainConfig, publicKey, bc.authentication.AUTHENTICATION_TYPE_BLOCKCHAIN, callback);
+	// };
+
+	// /**
+	//  * Detaches the blockchain identity to the current profile.
+	//  *
+	//  * Service Name - Identity
+	//  * Service Operation - Detach
+	//  *
+	//  * @param blockchainConfig 
+	//  * @param callback The method to be invoked when the server response is received
+	//  *
+	//  * Watch for DOWNGRADING_TO_ANONYMOUS_ERROR - occurs if you set continueAnon to false, and
+	//  * disconnecting this identity would result in the profile being anonymous (which means that
+	//  * the profile wouldn't be retrievable if the user loses their device)
+	//  */
+	// bc.identity.detachBlockchainIdentity = function(blockchainConfig, callback) {
+	// 	bc.identity.detachIdentity(blockchainConfig, bc.authentication.AUTHENTICATION_TYPE_BLOCKCHAIN, continueAnon, callback);
+	// };
 
 	/**
 	 * Attach the user's Google credentials to the current profile.

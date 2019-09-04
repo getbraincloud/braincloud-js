@@ -57,6 +57,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.tournament = bcw.brainCloudClient.tournament;
         bcw.itemCatalog = bcw.brainCloudClient.itemCatalog;
         bcw.userInventoryManagement = bcw.brainCloudClient.userInventoryManagement;
+        bcw.customEntity = bcw.brainCloudClient.customEntity;
 
         bcw.brainCloudManager = bcw.brainCloudClient.brainCloudManager = bcw.brainCloudClient.brainCloudManager || {};
 

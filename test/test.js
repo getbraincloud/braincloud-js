@@ -612,6 +612,15 @@ async function testDataStream() {
             resolve_test();
         });
     });
+
+    await asyncTest("submitCrashReport()", function() {
+        bc.dataStream.submitCrashReport("unknown", "ERRORS test", {
+            dialog : "5"
+        }, "func", "testname", "testemail", "notessss", false, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
@@ -812,6 +821,117 @@ async function testEntity() {
                     resolve_test();
                 });
     });
+}
+
+////////////////////////////////////////
+// Custom Entity unit tests
+////////////////////////////////////////
+async function testCustomEntity() {
+    if (!module("CustomEntity", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    var entityId = "";
+    var entityType = "athletes";
+
+    await asyncTest("createEntity()", function() {
+        bc.customEntity.createEntity(entityType, {
+            firstName : "bob",
+            surName : "tester",
+            position : "forward",
+            goals : 2,
+            assists : 4
+        }, { "other" : 2 }, null, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            entityId = result.data.entityId;
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getCount()", function() {
+        bc.customEntity.getCount( entityType,
+            { "data.position" : "defense" },
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("getPage()", function() {
+        bc.customEntity.getPage( entityType, 20,
+            {"data.position" : "defense" },
+            { createdAt : 1 },
+            false,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("getPageOffset()", function() {
+        bc.customEntity.getPageOffset( entityType,
+            "eyJzZWFyY2hDcml0ZXJpYSI6eyJkYXRhLnBvc2l0aW9uIjoiZGVmZW5zZSIsIiRvciI6W3sib3duZXJJZCI6IjBiOWZjNzkwLWUwY2MtNDhhYy1iZjM3LTk4NzQzOWY3ZTViMiJ9LHsiYWNsLm90aGVyIjp7IiRuZSI6MH19XX0sInNvcnRDcml0ZXJpYSI6eyJjcmVhdGVkQXQiOjF9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoyMCwicGFnZU51bWJlciI6MSwiZG9Db3VudCI6ZmFsc2V9LCJvcHRpb25zIjpudWxsfQ",
+            1,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("ReadEntity()", function() {
+        bc.customEntity.readEntity( entityType,
+            entityId,
+            function(result)
+            {
+                equal(result.status, 200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("UpdateEntity()", function() {
+        bc.customEntity.updateEntity( 
+            entityType,
+            entityId,
+            1,
+            {
+                firstName : "bob",
+                surName : "tester",
+                position : "forward",
+                goals : 2,
+                assists : 4
+            },
+            { "other" : 2 }, 
+            null,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("UpdateEntityFields()", function() {
+        bc.customEntity.updateEntityFields( 
+            entityType,
+            entityId,
+            2,
+            {
+                goals : 2,
+                assists : 4
+            },
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
 }
 
 ////////////////////////////////////////
@@ -2049,6 +2169,15 @@ async function testIdentity() {
         return tearDownLogout();
     })) return;
 
+    // await asyncTest("attachBlockchainIdentity()", 2, function() {
+    //     bc.identity.attachBlockchainIdentity("config",
+    //             "xxx", function(result) {
+    //                 ok(true, JSON.stringify(result));
+    //                 equal(result.status, 403, "Expecting 403");
+    //                 resolve_test();
+    //             });
+    // });
+
     await asyncTest("attachFacebookId()", 2, function() {
         bc.identity.attachFacebookIdentity("test",
                 "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
@@ -2609,6 +2738,38 @@ async function testPlayerState() {
 
     await asyncTest("resetPlayer()", function() {
         bc.playerState.resetPlayer(
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("clearUserStatus()", function() {
+        bc.playerState.clearUserStatus("a_Status_Name",
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("extendUserStatus()", function() {
+        bc.playerState.extendUserStatus("a_Status_Name", 1000, {},
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("getUserStatus()", function() {
+        bc.playerState.getUserStatus("a_Status_Name",
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("setUserStatus()", function() {
+        bc.playerState.setUserStatus("a_Status_Name", 60, {},
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
@@ -5618,6 +5779,7 @@ async function run_tests()
     await testLobby();
     await testItemCatalog();
     await testUserInventoryManagement();
+    await testCustomEntity();
 }
 
 async function main()
