@@ -116,7 +116,7 @@ function BCDataStream() {
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
-	bc.dataStream.submitCrashReport = function(crashType, errorMsg, crashJson, crashLog, playerName, userEmail, userNotes, userSubmitted, callback) {
+	bc.dataStream.submitCrashReport = function(crashType, errorMsg, crashJson, crashLog, userName, userEmail, userNotes, userSubmitted, callback) {
 		var message = {
 			crashType: crashType,
 			errorMsg: errorMsg,
