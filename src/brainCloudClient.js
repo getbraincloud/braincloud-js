@@ -26,7 +26,7 @@ function BrainCloudClient() {
         BCGroup.apply(bcc);
         BCIdentity.apply(bcc);
         BCItemCatalog.apply(bcc);
-        BCUserInventoryManagement.apply(bcc);
+        BCUserItems.apply(bcc);
         BCLobby.apply(bcc);
         BCMail.apply(bcc);
         BCMatchMaking.apply(bcc);
@@ -96,7 +96,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.time = bcc.time;
         bcc.brainCloudManager.tournament = bcc.tournament;
         bcc.brainCloudManager.itemCatalog = bcc.itemCatalog;
-        bcc.brainCloudManager.userInventoryManagement = bcc.userInventoryManagement;
+        bcc.brainCloudManager.userItems = bcc.userItems;
         bcc.brainCloudManager.customEntity = bcc.customEntity;
 
         bcc.brainCloudRttComms.rtt = bcc.rtt;
@@ -148,7 +148,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.time = bcc.brainCloudClient.time = bcc.brainCloudClient.time || {};
         bcc.brainCloudManager.tournament = bcc.brainCloudClient.tournament = bcc.brainCloudClient.tournament || {};
         bcc.brainCloudManager.itemCatalog = bcc.brainCloudClient.itemCatalog = bcc.brainCloudClient.itemCatalog || {};
-        bcc.brainCloudManager.userInventoryManagement = bcc.brainCloudClient.userInventoryManagement = bcc.brainCloudClient.userInventoryManagement || {};
+        bcc.brainCloudManager.userItems = bcc.brainCloudClient.userItems = bcc.brainCloudClient.userItems || {};
         bcc.brainCloudManager.customEntity = bcc.brainCloudClient.customEntity = bcc.brainCloudClient.customEntity || {};
 
         bcc.brainCloudRttComms.rtt = bcc.brainCloudClient.rtt = bcc.brainCloudClient.rtt || {};

@@ -13,6 +13,7 @@ function BCCustomEntity() {
 	bc.customEntity.OPERATION_READ_ENTITY= "READ_ENTITY";
 	bc.customEntity.OPERATION_UPDATE_ENTITY= "UPDATE_ENTITY";
 	bc.customEntity.OPERATION_UPDATE_ENTITY_FIELDS= "UPDATE_ENTITY_FIELDS";
+	bc.customEntity.OPERATION_DELETE_ENTITY = "DELETE_ENTITY";
 
 	/**
 	 * Creates new custom entity.
@@ -29,11 +30,12 @@ function BCCustomEntity() {
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
-	bc.customEntity.createEntity = function(entityType, data, acl, timeToLive, callback) {
+	bc.customEntity.createEntity = function(entityType, data, acl, timeToLive, isOwned, callback) {
 		var message = {
 			entityType : entityType,
 			data : data,
-			timeToLive : timeToLive 
+			timeToLive : timeToLive, 
+			isOwned : isOwned 
 		};
 
 		if (acl) {
@@ -221,6 +223,32 @@ function BCCustomEntity() {
 			callback : callback
 		});
 	};
+
+	/**
+	 *Deletes the specified custom entity on the server.
+	 * 
+	 * @param entityType
+	 *            {string} The entity type as defined by the user
+	 * @param entityId
+	 * @param version
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.customEntity.deleteEntity = function(entityType, entityId, version, callback) {
+		var message = {
+			entityType : entityType,
+			entityId : entityId,
+			version : version
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_CUSTOM_ENTITY,
+			operation : bc.customEntity.OPERATION_DELETE_ENTITY,
+			data : message,
+			callback : callback
+		});
+	};
+
 }
 
 BCCustomEntity.apply(window.brainCloudClient = window.brainCloudClient || {});
