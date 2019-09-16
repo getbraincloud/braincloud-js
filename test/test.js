@@ -471,6 +471,71 @@ async function testAsyncMatch()
                     resolve_test();
                 });
     });
+
+
+    await asyncTest("CompleteMatchWithSummaryData()", 3, function() {
+        bc.asyncMatch.createMatch(
+                [ { "platform": platform, "id" : UserA.profileId },{ "platform": platform, "id" : UserB.profileId }],
+                null,
+                function(result) {
+                    matchId = result["data"]["matchId"];
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+
+        bc.asyncMatch.submitTurn(
+            UserA.profileId,
+            matchId,
+            2,
+            {"summary" : "sum"},
+            null,
+            UserB.profileId,
+            {"summary" : "sum"},
+            {"summary" : "sum"},
+            function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
+
+
+            bc.asyncMatch.completeMatchWithSummaryData(UserA.profileId, matchId, "EHHH", {"summary" : "sum"},
+            function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
+    });
+
+    await asyncTest("AbandonMatchWithSummaryData()", 3, function() {
+        bc.asyncMatch.createMatch(
+                [ { "platform": platform, "id" : UserA.profileId },{ "platform": platform, "id" : UserB.profileId }],
+                null,
+                function(result) {
+                    matchId = result["data"]["matchId"];
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+
+        bc.asyncMatch.submitTurn(
+            UserA.profileId,
+            matchId,
+            0,
+            {"summary" : "sum"},
+            null,
+            UserB.profileId,
+            {"summary" : "sum"},
+            {"summary" : "sum"},
+            function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
+
+
+            bc.asyncMatch.abandonMatchWithSummaryData(UserA.profileId, matchId, "EHHH", {"summary" : "sum"},
+            function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
+    });
 }
 
 ////////////////////////////////////////
@@ -608,6 +673,15 @@ async function testDataStream() {
         bc.dataStream.customTrackEvent("testTrack", {
             testProperty : "1"
         }, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("submitCrashReport()", function() {
+        bc.dataStream.submitCrashReport("unknown", "ERRORS test", {
+            dialog : "5"
+        }, "func", "testname", "testemail", "notessss", false, function(result) {
             equal(result.status, 200, JSON.stringify(result));
             resolve_test();
         });
@@ -812,6 +886,129 @@ async function testEntity() {
                     resolve_test();
                 });
     });
+}
+
+////////////////////////////////////////
+// Custom Entity unit tests
+////////////////////////////////////////
+async function testCustomEntity() {
+    if (!module("CustomEntity", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    var entityId = "";
+    var entityType = "athletes";
+
+    await asyncTest("createEntity()", function() {
+        bc.customEntity.createEntity(entityType, {
+            firstName : "bob",
+            surName : "tester",
+            position : "forward",
+            goals : 2,
+            assists : 4
+        }, { "other" : 2 }, null, false, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            entityId = result.data.entityId;
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getCount()", function() {
+        bc.customEntity.getCount( entityType,
+            { "data.position" : "defense" },
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("getPage()", function() {
+        bc.customEntity.getPage( entityType, 20,
+            {"data.position" : "defense" },
+            { createdAt : 1 },
+            false,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("getPageOffset()", function() {
+        bc.customEntity.getPageOffset( entityType,
+            "eyJzZWFyY2hDcml0ZXJpYSI6eyJkYXRhLnBvc2l0aW9uIjoiZGVmZW5zZSIsIiRvciI6W3sib3duZXJJZCI6IjBiOWZjNzkwLWUwY2MtNDhhYy1iZjM3LTk4NzQzOWY3ZTViMiJ9LHsiYWNsLm90aGVyIjp7IiRuZSI6MH19XX0sInNvcnRDcml0ZXJpYSI6eyJjcmVhdGVkQXQiOjF9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoyMCwicGFnZU51bWJlciI6MSwiZG9Db3VudCI6ZmFsc2V9LCJvcHRpb25zIjpudWxsfQ",
+            1,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("ReadEntity()", function() {
+        bc.customEntity.readEntity( entityType,
+            entityId,
+            function(result)
+            {
+                equal(result.status, 200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("UpdateEntity()", function() {
+        bc.customEntity.updateEntity( 
+            entityType,
+            entityId,
+            1,
+            {
+                firstName : "bob",
+                surName : "tester",
+                position : "forward",
+                goals : 2,
+                assists : 4
+            },
+            { "other" : 2 }, 
+            null,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("UpdateEntityFields()", function() {
+        bc.customEntity.updateEntityFields( 
+            entityType,
+            entityId,
+            2,
+            {
+                goals : 2,
+                assists : 4
+            },
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("DeleteEntity()", function() {
+        bc.customEntity.deleteEntity( 
+            entityType,
+            entityId,
+            3,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
 }
 
 ////////////////////////////////////////
@@ -2049,6 +2246,24 @@ async function testIdentity() {
         return tearDownLogout();
     })) return;
 
+    await asyncTest("attachBlockchainIdentity()", 2, function() {
+        bc.identity.attachBlockchainIdentity("config",
+                "thisisAgreattestKey", function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("detachBlockchainIdentity()", 2, function() {
+        bc.identity.detachBlockchainIdentity("config",
+                    function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("attachFacebookId()", 2, function() {
         bc.identity.attachFacebookIdentity("test",
                 "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
@@ -2609,6 +2824,38 @@ async function testPlayerState() {
 
     await asyncTest("resetPlayer()", function() {
         bc.playerState.resetPlayer(
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("clearUserStatus()", function() {
+        bc.playerState.clearUserStatus("a_Status_Name",
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("extendUserStatus()", function() {
+        bc.playerState.extendUserStatus("a_Status_Name", 1000, {},
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("getUserStatus()", function() {
+        bc.playerState.getUserStatus("a_Status_Name",
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("setUserStatus()", function() {
+        bc.playerState.setUserStatus("a_Status_Name", 60, {},
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
@@ -5404,7 +5651,7 @@ async function testItemCatalog()
     });
 }
 
-async function testUserInventoryManagement()
+async function testUserItems()
 {
     let itemId;
     let itemIdToGet;
@@ -5412,7 +5659,7 @@ async function testUserInventoryManagement()
     let item4;
     let item5;
 
-    if (!module("UserInventoryManagement", () =>
+    if (!module("UserItems", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
@@ -5422,7 +5669,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("AwardUserItem() and Drop", () =>
     {
-        bc.userInventoryManagement.awardUserItem("sword001", 5, true, result =>
+        bc.userItems.awardUserItem("sword001", 5, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             //grab an itemID
@@ -5437,18 +5684,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("DropUserItem()", () =>
     {
-        bc.userInventoryManagement.dropUserItem(itemId, 1, true, result =>
-        {
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
-
-    await asyncTest("GetUserInventory()", () =>
-    {
-        var criteria = new Map();
-        criteria.set("itemData.bonus", 1);
-        bc.userInventoryManagement.getUserInventory(criteria, true, result =>
+        bc.userItems.dropUserItem(itemId, 1, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5465,7 +5701,7 @@ async function testUserInventoryManagement()
         context["searchCriteria"] = new Map().set("category", "sword");
         context["sortCriteria"] = new Map().set("createdAt", 1);
         context["sortCriteria"].set("updatedAt", -1);
-        bc.userInventoryManagement.getUserInventoryPage(context, true, result =>
+        bc.userItems.getUserInventoryPage(context, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5475,7 +5711,7 @@ async function testUserInventoryManagement()
     await asyncTest("GetUserInventoryPageOffset()", 1, () =>
     {
         var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJnYW1lSWQiOiIyMDAwMSIsInBsYXllcklkIjoiZTZiN2Q2NTEtYWIxZC00MDllLTgwMjktOTNhZDcxYWI4OTRkIiwiZ2lmdGVkVG8iOm51bGx9LCJzb3J0Q3JpdGVyaWEiOnt9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoxMDAsInBhZ2VOdW1iZXIiOm51bGx9LCJvcHRpb25zIjpudWxsfQ";
-        bc.userInventoryManagement.getUserInventoryPageOffset(context, 1, true, result =>
+        bc.userItems.getUserInventoryPageOffset(context, 1, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5484,7 +5720,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("GetUserItem())", 1, () =>
     {
-        bc.userInventoryManagement.getUserItem(itemIdToGet, true, result =>
+        bc.userItems.getUserItem(itemIdToGet, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5493,7 +5729,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("GiveUserItemTo())", 1, () =>
     {
-        bc.userInventoryManagement.giveUserItemTo(UserB.profileId, itemIdToGet, 1, true, result =>
+        bc.userItems.giveUserItemTo(UserB.profileId, itemIdToGet, 1, 1, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5502,7 +5738,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("PurchaseUserItem())", 1, () =>
     {
-        bc.userInventoryManagement.purchaseUserItem("sword001", 1, null, true, result =>
+        bc.userItems.purchaseUserItem("sword001", 1, null, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5511,7 +5747,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("ReceiveUserItemFrom())", 1, () =>
     {
-        bc.userInventoryManagement.receiveUserItemFrom(UserB.profileId, itemIdToGet, result =>
+        bc.userItems.receiveUserItemFrom(UserB.profileId, itemIdToGet, result =>
         {
             //40660
             equal(result.status, 400, "Cannot receive item gift from self");
@@ -5521,7 +5757,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("SellUserItem())", 1, () =>
     {
-        bc.userInventoryManagement.sellUserItem(item3, 1, 1, null, true, result =>
+        bc.userItems.sellUserItem(item3, 1, 1, null, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5531,7 +5767,7 @@ async function testUserInventoryManagement()
     await asyncTest("UpdateUserItemData())", 1, () =>
     {
         var newItemData = new Map();
-        bc.userInventoryManagement.updateUserItemData(item4, 1, newItemData, result =>
+        bc.userItems.updateUserItemData(item4, 1, newItemData, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5542,7 +5778,7 @@ async function testUserInventoryManagement()
     {
         var newItemData = new Map();
         newItemData.set("test", "testing");
-        bc.userInventoryManagement.useUserItem(item4, 2, newItemData, true, result =>
+        bc.userItems.useUserItem(item4, 2, newItemData, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5557,7 +5793,7 @@ async function testUserInventoryManagement()
         //     resolve_test();
         // });
 
-        bc.userInventoryManagement.publishUserItemToBlockchain("InvalidForNow", 1, result =>
+        bc.userItems.publishUserItemToBlockchain("InvalidForNow", 1, result =>
             {
                 equal(result.status, 400, "Expecting 400");
                 resolve_test();
@@ -5566,7 +5802,7 @@ async function testUserInventoryManagement()
 
     await asyncTest("refreshBlockhainUserItems())", 1, () =>
     {
-        bc.userInventoryManagement.refreshBlockchainUserItems(result =>
+        bc.userItems.refreshBlockchainUserItems(result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5617,7 +5853,8 @@ async function run_tests()
     await testRTT();
     await testLobby();
     await testItemCatalog();
-    await testUserInventoryManagement();
+    await testUserItems();
+    await testCustomEntity();
 }
 
 async function main()

@@ -16,6 +16,8 @@ function BCAsyncMatch() {
 	bc.asyncMatch.OPERATION_FIND_MATCHES = "FIND_MATCHES";
 	bc.asyncMatch.OPERATION_FIND_MATCHES_COMPLETED = "FIND_MATCHES_COMPLETED";
 	bc.asyncMatch.OPERATION_DELETE_MATCH = "DELETE_MATCH";
+	bc.asyncMatch.OPERATION_ABANDON_MATCH_WITH_SUMMARY_DATA = "ABANDON_MATCH_WITH_SUMMARY_DATA";
+	bc.asyncMatch.OPERATION_COMPLETE_MATCH_WITH_SUMMARY_DATA = "COMPLETE_MATCH_WITH_SUMMARY_DATA";
 
 	/**
 	 * Creates an instance of an asynchronous match.
@@ -333,6 +335,59 @@ function BCAsyncMatch() {
 			data: {
 				ownerId: ownerId,
 				matchId: matchId
+			},
+			callback: callback
+		});
+	};
+
+	/**
+	 * Marks the given match as complete. This call can send a notification message.
+	 *
+	 * Service Name - AsyncMatch
+	 * Service Operation - CompleteMatchWithSummaryData
+	 *
+	 * @param ownerId   Match owner identifier
+	 * @param matchId   Match identifier
+	 * @param pushContent what to push the 
+	 * @param summary json summary
+	 * @param callback  Optional instance of IServerCallback to call when the server response is received.
+	 */
+	bc.asyncMatch.completeMatchWithSummaryData = function(ownerId, matchId, pushContent, summary, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_ASYNC_MATCH,
+			operation: bc.asyncMatch.OPERATION_COMPLETE_MATCH_WITH_SUMMARY_DATA,
+			data: {
+				ownerId: ownerId,
+				matchId: matchId,
+				pushContent: pushContent,
+				summary: summary
+			},
+			callback: callback
+		});
+	};
+
+
+	/**
+	 * Marks the given match as complete. This call can send a notification message.
+	 *
+	 * Service Name - AsyncMatch
+	 * Service Operation - CompleteMatchWithSummaryData
+	 *
+	 * @param ownerId   Match owner identifier
+	 * @param matchId   Match identifier
+	 * @param pushContent what to push the 
+	 * @param summary json summary
+	 * @param callback  Optional instance of IServerCallback to call when the server response is received.
+	 */
+	bc.asyncMatch.abandonMatchWithSummaryData = function(ownerId, matchId, pushContent, summary, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_ASYNC_MATCH,
+			operation: bc.asyncMatch.OPERATION_ABANDON_MATCH_WITH_SUMMARY_DATA,
+			data: {
+				ownerId: ownerId,
+				matchId: matchId,
+				pushContent: pushContent,
+				summary: summary
 			},
 			callback: callback
 		});

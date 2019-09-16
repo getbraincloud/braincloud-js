@@ -1,25 +1,24 @@
 
-function BCUserInventoryManagement() {
+function BCUserItems() {
     var bc = this;
 
-	bc.userInventoryManagement = {};
+	bc.userItems = {};
 
-	bc.SERVICE_USER_INVENTORY_MANAGEMENT = "userInventoryManagement";
+	bc.SERVICE_USER_INVENTORY_MANAGEMENT = "userItems";
 
-	bc.userInventoryManagement.OPERATION_AWARD_USER_ITEM = "AWARD_USER_ITEM";
-	bc.userInventoryManagement.OPERATION_DROP_USER_ITEM = "DROP_USER_ITEM";
-	bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY = "GET_USER_INVENTORY";
-	bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE = "GET_USER_INVENTORY_PAGE";
-	bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET = "GET_USER_INVENTORY_PAGE_OFFSET";
-	bc.userInventoryManagement.OPERATION_GET_USER_ITEM = "GET_USER_ITEM";
-	bc.userInventoryManagement.OPERATION_GIVE_USER_ITEM_TO = "GIVE_USER_ITEM_TO";
-	bc.userInventoryManagement.OPERATION_PURCHASE_USER_ITEM = "PURCHASE_USER_ITEM";
-	bc.userInventoryManagement.OPERATION_RECEIVE_USER_ITEM_FROM = "RECEIVE_USER_ITEM_FROM";
-	bc.userInventoryManagement.OPERATION_SELL_USER_ITEM = "SELL_USER_ITEM";
-	bc.userInventoryManagement.OPERATION_UPDATE_USER_ITEM_DATA = "UPDATE_USER_ITEM_DATA";
-	bc.userInventoryManagement.OPERATION_USE_USER_ITEM = "USE_USER_ITEM";
-	bc.userInventoryManagement.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN = "PUBLISH_USER_ITEM_TO_BLOCKCHAIN";
-	bc.userInventoryManagement.OPERATION_REFRESH_BLOCKCHAIN_USER_ITEMS = "REFRESH_BLOCKCHAIN_USER_ITEMS";
+	bc.userItems.OPERATION_AWARD_USER_ITEM = "AWARD_USER_ITEM";
+	bc.userItems.OPERATION_DROP_USER_ITEM = "DROP_USER_ITEM";
+	bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE = "GET_USER_ITEMS_PAGE";
+	bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET = "GET_USER_ITEMS_PAGE_OFFSET";
+	bc.userItems.OPERATION_GET_USER_ITEM = "GET_USER_ITEM";
+	bc.userItems.OPERATION_GIVE_USER_ITEM_TO = "GIVE_USER_ITEM_TO";
+	bc.userItems.OPERATION_PURCHASE_USER_ITEM = "PURCHASE_USER_ITEM";
+	bc.userItems.OPERATION_RECEIVE_USER_ITEM_FROM = "RECEIVE_USER_ITEM_FROM";
+	bc.userItems.OPERATION_SELL_USER_ITEM = "SELL_USER_ITEM";
+	bc.userItems.OPERATION_UPDATE_USER_ITEM_DATA = "UPDATE_USER_ITEM_DATA";
+	bc.userItems.OPERATION_USE_USER_ITEM = "USE_USER_ITEM";
+	bc.userItems.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN = "PUBLISH_USER_ITEM_TO_BLOCKCHAIN";
+	bc.userItems.OPERATION_REFRESH_BLOCKCHAIN_USER_ITEMS = "REFRESH_BLOCKCHAIN_USER_ITEMS";
 
 
 	/**
@@ -28,7 +27,7 @@ function BCUserInventoryManagement() {
 	 * includes associated itemDef with language fields limited
 	 *  to the current or default language.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - AWARD_USER_ITEM
 	 *
 	 * @param defId 
@@ -36,7 +35,7 @@ function BCUserInventoryManagement() {
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.awardUserItem = function(defId, quantity, includeDef, callback) {
+	bc.userItems.awardUserItem = function(defId, quantity, includeDef, callback) {
 		var message = {
 			defId : defId,
 			quantity : quantity,
@@ -45,7 +44,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_AWARD_USER_ITEM,
+			operation : bc.userItems.OPERATION_AWARD_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -58,7 +57,7 @@ function BCUserInventoryManagement() {
 	 * potentially with the associated itemDef (with language fields 
 	 * limited to the current or default language).
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - DROP_USER_ITEM
 	 *
 	 * @param defId 
@@ -66,7 +65,7 @@ function BCUserInventoryManagement() {
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.dropUserItem = function(itemId, quantity, includeDef, callback) {
+	bc.userItems.dropUserItem = function(itemId, quantity, includeDef, callback) {
 		var message = {
 			itemId : itemId,
 			quantity : quantity,
@@ -75,35 +74,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_DROP_USER_ITEM,
-			data : message,
-			callback : callback
-		});
-	};
-
-	/**
-	 * Retrieves the user's inventory from the 
-	 * server (or inventory specified by criteria). 
-	 * If includeDef is true, response includes associated 
-	 * itemDef with each user item, with language fields 
-	 * limited to the current or default language.
-	 *
-	 * Service Name - userInventoryManagement
-	 * Service Operation - GET_USER_INVENTORY
-	 *
-	 * @param criteria 
-	 * @param includeDef 
-	 * @param callback The method to be invoked when the server response is received
-	 */
-	bc.userInventoryManagement.getUserInventory = function(criteria, includeDef, callback) {
-		var message = {
-			criteria : criteria,
-			includeDef : includeDef
-		};
-
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY,
+			operation : bc.userItems.OPERATION_DROP_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -115,7 +86,7 @@ function BCUserInventoryManagement() {
 	 *  includes associated itemDef with each user item, with 
 	 * language fields limited to the current or default language.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - GET_USER_INVENTORY_PAGE
 	 *
 	 * @param context
@@ -124,7 +95,7 @@ function BCUserInventoryManagement() {
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.getUserInventoryPage = function(context, includeDef, callback) {
+	bc.userItems.getUserInventoryPage = function(context, includeDef, callback) {
 		var message = {
 			context : context,
 			includeDef : includeDef
@@ -132,7 +103,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE,
+			operation : bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE,
 			data : message,
 			callback : callback
 		});
@@ -145,7 +116,7 @@ function BCUserInventoryManagement() {
 	 * with language fields limited to the current or default
 	 * language.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - GET_USER_INVENTORY_PAGE_OFFSET
 	 *
 	 * @param context
@@ -153,7 +124,7 @@ function BCUserInventoryManagement() {
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.getUserInventoryPageOffset = function(context, pageOffset, includeDef, callback) {
+	bc.userItems.getUserInventoryPageOffset = function(context, pageOffset, includeDef, callback) {
 		var message = {
 			context : context,
 			pageOffset : pageOffset,
@@ -162,7 +133,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET,
+			operation : bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET,
 			data : message,
 			callback : callback
 		});
@@ -174,14 +145,14 @@ function BCUserInventoryManagement() {
 	 * itemDef with language fields limited to the current 
 	 * or default language.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - GET_USER_ITEM
 	 *
 	 * @param itemId
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.getUserItem = function(itemId, includeDef, callback) {
+	bc.userItems.getUserItem = function(itemId, includeDef, callback) {
 		var message = {
 			itemId : itemId,
 			includeDef : includeDef
@@ -189,7 +160,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_GET_USER_ITEM,
+			operation : bc.userItems.OPERATION_GET_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -198,7 +169,7 @@ function BCUserInventoryManagement() {
 	/**
 	 * Gifts item to the specified player.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - GIVE_USER_ITEM_TO
 	 *
 	 * @param profileId
@@ -207,17 +178,18 @@ function BCUserInventoryManagement() {
 	 * @param immediate 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.giveUserItemTo = function(profileId, itemId, version, immediate, callback) {
+	bc.userItems.giveUserItemTo = function(profileId, itemId, version, quantity, immediate, callback) {
 		var message = {
 			profileId : profileId,
 			itemId : itemId,
 			version : version,
+			quantity : quantity,
 			immediate : immediate
 		};
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_GIVE_USER_ITEM_TO,
+			operation : bc.userItems.OPERATION_GIVE_USER_ITEM_TO,
 			data : message,
 			callback : callback
 		});
@@ -229,7 +201,7 @@ function BCUserInventoryManagement() {
 	 * itemDef with language fields limited to the current 
 	 * or default language.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - PURCHASE_USER_ITEM
 	 *
 	 * @param defId
@@ -238,7 +210,7 @@ function BCUserInventoryManagement() {
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.purchaseUserItem = function(defId, quantity, shopId, includeDef, callback) {
+	bc.userItems.purchaseUserItem = function(defId, quantity, shopId, includeDef, callback) {
 		var message = {
 			defId : defId,
 			quantity : quantity,
@@ -248,7 +220,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_PURCHASE_USER_ITEM,
+			operation : bc.userItems.OPERATION_PURCHASE_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -259,14 +231,14 @@ function BCUserInventoryManagement() {
 	 * the specified player, who must have previously 
 	 * called giveUserItemTo.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - RECEVIE_USER_ITEM_FROM
 	 *
 	 * @param profileId
 	 * @param itemId
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.receiveUserItemFrom = function(profileId, itemId, callback) {
+	bc.userItems.receiveUserItemFrom = function(profileId, itemId, callback) {
 		var message = {
 			profileId : profileId,
 			itemId : itemId
@@ -274,7 +246,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_RECEIVE_USER_ITEM_FROM,
+			operation : bc.userItems.OPERATION_RECEIVE_USER_ITEM_FROM,
 			data : message,
 			callback : callback
 		});
@@ -287,7 +259,7 @@ function BCUserInventoryManagement() {
 	 * limited to the current or default language), along with the 
 	 * currency refunded and currency balances.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - SELL_USER_ITEM
 	 *
 	 * @param itemId
@@ -297,7 +269,7 @@ function BCUserInventoryManagement() {
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.sellUserItem = function(itemId, version, quantity, shopId, includeDef, callback) {
+	bc.userItems.sellUserItem = function(itemId, version, quantity, shopId, includeDef, callback) {
 		var message = {
 			itemId : itemId,
 			version : version,
@@ -308,7 +280,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_SELL_USER_ITEM,
+			operation : bc.userItems.OPERATION_SELL_USER_ITEM,
 			data : message,
 			callback : callback
 		});
@@ -317,7 +289,7 @@ function BCUserInventoryManagement() {
 	/**
 	 * Updates the item data on the specified user item.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - UPDATE_USER_ITEM_DATA
 	 *
 	 * @param itemId
@@ -325,7 +297,7 @@ function BCUserInventoryManagement() {
 	 * @param newItemData
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.updateUserItemData = function(itemId, version, newItemData, callback) {
+	bc.userItems.updateUserItemData = function(itemId, version, newItemData, callback) {
 		var data = {
 			itemId : itemId,
 			version : version,
@@ -334,7 +306,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_UPDATE_USER_ITEM_DATA,
+			operation : bc.userItems.OPERATION_UPDATE_USER_ITEM_DATA,
 			data : data,
 			callback : callback
 		});
@@ -343,7 +315,7 @@ function BCUserInventoryManagement() {
 	/**
 	 * Uses the specified item, potentially consuming it.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - USE_USER_ITEM
 	 *
 	 * @param itemId
@@ -352,7 +324,7 @@ function BCUserInventoryManagement() {
 	 * @param includeDef 
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.useUserItem = function(itemId, version, newItemData, includeDef, callback) {
+	bc.userItems.useUserItem = function(itemId, version, newItemData, includeDef, callback) {
 		var data = {
 			itemId : itemId,
 			version : version,
@@ -362,7 +334,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_USE_USER_ITEM,
+			operation : bc.userItems.OPERATION_USE_USER_ITEM,
 			data : data,
 			callback : callback
 		});
@@ -371,14 +343,14 @@ function BCUserInventoryManagement() {
 	/**
 	 * Publishes the specified item to the item management attached blockchain. Results are reported asynchronously via an RTT event.
 	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - PUBLISH_USER_ITEM_TO_BLOCKCHAIN
 	 *
 	 * @param itemId
 	 * @param version
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.publishUserItemToBlockchain = function(itemId, version, callback) {
+	bc.userItems.publishUserItemToBlockchain = function(itemId, version, callback) {
 		var data = {
 			itemId : itemId,
 			version : version
@@ -386,7 +358,7 @@ function BCUserInventoryManagement() {
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN,
+			operation : bc.userItems.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN,
 			data : data,
 			callback : callback
 		});
@@ -394,22 +366,22 @@ function BCUserInventoryManagement() {
 
 	/**
 	 * Syncs the caller's user items with the item management attached blockchain. Results are reported asynchronously via an RTT event	 *
-	 * Service Name - userInventoryManagement
+	 * Service Name - userItems
 	 * Service Operation - REFRESH_BLOCKCHAIN_USER_ITMES
 	 *
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.userInventoryManagement.refreshBlockchainUserItems = function(callback) {
+	bc.userItems.refreshBlockchainUserItems = function(callback) {
 		var data = {
 		};
 
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
-			operation : bc.userInventoryManagement.OPERATION_REFRESH_BLOCKCHAIN_USER_ITEMS,
+			operation : bc.userItems.OPERATION_REFRESH_BLOCKCHAIN_USER_ITEMS,
 			data : data,
 			callback : callback
 		});
 	};
 }
 
-BCUserInventoryManagement.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCUserItems.apply(window.brainCloudClient = window.brainCloudClient || {});

@@ -12,7 +12,7 @@ function BCRTT() {
     bc.rttService.SERVICE_LOBBY = "lobby";
     bc.rttService.SERVICE_MESSAGING = "messaging";
     bc.rttService.SERVICE_PRESENCE = "presence";
-    bc.rttService.SERVICE_USER_INVENTORY_MANAGEMENT = "userInventoryManagement";
+    bc.rttService.SERVICE_USER_ITEMS = "userItems";
 
         /**
      * Enables Real Time event for this session.
