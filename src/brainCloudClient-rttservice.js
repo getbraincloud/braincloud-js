@@ -124,7 +124,7 @@ function BCRTT() {
     bc.rttService.registerRTTBlockchainRefresh = function(callback) {
         bc.brainCloudRttComms.registerRTTCallback(bc.rttService.SERVICE_USER_INVENTORY_MANAGEMENT, callback);
     }
-    bc.rttService.deregisterRTTPresenceCallback = function() {
+    bc.rttService.deregisterRTTBlockchainCallback = function() {
         bc.brainCloudRttComms.deregisterRTTCallback(bc.rttService.SERVICE_USER_INVENTORY_MANAGEMENT);
     }
 
