@@ -5808,6 +5808,15 @@ async function testUserItems()
             resolve_test();
         });
     });
+
+    await asyncTest("RemoveUserItemFromBlockchain())", 1, () =>
+    {
+        bc.userItems.removeUserItemFromBlockchain("InvalidForNow", 1, result =>
+            {
+                equal(result.status, 400, "Expecting 400");
+                resolve_test();
+            });
+    });
 }
 
 async function run_tests()

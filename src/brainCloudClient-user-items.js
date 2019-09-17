@@ -4,7 +4,7 @@ function BCUserItems() {
 
 	bc.userItems = {};
 
-	bc.SERVICE_USER_INVENTORY_MANAGEMENT = "userItems";
+	bc.SERVICE_USER_ITEMS = "userItems";
 
 	bc.userItems.OPERATION_AWARD_USER_ITEM = "AWARD_USER_ITEM";
 	bc.userItems.OPERATION_DROP_USER_ITEM = "DROP_USER_ITEM";
@@ -19,6 +19,8 @@ function BCUserItems() {
 	bc.userItems.OPERATION_USE_USER_ITEM = "USE_USER_ITEM";
 	bc.userItems.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN = "PUBLISH_USER_ITEM_TO_BLOCKCHAIN";
 	bc.userItems.OPERATION_REFRESH_BLOCKCHAIN_USER_ITEMS = "REFRESH_BLOCKCHAIN_USER_ITEMS";
+	bc.userItems.OPERATION_REMOVE_USER_ITEM_FROM_BLOCKCHAIN = "REMOVE_USER_ITEM_FROM_BLOCKCHAIN";
+
 
 
 	/**
@@ -43,7 +45,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_AWARD_USER_ITEM,
 			data : message,
 			callback : callback
@@ -73,7 +75,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_DROP_USER_ITEM,
 			data : message,
 			callback : callback
@@ -102,7 +104,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE,
 			data : message,
 			callback : callback
@@ -132,7 +134,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET,
 			data : message,
 			callback : callback
@@ -159,7 +161,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_GET_USER_ITEM,
 			data : message,
 			callback : callback
@@ -188,7 +190,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_GIVE_USER_ITEM_TO,
 			data : message,
 			callback : callback
@@ -219,7 +221,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_PURCHASE_USER_ITEM,
 			data : message,
 			callback : callback
@@ -245,7 +247,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_RECEIVE_USER_ITEM_FROM,
 			data : message,
 			callback : callback
@@ -279,7 +281,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_SELL_USER_ITEM,
 			data : message,
 			callback : callback
@@ -305,7 +307,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_UPDATE_USER_ITEM_DATA,
 			data : data,
 			callback : callback
@@ -333,7 +335,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_USE_USER_ITEM,
 			data : data,
 			callback : callback
@@ -357,7 +359,7 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN,
 			data : data,
 			callback : callback
@@ -376,8 +378,30 @@ function BCUserItems() {
 		};
 
 		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_USER_INVENTORY_MANAGEMENT,
+			service : bc.SERVICE_USER_ITEMS,
 			operation : bc.userItems.OPERATION_REFRESH_BLOCKCHAIN_USER_ITEMS,
+			data : data,
+			callback : callback
+		});
+	};
+
+	/**
+	 * Syncs the caller's user items with the item management attached blockchain. Results are reported asynchronously via an RTT event	 *
+	 * Service Name - userItems
+	 * Service Operation - REMOVE_USER_ITEM_FROM_BLOCKCHAIN
+	 * @param itemId
+	 * @param version
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.userItems.removeUserItemFromBlockchain = function(itemId, version, callback) {
+		var data = {
+			itemId : itemId,
+			version : version
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_USER_ITEMS,
+			operation : bc.userItems.OPERATION_REMOVE_USER_ITEM_FROM_BLOCKCHAIN,
 			data : data,
 			callback : callback
 		});
