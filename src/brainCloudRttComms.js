@@ -1,6 +1,10 @@
-if (typeof WebSocket === 'undefined') {
-    WebSocket = require('ws');
-}
+// if (typeof WebSocket === 'undefined') {
+// 	try {
+// 		WebSocket = require('ws');
+// 	} catch (err) {
+// 		WebSocket = null;
+// 	}
+// }
 
 var DEFAULT_RTT_HEARTBEAT; // Seconds
 

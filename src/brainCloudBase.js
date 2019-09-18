@@ -1,8 +1,12 @@
 
+if (typeof CryptoJS === 'undefined' || CryptoJS === null) {
+    var CryptoJS = require('crypto-js');
+}
+
 function BrainCloudManager ()
 {
     var bcm = this;
-    _setInterval = typeof customSetInterval === 'function' ? customSetInterval : setInterval;
+    var _setInterval = typeof customSetInterval === 'function' ? customSetInterval : setInterval;
 
     bcm.name = "BrainCloudManager";
 
@@ -480,7 +484,7 @@ function BrainCloudManager ()
                     bcm._statusMessageCache = messages[c].status_message;
                 }
 
-                console.log("STATUSCodes:" + bcm.statusCodes.CLIENT_NETWORK_ERROR);
+                bcm.debugLog("STATUSCodes:" + bcm.statusCodes.CLIENT_NETWORK_ERROR);
                 bcm.updateKillSwitch(bcm._inProgressQueue[c].service, bcm._inProgressQueue[c].operation, statusCode)
             }
 
