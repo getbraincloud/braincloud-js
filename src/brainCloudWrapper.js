@@ -7,6 +7,8 @@
  * be sent to the server. This strategy is useful when using anonymous authentication.
  */
 
+var getIdentitiesCallback = null;
+
 function BrainCloudWrapper(wrapperName) {
 
     var bcw = this;
@@ -55,6 +57,9 @@ function BrainCloudWrapper(wrapperName) {
         bcw.statusCodes = bcw.brainCloudClient.statusCodes;
         bcw.time = bcw.brainCloudClient.time;
         bcw.tournament = bcw.brainCloudClient.tournament;
+        bcw.itemCatalog = bcw.brainCloudClient.itemCatalog;
+        bcw.userItems = bcw.brainCloudClient.userItems;
+        bcw.customEntity = bcw.brainCloudClient.customEntity;
 
         bcw.brainCloudManager = bcw.brainCloudClient.brainCloudManager = bcw.brainCloudClient.brainCloudManager || {};
 

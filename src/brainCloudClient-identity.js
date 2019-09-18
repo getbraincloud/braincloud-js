@@ -17,6 +17,8 @@ function BCIdentity() {
 	bc.SERVICE_IDENTITY = "identity";
 
 	bc.identity.OPERATION_ATTACH = "ATTACH";
+	bc.identity.OPERATION_ATTACH_BLOCKCHAIN_IDENTITY = "ATTACH_BLOCKCHAIN_IDENTITY";
+	bc.identity.OPERATION_DETACH_BLOCKCHAIN_IDENTITY = "DETACH_BLOCKCHAIN_IDENTITY";
 	bc.identity.OPERATION_MERGE = "MERGE";
 	bc.identity.OPERATION_DETACH = "DETACH";
 	bc.identity.OPERATION_SWITCH_TO_CHILD_PROFILE = "SWITCH_TO_CHILD_PROFILE";
@@ -41,6 +43,7 @@ function BCIdentity() {
 		facebook : "Facebook",
 		gameCenter : "GameCenter",
 		steam : "Steam",
+		blockChain : "BlockChain",
 		google : "Google",
 		twitter : "Twitter",
 		parse : "Parse",
@@ -514,6 +517,48 @@ function BCIdentity() {
 	bc.identity.switchToSingletonChildProfile = function(childAppId, forceCreate, callback) {
 
 		bc.identity.switchToChildProfileInternal(null, childAppId, forceCreate, true, callback);
+	};
+
+	/**
+	 * Attaches the given block chain public key identity to the current profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - OPERATION_ATTACH_BLOCKCHAIN_IDENTITY
+	 *
+	 * @param blockchainConfig user id
+	 * @param publicKey anything you want
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.identity.attachBlockchainIdentity = function(blockchainConfig, publicKey, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_IDENTITY,
+			operation: bc.identity.OPERATION_ATTACH_BLOCKCHAIN_IDENTITY,
+			data: {
+				blockchainConfig : blockchainConfig,
+				publicKey : publicKey
+			},
+			callback: callback
+		});
+	};
+
+	/**
+	 * Updates univeral id of the current profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - UPDATE_UNIVERSAL_LOGIN
+	 *
+	 * @param blockchainConfig 
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.identity.detachBlockchainIdentity = function(blockchainConfig, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_IDENTITY,
+			operation: bc.identity.OPERATION_DETACH_BLOCKCHAIN_IDENTITY,
+			data: {
+				blockchainConfig : blockchainConfig
+			},
+			callback: callback
+		});
 	};
 
 	/**

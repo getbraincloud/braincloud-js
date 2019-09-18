@@ -30,6 +30,7 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_UNIVERSAL = "Universal";
 	bc.authentication.AUTHENTICATION_TYPE_GAME_CENTER = "GameCenter";
 	bc.authentication.AUTHENTICATION_TYPE_STEAM = "Steam";
+	bc.authentication.AUTHENTICATION_TYPE_BLOCKCHAIN = "Blockchain";
 	bc.authentication.AUTHENTICATION_TYPE_TWITTER = "Twitter";
 	bc.authentication.AUTHENTICATION_TYPE_PARSE = "Parse";
 	bc.authentication.AUTHENTICATION_TYPE_HANDOFF = "Handoff";
