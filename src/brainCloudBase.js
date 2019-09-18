@@ -1,8 +1,12 @@
 
+if (typeof CryptoJS === 'undefined' || CryptoJS === null) {
+    var CryptoJS = require('crypto-js');
+}
+
 function BrainCloudManager ()
 {
     var bcm = this;
-    _setInterval = typeof customSetInterval === 'function' ? customSetInterval : setInterval;
+    var _setInterval = typeof customSetInterval === 'function' ? customSetInterval : setInterval;
 
     bcm.name = "BrainCloudManager";
 
