@@ -108,6 +108,7 @@ function BrainCloudWrapper(wrapperName) {
     };
 
     bcw._authResponseHandler = function(result) {
+
         if (result.status == 200) {
             var profileId = result.data.profileId;
             bcw.setStoredProfileId(profileId);
@@ -115,6 +116,9 @@ function BrainCloudWrapper(wrapperName) {
             var sessionId = result.data.sessionId;
             bcw.setStoredSessionId(sessionId);
         }
+        
+        console.log("PROFILE IDDDDDDDDD");
+        console.log(profileId);
     };
 
     ///////////////////////////////////////////////////////////////////////////
@@ -198,7 +202,8 @@ function BrainCloudWrapper(wrapperName) {
             function(result) {
                 bcw._authResponseHandler(result);
                 responseHandler(result);
-            });
+            }
+            );
     };
 
     /**
