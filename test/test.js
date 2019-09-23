@@ -4632,6 +4632,8 @@ async function testWrapper()
 
 
     await asyncTest("authenticateAnonymous()", 2, function() {
+        bc.resetStoredProfileId();
+        
         bc.authenticateAnonymous(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
