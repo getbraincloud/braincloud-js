@@ -656,13 +656,49 @@ async function testAuthentication() {
             });
     });
 
-    await asyncTest("authenticateHandoff()", 2, function() {
-        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+    await asyncTest("authenticateHandoff()", 3, function() {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());     
 
-        bc.brainCloudClient.authentication.authenticateHandoff("_invalid_profileId_", "_invalid_handoff_token_", function(result) {
-                equal(result.status, bc.statusCodes.FORBIDDEN);
-                equal(result.reason_code, bc.reasonCodes.TOKEN_DOES_NOT_MATCH_USER);
-                resolve_test();
+        var handoffId;
+        var handoffToken;
+        
+        bc.brainCloudClient.authentication.authenticateAnonymous(
+            true, function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+
+                bc.brainCloudClient.script.runScript("createHandoffId", {}, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    var d = result.data;
+                    handoffId = d.response.handoffId;
+                    handoffToken = d.response.securityToken;
+
+                    bc.brainCloudClient.authentication.authenticateHandoff(handoffId, handoffToken, function(result) {
+                        equal(result.status, 200, JSON.stringify(result));
+                        resolve_test();
+                       });
+                   });
+            });
+    });
+
+    await asyncTest("authenticateSettopHandoff()", 3, function() {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());     
+
+        var handoffCode
+        
+        bc.brainCloudClient.authentication.authenticateAnonymous(
+            true, function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+
+                bc.brainCloudClient.script.runScript("CreateSettopHandoffCode", {}, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    var d = result.data;
+                    handoffCode = d.response.handoffCode
+
+                    bc.brainCloudClient.authentication.authenticateSettopHandoff(handoffCode, function(result) {
+                        equal(result.status, 200, JSON.stringify(result));
+                        resolve_test();
+                       });
+                   });
             });
     });
 }
@@ -938,7 +974,7 @@ async function testCustomEntity() {
             position : "forward",
             goals : 2,
             assists : 4
-        }, { "other" : 2 }, null, false, function(result) {
+        }, { "other" : 2 }, null, true, function(result) {
             equal(result.status, 200, JSON.stringify(result));
             entityId = result.data.entityId;
             resolve_test();
@@ -3936,6 +3972,23 @@ async function testSocialLeaderboard() {
             groupId,
             0,
             { test : "asdf"},
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("postScoreToDynamicGroupLeaderboard())", 2, function() {
+        bc.socialLeaderboard.postScoreToDynamicGroupLeaderboard(
+            groupLeaderboard,
+            groupId,
+            0,
+            { test : "asdf"},
+            "HIGH_VALUE",
+            "WEEKLY",
+            1570818219096,
+            2,
             function(result) {
                 ok(true, JSON.stringify(result));
                 equal(result.status, 200, "Expecting 200");
