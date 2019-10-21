@@ -10,6 +10,7 @@ function BCGroup() {
 	bc.group.OPERATION_ADD_GROUP_MEMBER = "ADD_GROUP_MEMBER";
 	bc.group.OPERATION_APPROVE_GROUP_JOIN_REQUEST = "APPROVE_GROUP_JOIN_REQUEST";
 	bc.group.OPERATION_AUTO_JOIN_GROUP = "AUTO_JOIN_GROUP";
+	bc.group.OPERATION_AUTO_JOIN_GROUP_MULTI = "AUTO_JOIN_GROUP_MULTI";
 	bc.group.OPERATION_CANCEL_GROUP_INVITATION = "CANCEL_GROUP_INVITATION";
 	bc.group.OPERATION_CREATE_GROUP = "CREATE_GROUP";
 	bc.group.OPERATION_CREATE_GROUP_ENTITY = "CREATE_GROUP_ENTITY";
@@ -153,6 +154,34 @@ function BCGroup() {
 			callback : callback
 		});
 	};
+
+	/**
+	 * Find and join an open group in the pool of groups in multiple group types provided as input arguments.
+	 * 
+	 * Service Name - group
+	 * Service Operation - AUTO_JOIN_GROUP
+	 *
+	 * @param groupTypes Name of the associated group type.
+	 * @param autoJoinStrategy Selection strategy to employ when there are multiple matches
+	 * @param where Query parameters (optional)
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.group.autoJoinGroupMulti = function(groupTypes, autoJoinStrategy, where, callback) {
+		var message = {
+			groupTypes : groupTypes,
+			autoJoinStrategy : autoJoinStrategy
+		};
+
+		if(where) message.where = where;
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_GROUP,
+			operation : bc.group.OPERATION_AUTO_JOIN_GROUP_MULTI,
+			data : message,
+			callback : callback
+		});
+	};
+
 
 	/**
 	 * Cancel an outstanding invitation to the group.

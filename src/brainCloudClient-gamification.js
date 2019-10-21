@@ -241,6 +241,8 @@ function BCGamification() {
 	};
 
 	/**
+     * @deprecated
+     *
 	 * Resets the specified milestones' statuses to LOCKED.
 	 *
 	 * Service Name - Gamification

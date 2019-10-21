@@ -2264,6 +2264,19 @@ async function testGroup() {
                     resolve_test();
                 });
     });
+    
+    var groupTypes = ["test"];
+
+    await asyncTest("autoJoinGroupMulti()", 2, function() {
+        bc.group.autoJoinGroupMulti(groupTypes,
+                bc.group.autoJoinStrategy.joinFirstGroup,
+                null,
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
 
     await asyncTest("GetRandomGroupsMatching()", 2, function() {
         bc.group.getRandomGroupsMatching({ groupType : "BLUE"},
