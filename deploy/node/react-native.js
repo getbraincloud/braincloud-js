@@ -1,7 +1,7 @@
-// Set up AsyncStorage.
+//Set up AsyncStorage.
 var AsyncStorage = null;
 try {
-    AsyncStorage = require('@react-native-community/async-storage').default
+    AsyncStorage = useReactModule('@react-native-community/async-storage')
 } catch (er) {
     AsyncStorage = {
         getItem: function () { },
@@ -13,10 +13,16 @@ try {
 var BackgroundTimer = null;
 var customSetInterval = null;
 try {
-    BackgroundTimer = require('react-native-background-timer').default;
+    BackgroundTimer = useReactModule('react-native-background-timer')
     customSetInterval = function (func, interval) { BackgroundTimer.setInterval(func, interval); };
 } catch (e) {
     customSetInterval = null;
+}
+
+//Browserify processes only require() calls with literals, i.e. require('theplugin'); It will not include modules that can be required with functions.
+//this is key because if you use regular requires, it will alwyas argue that the module is missing if it is not there and directed by a relative path. 
+function useReactModule(moduleName) {
+    require(moduleName).default;
 }
 
 /* 
