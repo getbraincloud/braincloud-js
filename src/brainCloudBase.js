@@ -20,7 +20,7 @@ function BrainCloudManager ()
     bcm._rewardCallback = null;
     bcm._errorCallback = null;
     bcm._jsonedQueue = "";
-    bcm._idleTimeout = 30;
+    bcm._idleTimeout = 120;
     bcm._heartBeatIntervalId = null;
     bcm._bundlerIntervalId = null;
 

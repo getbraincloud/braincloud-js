@@ -34,6 +34,7 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_TWITTER = "Twitter";
 	bc.authentication.AUTHENTICATION_TYPE_PARSE = "Parse";
 	bc.authentication.AUTHENTICATION_TYPE_HANDOFF = "Handoff";
+	bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF = "SettopHandoff";
 
 	bc.authentication.profileId = "";
 	bc.authentication.anonymousId = "";
@@ -481,6 +482,25 @@ function BCAuthentication() {
 			handoffId,
 			securityToken,
 			bc.authentication.AUTHENTICATION_TYPE_HANDOFF,
+			null,
+			false,
+			callback);
+	};
+
+	/**
+	 * Authenticate a user with handoffCode
+	 *
+	 * Service Name - authenticationV2
+	 * Service Operation - AUTHENTICATE
+	 *
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 */
+	bc.authentication.authenticateSettopHandoff= function(handoffCode, callback) {
+		bc.authentication.authenticate(
+			handoffCode,
+			"",
+			bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF,
 			null,
 			false,
 			callback);

@@ -108,6 +108,7 @@ function BrainCloudWrapper(wrapperName) {
     };
 
     bcw._authResponseHandler = function(result) {
+
         if (result.status == 200) {
             var profileId = result.data.profileId;
             bcw.setStoredProfileId(profileId);
@@ -115,6 +116,9 @@ function BrainCloudWrapper(wrapperName) {
             var sessionId = result.data.sessionId;
             bcw.setStoredSessionId(sessionId);
         }
+        
+        console.log("PROFILE IDDDDDDDDD");
+        console.log(profileId);
     };
 
     ///////////////////////////////////////////////////////////////////////////
@@ -198,7 +202,8 @@ function BrainCloudWrapper(wrapperName) {
             function(result) {
                 bcw._authResponseHandler(result);
                 responseHandler(result);
-            });
+            }
+            );
     };
 
     /**
@@ -415,6 +420,46 @@ function BrainCloudWrapper(wrapperName) {
                 responseHandler(result);
             });
     };
+
+    	/**
+	 * Authenticate the user using a Pase userid and authentication token
+	 *
+	 * Service Name - Authenticate
+	 * Service Operation - Authenticate
+	 *
+	 * @param handoffId braincloud handoff Id generated from cloud script
+	 * @param securityToken The security token entered by the user
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bcw.authenticateHandoff = function(handoffId, securityToken, callback) {
+        bcw.brainCloudClient.authentication.authenticateHandoff(
+			handoffId,
+			securityToken,
+			bc.authentication.AUTHENTICATION_TYPE_HANDOFF,
+			null,
+			false,
+			callback);
+	};
+
+	/**
+	 * Authenticate a user with handoffCode
+	 *
+	 * Service Name - authenticationV2
+	 * Service Operation - AUTHENTICATE
+	 *
+     * @param handoffCode generated via cloudcode
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 */
+	bcw.authenticateSettopHandoff= function(handoffCode, callback) {
+        bcw.brainCloudClient.authentication.authenticateSettopHandoff(
+			handoffCode,
+			"",
+			bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF,
+			null,
+			false,
+			callback);
+	};
 
     /**
      * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.

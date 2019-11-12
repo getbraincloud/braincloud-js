@@ -31,8 +31,7 @@ function BCSocialLeaderboard() {
 	bc.socialLeaderboard.OPERATION_REMOVE_GROUP_SCORE = "REMOVE_GROUP_SCORE";
 	bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW = "GET_GROUP_LEADERBOARD_VIEW";
 	bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW_BY_VERSION = "GET_GROUP_LEADERBOARD_VIEW_BY_VERSION";
-
-
+	bc.socialLeaderboard.OPERATION_POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD = "POST_GROUP_SCORE_DYNAMIC"
 
 
 
@@ -741,6 +740,42 @@ function BCSocialLeaderboard() {
 			callback : callback
 		});
 	}
+
+	/**
+     * Post the group score to the given group leaderboard and dynamically create if necessary. LeaderboardType, rotationType, rotationReset, and retainedCount are required.	 *
+	 * Service Name - leaderboard
+	 * Service Operation - POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD
+	 *
+	 * @param leaderboardId the id of the leaderboard
+	 * @param groupId the group's id
+	 * @param score the sort order
+	 * @param data extra data
+	 * @param leaderboardType the type
+	 * @param rotationType the type of tournamnet rotation
+	 * @param rotationResetTime how often to reset
+	 * @param retainedCount 
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.socialLeaderboard.postScoreToDynamicGroupLeaderboard = function(leaderboardId, groupId, score, data, leaderboardType, rotationType, rotationResetTime, retainedCount, callback) {
+		var message = {
+			leaderboardId : leaderboardId,
+			groupId : groupId,
+			score : score,
+			data : data,
+			leaderboardType : leaderboardType,
+			rotationType : rotationType,
+			rotationResetTime : rotationResetTime,
+			retainedCount : retainedCount
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_LEADERBOARD,
+			operation : bc.socialLeaderboard.OPERATION_POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD,
+			data : message,
+			callback : callback
+		});
+	}
+
 }
 
 BCSocialLeaderboard.apply(window.brainCloudClient = window.brainCloudClient || {});
