@@ -1007,28 +1007,9 @@ async function testCustomEntity() {
             }
         );
     });
-    ////////////////////////////////////////////////////
-    // var context = {
-    //     pagination : {
-    //         rowsPerPage : 50,
-    //         pageNumber : 1
-    //     },
-    //     searchCriteria : {
-    //         entityType : "testGlobalEntity"
-    //     }
-    // };
-    // var returnedContext;
 
-    // await asyncTest("getPage()", function() {
-    //     bc.globalEntity.getPage(context, function(result) {
-    //         equal(result.status, 200, JSON.stringify(result));
-    //         returnedContext = result["data"]["context"];
-    //         resolve_test();
-    //     });
-    // });
-
-    await asyncTest("getPageOffset()", function() {
-        bc.customEntity.getPageOffset( entityType,
+    await asyncTest("getEntityPageOffset()", function() {
+        bc.customEntity.getEntityPageOffset( "athletes",
             "eyJzZWFyY2hDcml0ZXJpYSI6eyJkYXRhLnBvc2l0aW9uIjoiZGVmZW5zZSIsIiRvciI6W3sib3duZXJJZCI6IjBiOWZjNzkwLWUwY2MtNDhhYy1iZjM3LTk4NzQzOWY3ZTViMiJ9LHsiYWNsLm90aGVyIjp7IiRuZSI6MH19XX0sInNvcnRDcml0ZXJpYSI6eyJjcmVhdGVkQXQiOjF9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoyMCwicGFnZU51bWJlciI6MSwiZG9Db3VudCI6ZmFsc2V9LCJvcHRpb25zIjpudWxsfQ",
             1,
             function(result)
