@@ -92,6 +92,10 @@ function BCCustomEntity() {
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
+
+	/**
+     * @deprecated Use getEntityPage() instead
+     */
 	bc.customEntity.getPage = function(entityType, rowsPerPage, searchJson, sortJson, doCount, callback) {
 		var message = {
 			entityType : entityType,
@@ -142,6 +146,10 @@ function BCCustomEntity() {
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
+
+	 /**
+     * @deprecated Use getEntityPageOffset() instead
+     */
 	bc.customEntity.getPageOffset = function(entityType, context, pageOffset, callback) {
 		var message = {
 			entityType : entityType,
@@ -156,8 +164,7 @@ function BCCustomEntity() {
 			callback : callback
 		});
 	};
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////
+
 		/**
 	 * Creates new custom entity.
 	 *
@@ -184,7 +191,6 @@ function BCCustomEntity() {
 			callback : callback
 		});
 	};
-	//////////////////////////////////////////////////////////////////////////
 
 
 	/**
