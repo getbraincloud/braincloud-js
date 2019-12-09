@@ -110,6 +110,26 @@ function BCCustomEntity() {
 		});
 	};
 
+	/** 
+	* @param context The json context for the page request.
+	*                   See the portal appendix documentation for format.
+	* @param entityType
+	* @param callback The callback object
+	*/
+	bc.customEntity.getEntityPage = function(entityType, context, callback) {
+		var message = {
+			entityType : entityType,
+			context : context
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_CUSTOM_ENTITY,
+			operation : bc.customEntity.OPERATION_GET_ENTITY_PAGE,
+			data : message,
+			callback : callback
+		});
+	};
+
 	/**
 	 * Creates new custom entity.
 	 *

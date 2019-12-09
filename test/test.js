@@ -991,17 +991,41 @@ async function testCustomEntity() {
         );
     });
 
-    await asyncTest("getPage()", function() {
-        bc.customEntity.getPage( entityType, 20,
-            {"data.position" : "defense" },
-            { createdAt : 1 },
-            false,
+    var context = {
+        pagination : {
+            rowsPerPage : 50,
+            pageNumber : 1
+        }
+    };
+    var returnedContext;
+
+    await asyncTest("getEntityPage()", function() {
+        bc.customEntity.getEntityPage( "athletes", context,
             function(result)
             {
                 equal(result.status,200, JSON.stringify(result)); resolve_test();
             }
         );
     });
+    ////////////////////////////////////////////////////
+    // var context = {
+    //     pagination : {
+    //         rowsPerPage : 50,
+    //         pageNumber : 1
+    //     },
+    //     searchCriteria : {
+    //         entityType : "testGlobalEntity"
+    //     }
+    // };
+    // var returnedContext;
+
+    // await asyncTest("getPage()", function() {
+    //     bc.globalEntity.getPage(context, function(result) {
+    //         equal(result.status, 200, JSON.stringify(result));
+    //         returnedContext = result["data"]["context"];
+    //         resolve_test();
+    //     });
+    // });
 
     await asyncTest("getPageOffset()", function() {
         bc.customEntity.getPageOffset( entityType,
