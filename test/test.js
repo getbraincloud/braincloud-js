@@ -5595,6 +5595,93 @@ async function testLobby() {
                 resolve_test();
             });
     });
+
+    // This should fail because we didn't get the regions yet
+    await asyncTest("pingRegions()", 2, () =>
+    {
+        bc.lobby.pingRegions(result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expecting BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.MISSING_REQUIRED_PARAMETER, "Expecting MISSING_REQUIRED_PARAMETER");
+            resolve_test();
+        });
+    });
+
+    // Trying to call a function <>withPingData without having fetched pings
+    await asyncTest("findOrCreateLobbyWithPingData() without pings", 2, () =>
+    {
+        bc.lobby.findOrCreateLobbyWithPingData("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expecting BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.MISSING_REQUIRED_PARAMETER, "Expecting MISSING_REQUIRED_PARAMETER");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getRegionsForLobbies()", 1, () =>
+    {
+        bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("pingRegions()", 4, () =>
+    {
+        bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.lobby.pingRegions(result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                console.log("PINGS 1: " + JSON.stringify(result));
+                    
+                // Do it again to make sure things are not cached and resulted pings not too low.
+                // We ping in different regions so it shouldn't be < 10ms
+                bc.lobby.pingRegions(result =>
+                {
+                    equal(result.status, 200, "Expecting 200");
+                    console.log("PINGS 2: " + JSON.stringify(result));
+                    let regionNames = Object.keys(result.data);
+                    let avg = regionNames.reduce((total, regionName) => total + result.data[regionName], 0)
+                    avg /= regionNames.length
+                    greaterEq(avg, regionNames.length * 10, "Pings too small. Cached HTTP requests?");
+                    resolve_test();
+                });
+            });
+        });
+    });
+
+    // Call all the <>WithPingData functions and make sure they go through braincloud
+    await asyncTest("<>WithPingData()", 6, () =>
+    {
+        bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.lobby.pingRegions(result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                bc.lobby.findOrCreateLobbyWithPingData("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
+                {
+                    equal(result.status, 200, "Expecting 200");
+                    bc.lobby.joinLobbyWithPingData("wrongLobbyId", true, {}, "red", null, result =>
+                    {
+                        equal(result.status, bc.statusCodes.BAD_REQUEST, "Expecting bc.statusCodes.BAD_REQUEST");
+                        bc.lobby.findLobbyWithPingData("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, true, {}, "all", result =>
+                        {
+                            equal(result.status, 200, "Expecting 200");
+                            bc.lobby.createLobbyWithPingData("MATCH_UNRANKED", 0, null, true, {}, "all", {}, result =>
+                            {
+                                equal(result.status, 200, "Expecting 200");
+                                resolve_test();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
 }
 
 async function testPresence()
