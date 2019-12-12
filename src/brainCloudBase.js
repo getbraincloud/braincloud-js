@@ -509,7 +509,7 @@ function BrainCloudManager ()
 
     bcm.fakeErrorResponse = function(statusCode, reasonCode, message)
     {
-        var responses = [bcm._inProgressQueue.length];
+        var responses = [];
 
         var response = {};
         response.status = statusCode;
@@ -519,13 +519,13 @@ function BrainCloudManager ()
 
         for (var i = 0; i < bcm._inProgressQueue.length; i++)
         {
-            responses[i] = response;
+            responses.push(response);
         }
 
         bcm.handleSuccessResponse(
-            {
-                "responses": responses
-            });
+        {
+            "responses": responses
+        });
     }
 
     bcm.setHeader = function(xhr)
