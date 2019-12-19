@@ -10,6 +10,8 @@ function BCCustomEntity() {
 	bc.customEntity.OPERATION_GET_COUNT= "GET_COUNT";
 	bc.customEntity.OPERATION_GET_PAGE= "GET_PAGE";
 	bc.customEntity.OPERATION_GET_PAGE_OFFSET= "GET_PAGE_BY_OFFSET";
+	bc.customEntity.OPERATION_GET_ENTITY_PAGE= "GET_ENTITY_PAGE";
+	bc.customEntity.OPERATION_GET_ENTITY_PAGE_OFFSET= "GET_ENTITY_PAGE_OFFSET";
 	bc.customEntity.OPERATION_READ_ENTITY= "READ_ENTITY";
 	bc.customEntity.OPERATION_UPDATE_ENTITY= "UPDATE_ENTITY";
 	bc.customEntity.OPERATION_UPDATE_ENTITY_FIELDS= "UPDATE_ENTITY_FIELDS";
@@ -90,6 +92,10 @@ function BCCustomEntity() {
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
+
+	/**
+     * @deprecated Use getEntityPage() instead
+     */
 	bc.customEntity.getPage = function(entityType, rowsPerPage, searchJson, sortJson, doCount, callback) {
 		var message = {
 			entityType : entityType,
@@ -108,6 +114,26 @@ function BCCustomEntity() {
 		});
 	};
 
+	/** 
+	* @param context The json context for the page request.
+	*                   See the portal appendix documentation for format.
+	* @param entityType
+	* @param callback The callback object
+	*/
+	bc.customEntity.getEntityPage = function(entityType, context, callback) {
+		var message = {
+			entityType : entityType,
+			context : context
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_CUSTOM_ENTITY,
+			operation : bc.customEntity.OPERATION_GET_ENTITY_PAGE,
+			data : message,
+			callback : callback
+		});
+	};
+
 	/**
 	 * Creates new custom entity.
 	 *
@@ -120,6 +146,10 @@ function BCCustomEntity() {
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
+
+	 /**
+     * @deprecated Use getEntityPageOffset() instead
+     */
 	bc.customEntity.getPageOffset = function(entityType, context, pageOffset, callback) {
 		var message = {
 			entityType : entityType,
@@ -134,6 +164,34 @@ function BCCustomEntity() {
 			callback : callback
 		});
 	};
+
+		/**
+	 * Creates new custom entity.
+	 *
+	 * @param entityType
+	 *            {string} The entity type as defined by the user
+	 * @param context
+	 * 			  {string} context
+	 * @param pageOffset
+	 *            {int} 
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.customEntity.getEntityPageOffset = function(entityType, context, pageOffset, callback) {
+		var message = {
+			entityType : entityType,
+			context : context,
+			pageOffset : pageOffset
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_CUSTOM_ENTITY,
+			operation : bc.customEntity.OPERATION_GET_ENTITY_PAGE_OFFSET,
+			data : message,
+			callback : callback
+		});
+	};
+
 
 	/**
 	 * Reads a custom entity.

@@ -991,11 +991,16 @@ async function testCustomEntity() {
         );
     });
 
-    await asyncTest("getPage()", function() {
-        bc.customEntity.getPage( entityType, 20,
-            {"data.position" : "defense" },
-            { createdAt : 1 },
-            false,
+    var context = {
+        pagination : {
+            rowsPerPage : 50,
+            pageNumber : 1
+        }
+    };
+    var returnedContext;
+
+    await asyncTest("getEntityPage()", function() {
+        bc.customEntity.getEntityPage( "athletes", context,
             function(result)
             {
                 equal(result.status,200, JSON.stringify(result)); resolve_test();
@@ -1003,8 +1008,8 @@ async function testCustomEntity() {
         );
     });
 
-    await asyncTest("getPageOffset()", function() {
-        bc.customEntity.getPageOffset( entityType,
+    await asyncTest("getEntityPageOffset()", function() {
+        bc.customEntity.getEntityPageOffset( "athletes",
             "eyJzZWFyY2hDcml0ZXJpYSI6eyJkYXRhLnBvc2l0aW9uIjoiZGVmZW5zZSIsIiRvciI6W3sib3duZXJJZCI6IjBiOWZjNzkwLWUwY2MtNDhhYy1iZjM3LTk4NzQzOWY3ZTViMiJ9LHsiYWNsLm90aGVyIjp7IiRuZSI6MH19XX0sInNvcnRDcml0ZXJpYSI6eyJjcmVhdGVkQXQiOjF9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoyMCwicGFnZU51bWJlciI6MSwiZG9Db3VudCI6ZmFsc2V9LCJvcHRpb25zIjpudWxsfQ",
             1,
             function(result)
@@ -5589,6 +5594,93 @@ async function testLobby() {
                 ok(false, error);
                 resolve_test();
             });
+    });
+
+    // This should fail because we didn't get the regions yet
+    await asyncTest("pingRegions()", 2, () =>
+    {
+        bc.lobby.pingRegions(result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expecting BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.MISSING_REQUIRED_PARAMETER, "Expecting MISSING_REQUIRED_PARAMETER");
+            resolve_test();
+        });
+    });
+
+    // Trying to call a function <>withPingData without having fetched pings
+    await asyncTest("findOrCreateLobbyWithPingData() without pings", 2, () =>
+    {
+        bc.lobby.findOrCreateLobbyWithPingData("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
+        {
+            equal(result.status, bc.statusCodes.BAD_REQUEST, "Expecting BAD_REQUEST");
+            equal(result.reason_code, bc.reasonCodes.MISSING_REQUIRED_PARAMETER, "Expecting MISSING_REQUIRED_PARAMETER");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getRegionsForLobbies()", 1, () =>
+    {
+        bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("pingRegions()", 4, () =>
+    {
+        bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.lobby.pingRegions(result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                console.log("PINGS 1: " + JSON.stringify(result));
+                    
+                // Do it again to make sure things are not cached and resulted pings not too low.
+                // We ping in different regions so it shouldn't be < 10ms
+                bc.lobby.pingRegions(result =>
+                {
+                    equal(result.status, 200, "Expecting 200");
+                    console.log("PINGS 2: " + JSON.stringify(result));
+                    let regionNames = Object.keys(result.data);
+                    let avg = regionNames.reduce((total, regionName) => total + result.data[regionName], 0)
+                    avg /= regionNames.length
+                    greaterEq(avg, regionNames.length * 10, "Pings too small. Cached HTTP requests?");
+                    resolve_test();
+                });
+            });
+        });
+    });
+
+    // Call all the <>WithPingData functions and make sure they go through braincloud
+    await asyncTest("<>WithPingData()", 6, () =>
+    {
+        bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.lobby.pingRegions(result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                bc.lobby.findOrCreateLobbyWithPingData("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
+                {
+                    equal(result.status, 200, "Expecting 200");
+                    bc.lobby.joinLobbyWithPingData("wrongLobbyId", true, {}, "red", null, result =>
+                    {
+                        equal(result.status, bc.statusCodes.BAD_REQUEST, "Expecting bc.statusCodes.BAD_REQUEST");
+                        bc.lobby.findLobbyWithPingData("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, true, {}, "all", result =>
+                        {
+                            equal(result.status, 200, "Expecting 200");
+                            bc.lobby.createLobbyWithPingData("MATCH_UNRANKED", 0, null, true, {}, "all", {}, result =>
+                            {
+                                equal(result.status, 200, "Expecting 200");
+                                resolve_test();
+                            });
+                        });
+                    });
+                });
+            });
+        });
     });
 }
 
