@@ -44,6 +44,7 @@ function BrainCloudClient() {
         BCPushNotifications.apply(bcc);
         BCReasonCodes.apply(bcc);
         BCRedemptionCodes.apply(bcc);
+        BCRelay.apply(bcc);
         BCRTT.apply(bcc);
         BCS3Handler.apply(bcc);
         BCScript.apply(bcc);
@@ -55,6 +56,7 @@ function BrainCloudClient() {
 
         bcc.brainCloudManager = new BrainCloudManager();
         bcc.brainCloudRttComms = new BrainCloudRttComms(this);
+        bcc.brainCloudRelayComms = new BrainCloudRelayComms(this);
 
         bcc.brainCloudManager.abtests = bcc.abtests;
         bcc.brainCloudManager.asyncMatch = bcc.asyncMatch;
@@ -88,6 +90,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.pushNotification = bcc.pushNotification;
         bcc.brainCloudManager.reasonCodes = bcc.reasonCodes;
         bcc.brainCloudManager.redemptionCode = bcc.redemptionCode;
+        bcc.brainCloudManager.relay = bcc.relay;
         bcc.brainCloudManager.rttService = bcc.rttService;
         bcc.brainCloudManager.s3Handling = bcc.s3Handling;
         bcc.brainCloudManager.script = bcc.script;
@@ -101,10 +104,12 @@ function BrainCloudClient() {
 
         bcc.brainCloudRttComms.rtt = bcc.rtt;
         bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
+        bcc.brainCloudRelayComms.brainCloudClient = bcc;
 
     } else {
         bcc.brainCloudManager = window.brainCloudManager = window.brainCloudManager || {};
         bcc.brainCloudRttComms = window.brainCloudRttComms = window.brainCloudRttComms || {};
+        bcc.brainCloudRelayComms = window.brainCloudRelayComms = window.brainCloudRelayComms || {};
 
         bcc.brainCloudClient = window.brainCloudClient = window.brainCloudClient || {};
 
@@ -140,6 +145,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.pushNotification = bcc.brainCloudClient.pushNotification = bcc.brainCloudClient.pushNotification || {};
         bcc.brainCloudManager.reasonCodes = bcc.brainCloudClient.reasonCodes = bcc.brainCloudClient.reasonCodes || {};
         bcc.brainCloudManager.redemptionCode = bcc.brainCloudClient.redemptionCode = bcc.brainCloudClient.redemptionCode || {};
+        bcc.brainCloudManager.relay = bcc.brainCloudClient.relay = bcc.brainCloudClient.relay || {};
         bcc.brainCloudManager.rttService = bcc.brainCloudClient.rttService = bcc.brainCloudClient.rttService || {};
         bcc.brainCloudManager.s3Handling = bcc.brainCloudClient.s3Handling = bcc.brainCloudClient.s3Handling || {};
         bcc.brainCloudManager.script = bcc.brainCloudClient.script = bcc.brainCloudClient.script || {};
@@ -153,10 +159,11 @@ function BrainCloudClient() {
 
         bcc.brainCloudRttComms.rtt = bcc.brainCloudClient.rtt = bcc.brainCloudClient.rtt || {};
         bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
+        bcc.brainCloudRelayComms.brainCloudClient = bcc; // Circular reference
     }
 
 
-    bcc.version = "4.3.5";
+    bcc.version = "4.3.6";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -346,12 +353,14 @@ function BrainCloudClient() {
     bcc.enableLogging = function(enableLogging) {
         bcc.brainCloudManager.setDebugEnabled(enableLogging);
         bcc.brainCloudRttComms.setDebugEnabled(enableLogging);
+        bcc.brainCloudRelayComms.setDebugEnabled(enableLogging);
     };
 
 // deprecated
     bcc.setDebugEnabled = function(debugEnabled) {
         bcc.brainCloudManager.setDebugEnabled(debugEnabled);
         bcc.brainCloudRttComms.setDebugEnabled(debugEnabled);
+        bcc.brainCloudRelayComms.setDebugEnabled(debugEnabled);
     };
 
     /**
@@ -375,6 +384,7 @@ function BrainCloudClient() {
 
         bcc.brainCloudManager.resetCommunication();
         bcc.brainCloudRttComms.disableRTT();
+        bcc.brainCloudRelayComms.disconnect();
     };
 
     /**
