@@ -180,7 +180,7 @@ function BrainCloudRelayComms(_client) {
         var payload = {
             lobbyId: bcr.connectInfo.lobbyId,
             profileId: bcr.m_client.getProfileId(),
-            passcode: bcr.connectInfo.passcode,
+            passcode: bcr.connectInfo.passcode
         };
 
         bcr.sendJson(bcr.CL2RS_CONNECTION, payload);
