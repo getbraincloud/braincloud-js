@@ -80,7 +80,7 @@ function BrainCloudRelayComms(_client) {
         }
 
         if (!host || !port || !passcode || !lobbyId) {
-            setTimeout(() => {
+            setTimeout(function() {
                 if (bcr.connectCallback.failure) {
                     bcr.connectCallback.failure("Invalid arguments")
                 }
