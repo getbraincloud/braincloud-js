@@ -110,6 +110,9 @@ function BrainCloudManager ()
         if(sessionId !== null || sessionId !== "")
         {
             bcm._isAuthenticated = true;
+        }
+        else
+        {
             bcm._packetId = -1; 
         }
         bcm._sessionId = sessionId;
