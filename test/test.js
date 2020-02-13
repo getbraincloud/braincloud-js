@@ -4805,16 +4805,7 @@ async function testWrapper()
             });
 
     });
-
-    await asyncTest("resetEmailPassword()", function() {
-        bc.resetEmailPassword(
-            "ryanr@bitheads.com",
-            function(result) {
-                equal(result.status, 200, JSON.stringify(result));
-                resolve_test();
-        });
-    });
-
+    
     await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.resetEmailPasswordAdvanced(
             "ryanr@bitheads.com",
