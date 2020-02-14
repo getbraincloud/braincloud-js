@@ -19,8 +19,12 @@ function BCAuthentication() {
 	bc.authentication.OPERATION_AUTHENTICATE = "AUTHENTICATE";
 	bc.authentication.OPERATION_RESET_EMAIL_PASSWORD = "RESET_EMAIL_PASSWORD";
 	bc.authentication.OPERATION_RESET_EMAIL_PASSWORD_ADVANCED = "RESET_EMAIL_PASSWORD_ADVANCED";
+	bc.authentication.OPERATION_RESET_EMAIL_PASSWORD_WITH_EXPIRY = "RESET_EMAIL_PASSWORD_WITH_EXPIRY";
+	bc.authentication.OPERATION_RESET_EMAIL_PASSWORD_ADVANCED_WITH_EXPIRY = "RESET_EMAIL_PASSWORD_ADVANCED_WITH_EXPIRY";
 	bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD = "RESET_UNIVERSAL_ID_PASSWORD";
 	bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD_ADVANCED = "RESET_UNIVERSAL_ID_PASSWORD_ADVANCED";
+	bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD_WITH_EXPIRY = "RESET_UNIVERSAL_ID_PASSWORD_WITH_EXPIRY";
+	bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD_ADVANCED_WITH_EXPIRY = "RESET_UNIVERSAL_ID_PASSWORD_ADVANCED_WITH_EXPIRY";
 
 	bc.authentication.AUTHENTICATION_TYPE_ANONYMOUS = "Anonymous";
 	bc.authentication.AUTHENTICATION_TYPE_EMAIL = "Email";
@@ -29,6 +33,8 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_APPLE = "Apple";
 	bc.authentication.AUTHENTICATION_TYPE_GOOGLE = "Google";
 	bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID = "GoogleOpenId";
+	bc.authentication.AUTHENTICATION_TYPE_APPLE = "Apple";
+
 	bc.authentication.AUTHENTICATION_TYPE_UNIVERSAL = "Universal";
 	bc.authentication.AUTHENTICATION_TYPE_GAME_CENTER = "GameCenter";
 	bc.authentication.AUTHENTICATION_TYPE_STEAM = "Steam";
@@ -196,6 +202,28 @@ function BCAuthentication() {
 	};
 
 	/**
+	 * Authenticate the user with brainCloud using their Facebook Credentials
+	 *
+	 * Service Name - authenticationV2
+	 * Service Operation - AUTHENTICATE
+	 *
+	 * @param appleId {string} - The Facebook id of the user
+	 * @param appleToken {string} - The validated token from the Facebook SDK
+	 * (that will be further validated when sent to the bC service)
+	 * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+	 * @param responseHandler {function} - The user callback method
+	 */
+	bc.authentication.authenticateApple = function(appleId, appleToken, forceCreate, responseHandler) {
+		bc.authentication.authenticate(
+			appleId,
+			appleToken,
+			bc.authentication.AUTHENTICATION_TYPE_APPLE,
+			null,
+			forceCreate,
+			responseHandler);
+	};
+
+	/**
 	 * Authenticate the user using their Game Center id
 	 *
 	 * Service Name - authenticationV2
@@ -276,6 +304,28 @@ function BCAuthentication() {
 		bc.authentication.authenticate(
 			googleUserAccountEmail,
 			IdToken,
+			bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID,
+			null,
+			forceCreate,
+			responseHandler);
+	};
+
+	/**
+	 * Authenticate the user using a google user id (email address) and google authentication token.
+	 *
+	 * Service Name - authenticationV2
+	 * Service Operation - AUTHENTICATE
+	 *
+	 * @param googleOpenId {string} - String representation of google+ userid (email)
+	 * @param googleToken {string} - The authentication token derived via the google apis.
+	 * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+	 * If set to false, you need to handle errors in the case of new players.
+	 * @param responseHandler {function} - The user callback method
+	 */
+	bc.authentication.authenticateGoogleOpenId = function(googleOpenId, googleToken, forceCreate, responseHandler) {
+		bc.authentication.authenticate(
+			googleOpenId,
+			googleToken,
 			bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID,
 			null,
 			forceCreate,
@@ -440,6 +490,81 @@ function BCAuthentication() {
 		};
 		bc.brainCloudManager.sendRequest(request);
 	};
+
+		/**
+	 * Reset Email password - sends a password reset email to the specified address
+	 *
+	 * Service Name - authenticationV2
+	 * Operation - ResetEmailPassword
+	 *
+	 * @param email {string} - The email address to send the reset email to.
+	 * @param tokenTtlInMinutes
+	 * @param responseHandler {function} - The user callback method
+	 *
+	 * Note the follow error reason codes:
+	 *
+	 * SECURITY_ERROR (40209) - If the email address cannot be found.
+	 */
+	bc.authentication.resetEmailPasswordWithExpiry = function(email, tokenTtlInMinutes, responseHandler) {
+		var callerCallback = responseHandler;
+		var appId = bc.brainCloudManager.getAppId();
+
+		var request = {
+			service: bc.SERVICE_AUTHENTICATION,
+			operation: bc.authentication.OPERATION_RESET_EMAIL_PASSWORD_WITH_EXPIRY,
+			data: {
+				gameId: appId,
+				externalId: email,
+				tokenTtlInMinutes:tokenTtlInMinutes
+			},
+			callerCallback: responseHandler,
+			callback: function(result) {
+				if (result && result.status == 200) {
+
+				}
+				if (callerCallback) {
+					callerCallback(result);
+				}
+				//console.log("CallerCallback: " + callerCallback);
+			}
+
+		};
+		//console.log("Request: " + JSON.stringify(request));
+		bc.brainCloudManager.sendRequest(request);
+    };
+
+	/**
+	 * Reset Email password with service parameters - sends a password reset email to the specified address
+	 *
+	 * Service Name - authenticationV2
+	 * Operation - ResetEmailPassword
+	 *
+     * @param appId {string} - The application Id
+	 * @param email {string} - The email address to send the reset email to.
+     * @param serviceParams {json} - Parameters to send to the email service. See the documentation for
+	 *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
+	 * @param responseHandler {function} - The user callback method
+	 *
+	 * Note the follow error reason codes:
+	 *
+	 * SECURITY_ERROR (40209) - If the email address cannot be found.
+	 */
+	bc.authentication.resetEmailPasswordAdvancedWithExpiry = function(emailAddress, serviceParams, tokenTtlInMinutes, responseHandler) {
+		var appId = bc.brainCloudManager.getAppId();
+
+		var request = {
+			service: bc.SERVICE_AUTHENTICATION,
+			operation: bc.authentication.OPERATION_RESET_EMAIL_PASSWORD_ADVANCED_WITH_EXPIRY,
+			data: {
+                gameId: appId,
+                emailAddress: emailAddress,
+				serviceParams: serviceParams,
+				tokenTtlInMinutes:tokenTtlInMinutes
+            },
+            callback: responseHandler
+		};
+		bc.brainCloudManager.sendRequest(request);
+	};
 	
 		/**
 	 * Reset Universal Id password
@@ -507,6 +632,82 @@ function BCAuthentication() {
                 gameId: appId,
                 universalId: universalId,
 				serviceParams: serviceParams
+            },
+            callback: responseHandler
+		};
+		bc.brainCloudManager.sendRequest(request);
+	};
+	
+	/**
+	 * Reset Universal Id password
+	 *
+	 * Service Name - authenticationV2
+	 * Operation - ResetUniversalIdPassord
+	 *
+	 * @param universalId {string} - The email address to send the reset email to.
+	 * @param responseHandler {function} - The user callback method
+	 * @param tokenTtlInMinutes
+	 *
+	 * Note the follow error reason codes:
+	 *
+	 * SECURITY_ERROR (40209) - If the email address cannot be found.
+	 */
+	bc.authentication.resetUniversalIdPasswordWithExpiry = function(universalId, tokenTtlInMinutes, responseHandler) {
+		var callerCallback = responseHandler;
+		var appId = bc.brainCloudManager.getAppId();
+
+		var request = {
+			service: bc.SERVICE_AUTHENTICATION,
+			operation: bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD,
+			data: {
+				gameId: appId,
+				universalId: universalId,
+				tokenTtlInMinutes:tokenTtlInMinutes
+			},
+			callerCallback: responseHandler,
+			callback: function(result) {
+				if (result && result.status == 200) {
+
+				}
+				if (callerCallback) {
+					callerCallback(result);
+				}
+				//console.log("CallerCallback: " + callerCallback);
+			}
+
+		};
+		//console.log("Request: " + JSON.stringify(request));
+		bc.brainCloudManager.sendRequest(request);
+    };
+
+	/**
+	 * Reset Universal Id password wth template options
+	 *
+	 * Service Name - authenticationV2
+	 * Operation - ResetUniversalIdPasswordAdvanced
+	 *
+     * @param appId {string} - The application Id
+	 * @param universalId {string} - the universalId
+     * @param serviceParams {json} - Parameters to send to the email service. See the documentation for
+	 *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
+	 * @param tokenTtlInMinutes
+	 * @param responseHandler {function} - The user callback method
+	 *
+	 * Note the follow error reason codes:
+	 *
+	 * SECURITY_ERROR (40209) - If the email address cannot be found.
+	 */
+	bc.authentication.resetUniversalIdPasswordAdvancedWithExpiry = function(universalId, serviceParams, tokenTtlInMinutes, responseHandler) {
+		var appId = bc.brainCloudManager.getAppId();
+
+		var request = {
+			service: bc.SERVICE_AUTHENTICATION,
+			operation: bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD_ADVANCED,
+			data: {
+                gameId: appId,
+                universalId: universalId,
+				serviceParams: serviceParams,
+				tokenTtlInMinutes: tokenTtlInMinutes
             },
             callback: responseHandler
 		};

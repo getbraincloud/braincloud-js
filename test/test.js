@@ -38,6 +38,7 @@ console.log("filters: " + filters);
 
 var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
+var UserB = createUser("UserC", getRandomInt(0, 20000000));
 
 var DEFAULT_TIMEOUT = 5000;
 
@@ -633,6 +634,62 @@ async function testAuthentication() {
                 });
             });
 
+            // await asyncTest("resetEmailPasswordWithExpiry()", function() {
+            //     bc.brainCloudClient.authentication.resetEmailPasswordWithExpiry(
+            //             "ryanr@bitheads.com",
+            //             1,
+            //             function(result) {
+            //                 equal(result.status, 200, JSON.stringify(result));
+            //                 resolve_test();
+            //             });
+            // });
+
+            // await asyncTest("authenticateUniversal()", function() {
+
+            //     bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+        
+            //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
+            //             UserA.password, true, function(result) {
+            //                 equal(result.status, 200, JSON.stringify(result));
+            //                 resolve_test();
+            //             });
+            // });
+        
+            // await asyncTest("resetEmailPasswordAdvancedWithExpiry()", function() {
+
+            //     bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+        
+            //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
+            //             UserA.password, true, function(result) {
+            //                 equal(result.status, 200, JSON.stringify(result));
+            //                 resolve_test();
+            //             });
+
+
+            //     bc.brainCloudClient.authentication.resetEmailPasswordAdvancedWithExpiry(
+            //             "ryanr@bitheads.com",
+            //             {
+            //                 fromAddress: "ryanr@bitheads.com",
+            //                 fromName: "fromName",
+            //                 replyToAddress: "ryanr@bitheads.com",
+            //                 replyToName: "replyToName",
+            //                 templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            //                 substitutions: {
+            //                   [":name"]: "John Doe",
+            //                   [":resetLink"]: "www.dummuyLink.io"
+            //                 },
+            //                 categories: [
+            //                   "category1",
+            //                   "category2"
+            //                 ]
+            //             },
+            //             1,
+            //             function(result) {
+            //                 equal(result.status, 200,  JSON.stringify(result));
+            //                 resolve_test();
+            //             });
+            //         });
+
     //NO SESSION!?
     await asyncTest("resetUniversalIdPassword()", function() {
         bc.brainCloudClient.authentication.resetUniversalIdPassword(
@@ -650,6 +707,30 @@ async function testAuthentication() {
         bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
             UserA.id,
             content,
+            function(result) {
+            equal(result.status, 403);
+            resolve_test();
+            });
+    });
+
+    await asyncTest("resetUniversalIdPasswordWithExpiry()", function() {
+        bc.brainCloudClient.authentication.resetUniversalIdPasswordWithExpiry(
+            UserA.id,
+            1,
+            function(result) {
+            equal(result.status, 403);
+            resolve_test();
+            });
+    });
+
+
+    await asyncTest("resetUniversalIdPasswordAdvancedWithExpiry()", function() {
+        content = "{\"templateId\": \"d-template-id-guid\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
+
+        bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvancedWithExpiry(
+            UserA.id,
+            content,
+            1,
             function(result) {
             equal(result.status, 403);
             resolve_test();
@@ -2494,6 +2575,7 @@ async function testMail() {
                 resolve_test();
             });
     });
+    
 
 }
 
@@ -2938,6 +3020,22 @@ async function testPlayerState() {
 
     await asyncTest("setUserStatus()", function() {
         bc.playerState.setUserStatus("a_Status_Name", 60, {},
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("updateTimeZoneOffset()", function() {
+        bc.playerState.updateTimeZoneOffset(1,
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("updateLanguageCode()", function() {
+        bc.playerState.updateLanguageCode("fr",
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();

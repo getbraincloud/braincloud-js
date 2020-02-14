@@ -33,6 +33,9 @@ function BCPlayerState() {
 	bc.playerState.OPERATION_GET_USER_STATUS = "GET_USER_STATUS";
 	bc.playerState.OPERATION_SET_USER_STATUS = "SET_USER_STATUS";
 
+	bc.playerState.OPERATION_UPDATE_TIME_ZONE_OFFSET = "UPDATE_TIMEZONE_OFFSET";
+	bc.playerState.OPERATION_UPDATE_LANGUAGE_CODE = "UPDATE_LANGUAGE_CODE";
+
 	/**
 	 * @deprecated Use deleteUser instead - Removal after September 1 2017
 	 */
@@ -154,6 +157,46 @@ function BCPlayerState() {
 			operation : bc.playerState.REMOVE_ATTRIBUTES,
 			data : {
 				attributes : attributes
+			},
+			callback : callback
+		});
+	};
+
+	/**
+	 * Remove user's attributes.
+	 *
+	 * Service Name - PlayerState
+	 * Service Operation - RemoveAttributes
+	 *
+	 * @param timeZoneOffset Json array of attribute names.
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.playerState.updateTimeZoneOffset = function(timeZoneOffset, callback) {
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYERSTATE,
+			operation : bc.playerState.OPERATION_UPDATE_TIME_ZONE_OFFSET,
+			data : {
+				timeZoneOffset : timeZoneOffset
+			},
+			callback : callback
+		});
+	};
+
+	/**
+	 * Remove user's attributes.
+	 *
+	 * Service Name - PlayerState
+	 * Service Operation - RemoveAttributes
+	 *
+	 * @param languageCode Json array of attribute names.
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.playerState.updateLanguageCode = function(languageCode, callback) {
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_PLAYERSTATE,
+			operation : bc.playerState.OPERATION_UPDATE_LANGUAGE_CODE,
+			data : {
+				languageCode : languageCode
 			},
 			callback : callback
 		});
