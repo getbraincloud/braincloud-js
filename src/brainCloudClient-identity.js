@@ -45,7 +45,9 @@ function BCIdentity() {
 		steam : "Steam",
 		blockChain : "BlockChain",
 		google : "Google",
+		googleOpenId : "GoogleOpenId",
 		twitter : "Twitter",
+		twitter : "Apple",
 		parse : "Parse",
 		external : "External",
 		unknown : "UNKNOWN"
@@ -369,6 +371,118 @@ function BCIdentity() {
 	 */
 	bc.identity.detachGoogleIdentity = function(googleId, continueAnon, callback) {
 		bc.identity.detachIdentity(googleId, bc.authentication.AUTHENTICATION_TYPE_GOOGLE, continueAnon, callback);
+	};
+
+	/**
+	 * Attach the user's Google credentials to the current profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - Attach
+	 *
+	 * @param googleOpenId The Google id of the user
+	 * @param authenticationToken The validated token from the Google SDK
+	 *   (that will be further validated when sent to the bC service)
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 * Errors to watch for:  SWITCHING_PROFILES - this means that the Google identity you provided
+	 * already points to a different profile.  You will likely want to offer the player the
+	 * choice to *SWITCH* to that profile, or *MERGE* the profiles.
+	 *
+	 * To switch profiles, call ClearSavedProfileID() and call AuthenticateGoogle().
+	 */
+	bc.identity.attachGoogleOpenIdIdentity = function(googleOpenId, authenticationToken, callback) {
+		bc.identity.attachIdentity(googleOpenId, authenticationToken, bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID, callback);
+	};
+
+	/**
+	 * Merge the profile associated with the provided Google credentials with the
+	 * current profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - Merge
+	 *
+	 * @param googleOpenId The Google id of the user
+	 * @param authenticationToken The validated token from the Google SDK
+	 *   (that will be further validated when sent to the bC service)
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 */
+	bc.identity.mergeGoogleIdentity = function(googleOpenId, authenticationToken, callback) {
+		bc.identity.mergeIdentity(googleOpenId, authenticationToken, bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID, callback);
+	};
+
+	/**
+	 * Detach the Google identity from this profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - Detach
+	 *
+	 * @param googleOpenId The Google id of the user
+	 * @param continueAnon Proceed even if the profile will revert to anonymous?
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 * Watch for DOWNGRADING_TO_ANONYMOUS_ERROR - occurs if you set continueAnon to false, and
+	 * disconnecting this identity would result in the profile being anonymous (which means that
+	 * the profile wouldn't be retrievable if the user loses their device)
+	 */
+	bc.identity.detachGoogleIdentity = function(googleOpenId, continueAnon, callback) {
+		bc.identity.detachIdentity(googleOpenId, bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID, continueAnon, callback);
+	};
+
+		/**
+	 * Attach the user's Google credentials to the current profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - Attach
+	 *
+	 * @param appleId The Google id of the user
+	 * @param authenticationToken The validated token from the Google SDK
+	 *   (that will be further validated when sent to the bC service)
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 * Errors to watch for:  SWITCHING_PROFILES - this means that the Google identity you provided
+	 * already points to a different profile.  You will likely want to offer the player the
+	 * choice to *SWITCH* to that profile, or *MERGE* the profiles.
+	 *
+	 * To switch profiles, call ClearSavedProfileID() and call AuthenticateGoogle().
+	 */
+	bc.identity.attachAppleIdentity = function(appleId, authenticationToken, callback) {
+		bc.identity.attachIdentity(appleId, authenticationToken, bc.authentication.AUTHENTICATION_TYPE_APPLE, callback);
+	};
+
+	/**
+	 * Merge the profile associated with the provided Google credentials with the
+	 * current profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - Merge
+	 *
+	 * @param appleId The Google id of the user
+	 * @param authenticationToken The validated token from the Google SDK
+	 *   (that will be further validated when sent to the bC service)
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 */
+	bc.identity.mergeAppleIdentity = function(appleId, authenticationToken, callback) {
+		bc.identity.mergeIdentity(appleId, authenticationToken, bc.authentication.AUTHENTICATION_TYPE_APPLE, callback);
+	};
+
+	/**
+	 * Detach the Google identity from this profile.
+	 *
+	 * Service Name - Identity
+	 * Service Operation - Detach
+	 *
+	 * @param appleId The Google id of the user
+	 * @param continueAnon Proceed even if the profile will revert to anonymous?
+	 * @param callback The method to be invoked when the server response is received
+	 *
+	 * Watch for DOWNGRADING_TO_ANONYMOUS_ERROR - occurs if you set continueAnon to false, and
+	 * disconnecting this identity would result in the profile being anonymous (which means that
+	 * the profile wouldn't be retrievable if the user loses their device)
+	 */
+	bc.identity.detachAppleIdentity = function(appleId, continueAnon, callback) {
+		bc.identity.detachIdentity(appleId, bc.authentication.AUTHENTICATION_TYPE_APPLE, continueAnon, callback);
 	};
 
 	/**
