@@ -8,6 +8,36 @@ If you haven't signed up or you want to log into the brainCloud portal, you can 
 
 https://portal.braincloudservers.com/
 
+## Running in nodejs without web interface (nodejs server)
+
+If you plan to run this server side in nodejs, it is possible. But it will fail to build at first because of missing web components. Simply put this into your main code file:
+```javascript
+// Set up XMLHttpRequest.
+XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+window = {
+    XMLHttpRequest: XMLHttpRequest
+};
+XMLHttpRequest.UNSENT = 0;
+XMLHttpRequest.OPENED = 1;
+XMLHttpRequest.HEADERS_RECEIVED = 2;
+XMLHttpRequest.LOADING = 3;
+XMLHttpRequest.DONE = 4;
+// Set up WebSocket.
+WebSocket = require('ws');
+// Set up LocalStorage.
+LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
+os = require('os');
+var configDir = os.homedir() + "/.bciot";
+localStorage = new LocalStorage(configDir);
+const BC = require('braincloud');
+```
+
+And make sure to have the following NPM dependencies installed:
+* braincloud
+* node-localstorage
+* ws
+* xmlhttprequest
+
 ## Releases
 
 Package | Description

@@ -50,6 +50,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.pushNotification = bcw.brainCloudClient.pushNotification;
         bcw.reasonCodes = bcw.brainCloudClient.reasonCodes;
         bcw.redemptionCode = bcw.brainCloudClient.redemptionCode;
+        bcw.relay = bcw.brainCloudClient.relay;
         bcw.rttService = bcw.brainCloudClient.rttService;
         bcw.s3Handling = bcw.brainCloudClient.s3Handling;
         bcw.script = bcw.brainCloudClient.script;
@@ -319,25 +320,78 @@ function BrainCloudWrapper(wrapperName) {
      * Service Name - authenticationV2
      * Service Operation - AUTHENTICATE
      *
-     * @param googleId {string} - String representation of google+ userid (email)
-     * @param googleToken {string} - The authentication token derived via the google apis.
+     * @param appleUserId {string} - This can be the user id OR the email of the user for the account
+     * @param identityToken {string} - The token confirming the user's identity
      * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
      * If set to false, you need to handle errors in the case of new users.
      * @param responseHandler {function} - The user callback method
      */
-    bcw.authenticateGoogle = function(googleId, googleToken, forceCreate, responseHandler) {
+    bcw.authenticateApple = function(appleUserId, identityToken, forceCreate, responseHandler) {
 
         bcw._initializeIdentity(false);
 
-        bcw.brainCloudClient.authentication.authenticateGoogle(
-            googleId,
-            googleToken,
+        bcw.brainCloudClient.authentication.authenticateApple(
+            appleUserId,
+            identityToken,
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(result);
                 responseHandler(result);
             });
     };
+
+    /**
+     * Authenticate the user using a google user id (email address) and google authentication token.
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param googleUserId {string} - String representation of google+ userId. Gotten with calls like RequestUserId
+     * @param serverAuthCode {string} - The server authentication token derived via the google apis. Gotten with calls like RequestServerAuthCode
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * If set to false, you need to handle errors in the case of new users.
+     * @param responseHandler {function} - The user callback method
+     */
+    bcw.authenticateGoogle = function(googleUserId, serverAuthCode, forceCreate, responseHandler) {
+
+        bcw._initializeIdentity(false);
+
+        bcw.brainCloudClient.authentication.authenticateGoogle(
+            googleUserId,
+            serverAuthCode,
+            forceCreate,
+            function(result) {
+                bcw._authResponseHandler(result);
+                responseHandler(result);
+            });
+    };
+
+    
+	/**
+	 * Authenticate the user using a google user id (email address) and google authentication token.
+	 *
+	 * Service Name - authenticationV2
+	 * Service Operation - AUTHENTICATE
+	 *
+	 * @param googleUserAccountEmail {string} - String representation of google+ userid (email)
+	 * @param IdToken {string} - The id token of the google account. Can get with calls like requestIdToken
+	 * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+	 * If set to false, you need to handle errors in the case of new players.
+	 * @param responseHandler {function} - The user callback method
+	 */
+	bcw.authenticateGoogleOpenId = function(googleUserAccountEmail, IdToken, forceCreate, responseHandler) {
+        
+        bcw._initializeIdentity(false);
+
+        bcw.brainCloudClient.authentication.authenticateGoogleOpenId(
+            googleUserAccountEmail,
+            IdToken,
+            forceCreate,
+            function(result) {
+                bcw._authResponseHandler(result);
+                responseHandler(result);
+            });
+	};
 
 
     /**

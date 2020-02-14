@@ -5561,6 +5561,158 @@ async function testRTT()
 }
 
 ////////////////////////////////////////
+// Relay tests
+////////////////////////////////////////
+async function testRelay() {
+    if (!module("Relay", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    // Bad connect parameters
+    await asyncTest("connect() bad arguments", 1, () =>
+    {
+        bc.relay.connect({}, result =>
+        { // Impossible
+            ok(false, "Relay Connected - This shouldn't have worked");
+            resolve_test();
+        }, error => 
+        {
+            ok(true, error);
+            resolve_test();
+        })
+    })
+
+    // Bad connect URL
+    await asyncTest("connect() bad URL", 2, () =>
+    {
+        bc.relay.connect({
+            ssl: false,
+            host: "ws://192.168.1.0",
+            port: 1234,
+            passcode: "invalid_passcode",
+            lobbyId: "invalid_lobbyId"
+        }, result =>
+        { // Impossible
+            ok(false, "Relay Connected - This shouldn't have worked");
+            resolve_test();
+        }, error => 
+        {
+            ok(true, error);
+            ok(!bc.relay.isConnected(), "Is !connected");
+            resolve_test();
+        })
+    })
+
+    // // Full flow. Create lobby -> ready up -> connect to server
+    await asyncTest("connect()", 8, () =>
+    {
+        // Force timeout after 60sec
+        let timeoutId = setTimeout(() =>
+        {
+            ok(false, "Timed out");
+            resolve_test();
+        }, 120000)
+
+        let server = null
+        let ownerId = ""
+
+        bc.relay.registerRelayCallback((netId, data) =>
+        {
+            ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
+            resolve_test();
+        })
+
+        bc.relay.registerSystemCallback(json =>
+        {
+            if (json.op == "CONNECT")
+            {
+                ok(true, "System Callback")
+                let relayOwnerId = bc.relay.getOwnerProfileId()
+                ok(ownerId == relayOwnerId, `getOwnerProfileId: ${ownerId} == ${relayOwnerId}`)
+                let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
+                ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
+                
+                // Wait 5sec then check the ping.
+                // If we are pinging properly, we should get
+                // less than 999. unless we have godawful
+                // connection which is also a bug I guess?
+                setTimeout(() =>
+                {
+                    ok(bc.relay.getPing() < 999, "Check Ping")
+
+                    // Send an echo that should come back to us
+                    bc.relay.send(Buffer.from("Echo"), netId, true, true, bc.relay.CHANNEL_HIGH_PRIORITY_1)
+                }, 5000)
+            }
+        })
+
+        bc.rttService.registerRTTLobbyCallback(result =>
+        {
+            console.log(result)
+            if (result.operation === "DISBANDED")
+            {
+                clearTimeout(timeoutId)
+                if (result.data.reason.code == bc.reasonCodes.RTT_ROOM_READY)
+                {
+                    bc.relay.connect({
+                        ssl: false,
+                        host: server.connectData.address,
+                        port: server.connectData.ports.ws,
+                        passcode: server.passcode,
+                        lobbyId: server.lobbyId
+                    }, result =>
+                    {
+                        console.log(result)
+                        ok(true, "Relay Connected")
+                    }, error => 
+                    {
+                        ok(false, error);
+                        resolve_test();
+                    })
+                }
+                else
+                {
+                    ok(false, "DISBANDED without RTT_ROOM_READY")
+                    resolve_test()
+                }
+            }
+            else if (result.operation == "ROOM_ASSIGNED")
+            {
+                bc.lobby.updateReady(result.data.lobbyId, true, {})
+            }
+            else if (result.operation == "STARTING")
+            {
+                ownerId = result.data.lobby.owner
+                console.log("STARTING ownerId = " + ownerId)
+            }
+            else if (result.operation == "ROOM_READY")
+            {
+                server = result.data
+            }
+        });
+
+        bc.rttService.enableRTT(result =>
+        {
+            console.log(result);
+            equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
+            bc.lobby.findOrCreateLobby("READY_START", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+            });
+        }, error =>
+        {
+            console.log(error);
+            ok(false, error);
+            resolve_test();
+        });
+    });
+}
+
+////////////////////////////////////////
 // Lobby tests
 ////////////////////////////////////////
 async function testLobby() {
@@ -6146,6 +6298,7 @@ async function run_tests()
     await testChat();
     await testMessaging();
     await testRTT();
+    await testRelay();
     await testLobby();
     await testItemCatalog();
     await testUserItems();
