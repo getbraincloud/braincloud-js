@@ -72,6 +72,10 @@ function BrainCloudManager ()
     bcm.setServerUrl = function(serverUrl)
     {
         bcm._serverUrl = serverUrl;
+        if (bcm._serverUrl.endsWith("/dispatcherv2"))
+        {
+            bcm._serverUrl = bcm._serverUrl.substring(0, bcm._serverUrl.length - "/dispatcherv2".length);
+        }
         while (bcm._serverUrl.length > 0 && bcm._serverUrl.charAt(bcm._serverUrl.length - 1) == '/')
         {
             bcm._serverUrl = bcm._serverUrl.substring(0, bcm._serverUrl.length - 1);
