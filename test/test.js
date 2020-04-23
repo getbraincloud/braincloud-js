@@ -4243,7 +4243,7 @@ async function testTime() {
 }
 
 ////////////////////////////////////////
-// Time unit tests
+// Global File unit tests
 ////////////////////////////////////////
 async function testGlobalFile() {
     if (!module("GlobalFile", () =>
