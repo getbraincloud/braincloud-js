@@ -4243,6 +4243,65 @@ async function testTime() {
 }
 
 ////////////////////////////////////////
+// Time unit tests
+////////////////////////////////////////
+async function testGlobalFile() {
+    if (!module("GlobalFile", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    var testfileName = "testGlobalFile.png";
+    var testFileId = "ed2d2924-4650-4a88-b095-94b75ce9aa18";
+    var testFolderPath = "/fname/";
+
+    await asyncTest("getFileInfo()", 2, function() {
+        bc.globalFile.getFileInfo(
+        testFileId,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getFileInfoSimple()", 2, function() {
+        bc.globalFile.getFileInfoSimple(
+        testFolderPath,
+        testfileName,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getGlobalCDNUrl()", 2, function() {
+        bc.globalFile.getGlobalCDNUrl(
+        testFileId,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getGlobalFileList()", 2, function() {
+        bc.globalFile.getGlobalFileList(
+        testFolderPath,
+        recurse,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+}
+
+////////////////////////////////////////
 // Tournament unit tests
 ////////////////////////////////////////
 async function testTournament() {
