@@ -4292,7 +4292,7 @@ async function testGlobalFile() {
     await asyncTest("getGlobalFileList()", 2, function() {
         bc.globalFile.getGlobalFileList(
         testFolderPath,
-        recurse,
+        true,
         function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -6362,6 +6362,7 @@ async function run_tests()
     await testItemCatalog();
     await testUserItems();
     await testCustomEntity();
+    await testGlobalFile();
 }
 
 async function main()

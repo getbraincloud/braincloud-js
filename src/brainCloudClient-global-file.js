@@ -6,7 +6,6 @@ function BCGlobalFile() {
 
 	bc.SERVICE_GLOBAL_FILE = "globalFileV3";
 
-	bc.SERVICE_GLOBAL_FILE = "globalFile";
 	bc.globalFile.OPERATION_GET_FILE_INFO = "GET_FILE_INFO";
 	bc.globalFile.OPERATION_GET_FILE_INFO_SIMPLE = "GET_FILE_INFO_SIMPLE";
 	bc.globalFile.OPERATION_GET_GLOBAL_CDN_URL = "GET_GLOBAL_CDN_URL";
@@ -21,10 +20,10 @@ function BCGlobalFile() {
 	 * @param fileId The Id of the file
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.globalApp.getFileInfo = function(fileId, callback) {
+	bc.globalFile.getFileInfo = function(fileId, callback) {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_GLOBAL_FILE,
-			operation : bc.globalApp.OPERATION_GET_FILE_INFO,
+			operation : bc.globalFile.OPERATION_GET_FILE_INFO,
 			data : {
 				fileId : fileId
 			},
@@ -42,10 +41,10 @@ function BCGlobalFile() {
 	 * @param filename the name of the file being searched
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.globalApp.getFileInfoSimple = function(folderPath, filename, callback) {
+	bc.globalFile.getFileInfoSimple = function(folderPath, filename, callback) {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_GLOBAL_FILE,
-			operation : bc.globalApp.OPERATION_GET_FILE_INFO_SIMPLE,
+			operation : bc.globalFile.OPERATION_GET_FILE_INFO_SIMPLE,
 			data : {
 				folderPath : folderPath,
 				filename : filename
@@ -63,10 +62,10 @@ function BCGlobalFile() {
 	 * @param fileId The Id of the file
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.globalApp.getGlobalCDNUrl = function(fileId, callback) {
+	bc.globalFile.getGlobalCDNUrl = function(fileId, callback) {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_GLOBAL_FILE,
-			operation : bc.globalApp.OPERATION_GET_GLOBAL_CDN_URL,
+			operation : bc.globalFile.OPERATION_GET_GLOBAL_CDN_URL,
 			data : {
 				fileId : fileId
 			},
@@ -84,10 +83,10 @@ function BCGlobalFile() {
 	 * @param recurse Does it recurse?
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.globalApp.getGlobalFileList = function(folderPath, recurse, callback) {
+	bc.globalFile.getGlobalFileList = function(folderPath, recurse, callback) {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_GLOBAL_FILE,
-			operation : bc.globalApp.OPERATION_GET_GLOBAL_FILE_LIST,
+			operation : bc.globalFile.OPERATION_GET_GLOBAL_FILE_LIST,
 			data : {
 				folderPath : folderPath,
 				recurse : recurse
