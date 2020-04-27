@@ -4690,7 +4690,7 @@ async function testComms() {
     await asyncTest("Timeout test (With HeartBeat)", 2, function() {
         bc.playerState.readPlayerState(function(result) {
             equal(result.status, 200, "Expecting 200");
-            console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
+            console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
             setTimeout(function() {
                 bc.playerState.readPlayerState(function(result) {
                     equal(result.status, 200, "Expecting 200");
@@ -4703,7 +4703,7 @@ async function testComms() {
     await asyncTest("Timeout test (Without HeartBeat)", 3, function() {
         bc.playerState.readPlayerState(function(result) {
             equal(result.status, 200, "Expecting 200");
-            console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
+            console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
             bc.brainCloudClient.stopHeartBeat();
             setTimeout(function() {
                 bc.playerState.readPlayerState(function(result) {
@@ -4734,9 +4734,20 @@ async function testComms() {
         });
     });
 
-    await asyncTest("retry 45sec script", () =>
+    await asyncTest("retry 45sec script", 2, () =>
     {
+        // This is now expected to success because the server will allow more time now.
         bc.brainCloudClient.script.runScript("TestTimeoutRetry45", {}, result =>
+        {
+            equal(true, result.data.response, JSON.stringify(result));
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("retry 135sec script", 1, () =>
+    {
+        bc.brainCloudClient.script.runScript("TestTimeoutRetry135", {}, result =>
         {
             equal(result.status, bc.statusCodes.CLIENT_NETWORK_ERROR, JSON.stringify(result));
             resolve_test();

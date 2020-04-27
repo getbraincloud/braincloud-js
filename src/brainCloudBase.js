@@ -23,6 +23,8 @@ function BrainCloudManager ()
     bcm._idleTimeout = 30;
     bcm._heartBeatIntervalId = null;
     bcm._bundlerIntervalId = null;
+    bcm._packetTimeouts = [15, 20, 35, 50];
+    bcm._retry = 0;
 
     bcm._appId = "";
     bcm._secret = "";
@@ -544,7 +546,7 @@ function BrainCloudManager ()
 
     bcm.retry = function()
     {
-        if (bcm._retry <= 2)
+        if (bcm._retry <= bcm._packetTimeouts.length)
         {
             bcm._retry++;
             bcm.debugLog("Retry # " + bcm._retry.toString(), false);
@@ -555,8 +557,8 @@ function BrainCloudManager ()
             }
             else
             {
-                bcm.debugLog("Waiting for 10 sec...", false);
-                setTimeout(bcm.performQuery, 10000);
+                bcm.debugLog("Waiting for " + bcm._packetTimeouts[bcm._retry - 1] + " sec...", false);
+                setTimeout(bcm.performQuery, bcm._packetTimeouts[bcm._retry - 1] * 1000);
             }
         }
         else
@@ -679,7 +681,7 @@ function BrainCloudManager ()
         }; // end inner function
 
         // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
-        bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, 15000);
+        bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
 
         xmlhttp.open("POST", bcm._dispatcherUrl, true);
         xmlhttp.setRequestHeader("Content-type", "application/json");
