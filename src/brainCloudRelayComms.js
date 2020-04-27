@@ -263,6 +263,21 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.send = function(netId, data) {
+        if (!((netId < MAX_PLAYERS && netId >= 0) || netId == bc.relay.TO_ALL_PLAYERS))
+        {
+            if (bcr.connectCallback.failure) {
+                bcr.connectCallback.failure("Relay Error: Invalid NetId " + netId);
+            }
+            return;
+        }
+        if (data.length > 1024)
+        {
+            if (bcr.connectCallback.failure) {
+                bcr.connectCallback.failure("Relay Error: Packet too big " + data.length + " > max 1024");
+            }
+            return;
+        }
+
         var buffer = new Buffer(data.length + 3)
         buffer.writeUInt16BE(data.length + 3, 0);
         buffer.writeUInt8(netId, 2);
