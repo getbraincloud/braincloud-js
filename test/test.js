@@ -5669,12 +5669,12 @@ async function testRelay() {
     // // Full flow. Create lobby -> ready up -> connect to server
     await asyncTest("connect()", 8, () =>
     {
-        // Force timeout after 60sec
+        // Force timeout after 5 mins
         let timeoutId = setTimeout(() =>
         {
             ok(false, "Timed out");
             resolve_test();
-        }, 120000)
+        }, 5 * 60 * 1000)
 
         let server = null
         let ownerId = ""
