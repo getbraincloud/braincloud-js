@@ -3812,9 +3812,10 @@ async function testScript() {
         var tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
         var _dateUTC = bc.utils.ToUTCEpochTime(tomorrow);
-        print("UTC Millis of tomorrow: " + _dateUTC);
+        console.log("UTC of tomorrow: " + _dateUTC);
+        console.log("Date of tomorrow: " + bc.utils.ToDateTimeFromUTCEpoch(_dateUTC));
         bc.script.scheduleRunScriptUTC(scriptName,
-                scriptData, bc.utils.ToUTCEpochTime(_dateUTC), function(result) {
+                scriptData, bc.utils.ToDateTimeFromUTCEpoch(_dateUTC), function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();

@@ -55,6 +55,8 @@ function BrainCloudClient() {
         BCGlobalFile.apply(bcc);
         BCCustomEntity.apply(bcc);
 
+        BCUtils.apply(bcc);
+
         bcc.brainCloudManager = new BrainCloudManager();
         bcc.brainCloudRttComms = new BrainCloudRttComms(this);
         bcc.brainCloudRelayComms = new BrainCloudRelayComms(this);
@@ -103,7 +105,8 @@ function BrainCloudClient() {
         bcc.brainCloudManager.itemCatalog = bcc.itemCatalog;
         bcc.brainCloudManager.userItems = bcc.userItems;
         bcc.brainCloudManager.customEntity = bcc.customEntity;
-
+        bcc.brainCloudManager.utils = bcc.utils;
+        
         bcc.brainCloudRttComms.rtt = bcc.rtt;
         bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
         bcc.brainCloudRelayComms.brainCloudClient = bcc;
@@ -159,6 +162,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.itemCatalog = bcc.brainCloudClient.itemCatalog = bcc.brainCloudClient.itemCatalog || {};
         bcc.brainCloudManager.userItems = bcc.brainCloudClient.userItems = bcc.brainCloudClient.userItems || {};
         bcc.brainCloudManager.customEntity = bcc.brainCloudClient.customEntity = bcc.brainCloudClient.customEntity || {};
+        bcc.brainCloudManager.utils = bcc.brainCloudClient.utils = bcc.brainCloudClient.utils || {};
 
         bcc.brainCloudRttComms.rtt = bcc.brainCloudClient.rtt = bcc.brainCloudClient.rtt || {};
         bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
