@@ -3780,6 +3780,10 @@ async function testScript() {
     var scriptData = {
         testParam1 : 1
     };
+    var today = new Date();
+    var tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    var _dateUTC = bc.utils.ToUTCEpochTime(tomorrow);
 
     await asyncTest("runScript()", 2, function() {
         bc.script.runScript(scriptName, scriptData, function(
@@ -3791,13 +3795,27 @@ async function testScript() {
     });
 
     await asyncTest("scheduleRunScriptUTC()", 2, function() {
-
         var today = new Date();
         var tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
         bc.script.scheduleRunScriptUTC(scriptName,
                 scriptData, tomorrow, function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("scheduleRunScriptUTC - TEST UTC UTILS()", 2, function() {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        var _dateUTC = bc.utils.ToUTCEpochTime(tomorrow);
+        console.log("UTC of tomorrow: " + _dateUTC);
+        console.log("Date of tomorrow: " + bc.utils.ToDateTimeFromUTCEpoch(_dateUTC));
+        bc.script.scheduleRunScriptUTC(scriptName,
+                scriptData, bc.utils.ToDateTimeFromUTCEpoch(_dateUTC), function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
