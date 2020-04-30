@@ -3780,6 +3780,9 @@ async function testScript() {
     var scriptData = {
         testParam1 : 1
     };
+    var today = new Date();
+    var tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
 
     await asyncTest("runScript()", 2, function() {
         bc.script.runScript(scriptName, scriptData, function(
@@ -3791,13 +3794,40 @@ async function testScript() {
     });
 
     await asyncTest("scheduleRunScriptUTC()", 2, function() {
-
         var today = new Date();
         var tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
         bc.script.scheduleRunScriptUTC(scriptName,
                 scriptData, tomorrow, function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("scheduleRunScriptMillisUTC()", 2, function() {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        bc.script.scheduleRunScriptMillisUTC(scriptName,
+                scriptData, tomorrow.getTime(), function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("scheduleRunScriptUTC - TEST UTC UTILS()", 2, function() {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        var _dateUTC = bc.timeUtils.UTCDateTimeToUTCMillis(tomorrow);
+        console.log("UTC of tomorrow: " + _dateUTC);
+        console.log("Date of tomorrow: " + bc.timeUtils.UTCMillisToUTCDateTime(_dateUTC));
+        bc.script.scheduleRunScriptUTC(scriptName,
+                scriptData, bc.timeUtils.UTCMillisToUTCDateTime(_dateUTC), function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
@@ -4240,6 +4270,86 @@ async function testTime() {
             resolve_test();
         });
     });
+
+    await asyncTest("TimeUtilsTest", 1, function() {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        var _dateBefore = bc.timeUtils.UTCDateTimeToUTCMillis(tomorrow);
+        console.log("Date Before: " + _dateBefore);
+        var _convertedDate = bc.timeUtils.UTCMillisToUTCDateTime(_dateBefore)
+        console.log("Converted: " + _convertedDate);
+        var _dateAfter = bc.timeUtils.UTCDateTimeToUTCMillis(_convertedDate);
+        console.log("Date After: " + _dateAfter);
+        
+        if(_dateBefore == _dateAfter)
+        {
+            equal(_dateAfter, _dateBefore, "SUCCESS");
+        }
+        else{
+            equal(_dateAfter, _dateBefore, "FAIL" );
+        }
+        resolve_test();
+    });
+}
+
+////////////////////////////////////////
+// Global File unit tests
+////////////////////////////////////////
+async function testGlobalFile() {
+    if (!module("GlobalFile", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    var testfileName = "testGlobalFile.png";
+    var testFileId = "ed2d2924-4650-4a88-b095-94b75ce9aa18";
+    var testFolderPath = "/fname/";
+
+    await asyncTest("getFileInfo()", 2, function() {
+        bc.globalFile.getFileInfo(
+        testFileId,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getFileInfoSimple()", 2, function() {
+        bc.globalFile.getFileInfoSimple(
+        testFolderPath,
+        testfileName,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getGlobalCDNUrl()", 2, function() {
+        bc.globalFile.getGlobalCDNUrl(
+        testFileId,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getGlobalFileList()", 2, function() {
+        bc.globalFile.getGlobalFileList(
+        testFolderPath,
+        true,
+        function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
@@ -4631,7 +4741,7 @@ async function testComms() {
     await asyncTest("Timeout test (With HeartBeat)", 2, function() {
         bc.playerState.readPlayerState(function(result) {
             equal(result.status, 200, "Expecting 200");
-            console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
+            console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
             setTimeout(function() {
                 bc.playerState.readPlayerState(function(result) {
                     equal(result.status, 200, "Expecting 200");
@@ -4644,7 +4754,7 @@ async function testComms() {
     await asyncTest("Timeout test (Without HeartBeat)", 3, function() {
         bc.playerState.readPlayerState(function(result) {
             equal(result.status, 200, "Expecting 200");
-            console.log(`Waiting for session to timeout for ${expiryTimeout + 2}sec`)
+            console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
             bc.brainCloudClient.stopHeartBeat();
             setTimeout(function() {
                 bc.playerState.readPlayerState(function(result) {
@@ -4675,9 +4785,20 @@ async function testComms() {
         });
     });
 
-    await asyncTest("retry 45sec script", () =>
+    await asyncTest("retry 45sec script", 2, () =>
     {
+        // This is now expected to success because the server will allow more time now.
         bc.brainCloudClient.script.runScript("TestTimeoutRetry45", {}, result =>
+        {
+            equal(true, result.data.response, JSON.stringify(result));
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("retry 135sec script", 1, () =>
+    {
+        bc.brainCloudClient.script.runScript("TestTimeoutRetry135", {}, result =>
         {
             equal(result.status, bc.statusCodes.CLIENT_NETWORK_ERROR, JSON.stringify(result));
             resolve_test();
@@ -5610,12 +5731,12 @@ async function testRelay() {
     // // Full flow. Create lobby -> ready up -> connect to server
     await asyncTest("connect()", 8, () =>
     {
-        // Force timeout after 60sec
+        // Force timeout after 5 mins
         let timeoutId = setTimeout(() =>
         {
             ok(false, "Timed out");
             resolve_test();
-        }, 120000)
+        }, 5 * 60 * 1000)
 
         let server = null
         let ownerId = ""
@@ -6303,6 +6424,7 @@ async function run_tests()
     await testItemCatalog();
     await testUserItems();
     await testCustomEntity();
+    await testGlobalFile();
 }
 
 async function main()

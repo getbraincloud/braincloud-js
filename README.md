@@ -127,3 +127,21 @@ _bc.identity.attachEmailIdentity(_email, _password, _callback);
 ```
 There are many authentication types. You can also merge profiles and detach idenities. See the brainCloud documentation for more information:
 http://getbraincloud.com/apidocs/apiref/?java#capi-auth
+
+## TimeUtils
+Most of our APIs suggest using UTC time, so we have added utility functions for minimizing confusion
+```
+UTCDateTimeToUTCMillis(utcDate) -> Converts UTC Date time into UTC milliseconds
+UTCMillisToUTCDateTime(utcMillis) -> Converts UTC milliseconds into UTC Date time
+```
+examples of use:
+```
+        var today = new Date();
+        var _dateUTC = bc.timeUtils.UTCDateTimeToUTCMillis(tomorrow);
+        bc.script.scheduleRunScriptMillisUTC(scriptName,
+                scriptData, _dateUTC, function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+```
