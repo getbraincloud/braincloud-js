@@ -3783,7 +3783,6 @@ async function testScript() {
     var today = new Date();
     var tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-    var _dateUTC = bc.utils.ToUTCEpochTime(tomorrow);
 
     await asyncTest("runScript()", 2, function() {
         bc.script.runScript(scriptName, scriptData, function(
@@ -3807,15 +3806,28 @@ async function testScript() {
                 });
     });
 
+    await asyncTest("scheduleRunScriptMillisUTC()", 2, function() {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        bc.script.scheduleRunScriptMillisUTC(scriptName,
+                scriptData, tomorrow.getTime(), function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("scheduleRunScriptUTC - TEST UTC UTILS()", 2, function() {
         var today = new Date();
         var tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
-        var _dateUTC = bc.utils.ToUTCEpochTime(tomorrow);
+        var _dateUTC = bc.timeUtils.UTCDateTimeToUTCMillis(tomorrow);
         console.log("UTC of tomorrow: " + _dateUTC);
-        console.log("Date of tomorrow: " + bc.utils.ToDateTimeFromUTCEpoch(_dateUTC));
+        console.log("Date of tomorrow: " + bc.timeUtils.UTCMillisToUTCDateTime(_dateUTC));
         bc.script.scheduleRunScriptUTC(scriptName,
-                scriptData, bc.utils.ToDateTimeFromUTCEpoch(_dateUTC), function(result) {
+                scriptData, bc.timeUtils.UTCMillisToUTCDateTime(_dateUTC), function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
@@ -4257,6 +4269,27 @@ async function testTime() {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
+    });
+
+    await asyncTest("TimeUtilsTest", 1, function() {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        var _dateBefore = bc.timeUtils.UTCDateTimeToUTCMillis(tomorrow);
+        console.log("Date Before: " + _dateBefore);
+        var _convertedDate = bc.timeUtils.UTCMillisToUTCDateTime(_dateBefore)
+        console.log("Converted: " + _convertedDate);
+        var _dateAfter = bc.timeUtils.UTCDateTimeToUTCMillis(_convertedDate);
+        console.log("Date After: " + _dateAfter);
+        
+        if(_dateBefore == _dateAfter)
+        {
+            equal(_dateAfter, _dateBefore, "SUCCESS");
+        }
+        else{
+            equal(_dateAfter, _dateBefore, "FAIL" );
+        }
+        resolve_test();
     });
 }
 
