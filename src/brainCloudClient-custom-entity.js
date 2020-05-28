@@ -294,19 +294,17 @@ function BCCustomEntity() {
 *            {function} The callback handler.
 */
 bc.customEntity.deleteEntities = function(entityType, deleteCriteria, callback) {
-var message = {
-	entityType : entityType,
-	deleteCriteria : deleteCriteria,
-};
+	var message = {
+		entityType : entityType,
+		deleteCriteria : deleteCriteria,
+	};
 
-//if(fieldsJson) message.fieldsJson = fieldsJson;
-
-bc.brainCloudManager.sendRequest({
-	service : bc.SERVICE_CUSTOM_ENTITY,
-	operation : bc.customEntity.OPERATION_DELETE_ENTITIES,
-	data : message,
-	callback : callback
-});
+	bc.brainCloudManager.sendRequest({
+		service : bc.SERVICE_CUSTOM_ENTITY,
+		operation : bc.customEntity.OPERATION_DELETE_ENTITIES,
+		data : message,
+		callback : callback
+	});
 };
 
 	/**
