@@ -16,6 +16,7 @@ function BCCustomEntity() {
 	bc.customEntity.OPERATION_UPDATE_ENTITY= "UPDATE_ENTITY";
 	bc.customEntity.OPERATION_UPDATE_ENTITY_FIELDS= "UPDATE_ENTITY_FIELDS";
 	bc.customEntity.OPERATION_DELETE_ENTITY = "DELETE_ENTITY";
+	bc.customEntity.OPERATION_DELETE_ENTITIES = "DELETE_ENTITIES";
 
 	/**
 	 * Creates new custom entity.
@@ -281,6 +282,30 @@ function BCCustomEntity() {
 			callback : callback
 		});
 	};
+
+/**
+*deletes entities based on the delete criteria.
+* 
+* @param entityType
+*            {string} The entity type as defined by the user
+* @param deleteCriteria
+* 			  {json} delte criteria
+* @param callback
+*            {function} The callback handler.
+*/
+bc.customEntity.deleteEntities = function(entityType, deleteCriteria, callback) {
+	var message = {
+		entityType : entityType,
+		deleteCriteria : deleteCriteria,
+	};
+
+	bc.brainCloudManager.sendRequest({
+		service : bc.SERVICE_CUSTOM_ENTITY,
+		operation : bc.customEntity.OPERATION_DELETE_ENTITIES,
+		data : message,
+		callback : callback
+	});
+};
 
 	/**
 	 *Deletes the specified custom entity on the server.

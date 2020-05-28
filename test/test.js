@@ -1159,6 +1159,17 @@ async function testCustomEntity() {
         );
     });
 
+    await asyncTest("DeleteEntities()", function() {
+        bc.customEntity.deleteEntities( 
+            entityType,
+            { "entityId" : {"$in" : ["Test"]} },
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
 }
 
 ////////////////////////////////////////
