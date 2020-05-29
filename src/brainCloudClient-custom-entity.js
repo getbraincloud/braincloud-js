@@ -296,7 +296,7 @@ function BCCustomEntity() {
 bc.customEntity.deleteEntities = function(entityType, deleteCriteria, callback) {
 	var message = {
 		entityType : entityType,
-		deleteCriteria : deleteCriteria,
+		deleteCriteria : deleteCriteria
 	};
 
 	bc.brainCloudManager.sendRequest({
