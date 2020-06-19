@@ -17,6 +17,10 @@ function BCCustomEntity() {
 	bc.customEntity.OPERATION_UPDATE_ENTITY_FIELDS= "UPDATE_ENTITY_FIELDS";
 	bc.customEntity.OPERATION_DELETE_ENTITY = "DELETE_ENTITY";
 	bc.customEntity.OPERATION_DELETE_ENTITIES = "DELETE_ENTITIES";
+	bc.customEntity.OPERATION_DELETE_SINGLETON = "DELETE_SINGLETON";
+	bc.customEntity.OPERATION_READ_SINGLETON = "READ_SINGLETON";
+	bc.customEntity.OPERATION_UPDATE_SINGLETON = "UPDATE_SINGLETON";
+	bc.customEntity.OPERATION_UPDATE_SINGLETON_FIELDS = "UPDATE_SINGLETON_FIELDS";
 
 	/**
 	 * Creates new custom entity.
@@ -306,6 +310,129 @@ bc.customEntity.deleteEntities = function(entityType, deleteCriteria, callback) 
 		callback : callback
 	});
 };
+
+/**
+*
+* 
+* @param entityType
+*            {string} The entity type as defined by the user
+* @param version
+* 			  
+* @param callback
+*            {function} The callback handler.
+*/
+bc.customEntity.deleteSingleton = function(entityType, version, callback) {
+	var message = {
+		entityType : entityType,
+		version : version
+	};
+
+	bc.brainCloudManager.sendRequest({
+		service : bc.SERVICE_CUSTOM_ENTITY,
+		operation : bc.customEntity.OPERATION_DELETE_SINGLETON,
+		data : message,
+		callback : callback
+	});
+};
+
+/**
+*
+* 
+* @param entityType
+*            {string} The entity type as defined by the user
+* @param callback
+*            {function} The callback handler.
+*/
+bc.customEntity.readSingleton = function(entityType, callback) {
+	var message = {
+		entityType : entityType,
+	};
+
+	bc.brainCloudManager.sendRequest({
+		service : bc.SERVICE_CUSTOM_ENTITY,
+		operation : bc.customEntity.OPERATION_READ_SINGLETON,
+		data : message,
+		callback : callback
+	});
+};
+
+/**
+*
+* 
+* @param entityType
+*            {string} The entity type as defined by the user
+* @param version
+* 			  
+* @param callback
+*            {function} The callback handler.
+*/
+bc.customEntity.updateSingleton = function(entityType, version, dataJson, acl, timeToLive, callback) {
+	var message = {
+		entityType : entityType,
+		version : version,
+		dataJson : dataJson,
+		acl : acl,
+		timeToLive: timeToLive
+	};
+
+	bc.brainCloudManager.sendRequest({
+		service : bc.SERVICE_CUSTOM_ENTITY,
+		operation : bc.customEntity.OPERATION_UPDATE_SINGLETON,
+		data : message,
+		callback : callback
+	});
+};
+
+/**
+*
+* 
+* @param entityType
+*            {string} The entity type as defined by the user
+* @param version
+* 			  
+* @param callback
+*            {function} The callback handler.
+*/
+bc.customEntity.updateSingetonFields = function(entityType, version, fieldsJson, callback) {
+	var message = {
+		entityType : entityType,
+		version : version,
+		fieldsJson : fieldsJson
+	};
+
+	bc.brainCloudManager.sendRequest({
+		service : bc.SERVICE_CUSTOM_ENTITY,
+		operation : bc.customEntity.OPERATION_UPDATE_SINGLETON_FIELDS,
+		data : message,
+		callback : callback
+	});
+};
+
+/**
+*
+* 
+* @param entityType
+*            {string} The entity type as defined by the user
+* @param version
+* 			  
+* @param callback
+*            {function} The callback handler.
+*/
+bc.customEntity.incrementData = function(entityType, entityId, fieldsJson, callback) {
+	var message = {
+		entityType : entityType,
+		entityId : entityId,
+		fieldsJson : fieldsJson
+	};
+
+	bc.brainCloudManager.sendRequest({
+		service : bc.SERVICE_CUSTOM_ENTITY,
+		operation : bc.customEntity.OPERATION_INCREMENT_DATA,
+		data : message,
+		callback : callback
+	});
+};
+
 
 	/**
 	 *Deletes the specified custom entity on the server.
