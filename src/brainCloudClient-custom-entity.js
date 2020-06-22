@@ -393,7 +393,7 @@ bc.customEntity.updateSingleton = function(entityType, version, dataJson, acl, t
 * @param callback
 *            {function} The callback handler.
 */
-bc.customEntity.updateSingetonFields = function(entityType, version, fieldsJson, callback) {
+bc.customEntity.updateSingletonFields = function(entityType, version, fieldsJson, callback) {
 	var message = {
 		entityType : entityType,
 		version : version,
