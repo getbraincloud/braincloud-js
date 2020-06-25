@@ -52,7 +52,10 @@ function BrainCloudClient() {
         BCStatusCodes.apply(bcc);
         BCTime.apply(bcc);
         BCTournament.apply(bcc);
+        BCGlobalFile.apply(bcc);
         BCCustomEntity.apply(bcc);
+
+        BCTimeUtils.apply(bcc);
 
         bcc.brainCloudManager = new BrainCloudManager();
         bcc.brainCloudRttComms = new BrainCloudRttComms(this);
@@ -98,10 +101,12 @@ function BrainCloudClient() {
         bcc.brainCloudManager.statusCodes = bcc.statusCodes;
         bcc.brainCloudManager.time = bcc.time;
         bcc.brainCloudManager.tournament = bcc.tournament;
+        bcc.brainCloudManager.globalFile = bcc.globalFile;
         bcc.brainCloudManager.itemCatalog = bcc.itemCatalog;
         bcc.brainCloudManager.userItems = bcc.userItems;
         bcc.brainCloudManager.customEntity = bcc.customEntity;
-
+        bcc.brainCloudManager.timeUtils = bcc.timeUtils;
+        
         bcc.brainCloudRttComms.rtt = bcc.rtt;
         bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
         bcc.brainCloudRelayComms.brainCloudClient = bcc;
@@ -153,9 +158,11 @@ function BrainCloudClient() {
         bcc.brainCloudManager.statusCodes = bcc.brainCloudClient.statusCodes = bcc.brainCloudClient.statusCodes || {};
         bcc.brainCloudManager.time = bcc.brainCloudClient.time = bcc.brainCloudClient.time || {};
         bcc.brainCloudManager.tournament = bcc.brainCloudClient.tournament = bcc.brainCloudClient.tournament || {};
+        bcc.brainCloudManager.globalFile = bcc.brainCloudClient.globalFile = bcc.brainCloudClient.globalFile || {};
         bcc.brainCloudManager.itemCatalog = bcc.brainCloudClient.itemCatalog = bcc.brainCloudClient.itemCatalog || {};
         bcc.brainCloudManager.userItems = bcc.brainCloudClient.userItems = bcc.brainCloudClient.userItems || {};
         bcc.brainCloudManager.customEntity = bcc.brainCloudClient.customEntity = bcc.brainCloudClient.customEntity || {};
+        bcc.brainCloudManager.timeUtils = bcc.brainCloudClient.timeUtils = bcc.brainCloudClient.timeUtils || {};
 
         bcc.brainCloudRttComms.rtt = bcc.brainCloudClient.rtt = bcc.brainCloudClient.rtt || {};
         bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
@@ -163,7 +170,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "4.4.1";
+    bcc.version = "4.5.0";
     bcc.countryCode;
     bcc.languageCode;
 

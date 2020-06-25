@@ -404,7 +404,9 @@ function BCReasonCodes() {
     bc.reasonCodes.RTT_ROOM_CANCELLED = 80102;
     bc.reasonCodes.RTT_ERROR_ASSIGNING_ROOM = 80103;
     bc.reasonCodes.RTT_ERROR_LAUNCHING_ROOM = 80104;
+    bc.reasonCodes.RTT_BY_REQUEST = 80105;
     bc.reasonCodes.RTT_NO_LOBBIES_FOUND = 80200;
+    bc.reasonCodes.RTT_FIND_REQUEST_CANCELLED = 80201;
     bc.reasonCodes.CLIENT_NETWORK_ERROR_TIMEOUT = 90001;
     bc.reasonCodes.CLIENT_UPLOAD_FILE_CANCELLED = 90100;
     bc.reasonCodes.CLIENT_UPLOAD_FILE_TIMED_OUT = 90101;
