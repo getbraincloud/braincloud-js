@@ -1170,6 +1170,41 @@ async function testCustomEntity() {
         );
     });
 
+    await asyncTest("ReadSingleton()", function() {
+        bc.customEntity.createEntity(entityType, {
+            firstName : "bob",
+            surName : "tester",
+            position : "forward",
+            goals : 2,
+            assists : 4
+        }, { "other" : 2 }, null, true);
+        bc.customEntity.readSingleton( 
+            entityType,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("DeleteSingleton()", function() {
+        bc.customEntity.createEntity(entityType, {
+            firstName : "bob",
+            surName : "tester",
+            position : "forward",
+            goals : 2,
+            assists : 4
+        }, { "other" : 2 }, null, true);
+        bc.customEntity.deleteSingleton( 
+            entityType,
+            -1,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
 }
 
 ////////////////////////////////////////
