@@ -345,7 +345,7 @@ bc.customEntity.deleteSingleton = function(entityType, version, callback) {
 */
 bc.customEntity.readSingleton = function(entityType, callback) {
 	var message = {
-		entityType : entityType,
+		entityType : entityType
 	};
 
 	bc.brainCloudManager.sendRequest({
