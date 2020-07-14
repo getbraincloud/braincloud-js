@@ -37,7 +37,7 @@ function BCCustomEntity() {
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
-	bc.customEntity.createEntity = function(entityType, data, acl, timeToLive, isOwned, callback) {
+	bc.customEntity.createEntity = function(entityType, dataJson, acl, timeToLive, isOwned, callback) {
 		var message = {
 			entityType : entityType,
 			dataJson : dataJson,
