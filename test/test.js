@@ -702,7 +702,7 @@ async function testAuthentication() {
 
 
     await asyncTest("resetUniversalIdPasswordAdvanced()", function() {
-        content = "{\"templateId\": \"d-template-id-guid\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
+        content = "{\"templateId\": \"8f14c77d-61f4-4966-ab6d-0bee8b13d090\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
 
         bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
             UserA.id,
@@ -725,7 +725,7 @@ async function testAuthentication() {
 
 
     await asyncTest("resetUniversalIdPasswordAdvancedWithExpiry()", function() {
-        content = "{\"templateId\": \"d-template-id-guid\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
+        content = "{\"templateId\": \"8f14c77d-61f4-4966-ab6d-0bee8b13d090\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
 
         bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvancedWithExpiry(
             UserA.id,
@@ -1152,6 +1152,52 @@ async function testCustomEntity() {
             entityType,
             entityId,
             3,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("DeleteEntities()", function() {
+        bc.customEntity.deleteEntities( 
+            entityType,
+            { "entityId" : {"$in" : ["Test"]} },
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("ReadSingleton()", function() {
+        bc.customEntity.createEntity(entityType, {
+            firstName : "bob",
+            surName : "tester",
+            position : "forward",
+            goals : 2,
+            assists : 4
+        }, { "other" : 2 }, null, true);
+        bc.customEntity.readSingleton( 
+            entityType,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("DeleteSingleton()", function() {
+        bc.customEntity.createEntity(entityType, {
+            firstName : "bob",
+            surName : "tester",
+            position : "forward",
+            goals : 2,
+            assists : 4
+        }, { "other" : 2 }, null, true);
+        bc.customEntity.deleteSingleton( 
+            entityType,
+            -1,
             function(result)
             {
                 equal(result.status,200, JSON.stringify(result)); resolve_test();
