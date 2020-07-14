@@ -40,7 +40,7 @@ function BCCustomEntity() {
 	bc.customEntity.createEntity = function(entityType, data, acl, timeToLive, isOwned, callback) {
 		var message = {
 			entityType : entityType,
-			data : data,
+			dataJson : dataJson,
 			timeToLive : timeToLive, 
 			isOwned : isOwned 
 		};
