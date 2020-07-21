@@ -120,8 +120,7 @@ function BrainCloudWrapper(wrapperName) {
             bcw.setStoredSessionId(sessionId);
         }
         
-        console.log("PROFILE IDDDDDDDDD");
-        console.log(profileId);
+        console.log("Updated saved profileId to " + profileId);
     };
 
     ///////////////////////////////////////////////////////////////////////////
