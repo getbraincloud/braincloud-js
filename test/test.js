@@ -5104,6 +5104,46 @@ async function testWrapper()
         });
     });
 
+    await asyncTest("reInit()", 5, function() {
+        var secretMap = {};
+        secretMap[GAME_ID] = SECRET;
+        secretMap[CHILD_APP_ID] = CHILD_SECRET;
+        
+        var initCounter = 1;
+        //case 1 multiple init
+        bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
+        equal(initCounter == 1, true, "inits passed 1");
+        initCounter++;
+        bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
+        equal(initCounter == 2, true, "inits passed 2");
+        initCounter++;
+        bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
+        equal(initCounter == 3, true, "inits passed 3");
+
+        //auth
+        bc.brainCloudClient.authentication.authenticateAnonymous(
+            true, function(result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+        });
+
+        //call
+        bc.time.readServerTime(function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+
+        //reinit
+        bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
+
+        //call - expect fail becasue of no session
+        bc.time.readServerTime(function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 403, "No Session");
+            resolve_test();
+        });
+    });
 }
 
 async function testChat()
