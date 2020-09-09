@@ -5906,7 +5906,7 @@ async function testRelay() {
         {
             console.log(result);
             equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
-            bc.lobby.findOrCreateLobby("READY_START", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
+            bc.lobby.findOrCreateLobby("READY_START_V2", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
             {
                 equal(result.status, 200, "Expecting 200");
             });
