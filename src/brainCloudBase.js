@@ -289,6 +289,7 @@ function BrainCloudManager ()
         bcm._sendQueue = [];
         bcm._inProgressQueue = [];
         bcm._sessionId = "";
+        bcm.packetId = -1;
         bcm._isAuthenticated = false;
         bcm._requestInProgress = false;
 

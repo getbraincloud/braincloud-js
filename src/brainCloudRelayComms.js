@@ -1,28 +1,28 @@
 function BrainCloudRelayComms(_client) {
     var bcr = this;
 
-
     bcr.CONTROL_BYTES_SIZE = 1;
 
-    bcr.MAX_PLAYERS     = 128;
+    bcr.MAX_PLAYERS     = 40;
     bcr.INVALID_NET_ID  = bcr.MAX_PLAYERS;
 
     // Messages send from Client to Relay-Server
-    bcr.CL2RS_CONNECTION       = 129;
-    bcr.CL2RS_DISCONNECT       = 130;
-    bcr.CL2RS_RELAY            = 131;
-    bcr.CL2RS_PING             = 133;
-    bcr.CL2RS_RSMG_ACKNOWLEDGE = 134;
-    bcr.CL2RS_ACKNOWLEDGE      = 135;
+    bcr.CL2RS_CONNECT       = 0;
+    bcr.CL2RS_DISCONNECT    = 1;
+    bcr.CL2RS_RELAY         = 2;
+    bcr.CL2RS_ACK           = 3;
+    bcr.CL2RS_PING          = 4;
+    bcr.CL2RS_RSMG_ACK      = 5;
 
     // Messages sent from Relay-Server to Client
-    bcr.RS2CL_RSMG             = 129;
-    bcr.RS2CL_PONG             = bcr.CL2RS_PING;
-    bcr.RS2CL_ACKNOWLEDGE      = bcr.CL2RS_ACKNOWLEDGE;
+    bcr.RS2CL_RSMG          = 0;
+    bcr.RS2CL_DISCONNECT    = 1;
+    bcr.RS2CL_RELAY         = 2;
+    bcr.RS2CL_ACK           = 3;
+    bcr.RS2CL_PONG          = 4;
     
-    bcr.RELIABLE_BIT    = 0x8000
-    bcr.ORDERED_BIT     = 0x4000
-        
+    bcr.RELIABLE_BIT        = 0x8000
+    bcr.ORDERED_BIT         = 0x4000
 
     bcr.m_client = _client;
     bcr.name = "BrainCloudRelayComms";
@@ -39,7 +39,7 @@ function BrainCloudRelayComms(_client) {
     bcr._pingIntervalId = null;
     bcr._pingInFlight = false;
     bcr._pingTime = null;
-    bcr._packetIdPerChannel = [0, 0, 0, 0];
+    bcr._sendPacketId = {};
     bcr.ping = 999;
 
     bcr.setDebugEnabled = function(debugEnabled) {
@@ -109,7 +109,7 @@ function BrainCloudRelayComms(_client) {
             bcr.socket = null;
         }
         bcr.isConnected = false;
-        bcr._packetIdPerChannel = [0, 0, 0, 0];
+        bcr._sendPacketId = {};
         bcr._netIdToProfileId = {};
         bcr._profileIdToNetId = {};
         bcr.ping = 999;    
@@ -180,10 +180,11 @@ function BrainCloudRelayComms(_client) {
         var payload = {
             lobbyId: bcr.connectInfo.lobbyId,
             profileId: bcr.m_client.getProfileId(),
-            passcode: bcr.connectInfo.passcode
+            passcode: bcr.connectInfo.passcode,
+            version: bcr.m_client.version
         };
 
-        bcr.sendJson(bcr.CL2RS_CONNECTION, payload);
+        bcr.sendJson(bcr.CL2RS_CONNECT, payload);
     }
 
     bcr.onSocketMessage = function(e) {
@@ -228,24 +229,68 @@ function BrainCloudRelayComms(_client) {
         }
     }
 
-    bcr.sendRelay = function(data, toNetId, reliable, ordered, channel) {
+    bcr.sendRelay = function(data, playerMask, reliable, ordered, channel) {
         if (!bcr.isConnected) return;
 
-        var buffer = new Buffer(data.length + 5)
-        buffer.writeUInt16BE(data.length + 5, 0)
-        buffer.writeUInt8(toNetId, 2)
-
         // Relay Header
-        var rh = 0; // 
-        if (reliable) rh |= bcr.RELIABLE_BIT;
-        if (ordered) rh |= bcr.ORDERED_BIT;
-        rh |= channel << 12;
-        rh |= bcr._packetIdPerChannel[channel];
-        bcr._packetIdPerChannel[channel] = (bcr._packetIdPerChannel[channel] + 1) % 0x1000;
-        buffer.writeUInt16BE(rh, 3)
+        var rh = 0;
+        if (reliable) rh += bcr.RELIABLE_BIT;
+        if (ordered)  rh += bcr.ORDERED_BIT;
+        rh += channel * 4096;
 
-        buffer.set(data, 5)
+        // Store inverted player mask. As soon as you do a bitwise operation
+        // on a number in javascript, it transforms it from 64 bits to 32 bits.
+        // So we are using 2 parts comparison and += instead of |=
+        var invertedPlayerMask = 0;
+        var mask = 1;
+        var playerMaskPart0 = (playerMask / 4294967296) & 0xFFFFFFFF;
+        var playerMaskPart1 = playerMask & 0xFFFFFFFF;
+        for (var i = 0; i < 40; ++i)
+        {
+            var invertedMask = Math.pow(2, 40 - i - 1);
+            var maskPart0 = (mask / 4294967296) & 0xFFFFFFFF;
+            var maskPart1 = mask & 0xFFFFFFFF;
+            if ((playerMaskPart0 & maskPart0) != 0 || (playerMaskPart1 & maskPart1) != 0)
+            {
+                invertedPlayerMask += invertedMask;
+            }
+            mask *= 2;
+        }
+        playerMaskPart0 = ((invertedPlayerMask * 256) / 4294967296) & 0x0000FFFF;
+        playerMaskPart1 = (invertedPlayerMask * 256) & 0xFFFFFF00;
+
+        // AckId without packet id
+        var p0 = rh;
+        var p1 = playerMaskPart0 & 0xFFFF;
+        var p2 = (playerMaskPart1 / 65536) & 0xFFFF;
+        var p3 = playerMaskPart1 & 0xFFFF;
+
+        // 4D object because we don't want to map it to a 64 bits number, it won't work in JS.
+        // We use 4 parts 16 bits
+        if (!bcr._sendPacketId.hasOwnProperty(p0))
+             bcr._sendPacketId[p0] = {}
+        if (!bcr._sendPacketId[p0].hasOwnProperty(p1))
+             bcr._sendPacketId[p0][p1] = {}
+        if (!bcr._sendPacketId[p0][p1].hasOwnProperty(p2))
+             bcr._sendPacketId[p0][p1][p2] = {}
+        if (!bcr._sendPacketId[p0][p1][p2].hasOwnProperty(p3))
+             bcr._sendPacketId[p0][p1][p2][p3] = 0
+        
+        var packetId = bcr._sendPacketId[p0][p1][p2][p3];
+        rh += packetId;
+
+        var buffer = new Buffer(data.length + 11)
+        buffer.writeUInt16BE(data.length + 11, 0)
+        buffer.writeUInt8(bcr.CL2RS_RELAY, 2)
+        buffer.writeUInt16BE(rh, 3)
+        buffer.writeUInt16BE(p1, 5)
+        buffer.writeUInt16BE(p2, 7)
+        buffer.writeUInt16BE(p3, 9)
+        buffer.set(data, 11)
         bcr.socket.send(buffer);
+
+        packetId = (packetId + 1) & 0xFFF;
+        bcr._sendPacketId[p0][p1][p2][p3] = packetId;
     }
 
     bcr.sendPing = function() {
@@ -287,12 +332,12 @@ function BrainCloudRelayComms(_client) {
 
     bcr.onRecv = function(buffer) {
         var size = buffer.readUInt16BE(0);
-        var netId = buffer.readUInt8(2);
+        var controlByte = buffer.readUInt8(2);
 
-        if (netId == bcr.RS2CL_RSMG) {
+        if (controlByte == bcr.RS2CL_RSMG) {
             bcr.onRSMG(buffer);
         }
-        else if (netId == bcr.RS2CL_PONG) {
+        else if (controlByte == bcr.RS2CL_PONG) {
             if (bcr._pingInFlight) {
                 bcr._pingInFlight = false;
                 bcr.ping = Math.min(999, new Date().getTime() - bcr._pingTime);
@@ -301,22 +346,23 @@ function BrainCloudRelayComms(_client) {
                 console.log("RELAY RECV PONG: " + bcr.ping);
             }
         }
-        else if (netId == bcr.RS2CL_ACKNOWLEDGE) {
+        else if (controlByte == bcr.RS2CL_ACK) {
             // Not going to happen in JS because we don't use UDP
             // Ignore, don't throw.
         }
-        else if (netId < bcr.MAX_PLAYERS) {
+        else if (controlByte == bcr.RS2CL_RELAY) {
+            var netId = buffer.readUInt8(10);
             if (bcr._debugEnabled) {
                 console.log("RELAY RECV from netId: " + netId + " size: " + size);
             }
             if (bcr._relayCallback) {
-                bcr._relayCallback(netId, buffer.slice(5));
+                bcr._relayCallback(netId, buffer.slice(11));
             }
         }
         else {
             bcr.disconnect();
             if (bcr.connectCallback.failure) {
-                bcr.connectCallback.failure("Relay Recv Error: Unknown netId: " + netId);
+                bcr.connectCallback.failure("Relay Recv Error: Unknown controlByte: " + controlByte);
             }
         }
     }

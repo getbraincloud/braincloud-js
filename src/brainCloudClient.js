@@ -170,7 +170,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "4.5.5";
+    bcc.version = "4.5.6";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -186,6 +186,7 @@ function BrainCloudClient() {
      *            version - The app version (e.g. "1.0.0").
      */
     bcc.initialize = function(appId, secret, appVersion) {
+        bcc.resetCommunication();
         function isBlank(str) {
             return (!str || /^\s*$/.test(str));
         };
@@ -206,6 +207,7 @@ function BrainCloudClient() {
     };
 
     bcc.initializeWithApps = function(defaultAppId, secretMap, appVersion) {
+        bcc.resetCommunication();
         function isBlank(str) {
             return (!str || /^\s*$/.test(str));
         };
