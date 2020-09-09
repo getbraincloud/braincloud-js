@@ -241,15 +241,15 @@ function BrainCloudRelayComms(_client) {
         // Store inverted player mask. As soon as you do a bitwise operation
         // on a number in javascript, it transforms it from 64 bits to 32 bits.
         // So we are using 2 parts comparison and += instead of |=
-        let invertedPlayerMask = 0;
-        let mask = 1;
-        let playerMaskPart0 = (playerMask / 4294967296) & 0xFFFFFFFF;
-        let playerMaskPart1 = playerMask & 0xFFFFFFFF;
-        for (let i = 0; i < 40; ++i)
+        var invertedPlayerMask = 0;
+        var mask = 1;
+        var playerMaskPart0 = (playerMask / 4294967296) & 0xFFFFFFFF;
+        var playerMaskPart1 = playerMask & 0xFFFFFFFF;
+        for (var i = 0; i < 40; ++i)
         {
-            let invertedMask = Math.pow(2, 40 - i - 1);
-            let maskPart0 = (mask / 4294967296) & 0xFFFFFFFF;
-            let maskPart1 = mask & 0xFFFFFFFF;
+            var invertedMask = Math.pow(2, 40 - i - 1);
+            var maskPart0 = (mask / 4294967296) & 0xFFFFFFFF;
+            var maskPart1 = mask & 0xFFFFFFFF;
             if ((playerMaskPart0 & maskPart0) != 0 || (playerMaskPart1 & maskPart1) != 0)
             {
                 invertedPlayerMask += invertedMask;
@@ -260,10 +260,10 @@ function BrainCloudRelayComms(_client) {
         playerMaskPart1 = (invertedPlayerMask * 256) & 0xFFFFFF00;
 
         // AckId without packet id
-        let p0 = rh;
-        let p1 = playerMaskPart0 & 0xFFFF;
-        let p2 = (playerMaskPart1 / 65536) & 0xFFFF;
-        let p3 = playerMaskPart1 & 0xFFFF;
+        var p0 = rh;
+        var p1 = playerMaskPart0 & 0xFFFF;
+        var p2 = (playerMaskPart1 / 65536) & 0xFFFF;
+        var p3 = playerMaskPart1 & 0xFFFF;
 
         // 4D object because we don't want to map it to a 64 bits number, it won't work in JS.
         // We use 4 parts 16 bits
@@ -276,7 +276,7 @@ function BrainCloudRelayComms(_client) {
         if (!bcr._sendPacketId[p0][p1][p2].hasOwnProperty(p3))
              bcr._sendPacketId[p0][p1][p2][p3] = 0
         
-        let packetId = bcr._sendPacketId[p0][p1][p2][p3];
+        var packetId = bcr._sendPacketId[p0][p1][p2][p3];
         rh += packetId;
 
         var buffer = new Buffer(data.length + 11)

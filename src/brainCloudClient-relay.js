@@ -167,7 +167,7 @@ function BCRelay() {
         else
         {
             // Fancy math here because using bitwise operation will transform the number into 32 bits
-            let playerMask = Math.pow(2, toNetId);
+            var playerMask = Math.pow(2, toNetId);
             bc.brainCloudRelayComms.sendRelay(data, playerMask, reliable, ordered, channel);
         }
     }
@@ -194,11 +194,11 @@ function BCRelay() {
      * @param channel One of: (bc.relay.CHANNEL_HIGH_PRIORITY_1, bc.relay.CHANNEL_HIGH_PRIORITY_2, bc.relay.CHANNEL_NORMAL_PRIORITY, bc.relay.CHANNEL_LOW_PRIORITY)
      */
     bc.relay.sendToAll = function(data, reliable, ordered, channel) {
-        let myProfileId = bc.authentication.profileId;
-        let myNetId = bc.relay.getNetIdForProfileId(myProfileId);
+        var myProfileId = bc.authentication.profileId;
+        var myNetId = bc.relay.getNetIdForProfileId(myProfileId);
 
-        let myBit = Math.pow(2, myNetId);
-        let playerMask = bc.relay.TO_ALL_PLAYERS - myBit;
+        var myBit = Math.pow(2, myNetId);
+        var playerMask = bc.relay.TO_ALL_PLAYERS - myBit;
 
         bc.brainCloudRelayComms.sendRelay(data, playerMask, reliable, ordered, channel);
     }
