@@ -5,7 +5,7 @@ function BCRelay() {
 
     bc.SERVICE_RELAY = "relay";
 
-    bc.relay.TO_ALL_PLAYERS = 131;
+    bc.relay.TO_ALL_PLAYERS = 0x000000FFFFFFFFFF;
     bc.relay.CHANNEL_HIGH_PRIORITY_1      = 0;
     bc.relay.CHANNEL_HIGH_PRIORITY_2      = 1;
     bc.relay.CHANNEL_NORMAL_PRIORITY      = 2;
@@ -160,7 +160,47 @@ function BCRelay() {
      * @param channel One of: (bc.relay.CHANNEL_HIGH_PRIORITY_1, bc.relay.CHANNEL_HIGH_PRIORITY_2, bc.relay.CHANNEL_NORMAL_PRIORITY, bc.relay.CHANNEL_LOW_PRIORITY)
      */
     bc.relay.send = function(data, toNetId, reliable, ordered, channel) {
-        bc.brainCloudRelayComms.sendRelay(data, toNetId, reliable, ordered, channel);
+        if (toNetId == bc.relay.TO_ALL_PLAYERS)
+        {
+            bc.relay.sendToAll(data, reliable, ordered, channel);
+        }
+        else
+        {
+            // Fancy math here because using bitwise operation will transform the number into 32 bits
+            let playerMask = Math.pow(2, toNetId);
+            bc.brainCloudRelayComms.sendRelay(data, playerMask, reliable, ordered, channel);
+        }
+    }
+
+    /**
+     * Send a packet to any peers by using a mask
+     * 
+     * @param data Byte array for the data to send
+     * @param playerMask Mask of the players to send to. 0001 = netId 0, 0010 = netId 1, etc. If you pass ALL_PLAYER_MASK you will be included and you will get an echo for your message. Use sendToAll instead, you will be filtered out. You can manually filter out by : ALL_PLAYER_MASK &= ~(1 << myNetId)
+     * @param reliable Send this reliable or not.
+     * @param ordered Receive this ordered or not.
+     * @param channel One of: (bc.relay.CHANNEL_HIGH_PRIORITY_1, bc.relay.CHANNEL_HIGH_PRIORITY_2, bc.relay.CHANNEL_NORMAL_PRIORITY, bc.relay.CHANNEL_LOW_PRIORITY)
+     */
+    bc.relay.sendToPlayers = function(data, playerMask, reliable, ordered, channel) {
+        bc.brainCloudRelayComms.sendRelay(data, playerMask, reliable, ordered, channel);
+    }
+
+    /**
+     * Send a packet to all except yourself
+     * 
+     * @param data Byte array for the data to send
+     * @param reliable Send this reliable or not.
+     * @param ordered Receive this ordered or not.
+     * @param channel One of: (bc.relay.CHANNEL_HIGH_PRIORITY_1, bc.relay.CHANNEL_HIGH_PRIORITY_2, bc.relay.CHANNEL_NORMAL_PRIORITY, bc.relay.CHANNEL_LOW_PRIORITY)
+     */
+    bc.relay.sendToAll = function(data, reliable, ordered, channel) {
+        let myProfileId = bc.authentication.profileId;
+        let myNetId = bc.relay.getNetIdForProfileId(myProfileId);
+
+        let myBit = Math.pow(2, myNetId);
+        let playerMask = bc.relay.TO_ALL_PLAYERS - myBit;
+
+        bc.brainCloudRelayComms.sendRelay(data, playerMask, reliable, ordered, channel);
     }
 }
 
