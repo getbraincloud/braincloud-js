@@ -912,41 +912,6 @@ async function testEntity() {
                 });
     });
 
-    await asyncTest("getSharedEntitiesForPlayerId()", function() {
-        bc.entity.getSharedEntitiesForPlayerId(
-            UserA.profileId,
-            function(result)
-            {
-                entityId = result["data"]["entities"][0]["entityId"];
-                equal(result.status,200, JSON.stringify(result)); resolve_test();
-            }
-        );
-    });
-
-    await asyncTest("getSharedEntitiesListForPlayerId()", function() {
-        bc.entity.getSharedEntitiesListForPlayerId(
-            UserA.profileId,
-            { entityType: "test" },
-            null,
-            10,
-            function(result)
-            {
-                equal(result.status,200, JSON.stringify(result)); resolve_test();
-            }
-        );
-    });
-
-    await asyncTest("getSharedEntitiesForPlayerId()", function() {
-        bc.entity.getSharedEntitiesForPlayerId(
-            UserA.profileId,
-            function(result)
-            {
-                entityId = result["data"]["entities"][0]["entityId"];
-                equal(result.status,200, JSON.stringify(result)); resolve_test();
-            }
-        );
-    });
-
     await asyncTest("updateSharedEntity()", function() {
         bc.entity.updateSharedEntity(
             entityId,
@@ -1366,15 +1331,6 @@ async function testFriend() {
 
     await asyncTest("findUsersBySubstrName()", 2, function() {
         bc.friend.findUsersBySubstrName("NotAUser", 10, function(
-                result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
-
-    await asyncTest("findPlayerByUniversalId()", 2, function() {
-        bc.friend.findPlayerByUniversalId("NotAUser", 10, function(
                 result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -2874,26 +2830,6 @@ async function testPlaybackStream() {
             });
     });
 
-    await asyncTest("getStreamSummariesForTargetPlayer()", 2, function() {
-        bc.playbackStream.getStreamSummariesForTargetPlayer(
-                streamId,
-                function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-
-    await asyncTest("getStreamSummariesForInitiatingPlayer()", 2, function() {
-        bc.playbackStream.getStreamSummariesForInitiatingPlayer(
-                streamId,
-                function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-
     await asyncTest("readStream()", 2, function() {
         bc.playbackStream.readStream(
                 streamId,
@@ -2946,8 +2882,8 @@ async function testPlayerState() {
         return setUpWithAuthenticate();
     }, null))
     {
-        await asyncTest("deletePlayer()", function() {
-            bc.playerState.deletePlayer(function(result) {
+        await asyncTest("deleteUser()", function() {
+            bc.playerState.deleteUser(function(result) {
                 equal(result.status, 200, JSON.stringify(result));
                 bc.brainCloudClient.resetCommunication();
                 resolve_test();
@@ -2963,16 +2899,16 @@ async function testPlayerState() {
         return tearDownLogout();
     })) return;
 
-    await asyncTest("updatePlayerName()", function() {
-        bc.playerState.updatePlayerName("junit", function(
+    await asyncTest("updateName()", function() {
+        bc.playerState.updateName("junit", function(
                 result) {
             equal(result.status, 200, JSON.stringify(result));
             resolve_test();
         });
     });
 
-    await asyncTest("readPlayerState()", function() {
-        bc.playerState.readPlayerState(function(result) {
+    await asyncTest("readUserState()", function() {
+        bc.playerState.readUserState(function(result) {
             equal(result.status, 200, JSON.stringify(result));
             resolve_test();
         });
@@ -3014,8 +2950,8 @@ async function testPlayerState() {
         });
     });
 
-    await asyncTest("updatePlayerPictureUrl()", 2, function() {
-        bc.playerState.updatePlayerPictureUrl("https://some.domain.com/mypicture.jpg", function(
+    await asyncTest("updateUserPictureUrl()", 2, function() {
+        bc.playerState.updateUserPictureUrl("https://some.domain.com/mypicture.jpg", function(
                 result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -3032,8 +2968,8 @@ async function testPlayerState() {
         });
     });
 
-    await asyncTest("resetPlayer()", function() {
-        bc.playerState.resetPlayer(
+    await asyncTest("resetUser()", function() {
+        bc.playerState.resetUser(
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
@@ -3104,8 +3040,8 @@ async function testPlayerStatisticsEvent() {
     var eventId1 = "testEvent01";
     var eventId2 = "rewardCredits";
 
-    await asyncTest("triggerPlayerStatisticsEvent()", 2, function() {
-        bc.playerStatisticsEvent.triggerPlayerStatisticsEvent(
+    await asyncTest("triggerUserStatsEvent()", 2, function() {
+        bc.playerStatisticsEvent.triggerUserStatsEvent(
                 eventId1,
                 10,
                 function(result) {
@@ -3116,8 +3052,8 @@ async function testPlayerStatisticsEvent() {
     });
 
 
-    await asyncTest("triggerPlayerStatisticsEvents()", 2, function() {
-        bc.playerStatisticsEvent.triggerPlayerStatisticsEvents(
+    await asyncTest("triggerUserStatsEvents()", 2, function() {
+        bc.playerStatisticsEvent.triggerUserStatsEvents(
                 [
                     { "eventName" : eventId1, "eventMultiplier" : 10 },
                     { "eventName" : eventId2, "eventMultiplier" : 10 }
@@ -3131,7 +3067,7 @@ async function testPlayerStatisticsEvent() {
 
 
     await asyncTest("rewardHandlerTriggerStatisticsEvents()", 3, function() {
-        bc.playerState.resetPlayer();
+        bc.playerState.resetUser();
 
         var rewardCallbackCount = 0;
         bc.brainCloudClient.registerRewardCallback(function(rewardsJson)
@@ -3141,7 +3077,7 @@ async function testPlayerStatisticsEvent() {
                 resolve_test();
                 bc.brainCloudClient.deregisterRewardCallback();
             })
-        bc.playerStatisticsEvent.triggerPlayerStatisticsEvents(
+        bc.playerStatisticsEvent.triggerUserStatsEvents(
                 [
                     { "eventName" : "incQuest1Stat", "eventMultiplier" : 1 },
                     { "eventName" : "incQuest2Stat", "eventMultiplier" : 1 }
@@ -3183,8 +3119,8 @@ async function testPlayerStatistics() {
                 });
     });
 
-    await asyncTest("incrementPlayerStats()", function() {
-        bc.playerStatistics.incrementPlayerStats({
+    await asyncTest("incrementUserStats()", function() {
+        bc.playerStatistics.incrementUserStats({
             "wins" : 10,
             "losses" : 4
         }, 100, function(result) {
@@ -3193,24 +3129,24 @@ async function testPlayerStatistics() {
         });
     });
 
-    await asyncTest("readAllPlayerStats()", function() {
-        bc.playerStatistics.readAllPlayerStats(function(
+    await asyncTest("readAllUserStats()", function() {
+        bc.playerStatistics.readAllUserStats(function(
                 result) {
             equal(result.status, 200, JSON.stringify(result));
             resolve_test();
         });
     });
 
-    await asyncTest("readPlayerStatsSubset()", function() {
-        bc.playerStatistics.readPlayerStatsSubset(["wins"],
+    await asyncTest("readUserStatsSubset()", function() {
+        bc.playerStatistics.readUserStatsSubset(["wins"],
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
     });
 
-    await asyncTest("readPlayerStatsForCategory()", function() {
-        bc.playerStatistics.readPlayerStatsForCategory(
+    await asyncTest("readUserStatsForCategory()", function() {
+        bc.playerStatistics.readUserStatsForCategory(
                 "Test",
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
@@ -3218,8 +3154,8 @@ async function testPlayerStatistics() {
                 });
     });
 
-    await asyncTest("resetAllPlayerStats()", function() {
-        bc.playerStatistics.resetAllPlayerStats(function(
+    await asyncTest("resetAllUserStats()", function() {
+        bc.playerStatistics.resetAllUserStats(function(
                 result) {
             equal(result.status, 200, JSON.stringify(result));
             resolve_test();
@@ -3241,84 +3177,6 @@ async function testPlayerStatistics() {
             "gamesLost" : 2
         }, function(result) {
             equal(result.status, 200, JSON.stringify(result));
-            resolve_test();
-        });
-    });
-}
-
-////////////////////////////////////////
-// Product unit tests
-////////////////////////////////////////
-async function testProduct() {
-    if (!module("Product", () =>
-    {
-        return setUpWithAuthenticate();
-    }, () =>
-    {
-        return tearDownLogout();
-    })) return;
-
-    var currencyType = "credits";
-    var platform = "windows";
-    var productCatagory = "Test";
-
-    await asyncTest("awardCurrency()", 2, function() {
-        bc.product.awardCurrency(currencyType, 200, function(
-                result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
-
-    await asyncTest("consumeCurrency()", 2, function() {
-        bc.product.consumeCurrency(currencyType, 100,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("getCurrency()", 2, function() {
-        bc.product.getCurrency(currencyType,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("getEligiblePromotions()", 2, function() {
-        bc.product.getEligiblePromotions(function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
-
-    await asyncTest("getSalesInventory()", 2, function() {
-        bc.product.getSalesInventory(platform, currencyType,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("getSalesInventoryByCategory()", 2, function() {
-        bc.product.getSalesInventoryByCategory(platform,
-                currencyType, productCatagory, function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("resetCurrency()", 2, function() {
-        bc.product.resetCurrency(function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
@@ -4725,7 +4583,7 @@ async function testComms() {
     //         setTimeout(() =>
     //         {
     //             // Bundle 3 messages together
-    //             bc.playerState.readPlayerState(result =>
+    //             bc.playerState.readUserState(result =>
     //             {
     //                 ++cnt;
     //                 if (cnt === 3)
@@ -4734,7 +4592,7 @@ async function testComms() {
     //                     resolve_test();
     //                 }
     //             });
-    //             bc.playerState.readPlayerState(result =>
+    //             bc.playerState.readUserState(result =>
     //             {
     //                 ++cnt;
     //                 if (cnt === 3)
@@ -4743,7 +4601,7 @@ async function testComms() {
     //                     resolve_test();
     //                 }
     //             });
-    //             bc.playerState.readPlayerState(result =>
+    //             bc.playerState.readUserState(result =>
     //             {
     //                 ++cnt;
     //                 if (cnt === 3)
@@ -4758,8 +4616,8 @@ async function testComms() {
 
     let expiryTimeout = 0;
 
-    await asyncTest("readPlayerState()", 3, function() {
-        bc.playerState.readPlayerState(function(result) {
+    await asyncTest("readUserState()", 3, function() {
+        bc.playerState.readUserState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 403, "Expecting 403");
             equal(result.reason_code, 40304, "Expecting 40304 - NO_SESSION");
@@ -4776,8 +4634,8 @@ async function testComms() {
                 });
     });
 
-    await asyncTest("readPlayerState()", 2, function() {
-        bc.playerState.readPlayerState(function(result) {
+    await asyncTest("readUserState()", 2, function() {
+        bc.playerState.readUserState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -4785,11 +4643,11 @@ async function testComms() {
     });
 
     await asyncTest("Timeout test (With HeartBeat)", 2, function() {
-        bc.playerState.readPlayerState(function(result) {
+        bc.playerState.readUserState(function(result) {
             equal(result.status, 200, "Expecting 200");
             console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
             setTimeout(function() {
-                bc.playerState.readPlayerState(function(result) {
+                bc.playerState.readUserState(function(result) {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
@@ -4798,12 +4656,12 @@ async function testComms() {
     });
 
     await asyncTest("Timeout test (Without HeartBeat)", 3, function() {
-        bc.playerState.readPlayerState(function(result) {
+        bc.playerState.readUserState(function(result) {
             equal(result.status, 200, "Expecting 200");
             console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
             bc.brainCloudClient.stopHeartBeat();
             setTimeout(function() {
-                bc.playerState.readPlayerState(function(result) {
+                bc.playerState.readUserState(function(result) {
                     equal(result.status, 403, "Expecting 403");
                     equal(result.reason_code, 40303, "Expecting 40303");
                     resolve_test();
@@ -4852,8 +4710,8 @@ async function testComms() {
     });
 
     // Do a normal call after this to make sure things are still up and running nicely
-    await asyncTest("readPlayerState()", 2, function() {
-        bc.playerState.readPlayerState(function(result) {
+    await asyncTest("readUserState()", 2, function() {
+        bc.playerState.readUserState(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
             resolve_test();

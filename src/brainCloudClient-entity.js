@@ -101,23 +101,6 @@ function BCEntity() {
 	};
 
 	/**
-	 * @deprecated Use getSharedEntityForProfileId() instead - Removal after September 1 2017
-	 */
-	bc.entity.getSharedEntityForPlayerId = function(profileId, entityId, callback) {
-		var message = {
-			targetPlayerId : profileId,
-			entityId: entityId
-		};
-
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_ENTITY,
-			operation : bc.entity.OPERATION_READ_SHARED_ENTITY,
-			data : message,
-			callback : callback
-		});
-	};
-
-	/**
 	 * Method returns a shared entity for the given profile and entity ID.
 	 * An entity is shared if its ACL allows for the currently logged
 	 * in user to read the data.
@@ -138,22 +121,6 @@ function BCEntity() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_ENTITY,
 			operation : bc.entity.OPERATION_READ_SHARED_ENTITY,
-			data : message,
-			callback : callback
-		});
-	};
-
-	/**
-	 * @deprecated Use getSharedEntitiesForProfileId() instead - Removal after September 1 2017
-	 */
-	bc.entity.getSharedEntitiesForPlayerId = function(profileId, callback) {
-		var message = {
-			targetPlayerId : profileId
-		};
-
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_ENTITY,
-			operation : bc.entity.OPERATION_READ_SHARED,
 			data : message,
 			callback : callback
 		});
@@ -182,26 +149,6 @@ function BCEntity() {
 			callback : callback
 		});
 	};
-
-	/**
-	 * @deprecated Use getAppId() instead - Removal after September 1 2017
-	 */
-	bc.entity.getSharedEntitiesListForPlayerId = function(profileId, where, orderBy, maxReturn, callback) {
-		var message = {
-			targetPlayerId : profileId,
-			maxReturn : maxReturn
-		};
-
-		if(where) message.where = where;
-		if(orderBy) message.orderBy = orderBy;
-
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_ENTITY,
-			operation : bc.entity.OPERATION_READ_SHARED_ENTITIES_LIST,
-			data : message,
-			callback : callback
-		});
-	}
 
 	/**
 	 * Method gets list of shared entities for the specified user based on type and/or where clause

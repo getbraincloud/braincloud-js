@@ -99,7 +99,7 @@ function BCCustomEntity() {
 	 */
 
 	/**
-     * @deprecated Use getEntityPage() instead
+     * @deprecated Use getEntityPage() instead - Removal after October 21 2021
      */
 	bc.customEntity.getPage = function(entityType, rowsPerPage, searchJson, sortJson, doCount, callback) {
 		var message = {
@@ -153,7 +153,7 @@ function BCCustomEntity() {
 	 */
 
 	 /**
-     * @deprecated Use getEntityPageOffset() instead
+     * @deprecated Use getEntityPageOffset() instead - Removal after October 21 2021
      */
 	bc.customEntity.getPageOffset = function(entityType, context, pageOffset, callback) {
 		var message = {

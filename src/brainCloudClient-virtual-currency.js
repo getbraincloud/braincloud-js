@@ -92,7 +92,7 @@ function BCVirtualCurrency() {
      * Service Name - VirtualCurrency
      * Service Operation - AwardCurrency
      *
-     *  @deprecated For security reasons calling this API from the client is not recommended, and is rejected at the server by default. To over-ride, enable the 'Allow Currency Calls from Client' compatibility setting in the Design Portal.
+     * @note For security reasons calling this API from the client is not recommended, and is rejected at the server by default. To over-ride, enable the 'Allow Currency Calls from Client' compatibility setting in the Design Portal.
      *
      * @param vcId
      * @param vcAmount
@@ -119,7 +119,7 @@ function BCVirtualCurrency() {
      * Service Name - VirtualCurrency
      * Service Operation - ConsumeCurrency
      *
-     * @deprecated For security reasons calling this API from the client is not recommended, and is rejected at the server by default. To over-ride, enable the 'Allow Currency Calls from Client' compatibility setting in the Design Portal.
+     * @note For security reasons calling this API from the client is not recommended, and is rejected at the server by default. To over-ride, enable the 'Allow Currency Calls from Client' compatibility setting in the Design Portal.
      *
      * @param vcId
      * @param vcAmount

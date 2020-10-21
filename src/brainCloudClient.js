@@ -37,7 +37,6 @@ function BrainCloudClient() {
         BCPlayerStatistics.apply(bcc);
         BCPlayerStatisticsEvent.apply(bcc);
         BCPresence.apply(bcc);
-        BCProducts.apply(bcc);
         BCVirtualCurrency.apply(bcc);
         BCAppStore.apply(bcc);
         BCProfanity.apply(bcc);
@@ -86,7 +85,6 @@ function BrainCloudClient() {
         bcc.brainCloudManager.playerStatistics = bcc.playerStatistics;
         bcc.brainCloudManager.playerStatisticsEvent = bcc.playerStatisticsEvent;
         bcc.brainCloudManager.presence = bcc.precense;
-        bcc.brainCloudManager.product = bcc.product;
         bcc.brainCloudManager.virtualCurrency = bcc.virtualCurrency;
         bcc.brainCloudManager.appStore = bcc.appStore;
         bcc.brainCloudManager.profanity = bcc.profanity;
@@ -143,7 +141,6 @@ function BrainCloudClient() {
         bcc.brainCloudManager.playerStatistics = bcc.brainCloudClient.playerStatistics = bcc.brainCloudClient.playerStatistics || {};
         bcc.brainCloudManager.playerStatisticsEvent = bcc.brainCloudClient.playerStatisticsEvent = bcc.brainCloudClient.playerStatisticsEvent || {};
         bcc.brainCloudManager.presence = bcc.brainCloudClient.presence = bcc.brainCloudClient.presence || {};
-        bcc.brainCloudManager.product = bcc.brainCloudClient.product = bcc.brainCloudClient.product || {};
         bcc.brainCloudManager.virtualCurrency = bcc.brainCloudClient.virtualCurrency = bcc.brainCloudClient.virtualCurrency || {};
         bcc.brainCloudManager.appStore = bcc.brainCloudClient.appStore = bcc.brainCloudClient.appStore || {};
         bcc.brainCloudManager.profanity = bcc.brainCloudClient.profanity = bcc.brainCloudClient.profanity || {};
@@ -365,7 +362,7 @@ function BrainCloudClient() {
         bcc.brainCloudRelayComms.setDebugEnabled(enableLogging);
     };
 
-// deprecated
+    // deprecated - Will be removed after October 21 2021
     bcc.setDebugEnabled = function(debugEnabled) {
         bcc.brainCloudManager.setDebugEnabled(debugEnabled);
         bcc.brainCloudRttComms.setDebugEnabled(debugEnabled);

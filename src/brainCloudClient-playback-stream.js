@@ -131,38 +131,6 @@ function BCPlaybackStream() {
 	};
 
 	/**
-	 * @deprecated Use getRecentStreamsForInitiatingPlayer instead - Removal after September 1 2017
-	 */
-	bc.playbackStream.getStreamSummariesForInitiatingPlayer = function(initiatingPlayerId, callback) {
-		var message = {
-			initiatingPlayerId : initiatingPlayerId
-		};
-
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYBACK_STREAM,
-			operation : bc.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_INITIATING_PLAYER,
-			data : message,
-			callback : callback
-		});
-	};
-
-	/**
-	 * @deprecated Use getRecentStreamsForTargetPlayer instead - Removal after September 1 2017
-	 */
-	bc.playbackStream.getStreamSummariesForTargetPlayer = function(targetPlayerId, callback) {
-		var message = {
-			targetPlayerId : targetPlayerId
-		};
-
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYBACK_STREAM,
-			operation : bc.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER,
-			data : message,
-			callback : callback
-		});
-	};
-
-	/**
 	 * Method get recent stream summaries for initiating player
 	 *
 	 * @param initiatingPlayerId

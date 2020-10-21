@@ -78,20 +78,6 @@ function BCMessaging() {
             callback: callback
         });
     };
-
-    ///**
-    // * DEPRECATED - USE GETMESSAGES WITH MARKMESSAGEREAD... JS doesn't allow overload
-    // * Retrieves list of specified messages.
-    // *
-    // * Service Name - Messaging
-    // * Service Operation - GET_MESSAGES
-    // *
-    // * @param msgIds Arrays of message ids to get.
-    // * @param callback The method to be invoked when the server response is received
-    // */
-    // bc.messaging.getMessages = function(msgbox, msgIds, callback) {
-    //    getMessages(msgbox, msgIds, false, callback);
-    //};
     
     /**
      * Retrieves list of specified messages.

@@ -265,13 +265,6 @@ function BCMatchMaking() {
 	};
 
 	/**
-	 * @deprecated Use findPlayersUsingFilter instead - Removal after June 21 2016
-	 */
-	bc.matchMaking.findPlayersWithFilter = function(rangeDelta, numMatches, extraParms, callback) {
-		bc.matchMaking.findPlayersUsingFilter(rangeDelta, numMatches, extraParms, callback);
-	};
-
-	/**
 	 * Finds matchmaking enabled players
 	 *
 	 * Service Name - MatchMaking

@@ -20,7 +20,7 @@ function BCFile() {
 	bc.file.OPERATION_GET_CDN_URL = "GET_CDN_URL";
 
     /**
-     * @deprecated Use prepareUserUpload instead
+     * @deprecated Use prepareUserUpload instead - Removal after October 21 2021
      */
     bc.file.prepareFileUpload = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, callback) {
         bc.file.prepareUserUpload(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, callback);
