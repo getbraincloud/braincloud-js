@@ -134,41 +134,9 @@ function BrainCloudManager ()
         bcm._secret = secret;
     };
 
-    /**
-     * @deprecated Use getAppVersion() instead - Removal after September 1 2017
-     */
-    bcm.getGameVersion = function()
-    {
-        return bcm._appVersion;
-    };
-
-    /**
-     * @deprecated Use getAppVersion() instead - Removal after September 1 2017
-     */
-    bcm.getVersion = function()
-    {
-        return bcm._appVersion;
-    };
-
     bcm.getAppVersion = function()
     {
         return bcm._appVersion;
-    };
-
-    /**
-     * @deprecated Use setAppVersion() instead - Removal after September 1 2017
-     */
-    bcm.setGameVersion = function(appVersion)
-    {
-        bcm._appVersion = appVersion;
-    };
-
-    /**
-     * @deprecated Use setAppVersion() instead - Removal after September 1 2017
-     */
-    bcm.setVersion = function(appVersion)
-    {
-        bcm._appVersion = appVersion;
     };
 
     bcm.setAppVersion = function(appVersion)
@@ -176,26 +144,9 @@ function BrainCloudManager ()
         bcm._appVersion = appVersion;
     };
 
-    /**
-     * @deprecated Use getAppId() instead - Removal after September 1 2017
-     */
-    bcm.getGameId = function()
-    {
-        return bcm._appId;
-    };
-
     bcm.getAppId = function()
     {
         return bcm._appId;
-    };
-
-
-    /**
-     * @deprecated Use setAppId() instead - Removal after September 1 2017
-     */
-    bcm.setGameId = function(appId)
-    {
-        bcm._appId = appId;
     };
 
     bcm.setAppId = function(appId)

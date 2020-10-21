@@ -63,21 +63,6 @@ function BCPlayerStatistics() {
 	};
 
 	/**
-	 * @deprecated Use incrementUserStats instead - Removal after September 1 2017
-	 */
-	bc.playerStatistics.incrementPlayerStats = function(stats, xp, callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYER_STATISTICS,
-			operation : bc.playerStatistics.UPDATE,
-			data : {
-				statistics : stats,
-				xp_points : xp
-			},
-			callback : callback
-		});
-	};
-
-	/**
 	 * Atomically increment (or decrement) user statistics.
 	 * Any rewards that are triggered from user statistic increments
 	 * will be considered. User statistics are defined through the brainCloud portal.
@@ -115,17 +100,6 @@ function BCPlayerStatistics() {
 	};
 
 	/**
-	 * @deprecated Use readAllUserStats instead - Removal after September 1 2017
-	 */
-	bc.playerStatistics.readAllPlayerStats = function(callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYER_STATISTICS,
-			operation : bc.playerStatistics.READ,
-			callback : callback
-		});
-	};
-
-	/**
 	 * Read all available user statistics.
 	 *
 	 * Service Name - PlayerStatistics
@@ -137,20 +111,6 @@ function BCPlayerStatistics() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_PLAYER_STATISTICS,
 			operation : bc.playerStatistics.READ,
-			callback : callback
-		});
-	};
-
-	/**
-	 * @deprecated Use readUserStatsSubset instead - Removal after September 1 2017
-	 */
-	bc.playerStatistics.readPlayerStatsSubset = function(subset, callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYER_STATISTICS,
-			operation : bc.playerStatistics.READ_SUBSET,
-			data : {
-				statistics : subset
-			},
 			callback : callback
 		});
 	};
@@ -188,20 +148,6 @@ function BCPlayerStatistics() {
 	};
 
 	/**
-	 * @deprecated Use readUserStatsForCategory instead - Removal after September 1 2017
-	 */
-	bc.playerStatistics.readPlayerStatsForCategory = function(category, callback) {
-		bc.brainCloudManager.sendRequest({
-			service: bc.SERVICE_PLAYER_STATISTICS,
-			operation: bc.playerStatistics.READ_FOR_CATEGORY,
-			data: {
-				category: category
-			},
-			callback: callback
-		});
-	};
-
-	/**
 	 * Method retrieves the user statistics for the given category.
 	 *
 	 * Service Name - PlayerStatistics
@@ -218,17 +164,6 @@ function BCPlayerStatistics() {
 				category: category
 			},
 			callback: callback
-		});
-	};
-
-	/**
-	 * @deprecated Use resetAllUserStats instead - Removal after September 1 2017
-	 */
-	bc.playerStatistics.resetAllPlayerStats = function(callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYER_STATISTICS,
-			operation : bc.playerStatistics.RESET,
-			callback : callback
 		});
 	};
 

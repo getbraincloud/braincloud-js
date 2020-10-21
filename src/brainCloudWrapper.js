@@ -43,7 +43,6 @@ function BrainCloudWrapper(wrapperName) {
         bcw.playerStatistics = bcw.brainCloudClient.playerStatistics;
         bcw.playerStatisticsEvent = bcw.brainCloudClient.playerStatisticsEvent;
         bcw.presence = bcw.brainCloudClient.presence;
-        bcw.product = bcw.brainCloudClient.product;
         bcw.virtualCurrency = bcw.brainCloudClient.virtualCurrency;
         bcw.appStore = bcw.brainCloudClient.appStore;
         bcw.profanity = bcw.brainCloudClient.profanity;
@@ -1021,7 +1020,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.brainCloudManager.setSessionId(sessionId);
         bcw.brainCloudClient.time.readServerTime(function(result) {
             if (result.status === 200) {
-                bcw.brainCloudClient.playerState.readPlayerState(callback);
+                bcw.brainCloudClient.playerState.readUserState(callback);
             } else {
                 callback(result);
             }

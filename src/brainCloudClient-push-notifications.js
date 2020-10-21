@@ -56,16 +56,6 @@ function BCPushNotifications() {
 		});
 	};
 
-	
-
-
-	/**
-     * @deprecated Use registerPushNotificationDeviceToken() instead - Removal after September 1 2020
-     */
-	bc.pushNotification.registerPushNotificationToken = function(deviceType, deviceToken, callback) {
-		registerPushNotificationDeviceToken(deviceType, deviceToken, callback);
-	};
-
 	/**
 	 * Registers the given device token with the server to enable this device
 	 * to receive push notifications.
