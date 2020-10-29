@@ -1037,6 +1037,16 @@ async function testCustomEntity() {
         );
     });
 
+    await asyncTest("getRandomEntitiesMatches()", function() {
+        bc.customEntity.getRandomEntitiesMatching( entityType,
+            { "data.position" : "defense" }, 1,
+            function(result)
+            {
+                equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
     var context = {
         pagination : {
             rowsPerPage : 50,
