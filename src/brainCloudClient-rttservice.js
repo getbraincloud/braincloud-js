@@ -44,6 +44,13 @@ function BCRTT() {
     }
 
     /**
+     * Returns rtt connection status
+     */
+    bc.rttService.getConnectionStatus = function() {
+        return bc.brainCloudRttComms.getConnectionStatus();
+    }
+
+    /**
      * Returns RTT connectionId
      */
     bc.rttService.getRTTConnectionId = function() {

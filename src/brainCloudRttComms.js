@@ -223,7 +223,12 @@ function BrainCloudRttComms (m_client) {
      * @param failure Called on failure to establish an RTT connection or got disconnected.
      */
     bcrtt.enableRTT = function(success, failure) {
-        if (!(bcrtt.isRTTEnabled()) || bcrtt._rttConnectionStatus == bcrtt.RTTConnectionStatus.CONNECTING) {
+        if(bcrtt.isRTTEnabled() || bcrtt._rttConnectionStatus == bcrtt.RTTConnectionStatus.CONNECTING)
+        {
+            return;
+        }
+        else
+        {
             bcrtt.connectCallback = {
                 success: success,
                 failure: failure

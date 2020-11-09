@@ -6032,7 +6032,7 @@ async function testPresence()
     {
         bc.presence.getPresenceOfFriends("brainCloud", true, result =>
         {
-            equal(result.status, 400, "Expecting 400");
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
@@ -6355,7 +6355,6 @@ async function run_tests()
     await testPlayerStatisticsEvent();
     await testPlayerStatistics();
     await testPresence();
-    await testProduct();
     await testVirtualCurrency();
     await testAppStore();
     await testProfanity();
