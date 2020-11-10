@@ -200,36 +200,6 @@ function BCFriend() {
 			callback: callback
 		});
 	};
-
-	/**
-	 * @deprecated Use findUserByUniversalId instead - Removal after September 1 2017
-	 */
-	bc.friend.findPlayerByUniversalId = function(searchText, maxResults, callback) {
-		bc.brainCloudManager.sendRequest({
-			service: bc.SERVICE_FRIEND,
-			operation: bc.friend.OPERATION_FIND_PLAYER_BY_UNIVERSAL_ID,
-			data: {
-				searchText: searchText,
-				maxResults: maxResults
-			},
-			callback: callback
-		});
-	};
-
-	/**
-	 * @deprecated Use findUserByExactUniversalId
-	 */
-	bc.friend.findUserByUniversalId = function(searchText, maxResults, callback) {
-		bc.brainCloudManager.sendRequest({
-			service: bc.SERVICE_FRIEND,
-			operation: bc.friend.OPERATION_FIND_PLAYER_BY_UNIVERSAL_ID,
-			data: {
-				searchText: searchText,
-				maxResults: maxResults
-			},
-			callback: callback
-		});
-	};
 	
 	/** Retrieves profile information for the partial matches of the specified text.
 	 *

@@ -10,9 +10,9 @@ function BCPlayerStatisticsEvent() {
 	bc.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE = "TRIGGER_MULTIPLE";
 
 	/**
-	 * @deprecated Use triggerUserStatsEvents instead - Removal after September 1 2017
+	 * @deprecated Use triggerStatsEvent instead - Removal September 1, 2021
 	 */
-	bc.playerStatisticsEvent.triggerPlayerStatisticsEvent = function(eventName, eventMultiplier, callback) {
+	bc.playerStatisticsEvent.triggerUserStatsEvent = function(eventName, eventMultiplier, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_PLAYER_STATISTICS_EVENT,
 			operation: bc.playerStatisticsEvent.OPERATION_TRIGGER,
@@ -41,7 +41,7 @@ function BCPlayerStatisticsEvent() {
 	 *
 	 * @param callback The method to be invoked when the server response is received
 	 */
-	bc.playerStatisticsEvent.triggerUserStatsEvent = function(eventName, eventMultiplier, callback) {
+	bc.playerStatisticsEvent.triggerStatsEvent = function(eventName, eventMultiplier, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_PLAYER_STATISTICS_EVENT,
 			operation: bc.playerStatisticsEvent.OPERATION_TRIGGER,
@@ -54,9 +54,9 @@ function BCPlayerStatisticsEvent() {
 	};
 
 	/**
-	 * @deprecated Use triggerUserStatsEvents instead - Removal after September 1 2017
+	 * @deprecated Use triggerStatsEvents instead - Removal September 1, 2021
 	 */
-	bc.playerStatisticsEvent.triggerPlayerStatisticsEvents = function(events, callback) {
+	bc.playerStatisticsEvent.triggerUserStatsEvents = function(events, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_PLAYER_STATISTICS_EVENT,
 			operation: bc.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE,
@@ -68,9 +68,6 @@ function BCPlayerStatisticsEvent() {
 	};
 
 	/**
-	 * See documentation for TriggerPlayerStatisticsEvent for more
-	 * documentation.
-	 *
 	 * Service Name - PlayerStatisticsEvent
 	 * Service Operation - TriggerMultiple
 	 *
@@ -86,7 +83,7 @@ function BCPlayerStatisticsEvent() {
  	 *     }
 	 *   ]
 	 */
-	bc.playerStatisticsEvent.triggerUserStatsEvents = function(events, callback) {
+	bc.playerStatisticsEvent.triggerStatsEvents = function(events, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_PLAYER_STATISTICS_EVENT,
 			operation: bc.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE,
@@ -96,7 +93,6 @@ function BCPlayerStatisticsEvent() {
 			callback: callback
 		});
 	};
-
 }
 
 BCPlayerStatisticsEvent.apply(window.brainCloudClient = window.brainCloudClient || {});

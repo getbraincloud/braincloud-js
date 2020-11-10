@@ -37,18 +37,7 @@ function BCPlayerState() {
 	bc.playerState.OPERATION_UPDATE_LANGUAGE_CODE = "UPDATE_LANGUAGE_CODE";
 
 	/**
-	 * @deprecated Use deleteUser instead - Removal after September 1 2017
-	 */
-	bc.playerState.deletePlayer = function(callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYERSTATE,
-			operation : bc.playerState.OPERATION_FULL_PLAYER_RESET,
-			callback : callback
-		});
-	};
-
-	/**
-	 * @deprecated Use deleteUser instead
+	 * @deprecated Use deleteUser instead - Will be removed after October 21 2021
 	 */
 	bc.playerState.userPlayer = function(callback) {
 		bc.brainCloudManager.sendRequest({
@@ -109,18 +98,6 @@ function BCPlayerState() {
 			callback : callback
 		});
 	};
-
-	/**
-	 * @deprecated Use readUserState instead - Removal after September 1 2017
-	 */
-	bc.playerState.readPlayerState = function(callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYERSTATE,
-			operation : bc.playerState.OPERATION_READ,
-			callback : callback
-		});
-	};
-
 
 	/**
 	 * Read the state of the currently logged in user.
@@ -203,17 +180,6 @@ function BCPlayerState() {
 	};
 
 	/**
-	 * @deprecated Use resetUser instead - Removal after September 1 2017
-	 */
-	bc.playerState.resetPlayer = function(callback) {
-		bc.brainCloudManager.sendRequest({
-			service : bc.SERVICE_PLAYERSTATE,
-			operation : bc.playerState.OPERATION_GAME_DATA_RESET,
-			callback : callback
-		});
-	};
-
-	/**
 	 * This method will delete *most* data for the currently logged in user.
 	 * Data which is not deleted includes: currency, credentials, and
 	 * purchase transactions. ResetUser is different from DeleteUser in that
@@ -256,20 +222,6 @@ function BCPlayerState() {
 		});
 	};
 
-	/**
-	 * @deprecated Use updateName instead - Removal after September 1 2017
-	 */
-	bc.playerState.updatePlayerName = function(name, callback) {
-        bc.playerState.updateName(name, callback);
-	};
-
-    /**
-     * @deprecated Use updateName instead
-     */
-    bc.playerState.updateUserName = function(name, callback) {
-        bc.playerState.updateName(name, callback);
-    };
-
     /**
      * Sets the user name.
      *
@@ -279,7 +231,7 @@ function BCPlayerState() {
      * @param name The name of the user
      * @param callback The method to be invoked when the server response is received
      */
-    bc.playerState.updateName = function(name, callback) {
+    bc.playerState.updateUserName = function(name, callback) {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_PLAYERSTATE,
             operation : bc.playerState.OPERATION_UPDATE_NAME,
@@ -288,6 +240,13 @@ function BCPlayerState() {
             },
             callback : callback
         });
+    };
+
+    /**
+     * @deprecated Use updateUserName instead - Will be removed after October 21 2021
+     */
+    bc.playerState.updateName = function(name, callback) {
+        bc.playerState.updateUserName(name, callback);
     };
 
 
@@ -322,20 +281,6 @@ function BCPlayerState() {
 			callback: callback
 		});
 	};
-
-	/**
-	 * @deprecated Use updateUserPictureUrl instead - Removal after September 1 2017
-	 */
-	bc.playerState.updatePlayerPictureUrl = function(pictureUrl, callback) {
-		bc.brainCloudManager.sendRequest({
-			service: bc.SERVICE_PLAYERSTATE,
-			operation: bc.playerState.UPDATE_PICTURE_URL,
-			data: {
-				playerPictureUrl: pictureUrl
-			},
-			callback: callback
-		});
-	}
 
 	/**
 	 * Update User picture URL.

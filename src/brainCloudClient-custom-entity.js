@@ -9,6 +9,7 @@ function BCCustomEntity() {
 	bc.customEntity.OPERATION_CREATE= "CREATE_ENTITY";
 	bc.customEntity.OPERATION_GET_COUNT= "GET_COUNT";
 	bc.customEntity.OPERATION_GET_PAGE= "GET_PAGE";
+	bc.customEntity.OPERATION_GET_RANDOM_ENTITIES_MATCHING= "GET_RANDOM_ENTITIES_MATCHING";
 	bc.customEntity.OPERATION_GET_PAGE_OFFSET= "GET_PAGE_BY_OFFSET";
 	bc.customEntity.OPERATION_GET_ENTITY_PAGE= "GET_ENTITY_PAGE";
 	bc.customEntity.OPERATION_GET_ENTITY_PAGE_OFFSET= "GET_ENTITY_PAGE_OFFSET";
@@ -81,6 +82,33 @@ function BCCustomEntity() {
 		});
 	};
 
+		/**
+	 * Gets a list of up to maxReturn randomly selected custom entities from the server based on the entity type and where condition.
+	 *
+	 * @param entityType
+	 *            {string} The entity type as defined by the user
+	 * @param whereJson
+	 *            {string} Mongo sstyle query string
+	 * @param maxReturn
+	 *            {int} number of max returns
+	 * @param callback
+	 *            {function} The callback handler.
+	 */
+	bc.customEntity.getRandomEntitiesMatching = function(entityType, whereJson, maxReturn, callback) {
+		var message = {
+			entityType : entityType,
+			whereJson : whereJson,
+			maxReturn : maxReturn
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_CUSTOM_ENTITY,
+			operation : bc.customEntity.OPERATION_GET_RANDOM_ENTITIES_MATCHING,
+			data : message,
+			callback : callback
+		});
+	};
+
 	/**
 	 * Retrieves first page of custom entities from the server based on the custom entity type and specified query context
 	 *
@@ -99,7 +127,7 @@ function BCCustomEntity() {
 	 */
 
 	/**
-     * @deprecated Use getEntityPage() instead
+     * @deprecated Use getEntityPage() instead - Removal after October 21 2021
      */
 	bc.customEntity.getPage = function(entityType, rowsPerPage, searchJson, sortJson, doCount, callback) {
 		var message = {
@@ -153,7 +181,7 @@ function BCCustomEntity() {
 	 */
 
 	 /**
-     * @deprecated Use getEntityPageOffset() instead
+     * @deprecated Use getEntityPageOffset() instead - Removal after October 21 2021
      */
 	bc.customEntity.getPageOffset = function(entityType, context, pageOffset, callback) {
 		var message = {

@@ -241,7 +241,7 @@ function BCGamification() {
 	};
 
 	/**
-     * @deprecated
+     * @deprecated - Removal after October 21 2021
      *
 	 * Resets the specified milestones' statuses to LOCKED.
 	 *
