@@ -223,13 +223,6 @@ function BCPlayerState() {
 	};
 
     /**
-     * @deprecated Use updateName instead - Will be removed after October 21 2021
-     */
-    bc.playerState.updateUserName = function(name, callback) {
-        bc.playerState.updateName(name, callback);
-    };
-
-    /**
      * Sets the user name.
      *
      * Service Name - playerState
@@ -238,7 +231,7 @@ function BCPlayerState() {
      * @param name The name of the user
      * @param callback The method to be invoked when the server response is received
      */
-    bc.playerState.updateName = function(name, callback) {
+    bc.playerState.updateUserName = function(name, callback) {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_PLAYERSTATE,
             operation : bc.playerState.OPERATION_UPDATE_NAME,
@@ -247,6 +240,13 @@ function BCPlayerState() {
             },
             callback : callback
         });
+    };
+
+    /**
+     * @deprecated Use updateUserName instead - Will be removed after October 21 2021
+     */
+    bc.playerState.updateName = function(name, callback) {
+        bc.playerState.updateUserName(name, callback);
     };
 
 
