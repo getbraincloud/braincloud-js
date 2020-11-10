@@ -40,16 +40,7 @@ function BCScript() {
 	};
 
 	/**
-	 * Allows cloud script executions to be scheduled
-	 *
-	 * Service Name - Script
-	 * Service Operation - ScheduleCloudScript
-	 *
-	 * @param scriptName The name of the script to be run
-	 * @param scriptData Data to be sent to the script in json format
-	 * @param startDateInUTC A date Object representing the time and date to run the script
-	 * @param callback The method to be invoked when the server response is received
-	 * @see The API documentation site for more details on cloud code
+	 * @deprecated Use ScheduleRunScriptMillisUTC instead - Removal September 1, 2021
 	 */
 	bc.script.scheduleRunScriptUTC = function(scriptName, scriptData, startDateInUTC, callback) {
 		bc.brainCloudManager.sendRequest({
