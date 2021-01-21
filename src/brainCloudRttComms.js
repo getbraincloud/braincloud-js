@@ -7,6 +7,8 @@
 // }
 
 var DEFAULT_RTT_HEARTBEAT; // Seconds
+var disconnectedWithReason = false;
+var disconnectMessage= null;
 
 function getBrowserName() {
     // Opera 8.0+
@@ -115,6 +117,10 @@ function BrainCloudRttComms (m_client) {
         }
 
         bcrtt.disableRTT();
+        if (disconnectedWithReason == true)
+        {
+            console.log("RTT:Disconnect"+ JSON.stringify(disconnectMessage));
+        }
     }
 
     bcrtt.onSocketOpen = function(e) {
@@ -155,11 +161,25 @@ function BrainCloudRttComms (m_client) {
     bcrtt.onSocketMessage = function(e) {
         if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
             var processResult = function(result) {
-                if (result.operation == "CONNECT" && result.service == "rtt") {
-                    bcrtt.connectionId = result.data.cxId;
-                    DEFAULT_RTT_HEARTBEAT = result.data.heartbeatSeconds; //make default heartbeat match the heartbeat the server gives us
-                    bcrtt.startHeartbeat();
-                    bcrtt.connectCallback.success(result);
+                if (result.service == "rtt") {
+                    if(result.operation == "CONNECT")
+                    {
+                        bcrtt.connectionId = result.data.cxId;
+                        DEFAULT_RTT_HEARTBEAT = result.data.heartbeatSeconds; //make default heartbeat match the heartbeat the server gives us
+                        bcrtt.startHeartbeat();
+                        bcrtt.connectCallback.success(result);
+                    }
+                    else if (result.operation == "DISCONNECT")
+                    {
+                        disconnectedWithReason = true;
+                        disconnectMessage = 
+                        {
+                            severity: "ERROR",
+                            reason: result.data.reason,
+                            reasonCode: result.data.reasonCode,
+                            data: null
+                        };
+                    }
                 }
                 else {
                     bcrtt.onRecv(result);
@@ -223,6 +243,7 @@ function BrainCloudRttComms (m_client) {
      * @param failure Called on failure to establish an RTT connection or got disconnected.
      */
     bcrtt.enableRTT = function(success, failure) {
+        disconnectedWithReason = false;
         if(bcrtt.isRTTEnabled() || bcrtt._rttConnectionStatus == bcrtt.RTTConnectionStatus.CONNECTING)
         {
             return;
