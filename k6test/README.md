@@ -1,6 +1,6 @@
 ## ABOUT
 
-*K6* is a load testing tool built for making performance testing productive. Using k6, you'll be able to catch performance regression and problems earlier, allowing you to build resilient systems and robust applications. Go to the k6.io website for the further information.
+*K6* is a load testing tool built for making performance testing productive. Using k6, you'll be able to catch performance regression and problems earlier, allowing you to build resilient systems and robust applications. Go to the [k6.io](https://k6.io) website for the further information.
 
 
 
@@ -15,4 +15,4 @@ Testing requires
 
 ## TESTING
 
-Refer to brainCloud knowledge base article -- Making performance testing against JS lib -- for the detailed steps.
+Refer to brainCloud knowledge base article -- [Making performance testing against JS](http://help.getbraincloud.com/en/articles/4853202-making-performance-testing-against-js-lib) lib -- for the detailed steps.
