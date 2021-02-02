@@ -1,15 +1,8 @@
 var CryptoJS, window;
+
 export function setCryptoJS(crypto){
 	CryptoJS = crypto;
 }
-
-// export function setWindow(http, brainCloudManager, brainCloudClient){
-// 	window = {
-// 		XMLHttpRequest: http,
-// 		brainCloudManager: brainCloudManager,
-// 		brainCloudClient :brainCloudClient
-// 	};
-// }
 
 export function setWindow(http){
 	window.XMLHttpRequest= http;
@@ -28,7 +21,7 @@ var localStorage = {
 	}
 };
 
-export function BrainCloudManager ()
+function BrainCloudManager ()
 {
     var bcm = this;
     var _setInterval = typeof customSetInterval === 'function' ? customSetInterval : setInterval;
@@ -243,18 +236,21 @@ export function BrainCloudManager ()
     {
         bcm.debugLog("SendRequest: " + JSON.stringify(request));
 
+        // todo : temporary way of adding this for k6 test
+        bcm._requestInProgress = false;
+        
         bcm._sendQueue.push(request);
         if (!bcm._requestInProgress && !bcm._bundleDelayActive)
         {
             // We can exploit the fact that JS is single threaded and process
             // the queue 1 "frame" later. This way if the user is doing many
             // consecussive calls they will be bundled
-            bcm._bundleDelayActive = true;
-            setTimeout(function()
-            {
+            // bcm._bundleDelayActive = true;
+            // setTimeout(function()
+            // {
                 bcm._bundleDelayActive = false;
                 bcm.processQueue();
-            }, 0);
+            // }, 0);
         }
     };
 
@@ -558,7 +554,7 @@ export function BrainCloudManager ()
 
     bcm.performQuery = function()
     {
-        clearTimeout(bcm.xml_timeoutId);
+        // clearTimeout(bcm.xml_timeoutId);
         bcm.xml_timeoutId = null;
 
         bcm._requestInProgress = true;
@@ -566,7 +562,8 @@ export function BrainCloudManager ()
         if (window.XMLHttpRequest)
         {
             // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
+            // xmlhttp = new XMLHttpRequest();
+            xmlhttp = window.XMLHttpRequest;
         }
         else
         {
@@ -598,7 +595,7 @@ export function BrainCloudManager ()
 
             if (xmlhttp.readyState == XMLHttpRequest.DONE)
             {
-                clearTimeout(bcm.xml_timeoutId);
+                // clearTimeout(bcm.xml_timeoutId);
                 bcm.xml_timeoutId = null;
 
                 bcm.debugLog("response status : " + xmlhttp.status);
@@ -658,14 +655,31 @@ export function BrainCloudManager ()
         }; // end inner function
 
         // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
-        bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
+        // bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
 
-        xmlhttp.open("POST", bcm._dispatcherUrl, true);
-        xmlhttp.setRequestHeader("Content-type", "application/json");
-        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
-        xmlhttp.setRequestHeader("X-SIG", sig);
-        xmlhttp.setRequestHeader('X-APPID', bcm._appId);
-        xmlhttp.send(bcm._jsonedQueue);
+        // xmlhttp.open("POST", bcm._dispatcherUrl, true);
+        // xmlhttp.setRequestHeader("Content-type", "application/json");
+        // var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        // xmlhttp.setRequestHeader("X-SIG", sig);
+        // xmlhttp.setRequestHeader('X-APPID', bcm._appId);
+        // xmlhttp.send(bcm._jsonedQueue);
+
+        let sig = CryptoJS.md5(bcm._jsonedQueue + bcm._secret, 'hex');
+		let headers = { 
+			'Content-Type': 'application/json',
+			'X-SIG': sig,
+			'X_APPID': bcm._appId
+		};
+        let res = xmlhttp.post(bcm._dispatcherUrl, bcm._jsonedQueue, { headers: headers });      
+        console.log("[RES-Body]:"+JSON.stringify(res.body));
+
+		//todo : temporally adding seesionId for k6 test
+		let jsonbody = JSON.parse(res.body);
+		if ("data" in jsonbody.responses[0]){
+			if ("sessionId" in jsonbody.responses[0].data){
+				bcm._sessionId = jsonbody.responses[0].data.sessionId;
+			}
+		}
     }
 
     bcm.processQueue = function()
@@ -709,6 +723,7 @@ export function BrainCloudManager ()
                     sessionId: bcm._sessionId,
                     packetId: bcm._packetId++
                 });
+
 
             localStorage.setItem("lastPacketId", bcm._packetId);
 
@@ -2224,7 +2239,7 @@ function BCAuthentication() {
 				}
 			}
 
-		};
+        };
 		bc.brainCloudManager.sendRequest(request);
 
     };
@@ -2276,7 +2291,7 @@ function BCAuthentication() {
 
 }
 
-// BCAuthentication.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCAuthentication.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCChat() {
     var bc = this;
@@ -3064,7 +3079,7 @@ bc.customEntity.incrementData = function(entityType, entityId, fieldsJson, callb
 
 }
 
-// BCCustomEntity.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCCustomEntity.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCDataStream() {
     var bc = this;
@@ -3205,7 +3220,7 @@ function BCDataStream() {
 
 }
 
-// BCDataStream.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCDataStream.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCEntity() {
     var bc = this;
@@ -3746,7 +3761,7 @@ function BCEntity() {
 
 }
 
-// BCEntity.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCEntity.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCEvents() {
     var bc = this;
@@ -3857,7 +3872,7 @@ function BCEvents() {
 
 }
 
-// BCEvents.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCEvents.apply(window.brainCloudClient = window.brainCloudClient || {});
 // FormData
 if (typeof window === "undefined" || window === null) {
     window = {}
@@ -4054,7 +4069,7 @@ function BCFile() {
 
 }
 
-// BCFile.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCFile.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCFriend() {
     var bc = this;
@@ -4420,7 +4435,7 @@ function BCFriend() {
 	};
 }
 
-// BCFriend.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCFriend.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCGamification() {
     var bc = this;
@@ -4879,7 +4894,7 @@ function BCGamification() {
 
 }
 
-// BCGamification.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCGamification.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCGlobalApp() {
     var bc = this;
@@ -4907,7 +4922,7 @@ function BCGlobalApp() {
 
 }
 
-// BCGlobalApp.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCGlobalApp.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCGlobalFile() {
     var bc = this;
@@ -5007,7 +5022,7 @@ function BCGlobalFile() {
 
 }
 
-// BCGlobalFile.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCGlobalFile.apply(window.brainCloudClient = window.brainCloudClient || {});
 /**
  * @status - incomplete - see STUB
  */
@@ -5149,7 +5164,7 @@ function BCGlobalStatistics() {
 
 }
 
-// BCGlobalStatistics.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCGlobalStatistics.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCGlobalEntity() {
     var bc = this;
@@ -5651,7 +5666,7 @@ function BCGlobalEntity() {
 
 }
 
-// BCGlobalEntity.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCGlobalEntity.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCGroup() {
     var bc = this;
@@ -6633,7 +6648,7 @@ function BCGroup() {
 
 }
 
-// BCGroup.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCGroup.apply(window.brainCloudClient = window.brainCloudClient || {});
 // User language
 if (typeof window === "undefined" || window === null) {
     window = {}
@@ -7664,7 +7679,7 @@ function BCIdentity() {
 
 }
 
-// BCIdentity.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCIdentity.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCItemCatalog() {
     var bc = this;
@@ -7747,7 +7762,7 @@ function BCItemCatalog() {
 	}
 }
 
-// BCItemCatalog.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCItemCatalog.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCLobby() {
     var bc = this;
@@ -8392,7 +8407,7 @@ function BCLobby() {
             {
                 if (!hasTimedout)
                 {
-                    clearTimeout(timeoutId)
+                    // clearTimeout(timeoutId);
                 }
                 if (xmlhttp.status == 200)
                 {
@@ -8449,7 +8464,7 @@ function BCLobby() {
     }
 }
 
-// BCLobby.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCLobby.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCMail() {
     var bc = this;
@@ -8534,7 +8549,7 @@ function BCMail() {
 
 }
 
-// BCMail.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCMail.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCMatchMaking() {
     var bc = this;
@@ -8884,7 +8899,7 @@ function BCMatchMaking() {
 
 }
 
-// BCMatchMaking.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCMatchMaking.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCMessaging() {
     var bc = this;
@@ -9112,7 +9127,7 @@ function BCMessaging() {
     };
 }
 
-// BCMessaging.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCMessaging.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCOneWayMatch() {
     var bc = this;
@@ -9192,7 +9207,7 @@ function BCOneWayMatch() {
 
 }
 
-// BCOneWayMatch.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCOneWayMatch.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCPlaybackStream() {
     var bc = this;
@@ -9375,7 +9390,7 @@ function BCPlaybackStream() {
 
 }
 
-// BCPlaybackStream.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCPlaybackStream.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCPlayerState() {
     var bc = this;
@@ -9791,7 +9806,7 @@ function BCPlayerState() {
 
 }
 
-// BCPlayerState.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCPlayerState.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCPlayerStatisticsEvent() {
     var bc = this;
@@ -9889,7 +9904,7 @@ function BCPlayerStatisticsEvent() {
 	};
 }
 
-// BCPlayerStatisticsEvent.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCPlayerStatisticsEvent.apply(window.brainCloudClient = window.brainCloudClient || {});
 /**
  * @status - complete
  */
@@ -10126,7 +10141,7 @@ function BCPlayerStatistics() {
 
 }
 
-// BCPlayerStatistics.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCPlayerStatistics.apply(window.brainCloudClient = window.brainCloudClient || {});
 function BCPresence() {
     var bc = this;
 
@@ -10390,7 +10405,7 @@ function BCPresence() {
     };
 }
 
-// BCPresence.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCPresence.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCProfanity() {
     var bc = this;
@@ -10527,7 +10542,7 @@ function BCProfanity() {
 
 }
 
-// BCProfanity.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCProfanity.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCPushNotifications() {
     var bc = this;
@@ -11015,7 +11030,7 @@ function BCPushNotifications() {
 
 }
 
-// BCPushNotifications.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCPushNotifications.apply(window.brainCloudClient = window.brainCloudClient || {});
 function BCReasonCodes() {
     var bc = this;
 
@@ -11432,7 +11447,7 @@ function BCReasonCodes() {
     bc.reasonCodes.CLIENT_DISABLED = 90200;
 }
 
-// BCReasonCodes.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCReasonCodes.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCRedemptionCodes() {
     var bc = this;
@@ -11501,7 +11516,7 @@ function BCRedemptionCodes() {
 
 }
 
-// BCRedemptionCodes.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCRedemptionCodes.apply(window.brainCloudClient = window.brainCloudClient || {});
 function BCRelay() {
     var bc = this;
 
@@ -11708,7 +11723,7 @@ function BCRelay() {
     }
 }
 
-// BCRelay.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCRelay.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCRTT() {
     var bc = this;
@@ -11873,7 +11888,7 @@ function BCRTT() {
     };
 }
 
-// BCRTT.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCRTT.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCS3Handler() {
     var bc = this;
@@ -11948,7 +11963,7 @@ function BCS3Handler() {
 
 }
 
-// BCS3Handler.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCS3Handler.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCScript() {
     var bc = this;
@@ -12198,7 +12213,7 @@ function BCScript() {
 
 }
 
-// BCScript.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCScript.apply(window.brainCloudClient = window.brainCloudClient || {});
 /**
  * @status complete
  */
@@ -12979,7 +12994,7 @@ function BCSocialLeaderboard() {
 
 }
 
-// BCSocialLeaderboard.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCSocialLeaderboard.apply(window.brainCloudClient = window.brainCloudClient || {});
 function BCStatusCodes() {
     var bc = this;
 
@@ -12994,7 +13009,7 @@ function BCStatusCodes() {
 
 }
 
-// BCStatusCodes.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCStatusCodes.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCTimeUtils() {
     var bc = this;
@@ -13016,7 +13031,7 @@ function BCTimeUtils() {
     //Date UTCTimeToLocalTime (Date utcDate)
 
 }
-// BCTimeUtils.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCTimeUtils.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCTime() {
     var bc = this;
@@ -13051,7 +13066,7 @@ function BCTime() {
 
 }
 
-// BCTime.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCTime.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCTournament() {
     var bc = this;
@@ -13392,7 +13407,7 @@ function BCTournament() {
 
 }
 
-// BCTournament.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCTournament.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCUserItems() {
     var bc = this;
@@ -13803,7 +13818,7 @@ function BCUserItems() {
 	};
 }
 
-// BCUserItems.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCUserItems.apply(window.brainCloudClient = window.brainCloudClient || {});
 
 function BCVirtualCurrency() {
     var bc = this;
@@ -13961,13 +13976,13 @@ function BCVirtualCurrency() {
 
 }
 
-// BCVirtualCurrency.apply(window.brainCloudClient = window.brainCloudClient || {});
+BCVirtualCurrency.apply(window.brainCloudClient = window.brainCloudClient || {});
 //----------------------------------------------------
 // brainCloud client source code
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-export function BrainCloudClient() {
+function BrainCloudClient() {
     var bcc = this;
 
     bcc.name = "BrainCloudClient";
@@ -14421,7 +14436,7 @@ export function BrainCloudClient() {
 /**
  * @deprecated Use of the *singleton* (window.brainCloudClient) has been deprecated. We recommend that you create your own *variable* to hold an instance of the brainCloudWrapper. Explanation here: http://getbraincloud.com/apidocs/release-3-6-5/
  */
-// BrainCloudClient.apply(window.brainCloudClient = window.brainCloudClient || {});
+BrainCloudClient.apply(window.brainCloudClient = window.brainCloudClient || {});
 function BrainCloudRelayComms(_client) {
     var bcr = this;
 
@@ -14832,7 +14847,7 @@ function BrainCloudRelayComms(_client) {
     }
 }
 
-// BrainCloudRelayComms.apply(window.brainCloudRelayComms = window.brainCloudRelayComms || {});
+BrainCloudRelayComms.apply(window.brainCloudRelayComms = window.brainCloudRelayComms || {});
 // if (typeof WebSocket === 'undefined') {
 // 	try {
 // 		WebSocket = require('ws');
@@ -15148,7 +15163,7 @@ function BrainCloudRttComms (m_client) {
     }
 }
 
-// BrainCloudRttComms.apply(window.brainCloudRttComms = window.brainCloudRttComms || {});
+BrainCloudRttComms.apply(window.brainCloudRttComms = window.brainCloudRttComms || {});
 /**
  * The BrainCloudWrapper provides some convenience functionality to developers when they are
  * getting started with the authentication system.
@@ -16182,4 +16197,4 @@ export function BrainCloudWrapper(wrapperName) {
 /**
  * @deprecated Use of the *singleton* (window.brainCloudWrapper) has been deprecated. We recommend that you create your own *variable* to hold an instance of the brainCloudWrapper. Explanation here: http://getbraincloud.com/apidocs/release-3-6-5/
  */
-// BrainCloudWrapper.apply(window.brainCloudWrapper = window.brainCloudWrapper || {});
+BrainCloudWrapper.apply(window.brainCloudWrapper = window.brainCloudWrapper || {});
