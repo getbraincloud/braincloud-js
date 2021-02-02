@@ -15,4 +15,4 @@ Testing requires
 
 ## TESTING
 
-Refer to brainCloud knowledge base article -- [Making performance testing against JS](http://help.getbraincloud.com/en/articles/4853202-making-performance-testing-against-js-lib) lib -- for the detailed steps.
+Refer to brainCloud knowledge base article -- [Making performance testing against JS lib](http://help.getbraincloud.com/en/articles/4853202-making-performance-testing-against-js-lib) -- for the detailed steps.
