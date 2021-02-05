@@ -9,7 +9,12 @@
 
 var getIdentitiesCallback = null;
 
+//> ADD IF K6
+//+ export function BrainCloudWrapper(wrapperName) {
+//> END
+//> REMOVE IF K6
 function BrainCloudWrapper(wrapperName) {
+//> END
 
     var bcw = this;
 

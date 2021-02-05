@@ -79,4 +79,6 @@ function BCAbTest() {
 
 }
 
+//> REMOVE IF K6
 BCAbTest.apply(window.brainCloudClient = window.brainCloudClient || {});
+//> END

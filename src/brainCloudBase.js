@@ -1,7 +1,32 @@
+//> ADD IF K6
+//+ var CryptoJS, window;
 
+//+ export function setCryptoJS(crypto){
+//+     CryptoJS = crypto;
+//+ }
+
+//+ export function setWindow(http){
+//+     window.XMLHttpRequest= http;
+//+ }
+
+//+ var localStorage = {
+//+     lastPacketId:"",
+//+     anonymousId:"",
+//+     profileId:"",
+//+     sessionId:"",
+//+     setItem:function(key, value) {
+//+         this[key] = value;
+//+     },
+//+     getItem:function(item) {
+//+         return this[item];
+//+     }
+//+ };
+//> END
+//> REMOVE IF K6
 if (typeof CryptoJS === 'undefined' || CryptoJS === null) {
     var CryptoJS = require('crypto-js');
 }
+//> END
 
 function BrainCloudManager ()
 {
@@ -218,9 +243,19 @@ function BrainCloudManager ()
     {
         bcm.debugLog("SendRequest: " + JSON.stringify(request));
 
+//> ADD IF K6
+//+     // todo : temporary way of adding this for k6 test
+//+     bcm._requestInProgress = false;
+//> END
+
         bcm._sendQueue.push(request);
         if (!bcm._requestInProgress && !bcm._bundleDelayActive)
         {
+//> ADD IF K6
+//+         bcm._bundleDelayActive = false;
+//+         bcm.processQueue();
+//> END
+//> REMOVE IF K6
             // We can exploit the fact that JS is single threaded and process
             // the queue 1 "frame" later. This way if the user is doing many
             // consecussive calls they will be bundled
@@ -230,6 +265,7 @@ function BrainCloudManager ()
                 bcm._bundleDelayActive = false;
                 bcm.processQueue();
             }, 0);
+//> END
         }
     };
 
@@ -533,7 +569,9 @@ function BrainCloudManager ()
 
     bcm.performQuery = function()
     {
+//> REMOVE IF K6
         clearTimeout(bcm.xml_timeoutId);
+//> END
         bcm.xml_timeoutId = null;
 
         bcm._requestInProgress = true;
@@ -541,7 +579,12 @@ function BrainCloudManager ()
         if (window.XMLHttpRequest)
         {
             // code for IE7+, Firefox, Chrome, Opera, Safari
+//> ADD IF K6
+//+         xmlhttp = window.XMLHttpRequest;
+//> END
+//> REMOVE IF K6
             xmlhttp = new XMLHttpRequest();
+//> END
         }
         else
         {
@@ -573,7 +616,9 @@ function BrainCloudManager ()
 
             if (xmlhttp.readyState == XMLHttpRequest.DONE)
             {
+//> REMOVE IF K6
                 clearTimeout(bcm.xml_timeoutId);
+//> END
                 bcm.xml_timeoutId = null;
 
                 bcm.debugLog("response status : " + xmlhttp.status);
@@ -633,6 +678,26 @@ function BrainCloudManager ()
         }; // end inner function
 
         // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
+//> ADD IF K6
+//+     let sig = CryptoJS.md5(bcm._jsonedQueue + bcm._secret, 'hex');
+//+     let headers = {
+//+         'Content-Type': 'application/json',
+//+         'X-SIG': sig,
+//+         'X_APPID': bcm._appId
+//+     };
+//+     let res = xmlhttp.post(bcm._dispatcherUrl, bcm._jsonedQueue, { headers: headers });
+//+     console.log("[RES-Body]:"+JSON.stringify(res.body));
+//+
+//+     //todo : temporally adding seesionId for k6 test
+//+
+//+     let jsonbody = JSON.parse(res.body);
+//+     if ("data" in jsonbody.responses[0]) {
+//+         if ("sessionId" in jsonbody.responses[0].data) {
+//+             bcm._sessionId = jsonbody.responses[0].data.sessionId;
+//+         }
+//+     }
+//> END
+//> REMOVE IF K6
         bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
 
         xmlhttp.open("POST", bcm._dispatcherUrl, true);
@@ -641,6 +706,7 @@ function BrainCloudManager ()
         xmlhttp.setRequestHeader("X-SIG", sig);
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
         xmlhttp.send(bcm._jsonedQueue);
+//> END
     }
 
     bcm.processQueue = function()
@@ -721,5 +787,7 @@ function BrainCloudManager ()
     }
 }
 
+//> REMOVE IF K6
 BrainCloudManager.apply(window.brainCloudManager = window.brainCloudManager || {});
+//> END
 
