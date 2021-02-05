@@ -26,6 +26,7 @@ function BCSocialLeaderboard() {
 	bc.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_ENTRY_COUNT = "GET_GLOBAL_LEADERBOARD_ENTRY_COUNT";
 	bc.socialLeaderboard.OPERATION_REMOVE_PLAYER_SCORE = "REMOVE_PLAYER_SCORE";
 	bc.socialLeaderboard.OPERATION_GET_PLAYER_SCORE = "GET_PLAYER_SCORE";
+	bc.socialLeaderboard.OPERATION_GET_PLAYER_SCORES = "GET_PLAYER_SCORES";
 	bc.socialLeaderboard.OPERATION_GET_PLAYER_SCORES_FROM_LEADERBOARDS = "GET_PLAYER_SCORES_FROM_LEADERBOARDS";
 	bc.socialLeaderboard.OPERATION_POST_GROUP_SCORE = "POST_GROUP_SCORE";
 	bc.socialLeaderboard.OPERATION_REMOVE_GROUP_SCORE = "REMOVE_GROUP_SCORE";
@@ -594,6 +595,32 @@ function BCSocialLeaderboard() {
 		bc.brainCloudManager.sendRequest({
 			service : bc.SERVICE_LEADERBOARD,
 			operation : bc.socialLeaderboard.OPERATION_GET_PLAYER_SCORE,
+			data : message,
+			callback : callback
+		});
+	}
+
+		/**
+	 * Gets a player's highest scores from a leaderboard
+	 *
+	 * Service Name - leaderboard
+	 * Service Operation - GET_PLAYER_SCORES
+	 *
+	 * @param leaderboardId The leaderboard ID
+	 * @param versionId The version of the leaderboard. Use -1 for current.
+	 * @param maxResults the maximum number of returned scores
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.socialLeaderboard.getPlayerScores = function(leaderboardId, versionId, maxResults, callback) {
+		var message = {
+			leaderboardId : leaderboardId,
+			versionId : versionId,
+			maxResults : maxResults
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service : bc.SERVICE_LEADERBOARD,
+			operation : bc.socialLeaderboard.OPERATION_GET_PLAYER_SCORES,
 			data : message,
 			callback : callback
 		});

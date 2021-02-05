@@ -4143,6 +4143,18 @@ async function testSocialLeaderboard() {
                 });
     });
 
+    await asyncTest("getPlayerScores()", 2, function() {
+        bc.socialLeaderboard.getPlayerScores(
+                leaderboardName,
+                -1,
+                 3,
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("getPlayerScoresFromLeaderboards()", 2, function() {
         bc.socialLeaderboard.getPlayerScoresFromLeaderboards(
                 [ leaderboardName ],
@@ -4164,6 +4176,7 @@ async function testSocialLeaderboard() {
                 });
     });
 }
+
 
 ////////////////////////////////////////
 // Time unit tests
