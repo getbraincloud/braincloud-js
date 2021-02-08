@@ -325,6 +325,7 @@ function BrainCloudManager ()
     bcm.startHeartBeat = function()
     {
         bcm.stopHeartBeat();
+//> REMOVE IF K6
         bcm._heartBeatIntervalId = _setInterval(function()
         {
             bcm.sendRequest({
@@ -333,13 +334,16 @@ function BrainCloudManager ()
                 callback : function(result) {}
             });
         }, bcm._idleTimeout * 1000);
+//> END
     }
 
     bcm.stopHeartBeat = function()
     {
         if (bcm._heartBeatIntervalId)
         {
+//> REMOVE IF K6
             clearInterval(bcm._heartBeatIntervalId);
+//> END
             bcm._heartBeatIntervalId = null;
         }
     }
@@ -592,6 +596,7 @@ function BrainCloudManager ()
             xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
 
+//> REMOVE IF K6
         xmlhttp.ontimeout_bc = function()
         {
             if (xmlhttp.readyState < 4)
@@ -616,9 +621,7 @@ function BrainCloudManager ()
 
             if (xmlhttp.readyState == XMLHttpRequest.DONE)
             {
-//> REMOVE IF K6
                 clearTimeout(bcm.xml_timeoutId);
-//> END
                 bcm.xml_timeoutId = null;
 
                 bcm.debugLog("response status : " + xmlhttp.status);
@@ -677,27 +680,6 @@ function BrainCloudManager ()
             }
         }; // end inner function
 
-        // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
-//> ADD IF K6
-//+     let sig = CryptoJS.md5(bcm._jsonedQueue + bcm._secret, 'hex');
-//+     let headers = {
-//+         'Content-Type': 'application/json',
-//+         'X-SIG': sig,
-//+         'X_APPID': bcm._appId
-//+     };
-//+     let res = xmlhttp.post(bcm._dispatcherUrl, bcm._jsonedQueue, { headers: headers });
-//+     console.log("[RES-Body]:"+JSON.stringify(res.body));
-//+
-//+     //todo : temporally adding seesionId for k6 test
-//+
-//+     let jsonbody = JSON.parse(res.body);
-//+     if ("data" in jsonbody.responses[0]) {
-//+         if ("sessionId" in jsonbody.responses[0].data) {
-//+             bcm._sessionId = jsonbody.responses[0].data.sessionId;
-//+         }
-//+     }
-//> END
-//> REMOVE IF K6
         bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
 
         xmlhttp.open("POST", bcm._dispatcherUrl, true);
@@ -706,6 +688,68 @@ function BrainCloudManager ()
         xmlhttp.setRequestHeader("X-SIG", sig);
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
         xmlhttp.send(bcm._jsonedQueue);
+//> END
+
+        // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
+//> ADD IF K6
+//+     let sig = CryptoJS.md5(bcm._jsonedQueue + bcm._secret, 'hex');
+//+     let headers = {
+//+         'Content-Type': 'application/json',
+//+         'X-SIG': sig,
+//+         'X_APPID': bcm._appId
+//+     };
+//+     let res = xmlhttp.post(bcm._dispatcherUrl, bcm._jsonedQueue, { headers: headers/*, timeout: bcm._packetTimeouts[0] * 1000*/ });
+//+
+//+
+//+     bcm.debugLog("response status : " + res.status);
+//+     bcm.debugLog("response : " + res.body);
+//+
+//+     if (res.status == 200)
+//+     {
+//+         var response = JSON.parse(res.body);
+//+
+//+         bcm.handleSuccessResponse(response);
+//+         bcm.processQueue();
+//+     }
+//+     else if (res.status == 503)
+//+     {
+//+         bcm.debugLog("packet in progress", false);
+//+         bcm.retry();
+//+         return;
+//+     }
+//+     else
+//+     {
+//+         try
+//+         {
+//+             var errorResponse = JSON.parse(res.body);
+//+             if (errorResponse["reason_code"])
+//+             {
+//+                 reasonCode = errorResponse["reason_code"];
+//+             }
+//+             if (errorResponse["status_message"])
+//+             {
+//+                 statusMessage = errorResponse["status_message"];
+//+             }
+//+             else
+//+             {
+//+                 statusMessage = res.body;
+//+             }
+//+         }
+//+         catch (e)
+//+         {
+//+             reasonCode = 0;
+//+             statusMessage = res.body;
+//+         }
+//+
+//+         var errorMessage = res.body;
+//+         bcm.debugLog("Failed", true);
+//+
+//+         if ((bcm._errorCallback != undefined) &&
+//+             (typeof bcm._errorCallback == 'function'))
+//+         {
+//+             bcm._errorCallback(errorMessage);
+//+         }
+//+     }
 //> END
     }
 
