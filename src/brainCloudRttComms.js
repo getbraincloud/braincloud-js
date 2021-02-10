@@ -10,6 +10,11 @@ var DEFAULT_RTT_HEARTBEAT; // Seconds
 var disconnectedWithReason = false;
 var disconnectMessage= null;
 
+//> ADD IF K6
+//+ import ws from 'k6/ws';
+//+ import { check } from "k6";
+//> END
+
 function getBrowserName() {
     // Opera 8.0+
     var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || (typeof navigator !== 'undefined' && navigator.userAgent.indexOf(' OPR/') >= 0);
@@ -96,11 +101,23 @@ function BrainCloudRttComms (m_client) {
             }
         }
 
+//> ADD IF K6
+//+     bcrtt._rttConnectionStatus = bcrtt.RTTConnectionStatus.CONNECTED;
+//+     var res = ws.connect(uri, {}, (socket) => {
+//+         bcrtt.socket = socket;
+//+         bcrtt.socket.on('error', bcrtt.onSocketError);
+//+         bcrtt.socket.on('close', bcrtt.onSocketClose);
+//+         bcrtt.socket.on('open', bcrtt.onSocketOpen);
+//+         bcrtt.socket.on('message', bcrtt.onSocketMessage);
+//+     });
+//> END
+//> REMOVE IF K6
         bcrtt.socket = new WebSocket(uri);
         bcrtt.socket.addEventListener('error', bcrtt.onSocketError);
         bcrtt.socket.addEventListener('close', bcrtt.onSocketClose);
         bcrtt.socket.addEventListener('open', bcrtt.onSocketOpen);
         bcrtt.socket.addEventListener('message', bcrtt.onSocketMessage);
+//> END
     }
 
     bcrtt.onSocketError = function(e) {
@@ -124,7 +141,7 @@ function BrainCloudRttComms (m_client) {
     }
 
     bcrtt.onSocketOpen = function(e) {
-        if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
+        if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the event anyway
             // Yay!
             console.log("WebSocket connection established");
 
@@ -186,6 +203,10 @@ function BrainCloudRttComms (m_client) {
                 }
             };
 
+//> ADD IF K6
+            processResult(JSON.parse(e));
+//> END
+//> REMOVE IF K6
             if (typeof e.data === "string") {
                 processResult(e.data);
             } else if (typeof FileReader !== 'undefined') {
@@ -199,10 +220,12 @@ function BrainCloudRttComms (m_client) {
                 // Node.js
                 processResult(JSON.parse(e.data));
             }
+//> END
         }
     }
 
     bcrtt.startHeartbeat = function() {
+//> REMOVE IF K6
         if (!this.heartbeatId) {
             bcrtt.heartbeatId = setInterval(function() {
                 // Send a connect request
@@ -219,6 +242,7 @@ function BrainCloudRttComms (m_client) {
                 bcrtt.socket.send(JSON.stringify(request));
             }, 1000 * DEFAULT_RTT_HEARTBEAT);
         }
+//> END
     }
 
     bcrtt.onRecv = function(result) {
@@ -302,10 +326,12 @@ function BrainCloudRttComms (m_client) {
             }
     
             if (bcrtt.socket) {
+//> REMOVE IF K6
                 bcrtt.socket.removeEventListener('error', bcrtt.onSocketError);
                 bcrtt.socket.removeEventListener('close', bcrtt.onSocketClose);
                 bcrtt.socket.removeEventListener('open', bcrtt.onSocketOpen);
                 bcrtt.socket.removeEventListener('message', bcrtt.onSocketMessage);
+//> END
                 bcrtt.socket.close();
                 bcrtt.socket = null;
             }
