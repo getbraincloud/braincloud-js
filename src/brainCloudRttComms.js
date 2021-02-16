@@ -143,7 +143,9 @@ function BrainCloudRttComms (m_client) {
     bcrtt.onSocketOpen = function(e) {
         if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the event anyway
             // Yay!
+//> REMOVE IF K6
             console.log("WebSocket connection established");
+//> END
 
             // Send a connect request
             var request = {

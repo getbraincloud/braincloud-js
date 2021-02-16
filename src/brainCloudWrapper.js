@@ -123,8 +123,9 @@ function BrainCloudWrapper(wrapperName) {
             var sessionId = result.data.sessionId;
             bcw.setStoredSessionId(sessionId);
         }
-        
+//> REMOVE IF K6
         console.log("Updated saved profileId to " + profileId);
+//> END
     };
 
     ///////////////////////////////////////////////////////////////////////////
