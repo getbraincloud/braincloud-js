@@ -54,6 +54,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.s3Handling = bcw.brainCloudClient.s3Handling;
         bcw.script = bcw.brainCloudClient.script;
         bcw.socialLeaderboard = bcw.brainCloudClient.socialLeaderboard;
+        bcw.leaderboard = bcw.socialLeaderboard;
         bcw.statusCodes = bcw.brainCloudClient.statusCodes;
         bcw.time = bcw.brainCloudClient.time;
         bcw.tournament = bcw.brainCloudClient.tournament;

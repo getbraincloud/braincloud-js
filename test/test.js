@@ -3827,9 +3827,9 @@ async function testSocialLeaderboard() {
     var groupLeaderboard = "groupLeaderboardConfig";
 
     await asyncTest("getGlobalLeaderboardPage()", 2, function() {
-        bc.socialLeaderboard.getGlobalLeaderboardPage(
+        bc.leaderboard.getGlobalLeaderboardPage(
                 leaderboardName,
-                bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+                bc.leaderboard.sortOrder.HIGH_TO_LOW,
                 0, 10, function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3838,9 +3838,9 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getGlobalLeaderboardView()", 2, function() {
-        bc.socialLeaderboard.getGlobalLeaderboardView(
+        bc.leaderboard.getGlobalLeaderboardView(
                 leaderboardName,
-                bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+                bc.leaderboard.sortOrder.HIGH_TO_LOW,
                 4, 5, function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3851,7 +3851,7 @@ async function testSocialLeaderboard() {
     var versionId = 0;
 
     await asyncTest("getGlobalLeaderboardVersions()", 2, function() {
-        bc.socialLeaderboard.getGlobalLeaderboardVersions(
+        bc.leaderboard.getGlobalLeaderboardVersions(
                 leaderboardName, function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3866,10 +3866,10 @@ async function testSocialLeaderboard() {
             "getGlobalLeaderboardPageByVersion()",
             2,
             function() {
-                bc.socialLeaderboard
+                bc.leaderboard
                         .getGlobalLeaderboardPageByVersion(
                                 leaderboardName,
-                                bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+                                bc.leaderboard.sortOrder.HIGH_TO_LOW,
                                 0, 10, versionId, function(result) {
                                     ok(true, JSON.stringify(result));
                                     equal(result.status, 200,
@@ -3879,10 +3879,10 @@ async function testSocialLeaderboard() {
             });
 
     await asyncTest("getGlobalLeaderboardViewByVersion()", 2, function() {
-        bc.socialLeaderboard
+        bc.leaderboard
                 .getGlobalLeaderboardViewByVersion(
                         leaderboardName,
-                        bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+                        bc.leaderboard.sortOrder.HIGH_TO_LOW,
                         4, 5, versionId, function(result) {
                             ok(true, JSON.stringify(result));
                             equal(result.status, 200,
@@ -3892,7 +3892,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getGlobalLeaderboardEntryCount()", 2, function() {
-        bc.socialLeaderboard.getGlobalLeaderboardEntryCount(
+        bc.leaderboard.getGlobalLeaderboardEntryCount(
                 leaderboardName, function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3905,11 +3905,11 @@ async function testSocialLeaderboard() {
         var tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
-        bc.socialLeaderboard.postScoreToDynamicLeaderboard(
+        bc.leaderboard.postScoreToDynamicLeaderboard(
                 "testDynamicJs" + (Math.random() * 10000000).toFixed(0), 1000, {
                     "extra" : 123
-                },  bc.socialLeaderboard.leaderboardType.HIGH_VALUE,
-                    bc.socialLeaderboard.rotationType.DAILY, tomorrow,
+                },  bc.leaderboard.leaderboardType.HIGH_VALUE,
+                    bc.leaderboard.rotationType.DAILY, tomorrow,
                 3, function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3922,10 +3922,10 @@ async function testSocialLeaderboard() {
         var tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
-        bc.socialLeaderboard.postScoreToDynamicLeaderboardDays(
+        bc.leaderboard.postScoreToDynamicLeaderboardDays(
                 "testDynamicJsDays" + (Math.random() * 10000000).toFixed(0), 1000, {
                     "extra" : 123
-                },  bc.socialLeaderboard.leaderboardType.HIGH_VALUE, tomorrow,
+                },  bc.leaderboard.leaderboardType.HIGH_VALUE, tomorrow,
                 3, 3, function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3934,7 +3934,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("postScoreToLeaderboard()", 2, function() {
-        bc.socialLeaderboard.postScoreToLeaderboard(
+        bc.leaderboard.postScoreToLeaderboard(
                 leaderboardName, 1000, {
                     "extra" : 123
                 }, function(result) {
@@ -3945,7 +3945,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getSocialLeaderboard()", 2, function() {
-        bc.socialLeaderboard.getSocialLeaderboard(leaderboardName,
+        bc.leaderboard.getSocialLeaderboard(leaderboardName,
                 true, function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3954,7 +3954,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getSocialLeaderboardByVersion()", 2, function() {
-        bc.socialLeaderboard.getSocialLeaderboardByVersion(leaderboardName,
+        bc.leaderboard.getSocialLeaderboardByVersion(leaderboardName,
                 true, 
                 0, 
                 function(result) {
@@ -3965,7 +3965,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getMultiSocialLeaderboard()", 2, function() {
-        bc.socialLeaderboard.getMultiSocialLeaderboard(
+        bc.leaderboard.getMultiSocialLeaderboard(
                 [ leaderboardName, "testDynamicJs" ],
                 10,
                 true, function(result) {
@@ -3976,7 +3976,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("listAllLeaderboards()", 2, function() {
-        bc.socialLeaderboard.listAllLeaderboards(
+        bc.leaderboard.listAllLeaderboards(
                 function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -4003,7 +4003,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getGroupSocialLeaderboard()", 2, function() {
-        bc.socialLeaderboard.getGroupSocialLeaderboard(
+        bc.leaderboard.getGroupSocialLeaderboard(
             leaderboardName,
             groupId,
             function(result) {
@@ -4014,7 +4014,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getGroupSocialLeaderboardByVersion()", 2, function() {
-        bc.socialLeaderboard.getGroupSocialLeaderboardByVersion(
+        bc.leaderboard.getGroupSocialLeaderboardByVersion(
             leaderboardName,
             groupId,
             0,
@@ -4027,7 +4027,7 @@ async function testSocialLeaderboard() {
 /////////////////////////////
 
     await asyncTest("postScoreToGroupLeaderboard())", 2, function() {
-        bc.socialLeaderboard.postScoreToGroupLeaderboard(
+        bc.leaderboard.postScoreToGroupLeaderboard(
             groupLeaderboard,
             groupId,
             0,
@@ -4040,7 +4040,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("postScoreToDynamicGroupLeaderboard())", 2, function() {
-        bc.socialLeaderboard.postScoreToDynamicGroupLeaderboard(
+        bc.leaderboard.postScoreToDynamicGroupLeaderboard(
             groupLeaderboard,
             groupId,
             0,
@@ -4057,7 +4057,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("removeGroupScore())", 2, function() {
-        bc.socialLeaderboard.removeGroupScore(
+        bc.leaderboard.removeGroupScore(
             groupLeaderboard,
             groupId,
             -1,
@@ -4069,10 +4069,10 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getGroupLeaderboardView())", 2, function() {
-        bc.socialLeaderboard.getGroupLeaderboardView(
+        bc.leaderboard.getGroupLeaderboardView(
             groupLeaderboard,
             groupId,
-            bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+            bc.leaderboard.sortOrder.HIGH_TO_LOW,
             5,
             5,
             function(result) {
@@ -4083,11 +4083,11 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getGroupLeaderboardViewByVersion())", 2, function() {
-        bc.socialLeaderboard.getGroupLeaderboardViewByVersion(
+        bc.leaderboard.getGroupLeaderboardViewByVersion(
             groupLeaderboard,
             groupId,
             1,
-            bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+            bc.leaderboard.sortOrder.HIGH_TO_LOW,
             5,
             5,
             function(result) {
@@ -4110,7 +4110,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getPlayersSocialLeaderboard()", 2, function() {
-        bc.socialLeaderboard.getPlayersSocialLeaderboard(
+        bc.leaderboard.getPlayersSocialLeaderboard(
                 leaderboardName,
                 [ UserA.profileId, UserB.profileId ],
                 function(result) {
@@ -4121,7 +4121,7 @@ async function testSocialLeaderboard() {
     });
     
     await asyncTest("getPlayersSocialLeaderboardByVersion()", 2, function() {
-        bc.socialLeaderboard.getPlayersSocialLeaderboardByVersion(
+        bc.leaderboard.getPlayersSocialLeaderboardByVersion(
                 leaderboardName,
                 [ UserA.profileId, UserB.profileId ],
                 0,
@@ -4133,7 +4133,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("getPlayerScore()", 2, function() {
-        bc.socialLeaderboard.getPlayerScore(
+        bc.leaderboard.getPlayerScore(
                 leaderboardName,
                 -1,
                 function(result) {
@@ -4143,8 +4143,20 @@ async function testSocialLeaderboard() {
                 });
     });
 
+    await asyncTest("getPlayerScores()", 2, function() {
+        bc.leaderboard.getPlayerScores(
+                leaderboardName,
+                -1,
+                 3,
+                function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("getPlayerScoresFromLeaderboards()", 2, function() {
-        bc.socialLeaderboard.getPlayerScoresFromLeaderboards(
+        bc.leaderboard.getPlayerScoresFromLeaderboards(
                 [ leaderboardName ],
                 function(result) {
                     ok(true, JSON.stringify(result));
@@ -4154,7 +4166,7 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("removePlayerScore()", 2, function() {
-        bc.socialLeaderboard.removePlayerScore(
+        bc.leaderboard.removePlayerScore(
                 leaderboardName,
                 -1,
                 function(result) {
@@ -4378,7 +4390,7 @@ async function testTournament() {
         200,
         { "test" : "test" },
         new Date(),
-        bc.socialLeaderboard.sortOrder.HIGH_TO_LOW,
+        bc.leaderboard.sortOrder.HIGH_TO_LOW,
         10,
         10,
         0,
