@@ -152,6 +152,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.s3Handling = bcc.brainCloudClient.s3Handling = bcc.brainCloudClient.s3Handling || {};
         bcc.brainCloudManager.script = bcc.brainCloudClient.script = bcc.brainCloudClient.script || {};
         bcc.brainCloudManager.socialLeaderboard = bcc.brainCloudClient.socialLeaderboard = bcc.brainCloudClient.socialLeaderboard || {};
+        bcc.brainCloudManager.leaderboard = bcc.brainCloudManager.socialLeaderboard;
         bcc.brainCloudManager.statusCodes = bcc.brainCloudClient.statusCodes = bcc.brainCloudClient.statusCodes || {};
         bcc.brainCloudManager.time = bcc.brainCloudClient.time = bcc.brainCloudClient.time || {};
         bcc.brainCloudManager.tournament = bcc.brainCloudClient.tournament = bcc.brainCloudClient.tournament || {};
