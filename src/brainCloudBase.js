@@ -1,12 +1,15 @@
 //> ADD IF K6
-//+ var CryptoJS, window;
+//+ import crypto from 'k6/crypto';
+//+ import http from 'k6/http';
 
-//+ export function setCryptoJS(crypto){
-//+     CryptoJS = crypto;
+//+ var responseG = {};
+//+ var CryptoJS = crypto;
+//+ var window = {
+//+     XMLHttpRequest: http
 //+ }
 
-//+ export function setWindow(http){
-//+     window.XMLHttpRequest= http;
+//+ export function getRes(){
+//+ 	return responseG;
 //+ }
 
 //+ var localStorage = {
@@ -31,7 +34,9 @@ if (typeof CryptoJS === 'undefined' || CryptoJS === null) {
 function BrainCloudManager ()
 {
     var bcm = this;
+//> REMOVE IF K6
     var _setInterval = typeof customSetInterval === 'function' ? customSetInterval : setInterval;
+//> END
 
     bcm.name = "BrainCloudManager";
 
@@ -693,13 +698,24 @@ function BrainCloudManager ()
         // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
 //> ADD IF K6
 //+     let sig = CryptoJS.md5(bcm._jsonedQueue + bcm._secret, 'hex');
-//+     let headers = {
-//+         'Content-Type': 'application/json',
-//+         'X-SIG': sig,
-//+         'X_APPID': bcm._appId
+//+     let _jsonedQueue = JSON.parse(bcm._jsonedQueue);
+//+     let params = {
+//+         cookies: { my_cookie: _jsonedQueue.messages[0].service+"."+_jsonedQueue.messages[0].operation },
+//+         headers: {
+//+             'Content-Type': 'application/json',
+//+             'X-SIG': sig,
+//+             'X_APPID': bcm._appId
+//+         },
+//+         // redirects: 5,
+//+         tags: {
+//+             api: _jsonedQueue.messages[0].service+"."+_jsonedQueue.messages[0].operation,
+//+             name: _jsonedQueue.messages[0].service+"."+_jsonedQueue.messages[0].operation,
+//+             url: bcm._dispatcherUrl
+//+         },
+//+         timeout: bcm._packetTimeouts[0] * 1000
 //+     };
-//+     let res = xmlhttp.post(bcm._dispatcherUrl, bcm._jsonedQueue, { headers: headers/*, timeout: bcm._packetTimeouts[0] * 1000*/ });
-//+
+//+     let res = xmlhttp.post(bcm._dispatcherUrl, bcm._jsonedQueue, params);
+//+     responseG = res;
 //+
 //+     bcm.debugLog("response status : " + res.status);
 //+     bcm.debugLog("response : " + res.body);
@@ -708,7 +724,7 @@ function BrainCloudManager ()
 //+     {
 //+         var response = JSON.parse(res.body);
 //+
-//+         bcm.handleSuccessResponse(response);
+//+         bcm.handleSuccessResponse(response, res);
 //+         bcm.processQueue();
 //+     }
 //+     else if (res.status == 503)
@@ -747,7 +763,7 @@ function BrainCloudManager ()
 //+         if ((bcm._errorCallback != undefined) &&
 //+             (typeof bcm._errorCallback == 'function'))
 //+         {
-//+             bcm._errorCallback(errorMessage);
+//+             bcm._errorCallback(errorMessage, res);
 //+         }
 //+     }
 //> END
