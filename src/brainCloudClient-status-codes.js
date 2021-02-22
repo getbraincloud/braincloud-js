@@ -1,14 +1,14 @@
 function BCStatusCodes() {
     var bc = this;
 
-	bc.statusCodes = {};
+    bc.statusCodes = {};
 
-	bc.statusCodes.OK = 200;
-	bc.statusCodes.BAD_REQUEST = 400;
-	bc.statusCodes.FORBIDDEN = 403;
-	bc.statusCodes.INTERNAL_SERVER_ERROR = 500;
+    bc.statusCodes.OK = 200;
+    bc.statusCodes.BAD_REQUEST = 400;
+    bc.statusCodes.FORBIDDEN = 403;
+    bc.statusCodes.INTERNAL_SERVER_ERROR = 500;
 
-	bc.statusCodes.CLIENT_NETWORK_ERROR = 900;
+    bc.statusCodes.CLIENT_NETWORK_ERROR = 900;
 
 }
 
