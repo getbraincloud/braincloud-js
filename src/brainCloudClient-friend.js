@@ -137,6 +137,20 @@ function BCFriend() {
 	};
 
 	/**
+     * @deprecated Use readFriendUserState() instead - Removal after March 1 2022
+	 */
+	bc.friend.readFriendPlayerState = function(friendId, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_FRIEND,
+			operation: bc.friend.OPERATION_READ_FRIEND_PLAYER_STATE,
+			data: {
+				friendId: friendId
+			},
+			callback: callback
+		});
+	};
+
+	/**
 	 * Read a friend's state.
 	 *
 	 * Service Name - PlayerState
@@ -145,7 +159,7 @@ function BCFriend() {
 	 * @param friendId Target friend
 	 * @param callback Method to be invoked when the server response is received.
 	 */
-	bc.friend.readFriendPlayerState = function(friendId, callback) {
+	bc.friend.readFriendUserState = function(friendId, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_FRIEND,
 			operation: bc.friend.OPERATION_READ_FRIEND_PLAYER_STATE,

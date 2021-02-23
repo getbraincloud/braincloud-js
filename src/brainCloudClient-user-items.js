@@ -83,6 +83,23 @@ function BCUserItems() {
     };
 
     /**
+     * @deprecated Use getUserItemsPage instead. Will be removed on March 1 2022
+     */
+    bc.userItems.getUserInventoryPage = function(context, includeDef, callback) {
+        var message = {
+            context : context,
+            includeDef : includeDef
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_USER_ITEMS,
+            operation : bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE,
+            data : message,
+            callback : callback
+        });
+    };
+
+    /**
      * Retrieves the page of user's inventory from the server 
      * based on the context. If includeDef is true, response
      *  includes associated itemDef with each user item, with 
@@ -97,7 +114,7 @@ function BCUserItems() {
      * @param includeDef 
      * @param callback The method to be invoked when the server response is received
      */
-    bc.userItems.getUserInventoryPage = function(context, includeDef, callback) {
+    bc.userItems.getUserItemsPage = function(context, includeDef, callback) {
         var message = {
             context : context,
             includeDef : includeDef
@@ -106,6 +123,24 @@ function BCUserItems() {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_USER_ITEMS,
             operation : bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE,
+            data : message,
+            callback : callback
+        });
+    };
+
+    /**
+     * @deprecated Use getUserItemsPageOffset instead. Will be removed on March 1 2022
+     */
+    bc.userItems.getUserInventoryPageOffset = function(context, pageOffset, includeDef, callback) {
+        var message = {
+            context : context,
+            pageOffset : pageOffset,
+            includeDef : includeDef
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_USER_ITEMS,
+            operation : bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET,
             data : message,
             callback : callback
         });
@@ -126,7 +161,7 @@ function BCUserItems() {
      * @param includeDef 
      * @param callback The method to be invoked when the server response is received
      */
-    bc.userItems.getUserInventoryPageOffset = function(context, pageOffset, includeDef, callback) {
+    bc.userItems.getUserItemsPageOffset = function(context, pageOffset, includeDef, callback) {
         var message = {
             context : context,
             pageOffset : pageOffset,

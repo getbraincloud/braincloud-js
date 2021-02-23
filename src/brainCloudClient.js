@@ -7,6 +7,7 @@ function BrainCloudClient() {
     var bcc = this;
 
     bcc.name = "BrainCloudClient";
+    bcc.appVersion = "1.0";
 
     // If this is not the singleton, initialize it
     if(window.brainCloudClient !== bcc) {
@@ -201,6 +202,8 @@ function BrainCloudClient() {
             return;
         }
 
+        bcc.appVersion = appVersion;
+
         bcc.brainCloudManager.initialize(appId, secret, appVersion);
     };
 
@@ -224,6 +227,8 @@ function BrainCloudClient() {
             console.log("ERROR | Failed to initialize brainCloud - " + error);
             return;
         }
+
+        bcc.appVersion = appVersion;
 
         bcc.brainCloudManager.initializeWithApps(defaultAppId, secretMap, appVersion);
     };
@@ -257,6 +262,15 @@ function BrainCloudClient() {
      */
     bcc.getAppId = function() {
         return bcc.brainCloudManager.getAppId();
+    };
+
+    /**
+     * Returns the app version
+     * 
+     * @return {string} - The application version
+     */
+    bcc.getAppVersion = function() {
+        return bcc.appVersion;
     };
 
     /**
@@ -339,6 +353,13 @@ function BrainCloudClient() {
     };
 
     /**
+     * @deprecated Use registerGlobalErrorCallback() instead - Removal after March 1 2022
+     */
+    bcc.setErrorCallback = function(errorCallback) {
+        bcc.brainCloudManager.setErrorCallback(errorCallback);
+    };
+
+    /**
      * Sets a callback handler for any error messages that come from brainCloud.
      * This will include any networking errors as well as requests from the client
      * which do not register a callback handler.
@@ -346,7 +367,7 @@ function BrainCloudClient() {
      * @param errorCallback
      *            {function} - The error callback
      */
-    bcc.setErrorCallback = function(errorCallback) {
+    bcc.registerGlobalErrorCallback = function(errorCallback) {
         bcc.brainCloudManager.setErrorCallback(errorCallback);
     };
 
