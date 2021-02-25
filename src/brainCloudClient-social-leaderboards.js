@@ -203,6 +203,29 @@ function BCSocialLeaderboard() {
     };
 
     /**
+     * Gets the number of entries in a global leaderboard
+     *
+     * Service Name - leaderboard
+     * Service Operation - GET_GLOBAL_LEADERBOARD_ENTRY_COUNT
+     *
+     * @param leaderboardId The leaderboard ID
+     * @param versionId Version of the leaderboard
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.socialLeaderboard.getGlobalLeaderboardEntryCountByVersion = function(leaderboardId, versionId, callback) {
+        bc.brainCloudManager
+            .sendRequest({
+                service : bc.SERVICE_LEADERBOARD,
+                operation : bc.socialLeaderboard.OPERATION_GET_GLOBAL_LEADERBOARD_ENTRY_COUNT,
+                data : {
+                    leaderboardId : leaderboardId,
+                    versionId: versionId
+                },
+                callback : callback
+            });
+    };
+
+    /**
      * Method returns the social leaderboard. A player's social leaderboard is
      * comprised of players who are recognized as being your friend.
      * For now, this applies solely to Facebook connected players who are
@@ -358,23 +381,7 @@ function BCSocialLeaderboard() {
     };
 
     /**
-     * Post the players score to the given social leaderboard.
-     * Pass leaderboard config data to dynamically create if necessary.
-     * You can optionally send a user-defined json string of data
-     * with the posted score. This string could include information
-     * relevant to the posted score.
-     *
-     * Service Name - SocialLeaderboard
-     * Service Operation - PostScoreDynamic
-     *
-     * @param leaderboardName The leaderboard to post to
-     * @param score The score to post
-     * @param data Optional user-defined data to post with the score
-     * @param leaderboardType leaderboard type
-     * @param rotationType Type of rotation
-     * @param rotationReset A date Object representing the time and date to start rotation
-     * @param retainedCount How many rotations to keep
-     * @param callback The method to be invoked when the server response is received
+     * @deprecated Use postScoreToDynamicLeaderboardUTC instead - Will be removed on March 1, 2022
      */
     bc.socialLeaderboard.postScoreToDynamicLeaderboard = function(leaderboardName, score,
                                                                                 data, leaderboardType, rotationType, rotationReset, retainedCount, callback ) {
@@ -412,10 +419,72 @@ function BCSocialLeaderboard() {
      * @param rotationType Type of rotation
      * @param rotationReset A date Object representing the time and date to start rotation
      * @param retainedCount How many rotations to keep
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.socialLeaderboard.postScoreToDynamicLeaderboardUTC = function(leaderboardName, score,
+                                                                     data, leaderboardType, rotationType, 
+                                                                     rotationReset, retainedCount, callback ) {
+        bc.brainCloudManager
+            .sendRequest({
+                service : bc.SERVICE_LEADERBOARD,
+                operation : bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
+                data : {
+                    leaderboardId : leaderboardName,
+                    score : score,
+                    data : data,
+                    leaderboardType : leaderboardType,
+                    rotationType : rotationType,
+                    rotationResetTime : rotationReset.getTime().toFixed(0),
+                    retainedCount : retainedCount
+                },
+                callback : callback
+            });
+    };
+
+    /**
+     *@deprecated Use postScoreToDynamicLeaderboardDaysUTC instead - Will be removed on March 1, 2022
+     */
+    bc.socialLeaderboard.postScoreToDynamicLeaderboardDays = function(leaderboardName, score,
+                                                                                    data, leaderboardType, rotationReset, retainedCount, numDaysToRotate, callback ) {
+        bc.brainCloudManager
+            .sendRequest({
+                service : bc.SERVICE_LEADERBOARD,
+                operation : bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
+                data : {
+                    leaderboardId : leaderboardName,
+                    score : score,
+                    data : data,
+                    leaderboardType : leaderboardType,
+                    rotationType : "DAYS",
+                    rotationResetTime : rotationReset.getTime().toFixed(0),
+                    retainedCount : retainedCount,
+                    numDaysToRotate : numDaysToRotate
+                },
+                callback : callback
+            });
+    };
+
+    /**
+     * Post the players score to the given social leaderboard.
+     * Pass leaderboard config data to dynamically create if necessary.
+     * You can optionally send a user-defined json string of data
+     * with the posted score. This string could include information
+     * relevant to the posted score.
+     *
+     * Service Name - SocialLeaderboard
+     * Service Operation - PostScoreDynamic
+     *
+     * @param leaderboardName The leaderboard to post to
+     * @param score The score to post
+     * @param data Optional user-defined data to post with the score
+     * @param leaderboardType leaderboard type
+     * @param rotationType Type of rotation
+     * @param rotationReset A date Object representing the time and date to start rotation
+     * @param retainedCount How many rotations to keep
      * @param numDaysToRotate How many days between each rotation
      * @param callback The method to be invoked when the server response is received
      */
-    bc.socialLeaderboard.postScoreToDynamicLeaderboardDays = function(leaderboardName, score,
+    bc.socialLeaderboard.postScoreToDynamicLeaderboardDaysUTC = function(leaderboardName, score,
                                                                                     data, leaderboardType, rotationReset, retainedCount, numDaysToRotate, callback ) {
         bc.brainCloudManager
             .sendRequest({
@@ -769,19 +838,7 @@ function BCSocialLeaderboard() {
     }
 
     /**
-     * Post the group score to the given group leaderboard and dynamically create if necessary. LeaderboardType, rotationType, rotationReset, and retainedCount are required.     *
-     * Service Name - leaderboard
-     * Service Operation - POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD
-     *
-     * @param leaderboardId the id of the leaderboard
-     * @param groupId the group's id
-     * @param score the sort order
-     * @param data extra data
-     * @param leaderboardType the type
-     * @param rotationType the type of tournamnet rotation
-     * @param rotationResetTime how often to reset
-     * @param retainedCount 
-     * @param callback The method to be invoked when the server response is received
+     * @deprecated Use postScoreToDynamicGroupLeaderboardUTC instead - Will be removed on March 1 2022
      */
     bc.socialLeaderboard.postScoreToDynamicGroupLeaderboard = function(leaderboardId, groupId, score, data, leaderboardType, rotationType, rotationResetTime, retainedCount, callback) {
         var message = {
@@ -803,6 +860,40 @@ function BCSocialLeaderboard() {
         });
     }
 
+    /**
+     * Post the group score to the given group leaderboard and dynamically create if necessary. LeaderboardType, rotationType, rotationReset, and retainedCount are required.     *
+     * Service Name - leaderboard
+     * Service Operation - POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD
+     *
+     * @param leaderboardId the id of the leaderboard
+     * @param groupId the group's id
+     * @param score the sort order
+     * @param data extra data
+     * @param leaderboardType the type
+     * @param rotationType the type of tournamnet rotation
+     * @param rotationResetTime the date to reset the rotation in milliseconds UTC
+     * @param retainedCount 
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.socialLeaderboard.postScoreToDynamicGroupLeaderboardUTC = function(leaderboardId, groupId, score, data, leaderboardType, rotationType, rotationResetTime, retainedCount, callback) {
+        var message = {
+            leaderboardId : leaderboardId,
+            groupId : groupId,
+            score : score,
+            data : data,
+            leaderboardType : leaderboardType,
+            rotationType : rotationType,
+            rotationResetTime : rotationResetTime,
+            retainedCount : retainedCount
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_LEADERBOARD,
+            operation : bc.socialLeaderboard.OPERATION_POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD,
+            data : message,
+            callback : callback
+        });
+    }
 }
 
 BCSocialLeaderboard.apply(window.brainCloudClient = window.brainCloudClient || {});

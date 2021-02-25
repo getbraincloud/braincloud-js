@@ -215,16 +215,7 @@ function BCTournament() {
     };
 
     /**
-     * Post the users score to the leaderboard
-     *
-     * Service Name - tournament
-     * Service Operation - POST_TOURNAMENT_SCORE
-     *
-     * @param leaderboardId The leaderboard for the tournament
-     * @param score The score to post
-     * @param data Optional data attached to the leaderboard entry
-     * @param roundStartedTime Time the user started the match resulting in the score being posted in UTC.
-     * @param callback The method to be invoked when the server response is received
+     * @deprecated use postTournamentScoreUTC instead. Will be removed on March 1 2022
      */
     bc.tournament.postTournamentScore = function(leaderboardId, score, data, roundStartedTime, callback) {
         var message = {
@@ -247,6 +238,68 @@ function BCTournament() {
      * Post the users score to the leaderboard
      *
      * Service Name - tournament
+     * Service Operation - POST_TOURNAMENT_SCORE
+     *
+     * @param leaderboardId The leaderboard for the tournament
+     * @param score The score to post
+     * @param data Optional data attached to the leaderboard entry
+     * @param roundStartedTime Time the user started the match resulting in the score being posted in UTC.
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.tournament.postTournamentScoreUTC = function(leaderboardId, score, data, roundStartedTime, callback) {
+        var message = {
+            leaderboardId : leaderboardId,
+            score : score,
+            roundStartedEpoch: roundStartedTime.getTime()
+        };
+
+        if(data) message.data = data;
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_TOURNAMENT,
+            operation : bc.tournament.OPERATION_POST_TOURNAMENT_SCORE,
+            data : message,
+            callback : callback
+        });
+    };
+
+    /**
+     * @deprecated use postTournamentScoreWithResultsUTC instead. Will be removed on March 1 2022
+     */
+    bc.tournament.postTournamentScoreWithResults = function(
+        leaderboardId,
+        score,
+        data,
+        roundStartedTime,
+        sort,
+        beforeCount,
+        afterCount,
+        initialScore,
+        callback) {
+        var message = {
+            leaderboardId : leaderboardId,
+            score : score,
+            roundStartedEpoch: roundStartedTime.getTime(),
+            sort: sort,
+            beforeCount : beforeCount,
+            afterCount : afterCount,
+            initialScore : initialScore
+        };
+
+        if(data) message.data = data;
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_TOURNAMENT,
+            operation : bc.tournament.OPERATION_POST_TOURNAMENT_SCORE_WITH_RESULTS,
+            data : message,
+            callback : callback
+        });
+    };
+
+    /**
+     * Post the users score to the leaderboard
+     *
+     * Service Name - tournament
      * Service Operation - POST_TOURNAMENT_SCORE_WITH_RESULTS
      *
      * @param leaderboardId The leaderboard for the tournament
@@ -260,7 +313,7 @@ function BCTournament() {
      *                          Usually 0, unless leaderboard is LOW_VALUE
      * @param callback The method to be invoked when the server response is received
      */
-    bc.tournament.postTournamentScoreWithResults = function(
+    bc.tournament.postTournamentScoreWithResultsUTC = function(
         leaderboardId,
         score,
         data,

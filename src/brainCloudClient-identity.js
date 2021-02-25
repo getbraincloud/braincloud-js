@@ -407,7 +407,7 @@ function BCIdentity() {
      * @param callback The method to be invoked when the server response is received
      *
      */
-    bc.identity.mergeGoogleIdentity = function(googleOpenId, authenticationToken, callback) {
+    bc.identity.mergeGoogleOpenIdIdentity = function(googleOpenId, authenticationToken, callback) {
         bc.identity.mergeIdentity(googleOpenId, authenticationToken, bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID, callback);
     };
 
@@ -425,7 +425,7 @@ function BCIdentity() {
      * disconnecting this identity would result in the profile being anonymous (which means that
      * the profile wouldn't be retrievable if the user loses their device)
      */
-    bc.identity.detachGoogleIdentity = function(googleOpenId, continueAnon, callback) {
+    bc.identity.detachGoogleOpenIdIdentity = function(googleOpenId, continueAnon, callback) {
         bc.identity.detachIdentity(googleOpenId, bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID, continueAnon, callback);
     };
 
