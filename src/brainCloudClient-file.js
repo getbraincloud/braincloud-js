@@ -3,8 +3,14 @@ if (typeof window === "undefined" || window === null) {
     window = {}
 }
 if (!window.FormData) {
+//> ADD IF K6
+//+ window.FormData = "k6test";
+//+ var FormData = window.FormData;
+//> END
+//> REMOVE IF K6
     window.FormData = require('form-data');
     FormData = window.FormData;
+//> END
 }
 
 function BCFile() {

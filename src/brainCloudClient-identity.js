@@ -6,7 +6,12 @@ if (!window.navigator) {
     window.navigator = {}
 }
 if (!window.navigator.userLanguage && !window.navigator.language) {
+//> ADD IF K6
+//+ window.navigator.userLanguage = "CA";
+//> END
+//> REMOVE IF K6
     window.navigator.userLanguage = require('get-user-locale').getUserLocale();
+//> END
 }
 
 function BCIdentity() {
