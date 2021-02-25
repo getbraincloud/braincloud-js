@@ -1,12 +1,42 @@
+//> ADD IF K6
+//+ import crypto from 'k6/crypto';
+//+ import http from 'k6/http';
 
+//+ var responseG = {};
+//+ var CryptoJS = crypto;
+//+ var window = {
+//+     XMLHttpRequest: http
+//+ }
+
+//+ export function getRes(){
+//+ 	return responseG;
+//+ }
+
+//+ var localStorage = {
+//+     lastPacketId:"",
+//+     anonymousId:"",
+//+     profileId:"",
+//+     sessionId:"",
+//+     setItem:function(key, value) {
+//+         this[key] = value;
+//+     },
+//+     getItem:function(item) {
+//+         return this[item];
+//+     }
+//+ };
+//> END
+//> REMOVE IF K6
 if (typeof CryptoJS === 'undefined' || CryptoJS === null) {
     var CryptoJS = require('crypto-js');
 }
+//> END
 
 function BrainCloudManager ()
 {
     var bcm = this;
+//> REMOVE IF K6
     var _setInterval = typeof customSetInterval === 'function' ? customSetInterval : setInterval;
+//> END
 
     bcm.name = "BrainCloudManager";
 
@@ -218,9 +248,19 @@ function BrainCloudManager ()
     {
         bcm.debugLog("SendRequest: " + JSON.stringify(request));
 
+//> ADD IF K6
+//+     // todo : temporary way of adding this for k6 test
+//+     bcm._requestInProgress = false;
+//> END
+
         bcm._sendQueue.push(request);
         if (!bcm._requestInProgress && !bcm._bundleDelayActive)
         {
+//> ADD IF K6
+//+         bcm._bundleDelayActive = false;
+//+         bcm.processQueue();
+//> END
+//> REMOVE IF K6
             // We can exploit the fact that JS is single threaded and process
             // the queue 1 "frame" later. This way if the user is doing many
             // consecussive calls they will be bundled
@@ -230,6 +270,7 @@ function BrainCloudManager ()
                 bcm._bundleDelayActive = false;
                 bcm.processQueue();
             }, 0);
+//> END
         }
     };
 
@@ -289,6 +330,7 @@ function BrainCloudManager ()
     bcm.startHeartBeat = function()
     {
         bcm.stopHeartBeat();
+//> REMOVE IF K6
         bcm._heartBeatIntervalId = _setInterval(function()
         {
             bcm.sendRequest({
@@ -297,13 +339,16 @@ function BrainCloudManager ()
                 callback : function(result) {}
             });
         }, bcm._idleTimeout * 1000);
+//> END
     }
 
     bcm.stopHeartBeat = function()
     {
         if (bcm._heartBeatIntervalId)
         {
+//> REMOVE IF K6
             clearInterval(bcm._heartBeatIntervalId);
+//> END
             bcm._heartBeatIntervalId = null;
         }
     }
@@ -533,7 +578,9 @@ function BrainCloudManager ()
 
     bcm.performQuery = function()
     {
+//> REMOVE IF K6
         clearTimeout(bcm.xml_timeoutId);
+//> END
         bcm.xml_timeoutId = null;
 
         bcm._requestInProgress = true;
@@ -541,7 +588,12 @@ function BrainCloudManager ()
         if (window.XMLHttpRequest)
         {
             // code for IE7+, Firefox, Chrome, Opera, Safari
+//> ADD IF K6
+//+         xmlhttp = window.XMLHttpRequest;
+//> END
+//> REMOVE IF K6
             xmlhttp = new XMLHttpRequest();
+//> END
         }
         else
         {
@@ -549,6 +601,7 @@ function BrainCloudManager ()
             xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
 
+//> REMOVE IF K6
         xmlhttp.ontimeout_bc = function()
         {
             if (xmlhttp.readyState < 4)
@@ -632,7 +685,6 @@ function BrainCloudManager ()
             }
         }; // end inner function
 
-        // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
         bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
 
         xmlhttp.open("POST", bcm._dispatcherUrl, true);
@@ -641,6 +693,80 @@ function BrainCloudManager ()
         xmlhttp.setRequestHeader("X-SIG", sig);
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
         xmlhttp.send(bcm._jsonedQueue);
+//> END
+
+        // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
+//> ADD IF K6
+//+     let sig = CryptoJS.md5(bcm._jsonedQueue + bcm._secret, 'hex');
+//+     let _jsonedQueue = JSON.parse(bcm._jsonedQueue);
+//+     let params = {
+//+         cookies: { my_cookie: _jsonedQueue.messages[0].service+"."+_jsonedQueue.messages[0].operation },
+//+         headers: {
+//+             'Content-Type': 'application/json',
+//+             'X-SIG': sig,
+//+             'X_APPID': bcm._appId
+//+         },
+//+         // redirects: 5,
+//+         tags: {
+//+             api: _jsonedQueue.messages[0].service+"."+_jsonedQueue.messages[0].operation,
+//+             name: _jsonedQueue.messages[0].service+"."+_jsonedQueue.messages[0].operation,
+//+             url: bcm._dispatcherUrl
+//+         },
+//+         timeout: bcm._packetTimeouts[0] * 1000
+//+     };
+//+     let res = xmlhttp.post(bcm._dispatcherUrl, bcm._jsonedQueue, params);
+//+     responseG = res;
+//+
+//+     bcm.debugLog("response status : " + res.status);
+//+     bcm.debugLog("response : " + res.body);
+//+
+//+     if (res.status == 200)
+//+     {
+//+         var response = JSON.parse(res.body);
+//+
+//+         bcm.handleSuccessResponse(response, res);
+//+         bcm.processQueue();
+//+     }
+//+     else if (res.status == 503)
+//+     {
+//+         bcm.debugLog("packet in progress", false);
+//+         bcm.retry();
+//+         return;
+//+     }
+//+     else
+//+     {
+//+         try
+//+         {
+//+             var errorResponse = JSON.parse(res.body);
+//+             if (errorResponse["reason_code"])
+//+             {
+//+                 reasonCode = errorResponse["reason_code"];
+//+             }
+//+             if (errorResponse["status_message"])
+//+             {
+//+                 statusMessage = errorResponse["status_message"];
+//+             }
+//+             else
+//+             {
+//+                 statusMessage = res.body;
+//+             }
+//+         }
+//+         catch (e)
+//+         {
+//+             reasonCode = 0;
+//+             statusMessage = res.body;
+//+         }
+//+
+//+         var errorMessage = res.body;
+//+         bcm.debugLog("Failed", true);
+//+
+//+         if ((bcm._errorCallback != undefined) &&
+//+             (typeof bcm._errorCallback == 'function'))
+//+         {
+//+             bcm._errorCallback(errorMessage, res);
+//+         }
+//+     }
+//> END
     }
 
     bcm.processQueue = function()
@@ -721,5 +847,7 @@ function BrainCloudManager ()
     }
 }
 
+//> REMOVE IF K6
 BrainCloudManager.apply(window.brainCloudManager = window.brainCloudManager || {});
+//> END
 
