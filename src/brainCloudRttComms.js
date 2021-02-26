@@ -204,7 +204,7 @@ function BrainCloudRttComms (m_client) {
             };
 
 //> ADD IF K6
-            processResult(JSON.parse(e));
+//+         processResult(JSON.parse(e));
 //> END
 //> REMOVE IF K6
             if (typeof e.data === "string") {
