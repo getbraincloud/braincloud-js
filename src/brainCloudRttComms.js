@@ -213,12 +213,32 @@ function BrainCloudRttComms (m_client) {
                 // Web Browser
                 var reader = new FileReader();
                 reader.onload = function() {
-                    processResult(JSON.parse(reader.result));
+                    var parsed = {};
+                    try
+                    {
+                        parsed = JSON.parse(reader.result);
+                    }
+                    catch (e)
+                    {
+                        console.log("WS RECV: " + reader.result);
+                        parsed = JSON.parse(reader.result); // Trigger the error again and let it fail
+                    }
+                    processResult(parsed);
                 }
                 reader.readAsText(e.data);
             } else {
                 // Node.js
-                processResult(JSON.parse(e.data));
+                var parsed = {};
+                try
+                {
+                    parsed = JSON.parse(e.data);
+                }
+                catch (e)
+                {
+                    console.log("WS RECV: " + e.data);
+                    parsed = JSON.parse(e.data); // Trigger the error again and let it fail
+                }
+                processResult(parsed);
             }
 //> END
         }
