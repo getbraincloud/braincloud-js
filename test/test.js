@@ -3906,7 +3906,7 @@ async function testSocialLeaderboard() {
         tomorrow.setDate(today.getDate() + 1);
 
         bc.leaderboard.postScoreToDynamicLeaderboard(
-                "testDynamicJs" + (Math.random() * 10000000).toFixed(0), 1000, {
+                "testDynamicJs", 1000, {
                     "extra" : 123
                 },  bc.leaderboard.leaderboardType.HIGH_VALUE,
                     bc.leaderboard.rotationType.DAILY, tomorrow,
@@ -3923,7 +3923,7 @@ async function testSocialLeaderboard() {
         tomorrow.setDate(today.getDate() + 1);
 
         bc.leaderboard.postScoreToDynamicLeaderboardDays(
-                "testDynamicJsDays" + (Math.random() * 10000000).toFixed(0), 1000, {
+                "testDynamicJsDays", 1000, {
                     "extra" : 123
                 },  bc.leaderboard.leaderboardType.HIGH_VALUE, tomorrow,
                 3, 3, function(result) {
