@@ -35,6 +35,7 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_EMAIL = "Email";
 	bc.authentication.AUTHENTICATION_TYPE_EXTERNAL = "External";
 	bc.authentication.AUTHENTICATION_TYPE_FACEBOOK = "Facebook";
+	bc.authentication.AUTHENTICATION_TYPE_FACEBOOK_LIMITED = "FacebookLimited";
 	bc.authentication.AUTHENTICATION_TYPE_APPLE = "Apple";
 	bc.authentication.AUTHENTICATION_TYPE_GOOGLE = "Google";
 	bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID = "GoogleOpenId";
@@ -181,7 +182,29 @@ function BCAuthentication() {
 	};
 
 	/**
-	 * Authenticate the user with brainCloud using their Facebook Credentials
+	 * Authenticate the user with brainCloud using their FacebookLimited Credentials
+	 *
+	 * Service Name - authenticationV2
+	 * Service Operation - AUTHENTICATE
+	 *
+	 * @param facebookLimitedId {string} - The FacebookLimited id of the user
+	 * @param facebookToken {string} - The validated token from the Facebook SDK
+	 * (that will be further validated when sent to the bC service)
+	 * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+	 * @param responseHandler {function} - The user callback method
+	 */
+		 bc.authentication.authenticateFacebookLimited = function(facebookLimitedId, facebookToken, forceCreate, responseHandler) {
+			bc.authentication.authenticate(
+				facebookLimitedId,
+				facebookToken,
+				bc.authentication.AUTHENTICATION_TYPE_FACEBOOK_LIMITED,
+				null,
+				forceCreate,
+				responseHandler);
+		};
+
+	/**
+	 * Authenticate the user with brainCloud using their Apple Credentials
 	 *
 	 * Service Name - authenticationV2
 	 * Service Operation - AUTHENTICATE

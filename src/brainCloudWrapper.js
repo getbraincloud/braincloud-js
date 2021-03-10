@@ -297,6 +297,32 @@ function BrainCloudWrapper(wrapperName) {
     };
 
     /**
+     * Authenticate the user with brainCloud using their FacebookLimited Credentials
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param facebookLimitedId {string} - The FacebookLimited id of the user
+     * @param facebookToken {string} - The validated token from the Facebook SDK
+     * (that will be further validated when sent to the bC service)
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * @param responseHandler {function} - The user callback method
+     */
+         bcw.authenticateFacebookLimited = function(facebookLimitedId, facebookToken, forceCreate, responseHandler) {
+
+            bcw._initializeIdentity(false);
+    
+            bcw.brainCloudClient.authentication.authenticateFacebookLimited(
+                facebookLimitedId,
+                facebookToken,
+                forceCreate,
+                function(result) {
+                    bcw._authResponseHandler(result);
+                    responseHandler(result);
+                });
+        };
+
+    /**
      * Authenticate the user using their Game Center id
      *
      * Service Name - authenticationV2
@@ -629,6 +655,41 @@ function BrainCloudWrapper(wrapperName) {
 
         bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
     };
+
+    /**
+     * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
+     * In event the current session was previously an anonymous account, the smart switch will delete that profile.
+     * Use this function to keep a clean designflow from anonymous to signed profiles
+     *
+     * Authenticate the user with brainCloud using their FacebookLimited Credentials
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param facebookLimitedId {string} - The FacebookLimited id of the user
+     * @param facebookToken {string} - The validated token from the Facebook SDK
+     * (that will be further validated when sent to the bC service)
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * @param responseHandler {function} - The user callback method
+     */
+         bcw.smartSwitchAuthenticateFacebookLimited = function (facebookLimitedId, facebookToken, forceCreate, responseHandler)
+         {
+     
+             bcw._initializeIdentity(false);
+     
+             authenticationCallback = function() {
+                 bcw.brainCloudClient.authentication.authenticateFacebookLimited(
+                     facebookLimitedId,
+                     facebookToken,
+                     forceCreate,
+                     function(result) {
+                         bcw._authResponseHandler(result);
+                         responseHandler(result);
+                     });
+             };
+     
+             bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
+         };
 
     /**
      * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
