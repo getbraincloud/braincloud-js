@@ -115,6 +115,62 @@ function BCIdentity() {
     };
 
     /**
+     * Attach the user's FacebookLimited credentials to the current profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Attach
+     *
+     * @param facebookLimitedId The facebook id of the user
+     * @param authenticationToken The validated token from the Facebook SDK
+     *   (that will be further validated when sent to the bC service)
+     * @param callback The method to be invoked when the server response is received
+     *
+     * Errors to watch for:  SWITCHING_PROFILES - this means that the Facebook identity you provided
+     * already points to a different profile.  You will likely want to offer the player the
+     * choice to *SWITCH* to that profile, or *MERGE* the profiles.
+     *
+     * To switch profiles, call ClearSavedProfileID() and call AuthenticateFacebook().
+     */
+    bc.identity.attachFacebookLimitedIdentity = function(facebookLimitedId, authenticationToken, callback) {
+        bc.identity.attachIdentity(facebookLimitedId, authenticationToken, bc.authentication.AUTHENTICATION_TYPE_FACEBOOK_LIMITED, callback);
+    };
+
+    /**
+     * Merge the profile associated with the provided FacebookLimited credentials with the
+     * current profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Merge
+     *
+     * @param facebookLimitedId The facebook id of the user
+     * @param authenticationToken The validated token from the Facebook SDK
+     *   (that will be further validated when sent to the bC service)
+     * @param callback The method to be invoked when the server response is received
+     *
+     */
+    bc.identity.mergeFacebookLimitedIdentity = function(facebookLimitedId, authenticationToken, callback) {
+        bc.identity.mergeIdentity(facebookLimitedId, authenticationToken, bc.authentication.AUTHENTICATION_TYPE_FACEBOOK_LIMITED, callback);
+    };
+
+    /**
+     * Detach the FacebookLimited identity from this profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Detach
+     *
+     * @param facebookLimitedId The Facebook id of the user
+     * @param continueAnon Proceed even if the profile will revert to anonymous?
+     * @param callback The method to be invoked when the server response is received
+     *
+     * Watch for DOWNGRADING_TO_ANONYMOUS_ERROR - occurs if you set continueAnon to false, and
+     * disconnecting this identity would result in the profile being anonymous (which means that
+     * the profile wouldn't be retrievable if the user loses their device)
+     */
+    bc.identity.detachFacebookLimitedIdentity = function(facebookId, continueAnon, callback) {
+        bc.identity.detachIdentity(facebookLimitedId, bc.authentication.AUTHENTICATION_TYPE_FACEBOOK_LIMITED, continueAnon, callback);
+    };
+
+    /**
      * Attach a Game Center identity to the current profile.
      *
      * Service Name - Identity
