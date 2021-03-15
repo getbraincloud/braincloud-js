@@ -254,6 +254,28 @@ function BCFriend() {
 	};
 
 	/**
+	 * 
+	 * 	 
+	 * Service Name - friend
+	 * Service Operation - GET_MY_SOCIAL_INFO
+	 *
+	 * @param friendPlatform Friend platform to query.
+	 * @param includeSummaryData  True if including summary data; false otherwise.
+	 * @param in_callback Method to be invoked when the server response is received.
+	 */
+		 bc.friend.getMySocialInfo = function(friendPlatform, includeSummaryData, callback) {
+			bc.brainCloudManager.sendRequest({
+				service: bc.SERVICE_FRIEND,
+				operation: bc.friend.OPERATION_GET_MY_SOCIAL_INFO,
+				data: {
+					friendPlatform: friendPlatform,
+					includeSummaryData: includeSummaryData
+				},
+				callback: callback
+			});
+		};
+
+	/**
 	 * Links the current user and the specified users as brainCloud friends.
 	 *
 	 * Service Name - friend
