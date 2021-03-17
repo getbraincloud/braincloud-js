@@ -9,7 +9,12 @@
 
 var getIdentitiesCallback = null;
 
+//> ADD IF K6
+//+ export function BrainCloudWrapper(wrapperName) {
+//> END
+//> REMOVE IF K6
 function BrainCloudWrapper(wrapperName) {
+//> END
 
     var bcw = this;
 
@@ -292,6 +297,32 @@ function BrainCloudWrapper(wrapperName) {
     };
 
     /**
+     * Authenticate the user with brainCloud using their FacebookLimited Credentials
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param facebookLimitedId {string} - The FacebookLimited id of the user
+     * @param facebookToken {string} - The validated token from the Facebook SDK
+     * (that will be further validated when sent to the bC service)
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * @param responseHandler {function} - The user callback method
+     */
+         bcw.authenticateFacebookLimited = function(facebookLimitedId, facebookToken, forceCreate, responseHandler) {
+
+            bcw._initializeIdentity(false);
+    
+            bcw.brainCloudClient.authentication.authenticateFacebookLimited(
+                facebookLimitedId,
+                facebookToken,
+                forceCreate,
+                function(result) {
+                    bcw._authResponseHandler(result);
+                    responseHandler(result);
+                });
+        };
+
+    /**
      * Authenticate the user using their Game Center id
      *
      * Service Name - authenticationV2
@@ -368,19 +399,19 @@ function BrainCloudWrapper(wrapperName) {
     };
 
     
-	/**
-	 * Authenticate the user using a google user id (email address) and google authentication token.
-	 *
-	 * Service Name - authenticationV2
-	 * Service Operation - AUTHENTICATE
-	 *
-	 * @param googleUserAccountEmail {string} - String representation of google+ userid (email)
-	 * @param IdToken {string} - The id token of the google account. Can get with calls like requestIdToken
-	 * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
-	 * If set to false, you need to handle errors in the case of new players.
-	 * @param responseHandler {function} - The user callback method
-	 */
-	bcw.authenticateGoogleOpenId = function(googleUserAccountEmail, IdToken, forceCreate, responseHandler) {
+    /**
+     * Authenticate the user using a google user id (email address) and google authentication token.
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param googleUserAccountEmail {string} - String representation of google+ userid (email)
+     * @param IdToken {string} - The id token of the google account. Can get with calls like requestIdToken
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * If set to false, you need to handle errors in the case of new players.
+     * @param responseHandler {function} - The user callback method
+     */
+    bcw.authenticateGoogleOpenId = function(googleUserAccountEmail, IdToken, forceCreate, responseHandler) {
         
         bcw._initializeIdentity(false);
 
@@ -392,7 +423,7 @@ function BrainCloudWrapper(wrapperName) {
                 bcw._authResponseHandler(result);
                 responseHandler(result);
             });
-	};
+    };
 
 
     /**
@@ -476,45 +507,45 @@ function BrainCloudWrapper(wrapperName) {
             });
     };
 
-    	/**
-	 * Authenticate the user using a Pase userid and authentication token
-	 *
-	 * Service Name - Authenticate
-	 * Service Operation - Authenticate
-	 *
-	 * @param handoffId braincloud handoff Id generated from cloud script
-	 * @param securityToken The security token entered by the user
-	 * @param callback The method to be invoked when the server response is received
-	 */
-	bcw.authenticateHandoff = function(handoffId, securityToken, callback) {
+        /**
+     * Authenticate the user using a Pase userid and authentication token
+     *
+     * Service Name - Authenticate
+     * Service Operation - Authenticate
+     *
+     * @param handoffId braincloud handoff Id generated from cloud script
+     * @param securityToken The security token entered by the user
+     * @param callback The method to be invoked when the server response is received
+     */
+    bcw.authenticateHandoff = function(handoffId, securityToken, callback) {
         bcw.brainCloudClient.authentication.authenticateHandoff(
-			handoffId,
-			securityToken,
-			bc.authentication.AUTHENTICATION_TYPE_HANDOFF,
-			null,
-			false,
-			callback);
-	};
+            handoffId,
+            securityToken,
+            bc.authentication.AUTHENTICATION_TYPE_HANDOFF,
+            null,
+            false,
+            callback);
+    };
 
-	/**
-	 * Authenticate a user with handoffCode
-	 *
-	 * Service Name - authenticationV2
-	 * Service Operation - AUTHENTICATE
-	 *
+    /**
+     * Authenticate a user with handoffCode
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
      * @param handoffCode generated via cloudcode
-	 * @param callback The method to be invoked when the server response is received
-	 *
-	 */
-	bcw.authenticateSettopHandoff= function(handoffCode, callback) {
+     * @param callback The method to be invoked when the server response is received
+     *
+     */
+    bcw.authenticateSettopHandoff= function(handoffCode, callback) {
         bcw.brainCloudClient.authentication.authenticateSettopHandoff(
-			handoffCode,
-			"",
-			bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF,
-			null,
-			false,
-			callback);
-	};
+            handoffCode,
+            "",
+            bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF,
+            null,
+            false,
+            callback);
+    };
 
     /**
      * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
@@ -624,6 +655,41 @@ function BrainCloudWrapper(wrapperName) {
 
         bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
     };
+
+    /**
+     * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
+     * In event the current session was previously an anonymous account, the smart switch will delete that profile.
+     * Use this function to keep a clean designflow from anonymous to signed profiles
+     *
+     * Authenticate the user with brainCloud using their FacebookLimited Credentials
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param facebookLimitedId {string} - The FacebookLimited id of the user
+     * @param facebookToken {string} - The validated token from the Facebook SDK
+     * (that will be further validated when sent to the bC service)
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * @param responseHandler {function} - The user callback method
+     */
+         bcw.smartSwitchAuthenticateFacebookLimited = function (facebookLimitedId, facebookToken, forceCreate, responseHandler)
+         {
+     
+             bcw._initializeIdentity(false);
+     
+             authenticationCallback = function() {
+                 bcw.brainCloudClient.authentication.authenticateFacebookLimited(
+                     facebookLimitedId,
+                     facebookToken,
+                     forceCreate,
+                     function(result) {
+                         bcw._authResponseHandler(result);
+                         responseHandler(result);
+                     });
+             };
+     
+             bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
+         };
 
     /**
      * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
@@ -834,79 +900,79 @@ function BrainCloudWrapper(wrapperName) {
         return identitiesCallback;
     };
 
-	/**
-	 * Reset Email password - sends a password reset email to the specified address
-	 *
-	 * Service Name - authenticationV2
-	 * Operation - ResetEmailPassword
-	 *
-	 * @param email {string} - The email address to send the reset email to.
-	 * @param responseHandler {function} - The user callback method
-	 *
-	 * Note the follow error reason codes:
-	 *
-	 * SECURITY_ERROR (40209) - If the email address cannot be found.
-	 */
-	bcw.resetEmailPassword = function(email, responseHandler) {
-		bcw.brainCloudClient.authentication.resetEmailPassword(email, responseHandler);
+    /**
+     * Reset Email password - sends a password reset email to the specified address
+     *
+     * Service Name - authenticationV2
+     * Operation - ResetEmailPassword
+     *
+     * @param email {string} - The email address to send the reset email to.
+     * @param responseHandler {function} - The user callback method
+     *
+     * Note the follow error reason codes:
+     *
+     * SECURITY_ERROR (40209) - If the email address cannot be found.
+     */
+    bcw.resetEmailPassword = function(email, responseHandler) {
+        bcw.brainCloudClient.authentication.resetEmailPassword(email, responseHandler);
     };
 
-	/**
-	 * Reset Email password with service parameters - sends a password reset email to the specified address
-	 *
-	 * Service Name - authenticationV2
-	 * Operation - ResetEmailPasswordAdvanced
-	 *
+    /**
+     * Reset Email password with service parameters - sends a password reset email to the specified address
+     *
+     * Service Name - authenticationV2
+     * Operation - ResetEmailPasswordAdvanced
+     *
      * @param appId {string} - The application Id
-	 * @param email {string} - The email address to send the reset email to.
+     * @param email {string} - The email address to send the reset email to.
      * @param serviceParams {json} - Parameters to send to the email service. See the documentation for
-	 *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
-	 * @param responseHandler {function} - The user callback method
-	 *
-	 * Note the follow error reason codes:
-	 *
-	 * SECURITY_ERROR (40209) - If the email address cannot be found.
-	 */
-	bcw.resetEmailPasswordAdvanced = function(emailAddress, serviceParams, responseHandler) {
+     *    a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
+     * @param responseHandler {function} - The user callback method
+     *
+     * Note the follow error reason codes:
+     *
+     * SECURITY_ERROR (40209) - If the email address cannot be found.
+     */
+    bcw.resetEmailPasswordAdvanced = function(emailAddress, serviceParams, responseHandler) {
         bcw.brainCloudClient.authentication.resetEmailPasswordAdvanced(emailAddress, serviceParams, responseHandler);
     };
 
-    	/**
-	 * Reset Email password - sends a password reset email to the specified address
-	 *
-	 * Service Name - authenticationV2
-	 * Operation - ResetEmailPassword
-	 *
-	 * @param email {string} - The email address to send the reset email to.
-	 * @param responseHandler {function} - The user callback method
+        /**
+     * Reset Email password - sends a password reset email to the specified address
+     *
+     * Service Name - authenticationV2
+     * Operation - ResetEmailPassword
+     *
+     * @param email {string} - The email address to send the reset email to.
+     * @param responseHandler {function} - The user callback method
      * @param tokenTtlInMinutes
-	 *
-	 * Note the follow error reason codes:
-	 *
-	 * SECURITY_ERROR (40209) - If the email address cannot be found.
-	 */
-	bcw.resetEmailPasswordWithExpiry = function(email, tokenTtlInMinutes,responseHandler) {
-		bcw.brainCloudClient.authentication.resetEmailPasswordWithExpiry(email, tokenTtlInMinutes, responseHandler);
+     *
+     * Note the follow error reason codes:
+     *
+     * SECURITY_ERROR (40209) - If the email address cannot be found.
+     */
+    bcw.resetEmailPasswordWithExpiry = function(email, tokenTtlInMinutes,responseHandler) {
+        bcw.brainCloudClient.authentication.resetEmailPasswordWithExpiry(email, tokenTtlInMinutes, responseHandler);
     };
 
-	/**
-	 * Reset Email password with service parameters - sends a password reset email to the specified address
-	 *
-	 * Service Name - authenticationV2
-	 * Operation - ResetEmailPasswordAdvanced
-	 *
+    /**
+     * Reset Email password with service parameters - sends a password reset email to the specified address
+     *
+     * Service Name - authenticationV2
+     * Operation - ResetEmailPasswordAdvanced
+     *
      * @param appId {string} - The application Id
-	 * @param email {string} - The email address to send the reset email to.
+     * @param email {string} - The email address to send the reset email to.
      * @param serviceParams {json} - Parameters to send to the email service. See the documentation for
-     *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
+     *    a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
      * @param tokenTtlInMinutes
- 	 * @param responseHandler {function} - The user callback method
-	 *
-	 * Note the follow error reason codes:
-	 *
-	 * SECURITY_ERROR (40209) - If the email address cannot be found.
-	 */
-	bcw.resetEmailPasswordAdvancedWithExpiry = function(emailAddress, serviceParams, tokenTtlInMinutes, responseHandler) {
+      * @param responseHandler {function} - The user callback method
+     *
+     * Note the follow error reason codes:
+     *
+     * SECURITY_ERROR (40209) - If the email address cannot be found.
+     */
+    bcw.resetEmailPasswordAdvancedWithExpiry = function(emailAddress, serviceParams, tokenTtlInMinutes, responseHandler) {
         bcw.brainCloudClient.authentication.resetEmailPasswordAdvancedWithExpiry(emailAddress, serviceParams, tokenTtlInMinutes, responseHandler);
     };
 
@@ -919,78 +985,78 @@ function BrainCloudWrapper(wrapperName) {
     };
     
     /**
-	 * Reset Email password - sends a password reset email to the specified address
-	 *
-	 * Service Name - authenticationV2
-	 * Operation - ResetEmailPassword
-	 *
-	 * @param email {string} - The email address to send the reset email to.
-	 * @param responseHandler {function} - The user callback method
-	 *
-	 * Note the follow error reason codes:
-	 *
-	 * SECURITY_ERROR (40209) - If the email address cannot be found.
-	 */
-	bcw.resetUniversalIdPassword = function(universalId, responseHandler) {
-		bcw.brainCloudClient.authentication.resetUniversalIdPassword(universalId, responseHandler);
+     * Reset Email password - sends a password reset email to the specified address
+     *
+     * Service Name - authenticationV2
+     * Operation - ResetEmailPassword
+     *
+     * @param email {string} - The email address to send the reset email to.
+     * @param responseHandler {function} - The user callback method
+     *
+     * Note the follow error reason codes:
+     *
+     * SECURITY_ERROR (40209) - If the email address cannot be found.
+     */
+    bcw.resetUniversalIdPassword = function(universalId, responseHandler) {
+        bcw.brainCloudClient.authentication.resetUniversalIdPassword(universalId, responseHandler);
     };
 
-	/**
-	 * Reset Email password with service parameters - sends a password reset email to the specified address
-	 *
-	 * Service Name - authenticationV2
-	 * Operation - ResetEmailPasswordAdvanced
-	 *
+    /**
+     * Reset Email password with service parameters - sends a password reset email to the specified address
+     *
+     * Service Name - authenticationV2
+     * Operation - ResetEmailPasswordAdvanced
+     *
      * @param appId {string} - The application Id
-	 * @param email {string} - The email address to send the reset email to.
+     * @param email {string} - The email address to send the reset email to.
      * @param serviceParams {json} - Parameters to send to the email service. See the documentation for
-	 *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
-	 * @param responseHandler {function} - The user callback method
-	 *
-	 * Note the follow error reason codes:
-	 *
-	 * SECURITY_ERROR (40209) - If the email address cannot be found.
-	 */
-	bcw.resetUniversalIdPasswordAdvanced = function(universalId, serviceParams, responseHandler) {
+     *    a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
+     * @param responseHandler {function} - The user callback method
+     *
+     * Note the follow error reason codes:
+     *
+     * SECURITY_ERROR (40209) - If the email address cannot be found.
+     */
+    bcw.resetUniversalIdPasswordAdvanced = function(universalId, serviceParams, responseHandler) {
         bcw.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(universalId, serviceParams, responseHandler);
     };
 
     /**
-	 * Reset Email password - sends a password reset email to the specified address
-	 *
-	 * Service Name - authenticationV2
-	 * Operation - ResetEmailPassword
-	 *
-	 * @param email {string} - The email address to send the reset email to.
-	 * @param responseHandler {function} - The user callback method
+     * Reset Email password - sends a password reset email to the specified address
+     *
+     * Service Name - authenticationV2
+     * Operation - ResetEmailPassword
+     *
+     * @param email {string} - The email address to send the reset email to.
+     * @param responseHandler {function} - The user callback method
      * @param tokenTtlInMinutes
-	 *
-	 * Note the follow error reason codes:
-	 *
-	 * SECURITY_ERROR (40209) - If the email address cannot be found.
-	 */
-	bcw.resetUniversalIdPasswordWithExpiry = function(universalId, tokenTtlInMinutes,responseHandler) {
-		bcw.brainCloudClient.authentication.resetUniversalIdPasswordWithExpiry(universalId, tokenTtlInMinutes, responseHandler);
+     *
+     * Note the follow error reason codes:
+     *
+     * SECURITY_ERROR (40209) - If the email address cannot be found.
+     */
+    bcw.resetUniversalIdPasswordWithExpiry = function(universalId, tokenTtlInMinutes,responseHandler) {
+        bcw.brainCloudClient.authentication.resetUniversalIdPasswordWithExpiry(universalId, tokenTtlInMinutes, responseHandler);
     };
 
-	/**
-	 * Reset Email password with service parameters - sends a password reset email to the specified address
-	 *
-	 * Service Name - authenticationV2
-	 * Operation - ResetEmailPasswordAdvanced
-	 *
+    /**
+     * Reset Email password with service parameters - sends a password reset email to the specified address
+     *
+     * Service Name - authenticationV2
+     * Operation - ResetEmailPasswordAdvanced
+     *
      * @param appId {string} - The application Id
-	 * @param email {string} - The email address to send the reset email to.
+     * @param email {string} - The email address to send the reset email to.
      * @param serviceParams {json} - Parameters to send to the email service. See the documentation for
-     *	a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
+     *    a full list. http://getbraincloud.com/apidocs/apiref/#capi-mail
      * @param tokenTtlInMinutes
- 	 * @param responseHandler {function} - The user callback method
-	 *
-	 * Note the follow error reason codes:
-	 *
-	 * SECURITY_ERROR (40209) - If the email address cannot be found.
-	 */
-	bcw.resetUniversalIdPasswordAdvancedWithExpiry = function(universalId, serviceParams, tokenTtlInMinutes, responseHandler) {
+      * @param responseHandler {function} - The user callback method
+     *
+     * Note the follow error reason codes:
+     *
+     * SECURITY_ERROR (40209) - If the email address cannot be found.
+     */
+    bcw.resetUniversalIdPasswordAdvancedWithExpiry = function(universalId, serviceParams, tokenTtlInMinutes, responseHandler) {
         bcw.brainCloudClient.authentication.resetUniversalIdPasswordAdvancedWithExpiry(universalId, serviceParams, tokenTtlInMinutes, responseHandler);
     };
 

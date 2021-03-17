@@ -1,12 +1,19 @@
 // if (typeof WebSocket === 'undefined') {
-// 	try {
-// 		WebSocket = require('ws');
-// 	} catch (err) {
-// 		WebSocket = null;
-// 	}
+//     try {
+//         WebSocket = require('ws');
+//     } catch (err) {
+//         WebSocket = null;
+//     }
 // }
 
 var DEFAULT_RTT_HEARTBEAT; // Seconds
+var disconnectedWithReason = false;
+var disconnectMessage= null;
+
+//> ADD IF K6
+//+ import ws from 'k6/ws';
+//+ import { check } from "k6";
+//> END
 
 function getBrowserName() {
     // Opera 8.0+
@@ -94,11 +101,23 @@ function BrainCloudRttComms (m_client) {
             }
         }
 
+//> ADD IF K6
+//+     bcrtt._rttConnectionStatus = bcrtt.RTTConnectionStatus.CONNECTED;
+//+     var res = ws.connect(uri, {}, (socket) => {
+//+         bcrtt.socket = socket;
+//+         bcrtt.socket.on('error', bcrtt.onSocketError);
+//+         bcrtt.socket.on('close', bcrtt.onSocketClose);
+//+         bcrtt.socket.on('open', bcrtt.onSocketOpen);
+//+         bcrtt.socket.on('message', bcrtt.onSocketMessage);
+//+     });
+//> END
+//> REMOVE IF K6
         bcrtt.socket = new WebSocket(uri);
         bcrtt.socket.addEventListener('error', bcrtt.onSocketError);
         bcrtt.socket.addEventListener('close', bcrtt.onSocketClose);
         bcrtt.socket.addEventListener('open', bcrtt.onSocketOpen);
         bcrtt.socket.addEventListener('message', bcrtt.onSocketMessage);
+//> END
     }
 
     bcrtt.onSocketError = function(e) {
@@ -115,10 +134,14 @@ function BrainCloudRttComms (m_client) {
         }
 
         bcrtt.disableRTT();
+        if (disconnectedWithReason == true)
+        {
+            console.log("RTT:Disconnect"+ JSON.stringify(disconnectMessage));
+        }
     }
 
     bcrtt.onSocketOpen = function(e) {
-        if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
+        if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the event anyway
             // Yay!
             console.log("WebSocket connection established");
 
@@ -155,34 +178,74 @@ function BrainCloudRttComms (m_client) {
     bcrtt.onSocketMessage = function(e) {
         if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
             var processResult = function(result) {
-                if (result.operation == "CONNECT" && result.service == "rtt") {
-                    bcrtt.connectionId = result.data.cxId;
-                    DEFAULT_RTT_HEARTBEAT = result.data.heartbeatSeconds; //make default heartbeat match the heartbeat the server gives us
-                    bcrtt.startHeartbeat();
-                    bcrtt.connectCallback.success(result);
+                if (result.service == "rtt") {
+                    if(result.operation == "CONNECT")
+                    {
+                        bcrtt.connectionId = result.data.cxId;
+                        DEFAULT_RTT_HEARTBEAT = result.data.heartbeatSeconds; //make default heartbeat match the heartbeat the server gives us
+                        bcrtt.startHeartbeat();
+                        bcrtt.connectCallback.success(result);
+                    }
+                    else if (result.operation == "DISCONNECT")
+                    {
+                        disconnectedWithReason = true;
+                        disconnectMessage = 
+                        {
+                            severity: "ERROR",
+                            reason: result.data.reason,
+                            reasonCode: result.data.reasonCode,
+                            data: null
+                        };
+                    }
                 }
                 else {
                     bcrtt.onRecv(result);
                 }
             };
 
+//> ADD IF K6
+//+         processResult(JSON.parse(e));
+//> END
+//> REMOVE IF K6
             if (typeof e.data === "string") {
                 processResult(e.data);
             } else if (typeof FileReader !== 'undefined') {
                 // Web Browser
                 var reader = new FileReader();
                 reader.onload = function() {
-                    processResult(JSON.parse(reader.result));
+                    var parsed = {};
+                    try
+                    {
+                        parsed = JSON.parse(reader.result);
+                    }
+                    catch (e)
+                    {
+                        console.log("WS RECV: " + reader.result);
+                        parsed = JSON.parse(reader.result); // Trigger the error again and let it fail
+                    }
+                    processResult(parsed);
                 }
                 reader.readAsText(e.data);
             } else {
                 // Node.js
-                processResult(JSON.parse(e.data));
+                var parsed = {};
+                try
+                {
+                    parsed = JSON.parse(e.data);
+                }
+                catch (e)
+                {
+                    console.log("WS RECV: " + e.data);
+                    parsed = JSON.parse(e.data); // Trigger the error again and let it fail
+                }
+                processResult(parsed);
             }
+//> END
         }
     }
 
     bcrtt.startHeartbeat = function() {
+//> REMOVE IF K6
         if (!this.heartbeatId) {
             bcrtt.heartbeatId = setInterval(function() {
                 // Send a connect request
@@ -199,6 +262,7 @@ function BrainCloudRttComms (m_client) {
                 bcrtt.socket.send(JSON.stringify(request));
             }, 1000 * DEFAULT_RTT_HEARTBEAT);
         }
+//> END
     }
 
     bcrtt.onRecv = function(result) {
@@ -223,6 +287,7 @@ function BrainCloudRttComms (m_client) {
      * @param failure Called on failure to establish an RTT connection or got disconnected.
      */
     bcrtt.enableRTT = function(success, failure) {
+        disconnectedWithReason = false;
         if(bcrtt.isRTTEnabled() || bcrtt._rttConnectionStatus == bcrtt.RTTConnectionStatus.CONNECTING)
         {
             return;
@@ -281,10 +346,12 @@ function BrainCloudRttComms (m_client) {
             }
     
             if (bcrtt.socket) {
+//> REMOVE IF K6
                 bcrtt.socket.removeEventListener('error', bcrtt.onSocketError);
                 bcrtt.socket.removeEventListener('close', bcrtt.onSocketClose);
                 bcrtt.socket.removeEventListener('open', bcrtt.onSocketOpen);
                 bcrtt.socket.removeEventListener('message', bcrtt.onSocketMessage);
+//> END
                 bcrtt.socket.close();
                 bcrtt.socket = null;
             }

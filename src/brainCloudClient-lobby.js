@@ -642,7 +642,9 @@ function BCLobby() {
             {
                 if (!hasTimedout)
                 {
+//> REMOVE IF K6
                     clearTimeout(timeoutId)
+//> END
                 }
                 if (xmlhttp.status == 200)
                 {
