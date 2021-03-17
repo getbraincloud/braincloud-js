@@ -1366,6 +1366,15 @@ async function testFriend() {
         });
     });
 
+    await asyncTest("getMySocialInfo()", 2, function() {
+        bc.friend.getMySocialInfo(bc.friend.friendPlatform.All, false,
+            function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     await asyncTest("removeFriends()", 2, function() {
         var ids = [ UserB.profileId ];
         bc.friend.removeFriends(ids, function(result) {
