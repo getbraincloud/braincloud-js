@@ -6388,18 +6388,19 @@ async function run_tests()
     await testTime();
     await testTournament();
     await testSharedIdentity();
-    await testComms();
     await testFile();
-    await testWrapper();
     await testChat();
     await testMessaging();
-    await testRTT();
-    await testRelay();
-    await testLobby();
     await testItemCatalog();
     await testUserItems();
     await testCustomEntity();
     await testGlobalFile();
+    
+    await testRTT();
+    await testComms();
+    await testWrapper();
+    await testRelay();
+    await testLobby();
 }
 
 async function main()
