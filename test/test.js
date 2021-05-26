@@ -3336,6 +3336,15 @@ async function testAppStore() {
             resolve_test();
         });
     });
+
+    await asyncTest("refreshPromotions()", 1, () =>
+    {
+        bc.appStore.refreshPromotions(result =>
+        {
+            equal(result.status, 200, "Expected 200");
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
