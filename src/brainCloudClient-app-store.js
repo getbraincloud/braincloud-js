@@ -187,7 +187,8 @@ function BCAppStore() {
     };
 
     /**
-    * Refreshes promotions for the player.
+    * Returns up-to-date eligible 'promotions' for the user and 
+    * a 'promotionsRefreshed' flag indicating whether the user's promotion info required refreshing.
     *
     * Service Name - AppStore
     * Service Operation - RefreshPromotions
