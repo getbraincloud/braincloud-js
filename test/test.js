@@ -1266,6 +1266,34 @@ async function testEvent() {
                 });
     });
 
+    await setUpWithAuthenticate();
+    await asyncTest("deleteIncomingEvents()", function() {
+        var evIds = [];
+        bc.event.deleteIncomingEvents(evIds, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await setUpWithAuthenticate();
+    await asyncTest("deleteIncomingEventsByTypeOlderThan()", function() {
+        var eventType = "my-event-type";
+        var dateMillis = 1619804426154;
+        bc.event.DeleteIncomingEventsByTypeOlderThan(eventType, dateMillis, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await setUpWithAuthenticate();
+    await asyncTest("deleteIncomingEventsOlderThan()", function() {
+        var dateMillis = 1619804426154;
+        bc.event.deleteIncomingEventsOlderThan(dateMillis, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
     // B read event
     await asyncTest("userB recv event()", 2, () =>
     {

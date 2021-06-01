@@ -12,6 +12,10 @@ function BCEvents() {
 	bc.event.OPERATION_DELETE_SENT = "DELETE_SENT";
 	bc.event.OPERATION_GET_EVENTS = "GET_EVENTS";
 
+	bc.event.OPERATION_DELETE_INCOMING_EVENTS = "DELETE_INCOMING_EVENTS";
+	bc.event.OPERATION_DELETE_INCOMING_EVENTS_OLDER_THAN = "DELETE_INCOMING_EVENTS_OLDER_THAN";
+	bc.event.OPERATION_DELETE_INCOMING_EVENTS_BY_TYPE_OLDER_THAN = "DELETE_INCOMING_EVENTS_BY_TYPE_OLDER_THAN";
+
 
 	/**
 	 * Sends an event to the designated player id with the attached json data.
@@ -102,6 +106,68 @@ function BCEvents() {
 			service: bc.SERVICE_EVENT,
 			operation: bc.event.OPERATION_GET_EVENTS,
 			data: null,
+			callback: callback
+		});
+	};
+
+	/**
+	 * Delete a list of events out of the user's incoming mailbox.
+	 *
+	 * Service Name - Event
+	 * Service Operation - DeleteIncomingEvents
+	 *
+	 * @param evIds Collection of event ids
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	 bc.event.deleteIncomingEvents = function(evIds, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_EVENT,
+			operation: bc.event.OPERATION_DELETE_INCOMING_EVENTS,
+			data: {
+				evIds: evIds
+			},
+			callback: callback
+		});
+	};
+
+	/**
+	 * Delete any events of the given type older than the given date out of the user's incoming mailbox.
+	 *
+	 * Service Name - Event
+	 * Service Operation - DeleteIncomingEventsByTypeOlderThan
+	 * 
+	 * @param eventType The user-defined type of the event
+	 * @param dateMillis createdAt cut-off time whereby older events will be deleted
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	 bc.event.DeleteIncomingEventsByTypeOlderThan = function(eventType, dateMillis, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_EVENT,
+			operation: bc.event.OPERATION_DELETE_INCOMING_EVENTS_OLDER_THAN,
+			data: {
+				eventType: eventType,
+				dateMillis: dateMillis
+			},
+			callback: callback
+		});
+	};
+
+	/**
+	 * Delete any events older than the given date out of the user's incoming mailbox.
+	 *
+	 * Service Name - Event
+	 * Service Operation - DeleteIncomingEventsOlderThan
+	 * 
+	 * @param dateMillis createdAt cut-off time whereby older events will be deleted
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	 bc.event.deleteIncomingEventsOlderThan = function(dateMillis, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_EVENT,
+			operation: bc.event.OPERATION_DELETE_INCOMING_EVENTS_OLDER_THAN,
+			data: {
+				dateMillis: dateMillis
+			},
 			callback: callback
 		});
 	};
