@@ -74,9 +74,23 @@ function BCRelay() {
     }
 
     /**
+     * Get the lobby's owner Connection Id
+     */
+    bc.relay.getOwnerCxId = function() {
+        return bc.brainCloudRelayComms.getOwnerCxId();
+    }
+
+    /**
      * Returns the profileId associated with a netId.
      */
     bc.relay.getProfileIdForNetId = function(netId) {
+        return bc.brainCloudRelayComms.getProfileIdForNetId(netId);
+    }
+
+    /**
+     * Returns the Connection Id associated with a netId.
+     */
+    bc.relay.getCxIdForNetId = function(netId) {
         return bc.brainCloudRelayComms.getProfileIdForNetId(netId);
     }
 

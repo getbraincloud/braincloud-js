@@ -101,6 +101,70 @@ function BCFile() {
     };
 
     /**
+     * Method uploads the supplied file to the brainCloud server. Note that you must
+     * call prepareUserUpload to retrieve the uploadId before calling this method.
+     * It is assumed that any methods required to monitor the file upload including
+     * progress, and completion are attached to the XMLHttpRequest xhr object's
+     * events such as:
+     *
+     * xhr.upload.addEventListener("progress", uploadProgress);
+     * xhr.addEventListener("load", transferComplete);
+     * xhr.addEventListener("error", transferFailed);
+     * xhr.addEventListener("abort", transferCanceled);
+     *
+     * @param xhr The XMLHttpRequest object that the brainCloud client will
+     * use to upload the file.
+     * @param file The file object
+     * @param uploadId The upload id obtained via prepareUserUpload()
+     * @param peerCode - optional - peerCode.  A Peer needs to allow prepareUserUpload 
+     */
+    bc.file.uploadFile = function(xhr, file, uploadId, peerCode) {
+
+        var url = bc.brainCloudManager.getFileUploadUrl();
+        var fd = new FormData();
+        var fileSize = file.size;
+
+        xhr.open("POST", url, true);
+        fd.append("sessionId", bc.brainCloudManager.getSessionId());
+        if (peerCode !== undefined) fd.append("peerCode", peerCode);
+        fd.append("uploadId", uploadId);
+        fd.append("fileSize", fileSize);
+        fd.append("uploadFile", file);
+        xhr.send(fd);
+    };
+
+    /**
+     * Upload screenshots from memory instead of local file storage. On success the file will begin uploading to the brainCloud server.
+     * This method allows uploads to happen in situations where local file access is not possible or convenient.
+     * For example, screenshots from Unity-based WebGL apps.
+     *
+     * @param cloudPath The desired cloud path of the file
+     * @param cloudFilename The desired cloud filename of the file
+     * @param shareable True if the file is shareable.
+     * @param replaceIfExists Whether to replace file if it exists
+     * @param encodedText The converted file data from memory in string format
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.file.uploadFileFromMemory = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, encodedString, callback) {
+
+        var message = {
+            cloudPath: cloudPath,
+            cloudFilename: cloudFilename,
+            shareable: shareable,
+            replaceIfExists: replaceIfExists,
+            fileSize: fileSize,
+            encodedString: encodedString
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_FILE,
+            operation : bc.file.OPERATION_PREPARE_USER_UPLOAD,
+            data : message,
+            callback : callback
+        });
+    };
+
+    /**
      * List user files from the given cloud path
      *
      * @param cloudPath Optional - cloud path

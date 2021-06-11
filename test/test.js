@@ -4685,59 +4685,59 @@ async function testComms() {
 
     let expiryTimeout = 0;
 
-    await asyncTest("readUserState()", 3, function() {
-        bc.playerState.readUserState(function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 403, "Expecting 403");
-            equal(result.reason_code, 40304, "Expecting 40304 - NO_SESSION");
-            resolve_test();
-        });
-    });
+    // await asyncTest("readUserState()", 3, function() {
+    //     bc.playerState.readUserState(function(result) {
+    //         ok(true, JSON.stringify(result));
+    //         equal(result.status, 403, "Expecting 403");
+    //         equal(result.reason_code, 40304, "Expecting 40304 - NO_SESSION");
+    //         resolve_test();
+    //     });
+    // });
 
-    await asyncTest("authenticateUniversal()", function() {
-        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-                UserA.password, true, function(result) {
-                    expiryTimeout = result.data.playerSessionExpiry;
-                    equal(result.status, 200, JSON.stringify(result));
-                    resolve_test();
-                });
-    });
+    // await asyncTest("authenticateUniversal()", function() {
+    //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
+    //             UserA.password, true, function(result) {
+    //                 expiryTimeout = result.data.playerSessionExpiry;
+    //                 equal(result.status, 200, JSON.stringify(result));
+    //                 resolve_test();
+    //             });
+    // });
 
-    await asyncTest("readUserState()", 2, function() {
-        bc.playerState.readUserState(function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
+    // await asyncTest("readUserState()", 2, function() {
+    //     bc.playerState.readUserState(function(result) {
+    //         ok(true, JSON.stringify(result));
+    //         equal(result.status, 200, "Expecting 200");
+    //         resolve_test();
+    //     });
+    // });
 
-    await asyncTest("Timeout test (With HeartBeat)", 2, function() {
-        bc.playerState.readUserState(function(result) {
-            equal(result.status, 200, "Expecting 200");
-            console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
-            setTimeout(function() {
-                bc.playerState.readUserState(function(result) {
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-            }, (expiryTimeout + 2) * 1000)
-        });
-    });
+    // await asyncTest("Timeout test (With HeartBeat)", 2, function() {
+    //     bc.playerState.readUserState(function(result) {
+    //         equal(result.status, 200, "Expecting 200");
+    //         console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
+    //         setTimeout(function() {
+    //             bc.playerState.readUserState(function(result) {
+    //                 equal(result.status, 200, "Expecting 200");
+    //                 resolve_test();
+    //             });
+    //         }, (expiryTimeout + 2) * 1000)
+    //     });
+    // });
 
-    await asyncTest("Timeout test (Without HeartBeat)", 3, function() {
-        bc.playerState.readUserState(function(result) {
-            equal(result.status, 200, "Expecting 200");
-            console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
-            bc.brainCloudClient.stopHeartBeat();
-            setTimeout(function() {
-                bc.playerState.readUserState(function(result) {
-                    equal(result.status, 403, "Expecting 403");
-                    equal(result.reason_code, 40303, "Expecting 40303");
-                    resolve_test();
-                });
-            }, (expiryTimeout + 2) * 1000)
-        });
-    });
+    // await asyncTest("Timeout test (Without HeartBeat)", 3, function() {
+    //     bc.playerState.readUserState(function(result) {
+    //         equal(result.status, 200, "Expecting 200");
+    //         console.log(`Waiting for session to timeout for ${expiryTimeout + 10}sec`)
+    //         bc.brainCloudClient.stopHeartBeat();
+    //         setTimeout(function() {
+    //             bc.playerState.readUserState(function(result) {
+    //                 equal(result.status, 403, "Expecting 403");
+    //                 equal(result.reason_code, 40303, "Expecting 40303");
+    //                 resolve_test();
+    //             });
+    //         }, (expiryTimeout + 2) * 1000)
+    //     });
+    // });
 
     await asyncTest("authenticateUniversal()", () =>
     {
@@ -4748,44 +4748,47 @@ async function testComms() {
         });
     });
 
-    await asyncTest("retry 30sec script", 2, () =>
-    {
-        bc.brainCloudClient.script.runScript("TestTimeoutRetry", {}, result =>
-        {
-            equal(true, result.data.response, JSON.stringify(result));
-            equal(result.status, 200, JSON.stringify(result));
-            resolve_test();
-        });
-    });
+    // await asyncTest("retry 30sec script", 2, () =>
+    // {
+    //     bc.brainCloudClient.script.runScript("TestTimeoutRetry", {}, result =>
+    //     {
+    //         equal(true, result.data.response, JSON.stringify(result));
+    //         equal(result.status, 200, JSON.stringify(result));
+    //         resolve_test();
+    //     });
+    // });
 
-    await asyncTest("retry 45sec script", 2, () =>
+    for (let i = 0; i < 50; ++i)
     {
-        // This is now expected to success because the server will allow more time now.
-        bc.brainCloudClient.script.runScript("TestTimeoutRetry45", {}, result =>
+        await asyncTest("retry 45sec script", 2, () =>
         {
-            equal(true, result.data.response, JSON.stringify(result));
-            equal(result.status, 200, JSON.stringify(result));
-            resolve_test();
+            // This is now expected to success because the server will allow more time now.
+            bc.brainCloudClient.script.runScript("TestTimeoutRetry45", {}, result =>
+            {
+                equal(true, result.data.response, JSON.stringify(result));
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
         });
-    });
+    }
 
-    await asyncTest("retry 135sec script", 1, () =>
-    {
-        bc.brainCloudClient.script.runScript("TestTimeoutRetry135", {}, result =>
-        {
-            equal(result.status, bc.statusCodes.CLIENT_NETWORK_ERROR, JSON.stringify(result));
-            resolve_test();
-        });
-    });
+    // await asyncTest("retry 135sec script", 1, () =>
+    // {
+    //     bc.brainCloudClient.script.runScript("TestTimeoutRetry135", {}, result =>
+    //     {
+    //         equal(result.status, bc.statusCodes.CLIENT_NETWORK_ERROR, JSON.stringify(result));
+    //         resolve_test();
+    //     });
+    // });
 
-    // Do a normal call after this to make sure things are still up and running nicely
-    await asyncTest("readUserState()", 2, function() {
-        bc.playerState.readUserState(function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
+    // // Do a normal call after this to make sure things are still up and running nicely
+    // await asyncTest("readUserState()", 2, function() {
+    //     bc.playerState.readUserState(function(result) {
+    //         ok(true, JSON.stringify(result));
+    //         equal(result.status, 200, "Expecting 200");
+    //         resolve_test();
+    //     });
+    // });
 
     await tearDownLogout();
 }
@@ -4841,6 +4844,20 @@ async function testFile() {
             {
                 resolve_test();
             }
+        });
+    });
+
+    // Upload file
+    await asyncTest("uploadFileFromMemory", 2, function()
+    {
+        var content = "Hello World!"
+        var base64Content = Buffer.from(content).toString("base64")
+
+        bc.file.uploadFileFromMemory("test", "README2.md", true, true, content.length, base64Content, result =>
+        {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
         });
     });
 
