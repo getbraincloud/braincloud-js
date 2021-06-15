@@ -145,22 +145,111 @@ function BCFile() {
      * @param encodedText The converted file data from memory in string format
      * @param callback The method to be invoked when the server response is received
      */
-    bc.file.uploadFileFromMemory = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileSize, encodedString, callback) {
+    bc.file.uploadFileFromMemory = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileData, callback) {
 
         var message = {
             cloudPath: cloudPath,
             cloudFilename: cloudFilename,
             shareable: shareable,
             replaceIfExists: replaceIfExists,
-            fileSize: fileSize,
-            encodedString: encodedString
+            fileSize: fileData.length
         };
 
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_FILE,
             operation : bc.file.OPERATION_PREPARE_USER_UPLOAD,
             data : message,
-            callback : callback
+            callback : function(prepareResult)
+            {
+                if (prepareResult.status && prepareResult.status == 200)
+                {
+                    var formData = new FormData();
+                    formData.append("sessionId", bc.brainCloudManager._sessionId);
+                    // if (_peerCode != "") postForm.AddField("peerCode", _peerCode); // [dsl] TODO - what's that?
+                    formData.append("uploadId", prepareResult.data.fileDetails.uploadId);
+                    formData.append("fileSize", fileData.length);
+                    formData.append("uploadFile", fileData, { filename: cloudFilename });
+
+                    if (formData.submit)
+                    {
+                        // We might be running this inside nodejs, xhr.send(formData) will fail
+                        formData.submit(bc.brainCloudManager._fileUploadUrl, function(err, res)
+                        {
+                            if (res.statusCode != 200)
+                            {
+                                if (callback) callback({reasonCode:res.statusCode, errorMessage:res.statusMessage});
+                            }
+                            else
+                            {
+                                if (callback) callback(prepareResult);
+                            }
+                            res.resume();
+                        });
+                    }
+                    else
+                    {
+                        var xhr;
+                        if (window.XMLHttpRequest)
+                        {
+                            // code for IE7+, Firefox, Chrome, Opera, Safari
+                            xhr = new XMLHttpRequest();
+                        }
+                        else
+                        {
+                            // code for IE6, IE5
+                            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+                        }
+                
+                        xhr.onreadystatechange = function()
+                        {
+                            if (xhr.readyState == XMLHttpRequest.DONE)
+                            {
+                                if (xhr.status == 200)
+                                {
+                                    // We forward back the response for the prepare, which was successful and have information about the file
+                                    if (callback) callback(prepareResult);
+                                }
+                                else
+                                {
+                                    reasonCode = 0;
+                                    statusMessage = ""
+                                    try
+                                    {
+                                        var errorResponse = JSON.parse(xhr.responseText);
+                                        if (errorResponse["reason_code"])
+                                        {
+                                            reasonCode = errorResponse["reason_code"];
+                                        }
+                                        if (errorResponse["status_message"])
+                                        {
+                                            statusMessage = errorResponse["status_message"];
+                                        }
+                                        else
+                                        {
+                                            statusMessage = xhr.responseText;
+                                        }
+                                    }
+                                    catch (e)
+                                    {
+                                        reasonCode = 0;
+                                        statusMessage = xhr.responseText;
+                                    }
+                
+                                    if (callback) callback({reasonCode:reasonCode, errorMessage:statusMessage});
+                                }
+                            }
+                        }; // end inner function
+            
+                        xhr.open("POST", bc.brainCloudManager._fileUploadUrl, true);
+                        xhr.setRequestHeader("Content-type", "multipart/form-data");
+                        xhr.send(formData);
+                    }
+                }
+                else
+                {
+                    if (callback) callback(result); // Pass the error to the user
+                }
+            }
         });
     };
 

@@ -11,7 +11,6 @@ function BCRelay() {
     bc.relay.CHANNEL_NORMAL_PRIORITY      = 2;
     bc.relay.CHANNEL_LOW_PRIORITY         = 3;
 
-
     /**
     * Start a connection, based on connection type to 
     * brainClouds Relay Servers. Connect options come in

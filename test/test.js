@@ -4797,7 +4797,7 @@ async function testComms() {
 // File unit tests
 ////////////////////////////////////////
 async function testFile() {
-    if (!module("File", () =>
+    if (!module("SingleFile", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
@@ -4806,54 +4806,52 @@ async function testFile() {
     })) return;
 
     // Upload file
-    await asyncTest("uploadFile", 2, function()
-    {
-        var fileSize = fs.statSync("README.md").size;
-        bc.file.prepareFileUpload("test", "README.md", true, true, fileSize, result =>
-        {
-            equal(result.status, 200, "Expecting 200");
-            if (result.status == 200)
-            {
-                let uploadId = result.data.fileDetails.uploadId;
-                let xhr = new BC.XMLHttpRequest4Upload();
-                let file = fs.createReadStream("README.md");
-                file.size = fileSize;
+    // await asyncTest("uploadFile", 2, function()
+    // {
+    //     var fileSize = fs.statSync("README.md").size;
+    //     bc.file.prepareFileUpload("test", "README.md", true, true, fileSize, result =>
+    //     {
+    //         equal(result.status, 200, "Expecting 200");
+    //         if (result.status == 200)
+    //         {
+    //             let uploadId = result.data.fileDetails.uploadId;
+    //             let xhr = new BC.XMLHttpRequest4Upload();
+    //             let file = fs.createReadStream("README.md");
+    //             file.size = fileSize;
 
-                xhr.addEventListener("load", result =>
-                {
-                    if (result.statusCode === 200)
-                    {
-                        ok(true, "done file upload");
-                    }
-                    else
-                    {
-                        ok(false, "Failed upload " + result.statusMessage);
-                    }
-                    resolve_test();
-                });
+    //             xhr.addEventListener("load", result =>
+    //             {
+    //                 if (result.statusCode === 200)
+    //                 {
+    //                     ok(true, "done file upload");
+    //                 }
+    //                 else
+    //                 {
+    //                     ok(false, "Failed upload " + result.statusMessage);
+    //                 }
+    //                 resolve_test();
+    //             });
 
-                xhr.addEventListener("error", result =>
-                {
-                    ok(false, error);
-                    resolve_test();
-                });
+    //             xhr.addEventListener("error", result =>
+    //             {
+    //                 ok(false, error);
+    //                 resolve_test();
+    //             });
                 
-                bc.file.uploadFile(xhr, file, uploadId);
-            }
-            else
-            {
-                resolve_test();
-            }
-        });
-    });
+    //             bc.file.uploadFile(xhr, file, uploadId);
+    //         }
+    //         else
+    //         {
+    //             resolve_test();
+    //         }
+    //     });
+    // });
 
     // Upload file
     await asyncTest("uploadFileFromMemory", 2, function()
     {
         var content = "Hello World!"
-        var base64Content = Buffer.from(content).toString("base64")
-
-        bc.file.uploadFileFromMemory("test", "README2.md", true, true, content.length, base64Content, result =>
+        bc.file.uploadFileFromMemory("test", "uploadedFromMemory.txt", true, true, Buffer.from(content), result =>
         {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -4861,37 +4859,37 @@ async function testFile() {
         });
     });
 
-    await asyncTest("listUserFiles(\"\", true)", 2, function() {
-        bc.file.listUserFiles("", true, function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
+    // await asyncTest("listUserFiles(\"\", true)", 2, function() {
+    //     bc.file.listUserFiles("", true, function(result) {
+    //         ok(true, JSON.stringify(result));
+    //         equal(result.status, 200, "Expecting 200");
+    //         resolve_test();
+    //     });
+    // });
 
-    await asyncTest("listUserFiles(null, null)", 2, function() {
-        bc.file.listUserFiles(null, null, function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
+    // await asyncTest("listUserFiles(null, null)", 2, function() {
+    //     bc.file.listUserFiles(null, null, function(result) {
+    //         ok(true, JSON.stringify(result));
+    //         equal(result.status, 200, "Expecting 200");
+    //         resolve_test();
+    //     });
+    // });
 
-    await asyncTest("deleteUserFile()", 2, function() {
-        bc.file.deleteUserFile(null, null, function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
+    // await asyncTest("deleteUserFile()", 2, function() {
+    //     bc.file.deleteUserFile(null, null, function(result) {
+    //         ok(true, JSON.stringify(result));
+    //         equal(result.status, 200, "Expecting 200");
+    //         resolve_test();
+    //     });
+    // });
 
-    await asyncTest("deleteUserFiles()", 2, function() {
-        bc.file.deleteUserFiles("", true, function(result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 200, "Expecting 200");
-            resolve_test();
-        });
-    });
+    // await asyncTest("deleteUserFiles()", 2, function() {
+    //     bc.file.deleteUserFiles("", true, function(result) {
+    //         ok(true, JSON.stringify(result));
+    //         equal(result.status, 200, "Expecting 200");
+    //         resolve_test();
+    //     });
+    // });
 }
 
 ////////////////////////////////////////

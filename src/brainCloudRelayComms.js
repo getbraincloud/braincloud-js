@@ -28,11 +28,20 @@ function BrainCloudRelayComms(_client) {
     bcr.name = "BrainCloudRelayComms";
     bcr.isConnected = false;
 
-    bcr._debugEnabled = false;
-    bcr._netId = bcr.INVALID_NET_ID; // My net Id
+    // [dsl] - Added in 4.8.0
+    bcr._cxId = null;
+    bcr._ownerCxId = null;
+    bcr._netIdToCxId = {};
+    bcr._cxIdToNetId = {};
+
+    // [dsl] - Deprecated in 4.8.0, but we keep around and will use the cxIds
+    //         to split() and find the profile id within.
     bcr._ownerId = null;
     bcr._netIdToProfileId = {};
     bcr._profileIdToNetId = {};
+
+    bcr._debugEnabled = false;
+    bcr._netId = bcr.INVALID_NET_ID; // My net Id
     bcr._systemCallback = null;
     bcr._relayCallback = null;
     bcr._pingIntervalMS = 1000;
@@ -46,22 +55,41 @@ function BrainCloudRelayComms(_client) {
         bcr._debugEnabled = debugEnabled;
     };
 
+    bcr.getCxIdForNetId = function(netId) {
+        if (!bcr._netIdToCxId.hasOwnProperty(netId))
+            return null;
+        return bcr._netIdToCxId[netId];
+    }
+
+    bcr.getNetIdForCXId = function(cxId) {
+        if (!bcr._cxIdToNetId.hasOwnProperty(cxId))
+            return bcr.INVALID_NET_ID;
+        return bcr._cxIdToNetId[cxId];
+    }
+
     bcr.getProfileIdForNetId = function(netId) {
-        if (!bcr._netIdToProfileId.hasOwnProperty(netId))
-            return INVALID_PROFILE_ID;
-        return bcr._netIdToProfileId[netId];
+        let cxId = getCxIdForNetId(netId);
+        return cxId.split(":")[1];
     }
 
     bcr.getNetIdForProfileId = function(profileId) {
-        if (!bcr._profileIdToNetId.hasOwnProperty(profileId))
-            return bcr.INVALID_NET_ID;
-        return bcr._profileIdToNetId[profileId];
+        let keys = _cxIdToNetId.keys();
+        for (let i = 0; i < keys.length; i++)
+        {
+            let cxId = keys[i];
+            if (profileId === cxId.split(":")[1])
+                return getNetIdForCXId(cxId);
+        }
+        return bcr.INVALID_NET_ID;
     }
 
     bcr.connect = function(options, success, failure) {
         if (bcr.isConnected) {
             bcr.disconnect();
         }
+
+        // Make sure RTT is enabled
+        // ...
 
         var ssl = options.ssl ? options.ssl : false;
         var host = options.host;
