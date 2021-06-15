@@ -4806,46 +4806,46 @@ async function testFile() {
     })) return;
 
     // Upload file
-    // await asyncTest("uploadFile", 2, function()
-    // {
-    //     var fileSize = fs.statSync("README.md").size;
-    //     bc.file.prepareFileUpload("test", "README.md", true, true, fileSize, result =>
-    //     {
-    //         equal(result.status, 200, "Expecting 200");
-    //         if (result.status == 200)
-    //         {
-    //             let uploadId = result.data.fileDetails.uploadId;
-    //             let xhr = new BC.XMLHttpRequest4Upload();
-    //             let file = fs.createReadStream("README.md");
-    //             file.size = fileSize;
+    await asyncTest("uploadFile", 2, function()
+    {
+        var fileSize = fs.statSync("README.md").size;
+        bc.file.prepareFileUpload("test", "README.md", true, true, fileSize, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            if (result.status == 200)
+            {
+                let uploadId = result.data.fileDetails.uploadId;
+                let xhr = new BC.XMLHttpRequest4Upload();
+                let file = fs.createReadStream("README.md");
+                file.size = fileSize;
 
-    //             xhr.addEventListener("load", result =>
-    //             {
-    //                 if (result.statusCode === 200)
-    //                 {
-    //                     ok(true, "done file upload");
-    //                 }
-    //                 else
-    //                 {
-    //                     ok(false, "Failed upload " + result.statusMessage);
-    //                 }
-    //                 resolve_test();
-    //             });
+                xhr.addEventListener("load", result =>
+                {
+                    if (result.statusCode === 200)
+                    {
+                        ok(true, "done file upload");
+                    }
+                    else
+                    {
+                        ok(false, "Failed upload " + result.statusMessage);
+                    }
+                    resolve_test();
+                });
 
-    //             xhr.addEventListener("error", result =>
-    //             {
-    //                 ok(false, error);
-    //                 resolve_test();
-    //             });
+                xhr.addEventListener("error", result =>
+                {
+                    ok(false, error);
+                    resolve_test();
+                });
                 
-    //             bc.file.uploadFile(xhr, file, uploadId);
-    //         }
-    //         else
-    //         {
-    //             resolve_test();
-    //         }
-    //     });
-    // });
+                bc.file.uploadFile(xhr, file, uploadId);
+            }
+            else
+            {
+                resolve_test();
+            }
+        });
+    });
 
     // Upload file
     await asyncTest("uploadFileFromMemory", 2, function()
@@ -4859,37 +4859,37 @@ async function testFile() {
         });
     });
 
-    // await asyncTest("listUserFiles(\"\", true)", 2, function() {
-    //     bc.file.listUserFiles("", true, function(result) {
-    //         ok(true, JSON.stringify(result));
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+    await asyncTest("listUserFiles(\"\", true)", 2, function() {
+        bc.file.listUserFiles("", true, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 
-    // await asyncTest("listUserFiles(null, null)", 2, function() {
-    //     bc.file.listUserFiles(null, null, function(result) {
-    //         ok(true, JSON.stringify(result));
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+    await asyncTest("listUserFiles(null, null)", 2, function() {
+        bc.file.listUserFiles(null, null, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 
-    // await asyncTest("deleteUserFile()", 2, function() {
-    //     bc.file.deleteUserFile(null, null, function(result) {
-    //         ok(true, JSON.stringify(result));
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+    await asyncTest("deleteUserFile()", 2, function() {
+        bc.file.deleteUserFile(null, null, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 
-    // await asyncTest("deleteUserFiles()", 2, function() {
-    //     bc.file.deleteUserFiles("", true, function(result) {
-    //         ok(true, JSON.stringify(result));
-    //         equal(result.status, 200, "Expecting 200");
-    //         resolve_test();
-    //     });
-    // });
+    await asyncTest("deleteUserFiles()", 2, function() {
+        bc.file.deleteUserFiles("", true, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
@@ -5767,7 +5767,7 @@ async function testRelay() {
         }, 5 * 60 * 1000)
 
         let server = null
-        let ownerId = ""
+        let ownerCxId = ""
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
@@ -5780,8 +5780,8 @@ async function testRelay() {
             if (json.op == "CONNECT")
             {
                 ok(true, "System Callback")
-                let relayOwnerId = bc.relay.getOwnerProfileId()
-                ok(ownerId == relayOwnerId, `getOwnerProfileId: ${ownerId} == ${relayOwnerId}`)
+                let relayOwnerCxId = bc.relay.getOwnerCxId()
+                ok(ownerCxId == relayOwnerCxId, `getOwnerCxId: ${ownerCxId} == ${relayOwnerCxId}`)
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
                 
@@ -5835,8 +5835,8 @@ async function testRelay() {
             }
             else if (result.operation == "STARTING")
             {
-                ownerId = result.data.lobby.owner
-                console.log("STARTING ownerId = " + ownerId)
+                ownerCxId = result.data.lobby.ownerCxId
+                console.log("STARTING ownerCxId = " + ownerCxId)
             }
             else if (result.operation == "ROOM_READY")
             {

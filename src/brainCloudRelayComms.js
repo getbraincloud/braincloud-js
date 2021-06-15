@@ -34,12 +34,6 @@ function BrainCloudRelayComms(_client) {
     bcr._netIdToCxId = {};
     bcr._cxIdToNetId = {};
 
-    // [dsl] - Deprecated in 4.8.0, but we keep around and will use the cxIds
-    //         to split() and find the profile id within.
-    bcr._ownerId = null;
-    bcr._netIdToProfileId = {};
-    bcr._profileIdToNetId = {};
-
     bcr._debugEnabled = false;
     bcr._netId = bcr.INVALID_NET_ID; // My net Id
     bcr._systemCallback = null;
@@ -55,6 +49,10 @@ function BrainCloudRelayComms(_client) {
         bcr._debugEnabled = debugEnabled;
     };
 
+    bcr.getOwnerCxId = function() {
+        return bcr._ownerCxId;
+    }
+
     bcr.getCxIdForNetId = function(netId) {
         if (!bcr._netIdToCxId.hasOwnProperty(netId))
             return null;
@@ -68,17 +66,16 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.getProfileIdForNetId = function(netId) {
-        let cxId = getCxIdForNetId(netId);
+        var cxId = bcr.getCxIdForNetId(netId);
+        if (cxId == null) return null;
         return cxId.split(":")[1];
     }
 
     bcr.getNetIdForProfileId = function(profileId) {
-        let keys = _cxIdToNetId.keys();
-        for (let i = 0; i < keys.length; i++)
+        for (var cxId in bcr._cxIdToNetId)
         {
-            let cxId = keys[i];
             if (profileId === cxId.split(":")[1])
-                return getNetIdForCXId(cxId);
+                return bcr.getNetIdForCXId(cxId);
         }
         return bcr.INVALID_NET_ID;
     }
@@ -166,7 +163,7 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.getOwnerProfileId = function() {
-        return bcr._ownerId;
+        return bcr._ownerCxId.spit(':')[1];
     }
 
     bcr.stopPing = function() {
@@ -404,12 +401,12 @@ function BrainCloudRelayComms(_client) {
 
         switch (json.op) {
             case "CONNECT": {
-                bcr._netIdToProfileId[json.netId] = json.profileId;
-                bcr._profileIdToNetId[json.profileId] = json.netId;
+                bcr._netIdToCxId[json.netId] = json.cxId;
+                bcr._cxIdToNetId[json.cxId] = json.netId;
                 if (json.profileId == _client.getProfileId()) {
                     if (!bcr.isConnected) {
                         bcr._netId = json.netId;
-                        bcr._ownerId = json.ownerId;
+                        bcr._ownerCxId = json.ownerCxId;
                         bcr.isConnected = true;
                         bcr.startPing();
                         if (bcr.connectCallback.success) {
@@ -420,12 +417,12 @@ function BrainCloudRelayComms(_client) {
                 break;
             }
             case "NET_ID": {
-                bcr._netIdToProfileId[json.netId] = json.profileId;
-                bcr._profileIdToNetId[json.profileId] = json.netId;
+                bcr._netIdToCxId[json.netId] = json.cxId;
+                bcr._cxIdToNetId[json.cxId] = json.netId;
                 break;
             }
             case "MIGRATE_OWNER": {
-                bcr._ownerId = json.profileId;
+                bcr._ownerId = json.cxId;
                 break;
             }
         }

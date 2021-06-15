@@ -101,6 +101,13 @@ function BCRelay() {
     }
 
     /**
+     * Returns the netId associated with a connection Id.
+     */
+    bc.relay.getNetIdForCXId = function(cxId) {
+        return bc.brainCloudRelayComms.getNetIdForCXId(cxId);
+    }
+
+    /**
      * Register callback for relay messages coming from peers.
      * 
      * @param callback Calle whenever a relay message was received. function(netId, data[])
