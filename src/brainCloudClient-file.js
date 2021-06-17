@@ -147,12 +147,13 @@ function BCFile() {
      */
     bc.file.uploadFileFromMemory = function(cloudPath, cloudFilename, shareable, replaceIfExists, fileData, callback) {
 
+        var fileSize = fileData.length ? fileData.length : fileData.size
         var message = {
             cloudPath: cloudPath,
             cloudFilename: cloudFilename,
             shareable: shareable,
             replaceIfExists: replaceIfExists,
-            fileSize: fileData.length
+            fileSize: fileSize
         };
 
         bc.brainCloudManager.sendRequest({
@@ -167,7 +168,7 @@ function BCFile() {
                     formData.append("sessionId", bc.brainCloudManager._sessionId);
                     // if (_peerCode != "") postForm.AddField("peerCode", _peerCode); // [dsl] TODO - what's that?
                     formData.append("uploadId", prepareResult.data.fileDetails.uploadId);
-                    formData.append("fileSize", fileData.length);
+                    formData.append("fileSize", fileSize);
                     formData.append("uploadFile", fileData, { filename: cloudFilename });
 
                     if (formData.submit)
@@ -241,7 +242,7 @@ function BCFile() {
                         }; // end inner function
             
                         xhr.open("POST", bc.brainCloudManager._fileUploadUrl, true);
-                        xhr.setRequestHeader("Content-type", "multipart/form-data");
+                        // xhr.setRequestHeader("Content-type", "multipart/form-data");
                         xhr.send(formData);
                     }
                 }
