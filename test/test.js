@@ -1385,6 +1385,14 @@ async function testFriend() {
         });
     });
 
+    await asyncTest("addFriendsFromPlatform()", 2, function() {
+        bc.friend.addFriendsFromPlatform("Facebook", "ADD", [], function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     await asyncTest("listFriends()", 2, function() {
         bc.friend.listFriends(bc.friend.friendPlatform.All, false,
             function(result) {
