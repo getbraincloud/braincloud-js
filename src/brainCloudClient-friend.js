@@ -20,6 +20,7 @@ function BCFriend() {
 	bc.friend.OPERATION_LIST_FRIENDS = "LIST_FRIENDS";
 	bc.friend.OPERATION_GET_MY_SOCIAL_INFO = "GET_MY_SOCIAL_INFO";
 	bc.friend.OPERATION_ADD_FRIENDS = "ADD_FRIENDS";
+	bc.friend.OPERATION_ADD_FRIENDS_FROM_PLATFORM = "ADD_FRIENDS_FROM_PLATFORM";
 	bc.friend.OPERATION_REMOVE_FRIENDS = "REMOVE_FRIENDS";
 	bc.friend.OPERATION_GET_SUMMARY_DATA_FOR_PROFILE_ID = "GET_SUMMARY_DATA_FOR_PROFILE_ID";
 	bc.friend.OPERATION_GET_USERS_ONLINE_STATUS = "GET_USERS_ONLINE_STATUS";
@@ -291,6 +292,30 @@ function BCFriend() {
 			operation: bc.friend.OPERATION_ADD_FRIENDS,
 			data: {
 				profileIds: profileIds
+			},
+			callback: callback
+		});
+	};
+
+	/**
+	 * Links the profiles for the specified externalIds for the given friend platform as internal friends.
+	 *
+	 * Service Name - friend
+	 * Service Operation - ADD_FRIENDS_FOR_PLATFORM
+	 *
+	 * @param friendPlatform Platform to add from (i.e: "Facebook").
+	 * @param mode ADD or SYNC.
+	 * @param externalIds Collection of external IDs from the friend platform.
+	 * @param callback Method to be invoked when the server response is received.
+	 */
+	bc.friend.addFriendsFromPlatform = function(friendPlatform, mode, externalIds, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_FRIEND,
+			operation: bc.friend.OPERATION_ADD_FRIENDS_FROM_PLATFORM,
+			data: {
+				friendPlatform: friendPlatform,
+				mode: mode,
+				externalIds: externalIds
 			},
 			callback: callback
 		});
