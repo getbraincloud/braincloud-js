@@ -1266,6 +1266,34 @@ async function testEvent() {
                 });
     });
 
+    await setUpWithAuthenticate();
+    await asyncTest("deleteIncomingEvents()", function() {
+        var evIds = [];
+        bc.event.deleteIncomingEvents(evIds, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await setUpWithAuthenticate();
+    await asyncTest("deleteIncomingEventsByTypeOlderThan()", function() {
+        var eventType = "my-event-type";
+        var dateMillis = 1619804426154;
+        bc.event.DeleteIncomingEventsByTypeOlderThan(eventType, dateMillis, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await setUpWithAuthenticate();
+    await asyncTest("deleteIncomingEventsOlderThan()", function() {
+        var dateMillis = 1619804426154;
+        bc.event.deleteIncomingEventsOlderThan(dateMillis, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
     // B read event
     await asyncTest("userB recv event()", 2, () =>
     {
@@ -1351,6 +1379,14 @@ async function testFriend() {
     await asyncTest("addFriends()", 2, function() {
         var ids = [ UserB.profileId ];
         bc.friend.addFriends(ids, function(result) {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("addFriendsFromPlatform()", 2, function() {
+        bc.friend.addFriendsFromPlatform("Facebook", "ADD", [], function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -3336,6 +3372,15 @@ async function testAppStore() {
             resolve_test();
         });
     });
+
+    await asyncTest("refreshPromotions()", 1, () =>
+    {
+        bc.appStore.refreshPromotions(result =>
+        {
+            equal(result.status, 200, "Expected 200");
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
@@ -4721,16 +4766,19 @@ async function testComms() {
         });
     });
 
-    await asyncTest("retry 45sec script", 2, () =>
-    {
-        // This is now expected to success because the server will allow more time now.
-        bc.brainCloudClient.script.runScript("TestTimeoutRetry45", {}, result =>
-        {
-            equal(true, result.data.response, JSON.stringify(result));
-            equal(result.status, 200, JSON.stringify(result));
-            resolve_test();
-        });
-    });
+    // for (let i = 0; i < 50; ++i)
+    // {
+    //     await asyncTest("retry 45sec script", 2, () =>
+    //     {
+    //         // This is now expected to success because the server will allow more time now.
+    //         bc.brainCloudClient.script.runScript("TestTimeoutRetry45", {}, result =>
+    //         {
+    //             equal(true, result.data.response, JSON.stringify(result));
+    //             equal(result.status, 200, JSON.stringify(result));
+    //             resolve_test();
+    //         });
+    //     });
+    // }
 
     await asyncTest("retry 135sec script", 1, () =>
     {
@@ -4757,7 +4805,7 @@ async function testComms() {
 // File unit tests
 ////////////////////////////////////////
 async function testFile() {
-    if (!module("File", () =>
+    if (!module("SingleFile", () =>
     {
         return setUpWithAuthenticate();
     }, () =>
@@ -4804,6 +4852,18 @@ async function testFile() {
             {
                 resolve_test();
             }
+        });
+    });
+
+    // Upload file
+    await asyncTest("uploadFileFromMemory", 2, function()
+    {
+        var content = "Hello World!"
+        bc.file.uploadFileFromMemory("test", "uploadedFromMemory.txt", true, true, Buffer.from(content), result =>
+        {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
         });
     });
 
@@ -5715,7 +5775,7 @@ async function testRelay() {
         }, 5 * 60 * 1000)
 
         let server = null
-        let ownerId = ""
+        let ownerCxId = ""
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
@@ -5728,8 +5788,8 @@ async function testRelay() {
             if (json.op == "CONNECT")
             {
                 ok(true, "System Callback")
-                let relayOwnerId = bc.relay.getOwnerProfileId()
-                ok(ownerId == relayOwnerId, `getOwnerProfileId: ${ownerId} == ${relayOwnerId}`)
+                let relayOwnerCxId = bc.relay.getOwnerCxId()
+                ok(ownerCxId == relayOwnerCxId, `getOwnerCxId: ${ownerCxId} == ${relayOwnerCxId}`)
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
                 
@@ -5783,8 +5843,8 @@ async function testRelay() {
             }
             else if (result.operation == "STARTING")
             {
-                ownerId = result.data.lobby.owner
-                console.log("STARTING ownerId = " + ownerId)
+                ownerCxId = result.data.lobby.ownerCxId
+                console.log("STARTING ownerCxId = " + ownerCxId)
             }
             else if (result.operation == "ROOM_READY")
             {
@@ -6388,18 +6448,19 @@ async function run_tests()
     await testTime();
     await testTournament();
     await testSharedIdentity();
-    await testComms();
     await testFile();
-    await testWrapper();
     await testChat();
     await testMessaging();
-    await testRTT();
-    await testRelay();
-    await testLobby();
     await testItemCatalog();
     await testUserItems();
     await testCustomEntity();
     await testGlobalFile();
+    
+    await testRTT();
+    await testComms();
+    await testWrapper();
+    await testRelay();
+    await testLobby();
 }
 
 async function main()

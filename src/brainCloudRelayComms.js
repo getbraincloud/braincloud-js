@@ -28,11 +28,14 @@ function BrainCloudRelayComms(_client) {
     bcr.name = "BrainCloudRelayComms";
     bcr.isConnected = false;
 
+    // [dsl] - Added in 4.8.0
+    bcr._cxId = null;
+    bcr._ownerCxId = null;
+    bcr._netIdToCxId = {};
+    bcr._cxIdToNetId = {};
+
     bcr._debugEnabled = false;
     bcr._netId = bcr.INVALID_NET_ID; // My net Id
-    bcr._ownerId = null;
-    bcr._netIdToProfileId = {};
-    bcr._profileIdToNetId = {};
     bcr._systemCallback = null;
     bcr._relayCallback = null;
     bcr._pingIntervalMS = 1000;
@@ -46,22 +49,44 @@ function BrainCloudRelayComms(_client) {
         bcr._debugEnabled = debugEnabled;
     };
 
+    bcr.getOwnerCxId = function() {
+        return bcr._ownerCxId;
+    }
+
+    bcr.getCxIdForNetId = function(netId) {
+        if (!bcr._netIdToCxId.hasOwnProperty(netId))
+            return null;
+        return bcr._netIdToCxId[netId];
+    }
+
+    bcr.getNetIdForCXId = function(cxId) {
+        if (!bcr._cxIdToNetId.hasOwnProperty(cxId))
+            return bcr.INVALID_NET_ID;
+        return bcr._cxIdToNetId[cxId];
+    }
+
     bcr.getProfileIdForNetId = function(netId) {
-        if (!bcr._netIdToProfileId.hasOwnProperty(netId))
-            return INVALID_PROFILE_ID;
-        return bcr._netIdToProfileId[netId];
+        var cxId = bcr.getCxIdForNetId(netId);
+        if (cxId == null) return null;
+        return cxId.split(":")[1];
     }
 
     bcr.getNetIdForProfileId = function(profileId) {
-        if (!bcr._profileIdToNetId.hasOwnProperty(profileId))
-            return bcr.INVALID_NET_ID;
-        return bcr._profileIdToNetId[profileId];
+        for (var cxId in bcr._cxIdToNetId)
+        {
+            if (profileId === cxId.split(":")[1])
+                return bcr.getNetIdForCXId(cxId);
+        }
+        return bcr.INVALID_NET_ID;
     }
 
     bcr.connect = function(options, success, failure) {
         if (bcr.isConnected) {
             bcr.disconnect();
         }
+
+        // Make sure RTT is enabled
+        // ...
 
         var ssl = options.ssl ? options.ssl : false;
         var host = options.host;
@@ -138,7 +163,7 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.getOwnerProfileId = function() {
-        return bcr._ownerId;
+        return bcr._ownerCxId.spit(':')[1];
     }
 
     bcr.stopPing = function() {
@@ -376,12 +401,12 @@ function BrainCloudRelayComms(_client) {
 
         switch (json.op) {
             case "CONNECT": {
-                bcr._netIdToProfileId[json.netId] = json.profileId;
-                bcr._profileIdToNetId[json.profileId] = json.netId;
+                bcr._netIdToCxId[json.netId] = json.cxId;
+                bcr._cxIdToNetId[json.cxId] = json.netId;
                 if (json.profileId == _client.getProfileId()) {
                     if (!bcr.isConnected) {
                         bcr._netId = json.netId;
-                        bcr._ownerId = json.ownerId;
+                        bcr._ownerCxId = json.ownerCxId;
                         bcr.isConnected = true;
                         bcr.startPing();
                         if (bcr.connectCallback.success) {
@@ -392,12 +417,12 @@ function BrainCloudRelayComms(_client) {
                 break;
             }
             case "NET_ID": {
-                bcr._netIdToProfileId[json.netId] = json.profileId;
-                bcr._profileIdToNetId[json.profileId] = json.netId;
+                bcr._netIdToCxId[json.netId] = json.cxId;
+                bcr._cxIdToNetId[json.cxId] = json.netId;
                 break;
             }
             case "MIGRATE_OWNER": {
-                bcr._ownerId = json.profileId;
+                bcr._ownerId = json.cxId;
                 break;
             }
         }

@@ -11,7 +11,6 @@ function BCRelay() {
     bc.relay.CHANNEL_NORMAL_PRIORITY      = 2;
     bc.relay.CHANNEL_LOW_PRIORITY         = 3;
 
-
     /**
     * Start a connection, based on connection type to 
     * brainClouds Relay Servers. Connect options come in
@@ -74,9 +73,23 @@ function BCRelay() {
     }
 
     /**
+     * Get the lobby's owner Connection Id
+     */
+    bc.relay.getOwnerCxId = function() {
+        return bc.brainCloudRelayComms.getOwnerCxId();
+    }
+
+    /**
      * Returns the profileId associated with a netId.
      */
     bc.relay.getProfileIdForNetId = function(netId) {
+        return bc.brainCloudRelayComms.getProfileIdForNetId(netId);
+    }
+
+    /**
+     * Returns the Connection Id associated with a netId.
+     */
+    bc.relay.getCxIdForNetId = function(netId) {
         return bc.brainCloudRelayComms.getProfileIdForNetId(netId);
     }
 
@@ -85,6 +98,13 @@ function BCRelay() {
      */
     bc.relay.getNetIdForProfileId = function(profileId) {
         return bc.brainCloudRelayComms.getNetIdForProfileId(profileId);
+    }
+
+    /**
+     * Returns the netId associated with a connection Id.
+     */
+    bc.relay.getNetIdForCXId = function(cxId) {
+        return bc.brainCloudRelayComms.getNetIdForCXId(cxId);
     }
 
     /**

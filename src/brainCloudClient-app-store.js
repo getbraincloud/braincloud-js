@@ -11,6 +11,7 @@ function BCAppStore() {
     bc.appStore.OPERATION_GET_SALES_INVENTORY = "GET_INVENTORY";
     bc.appStore.OPERATION_START_PURCHASE = "START_PURCHASE";
     bc.appStore.OPERATION_FINALIZE_PURCHASE = "FINALIZE_PURCHASE";
+    bc.appStore.OPERATION_REFRESH_PROMOTIONS = "REFRESH_PROMOTIONS";
 
     /**
     * Verifies that purchase was properly made at the store.
@@ -180,6 +181,27 @@ function BCAppStore() {
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_APP_STORE,
             operation: bc.appStore.OPERATION_FINALIZE_PURCHASE,
+            data: message,
+            callback: callback
+        });
+    };
+
+    /**
+    * Returns up-to-date eligible 'promotions' for the user and 
+    * a 'promotionsRefreshed' flag indicating whether the user's promotion info required refreshing.
+    *
+    * Service Name - AppStore
+    * Service Operation - RefreshPromotions
+    *
+    * @param callback The method to be invoked when the server response is received
+    */
+     bc.appStore.refreshPromotions = function(callback) {
+        var message = {
+        };
+        
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_APP_STORE,
+            operation: bc.appStore.OPERATION_REFRESH_PROMOTIONS,
             data: message,
             callback: callback
         });
