@@ -90,7 +90,7 @@ function BCRelay() {
      * Returns the Connection Id associated with a netId.
      */
     bc.relay.getCxIdForNetId = function(netId) {
-        return bc.brainCloudRelayComms.getProfileIdForNetId(netId);
+        return bc.brainCloudRelayComms.getCxIdForNetId(netId);
     }
 
     /**
@@ -103,8 +103,8 @@ function BCRelay() {
     /**
      * Returns the netId associated with a connection Id.
      */
-    bc.relay.getNetIdForCXId = function(cxId) {
-        return bc.brainCloudRelayComms.getNetIdForCXId(cxId);
+    bc.relay.getNetIdForCxId = function(cxId) {
+        return bc.brainCloudRelayComms.getNetIdForCxId(cxId);
     }
 
     /**
