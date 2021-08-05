@@ -4286,9 +4286,9 @@ async function testGlobalFile() {
         return tearDownLogout();
     })) return;
 
-    var testfileName = "png1.png";
-    var testFileId = "34802251-0da0-419e-91b5-59d91790af15";
-    var testFolderPath = "/existingfolder/";
+    var testfileName = "testGlobalFile.png";
+    var testFileId = "ed2d2924-4650-4a88-b095-94b75ce9aa18";
+    var testFolderPath = "/fname/";
 
     await asyncTest("getFileInfo()", 2, function() {
         bc.globalFile.getFileInfo(
