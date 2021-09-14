@@ -4150,6 +4150,18 @@ async function testSocialLeaderboard() {
                 resolve_test();
             });
     });
+
+    await asyncTest("postScoreToDynamicGroupLeaderboardDaysUTC()", 2, function() {
+        var today = new Date();
+
+        bc.leaderboard.postScoreToDynamicGroupLeaderboardDaysUTC(
+            groupLeaderboard, groupId, 0, { "extra" : 123 },  bc.leaderboard.leaderboardType.HIGH_VALUE, today,
+                2, 5, function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
     
 /////////////////////////
     await asyncTest("deleteGroup()", 2, function() {
