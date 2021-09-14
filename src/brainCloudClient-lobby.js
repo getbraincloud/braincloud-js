@@ -24,6 +24,7 @@ function BCLobby() {
     bc.lobby.OPERATION_CANCEL_FIND_REQUEST = "CANCEL_FIND_REQUEST";
     bc.lobby.OPERATION_GET_REGIONS_FOR_LOBBIES = "GET_REGIONS_FOR_LOBBIES";
     bc.lobby.OPERATION_PING_REGIONS = "PING_REGIONS";
+    bc.lobby.GET_VISIBLE_LOBBY_INSTANCES = "GET_VISIBLE_LOBBY_INSTANCES";
 
     // Private variables for ping 
     var pingData = null;
@@ -499,6 +500,26 @@ function BCLobby() {
                 // User callback
                 callback(result);
             }
+        })
+    };
+    
+    ///<summary>
+    ///Gets a map keyed by rating of the visible lobby instances matching the given type and rating range.
+    ///<summary>
+    bc.lobby.getVisibleLobbyInstances = function(lobbyType, minRating, maxRating, callback)
+    {
+        var data = {
+            lobbyType: lobbyType,
+            minRating: minRating,
+            maxRating: maxRating
+        };
+
+        bc.brainCloudManager.sendRequest
+        ({
+            service: bc.SERVICE_LOBBY,
+            operation: bc.lobby.GET_VISIBLE_LOBBY_INSTANCES,
+            data: data,
+            callback: callback
         })
     };
 
