@@ -6034,6 +6034,15 @@ async function testLobby() {
         });
     });
 
+    await asyncTest("getVisibleLobbyInstances()", 1, () =>
+    {
+        bc.lobby.getVisibleLobbyInstances("MATCH_UNRANKED", 1, 10000, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     await asyncTest("pingRegions()", 4, () =>
     {
         bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
