@@ -6046,12 +6046,29 @@ async function testLobby() {
         });
     });
 
-    await asyncTest("getVisibleLobbyInstances()", 1, () =>
+    await asyncTest("getLobbyInstances()", 1, () =>
     {
-        bc.lobby.getVisibleLobbyInstances("MATCH_UNRANKED", 1, 10000, result =>
+        bc.lobby.getLobbyInstances("MATCH_UNRANKED", {"rating":{"min":1,"max":1000}}, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
+        });
+    });
+
+    await asyncTest("getLobbyInstancesWithPingData()", 3, () =>
+    {
+        bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.lobby.pingRegions(result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                bc.lobby.getLobbyInstancesWithPingData("MATCH_UNRANKED", {"rating":{"min":1,"max":1000},"ping":{"max":100}}, result =>
+                {
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+            });
         });
     });
 
