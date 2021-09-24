@@ -327,6 +327,12 @@ function equal(actual, expected, log)
     else failed(actual + " != " + expected, log);
 }
 
+function nequal(actual, expected, log)
+{
+    if (actual != expected) passed(actual + " != " + expected, log);
+    else failed(actual + " == " + expected, log);
+}
+
 function greaterEq(actual, expected, log)
 {
     if (actual >= expected) passed(actual + " >= " + expected, log);
@@ -2488,7 +2494,7 @@ async function testIdentity() {
         bc.identity.attachFacebookIdentity("test",
                 "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
                     ok(true, JSON.stringify(result));
-                    equal(result.status, 403, "Expecting 403");
+                    nequal(result.status, 200, "Expecting failure");
                     resolve_test();
                 });
     });
