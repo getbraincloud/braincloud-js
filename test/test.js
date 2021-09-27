@@ -1666,6 +1666,22 @@ async function testGlobalApp() {
             resolve_test();
         });
     });
+
+    await asyncTest("readSelectedProperties()", function() {
+        bc.globalApp.readSelectedProperties(["prop1", "prop2", "prop3"],
+        function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("readPropertiesInCategories()", function() {
+        bc.globalApp.readPropertiesInCategories(["test"],
+        function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
