@@ -327,6 +327,12 @@ function equal(actual, expected, log)
     else failed(actual + " != " + expected, log);
 }
 
+function nequal(actual, expected, log)
+{
+    if (actual != expected) passed(actual + " != " + expected, log);
+    else failed(actual + " == " + expected, log);
+}
+
 function greaterEq(actual, expected, log)
 {
     if (actual >= expected) passed(actual + " >= " + expected, log);
@@ -1660,6 +1666,22 @@ async function testGlobalApp() {
             resolve_test();
         });
     });
+
+    await asyncTest("readSelectedProperties()", function() {
+        bc.globalApp.readSelectedProperties(["prop1", "prop2", "prop3"],
+        function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("readPropertiesInCategories()", function() {
+        bc.globalApp.readPropertiesInCategories(["test"],
+        function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
@@ -2488,7 +2510,7 @@ async function testIdentity() {
         bc.identity.attachFacebookIdentity("test",
                 "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
                     ok(true, JSON.stringify(result));
-                    equal(result.status, 403, "Expecting 403");
+                    nequal(result.status, 200, "Expecting failure");
                     resolve_test();
                 });
     });
@@ -4149,6 +4171,18 @@ async function testSocialLeaderboard() {
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
+    });
+
+    await asyncTest("postScoreToDynamicGroupLeaderboardDaysUTC()", 2, function() {
+        var today = new Date();
+
+        bc.leaderboard.postScoreToDynamicGroupLeaderboardDaysUTC(
+            groupLeaderboard, groupId, 0, { "extra" : 123 },  bc.leaderboard.leaderboardType.HIGH_VALUE, today,
+                2, 5, function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
     });
     
 /////////////////////////
@@ -6031,6 +6065,32 @@ async function testLobby() {
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
+        });
+    });
+
+    await asyncTest("getLobbyInstances()", 1, () =>
+    {
+        bc.lobby.getLobbyInstances("MATCH_UNRANKED", {"rating":{"min":1,"max":1000}}, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("getLobbyInstancesWithPingData()", 3, () =>
+    {
+        bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            bc.lobby.pingRegions(result =>
+            {
+                equal(result.status, 200, "Expecting 200");
+                bc.lobby.getLobbyInstancesWithPingData("MATCH_UNRANKED", {"rating":{"min":1,"max":1000},"ping":{"max":100}}, result =>
+                {
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+            });
         });
     });
 

@@ -59,7 +59,7 @@ function BrainCloudRelayComms(_client) {
         return bcr._netIdToCxId[netId];
     }
 
-    bcr.getNetIdForCXId = function(cxId) {
+    bcr.getNetIdForCxId = function(cxId) {
         if (!bcr._cxIdToNetId.hasOwnProperty(cxId))
             return bcr.INVALID_NET_ID;
         return bcr._cxIdToNetId[cxId];
@@ -75,7 +75,7 @@ function BrainCloudRelayComms(_client) {
         for (var cxId in bcr._cxIdToNetId)
         {
             if (profileId === cxId.split(":")[1])
-                return bcr.getNetIdForCXId(cxId);
+                return bcr.getNetIdForCxId(cxId);
         }
         return bcr.INVALID_NET_ID;
     }
@@ -204,7 +204,7 @@ function BrainCloudRelayComms(_client) {
         // Send a connect request
         var payload = {
             lobbyId: bcr.connectInfo.lobbyId,
-            profileId: bcr.m_client.getProfileId(),
+            cxId: bcr.m_client.rttService.getRTTConnectionId(),
             passcode: bcr.connectInfo.passcode,
             version: bcr.m_client.version
         };
@@ -403,7 +403,7 @@ function BrainCloudRelayComms(_client) {
             case "CONNECT": {
                 bcr._netIdToCxId[json.netId] = json.cxId;
                 bcr._cxIdToNetId[json.cxId] = json.netId;
-                if (json.profileId == _client.getProfileId()) {
+                if (json.cxId == _client.rttService.getRTTConnectionId()) {
                     if (!bcr.isConnected) {
                         bcr._netId = json.netId;
                         bcr._ownerCxId = json.ownerCxId;

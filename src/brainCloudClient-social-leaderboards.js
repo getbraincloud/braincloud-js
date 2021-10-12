@@ -505,6 +505,47 @@ function BCSocialLeaderboard() {
     };
 
     /**
+     * Post the players score to the given social leaderboard.
+     * Pass leaderboard config data to dynamically create if necessary.
+     * You can optionally send a user-defined json string of data
+     * with the posted score. This string could include information
+     * relevant to the posted score.
+     *
+     * Service Name - SocialLeaderboard
+     * Service Operation - PostGroupScoreDynamic
+     *
+     * @param leaderboardId the leaderboard to post to
+     * @param groupId the group's id
+     * @param score The score to post
+     * @param data Optional user-defined data to post with the score
+     * @param leaderboardType leaderboard type
+     * @param rotationType Type of rotation
+     * @param rotationReset A date Object representing the time and date to start rotation
+     * @param retainedCount How many rotations to keep
+     * @param numDaysToRotate How many days between each rotation
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.socialLeaderboard.postScoreToDynamicGroupLeaderboardDaysUTC = function(leaderboardId, groupId, score, data, leaderboardType, rotationReset, retainedCount, numDaysToRotate, callback) {
+        bc.brainCloudManager
+            .sendRequest({
+                service : bc.SERVICE_LEADERBOARD,
+                operation : bc.socialLeaderboard.OPERATION_POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD,
+                data : {
+                    leaderboardId : leaderboardId,
+                    groupId: groupId,
+                    score : score,
+                    data : data,
+                    leaderboardType : leaderboardType,
+                    rotationType : "DAYS",
+                    rotationResetTime : rotationReset.getTime().toFixed(0),
+                    retainedCount : retainedCount,
+                    numDaysToRotate : numDaysToRotate
+                },
+                callback : callback
+            });
+    };
+
+    /**
      * Retrieve the social leaderboard for a group.
      *
      * Service Name - leaderboard

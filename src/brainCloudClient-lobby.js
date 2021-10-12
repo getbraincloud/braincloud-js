@@ -24,6 +24,8 @@ function BCLobby() {
     bc.lobby.OPERATION_CANCEL_FIND_REQUEST = "CANCEL_FIND_REQUEST";
     bc.lobby.OPERATION_GET_REGIONS_FOR_LOBBIES = "GET_REGIONS_FOR_LOBBIES";
     bc.lobby.OPERATION_PING_REGIONS = "PING_REGIONS";
+    bc.lobby.OPERATION_GET_LOBBY_INSTANCES = "GET_LOBBY_INSTANCES";
+    bc.lobby.OPERATION_GET_LOBBY_INSTANCES_WITH_PING_DATA = "GET_LOBBY_INSTANCES_WITH_PING_DATA";
 
     // Private variables for ping 
     var pingData = null;
@@ -500,6 +502,51 @@ function BCLobby() {
                 callback(result);
             }
         })
+    };
+
+    /**
+     * Gets a map keyed by rating of the visible lobby instances matching the given type and rating range.
+     *
+     * Service Name - Lobby
+     * Service Operation - GET_LOBBY_INSTANCES
+     *
+     * @param lobbyType The type of lobby to look for.
+     * @param criteriaJson A JSON string used to describe filter criteria.
+     */
+    bc.lobby.getLobbyInstances = function(lobbyType, criteriaJson, callback)
+    {
+        var data = {
+            lobbyType: lobbyType,
+            criteriaJson: criteriaJson
+        };
+
+        bc.brainCloudManager.sendRequest
+        ({
+            service: bc.SERVICE_LOBBY,
+            operation: bc.lobby.OPERATION_GET_LOBBY_INSTANCES,
+            data: data,
+            callback: callback
+        })
+    };
+
+    /**
+     * Gets a map keyed by rating of the visible lobby instances matching the given type and rating range.
+     * Only lobby instances in the regions that satisfy the ping portion of the criteriaJson (based on the values provided in pingData) will be returned.
+     *
+     * Service Name - Lobby
+     * Service Operation - GET_LOBBY_INSTANCES_WITH_PING_DATA
+     *
+     * @param lobbyType The type of lobby to look for.
+     * @param criteriaJson A JSON string used to describe filter criteria.
+     */
+    bc.lobby.getLobbyInstancesWithPingData = function(lobbyType, criteriaJson, callback)
+    {
+        var data = {
+            lobbyType: lobbyType,
+            criteriaJson: criteriaJson
+        };
+
+        attachPingDataAndSend(data, bc.lobby.OPERATION_GET_LOBBY_INSTANCES_WITH_PING_DATA, callback);
     };
 
     bc.lobby.pingRegions = function(callback)
