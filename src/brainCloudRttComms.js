@@ -103,12 +103,12 @@ function BrainCloudRttComms (m_client) {
 
 //> ADD IF K6
 //+     bcrtt._rttConnectionStatus = bcrtt.RTTConnectionStatus.CONNECTED;
-//+     var res = ws.connect(uri, {}, (socket) => {
+//+     var res = ws.connect(uri, {}, function (socket) {
 //+         bcrtt.socket = socket;
-//+         bcrtt.socket.on('error', bcrtt.onSocketError);
-//+         bcrtt.socket.on('close', bcrtt.onSocketClose);
-//+         bcrtt.socket.on('open', bcrtt.onSocketOpen);
-//+         bcrtt.socket.on('message', bcrtt.onSocketMessage);
+//+         socket.on('error', bcrtt.onSocketError);
+//+         socket.on('close', bcrtt.onSocketClose);
+//+         socket.on('open', bcrtt.onSocketOpen);
+//+         socket.on('message', bcrtt.onSocketMessage);
 //+     });
 //> END
 //> REMOVE IF K6
@@ -176,6 +176,7 @@ function BrainCloudRttComms (m_client) {
     }
 
     bcrtt.onSocketMessage = function(e) {
+
         if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
             var processResult = function(result) {
                 if (result.service == "rtt") {
@@ -245,10 +246,15 @@ function BrainCloudRttComms (m_client) {
     }
 
     bcrtt.startHeartbeat = function() {
+        if (!bcrtt.heartbeatId) {
+//> ADD IF K6
+//+         bcrtt.heartbeatId = true;
+//+         bcrtt.socket.setInterval(function() {
+//> END
 //> REMOVE IF K6
-        if (!this.heartbeatId) {
             bcrtt.heartbeatId = setInterval(function() {
-                // Send a connect request
+//> END
+                // Send a heartbeat request
                 var request = {
                     operation: "HEARTBEAT",
                     service: "rtt",
@@ -262,7 +268,6 @@ function BrainCloudRttComms (m_client) {
                 bcrtt.socket.send(JSON.stringify(request));
             }, 1000 * DEFAULT_RTT_HEARTBEAT);
         }
-//> END
     }
 
     bcrtt.onRecv = function(result) {
@@ -341,7 +346,9 @@ function BrainCloudRttComms (m_client) {
             bcrtt._rttConnectionStatus = bcrtt.RTTConnectionStatus.DISCONNECTING;
 
             if (bcrtt.heartbeatId) {
+//> REMOVE IF K6
                 clearInterval(bcrtt.heartbeatId);
+//> END
                 bcrtt.heartbeatId = null;
             }
     
