@@ -180,6 +180,9 @@ function BrainCloudRttComms (m_client) {
         if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
             var processResult = function(result) {
                 if (result.service == "rtt") {
+                    if (bcrtt._debugEnabled) {
+                        console.log("WS RECV: " + JSON.stringify(result));
+                    }
                     if(result.operation == "CONNECT")
                     {
                         bcrtt.connectionId = result.data.cxId;
