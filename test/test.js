@@ -1762,7 +1762,7 @@ async function testGlobalEntity() {
     var indexId = "12345";
 
     await asyncTest("createEntity()", function() {
-        bc.globalEntity.createEntity("BUILDING", 0, "", {
+        bc.globalEntity.createEntity("BUILDING", 3434343, "", {
             buildingName : "bob",
             buildingColour : "blue",
             buildingAddressNumber : 123,
@@ -1839,7 +1839,7 @@ async function testGlobalEntity() {
 
     await asyncTest("createEntityWithIndexedId()", function() {
         bc.globalEntity.createEntityWithIndexedId("BUILDING",
-                indexId, 0, "", {
+                indexId, 3434343, "", {
                     buildingName : "bob",
                     buildingColour : "blue",
                     buildingAddressNumber : 123
