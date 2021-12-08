@@ -4683,6 +4683,7 @@ async function testComms() {
 
     if (!module("Comms", null, null)) return;
 
+    // [Keep commented]
     // Test bundling (Not really a test, it just goes through and we verify in the log)
     // Uncomment this, and comment out other tests in this function.
     // await asyncTest("Bundle", function()
@@ -4800,6 +4801,7 @@ async function testComms() {
         });
     });
 
+    // [Keep commented]
     // for (let i = 0; i < 50; ++i)
     // {
     //     await asyncTest("retry 45sec script", 2, () =>
