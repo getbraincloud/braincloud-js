@@ -281,12 +281,11 @@ async function asyncTest(name, expected, testFn)
             ++test_passed;
             console.log("\x1b[36m" + test_name + " \x1b[32m[PASSED]\x1b[0m (" + sub_testPass + " == " + expected + ")");
         }
-        // else
-        // {
-        //     var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[0m (" + sub_testPass + " != " + expected + ")";
-        //     fail_log.push(log);
-        //     console.log(log);
-        // }
+        else
+        {
+            var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[0m (" + sub_testPass + " != " + expected + ")";
+            console.log(log);
+        }
     }
     if (module_afterFn)
     {
@@ -311,7 +310,8 @@ function passed(expr, log)
 function failed(expr, logex)
 {
     var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[36m (" + expr + ")\x1b[0m" + logex;
-    fail_log.push(log);
+    var finallog = "\x1b[36m" + test_name + "\x1b[0m";
+    fail_log.push("\x1b[31m[  FAILED  ]\x1b[36m " + finallog);
     console.log(log);
 }
 
@@ -6532,7 +6532,7 @@ async function main()
     console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + " passed\x1b[0m");
     console.log(fail_log.join("\n"));
 
-    process.exit(test_count - test_passed);
+    process.exit((test_count - test_passed) ? 1 : 0);
 }
 
 main();
