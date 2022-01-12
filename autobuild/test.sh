@@ -21,4 +21,4 @@ java -jar ../tools/closure/compiler.jar --js ../deploy/node/lib/brainCloudClient
 pushd ../test
 npm install
 node test
-popd
+exit
