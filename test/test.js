@@ -281,12 +281,12 @@ async function asyncTest(name, expected, testFn)
             ++test_passed;
             console.log("\x1b[36m" + test_name + " \x1b[32m[PASSED]\x1b[0m (" + sub_testPass + " == " + expected + ")");
         }
-        else
-        {
-            var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[0m (" + sub_testPass + " != " + expected + ")";
-            fail_log.push(log);
-            console.log(log);
-        }
+        // else
+        // {
+        //     var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[0m (" + sub_testPass + " != " + expected + ")";
+        //     fail_log.push(log);
+        //     console.log(log);
+        // }
     }
     if (module_afterFn)
     {
