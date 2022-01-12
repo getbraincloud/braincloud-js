@@ -284,7 +284,6 @@ async function asyncTest(name, expected, testFn)
         else
         {
             var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[0m (" + sub_testPass + " != " + expected + ")";
-            // fail_log.push(log);
             console.log(log);
         }
     }
