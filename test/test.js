@@ -33,8 +33,67 @@ console.log("--- Running JS unit tests ---");
 
 var fail_log = [];
 
-var filters = process.argv[2];
+let Params = {};
+function parseArguments()
+{
+    let args = process.argv.slice(2);
+    
+    args = args.map(arg =>
+    {
+        if (arg.split(" ").length > 1)
+        {
+            return `\"${arg}\"`;
+        }
+        return arg;
+    });
+    
+    let argTypes = [
+        { key: { short: "-f", long: "--filters" }, description: "Unit Test filters" },
+        { key: { short: "-r", long: "--results" }, description: "Generate JUnit compatible xml" },
+    ];
+    
+    for (let i = 0; i < args.length; i++)
+    {
+        let arg = args[i];
+        let paramKey = arg.toLowerCase();
+        for (let j = 0; j < argTypes.length; j++)
+        {
+            let argType = argTypes[j];
+            if (argType.key.short == paramKey || argType.key.long == paramKey)
+            {
+                if (argType.singleFlag)
+                {
+                    Params[argType.key.long.substr(2)] = true;
+                    args.splice(i, 1);
+                    i -= 1;
+                }
+                else if (i < args.length - 1)
+                {
+                    Params[argType.key.long.substr(2)] = args[i + 1];
+                    args.splice(i, 2);
+                    i -= 1;
+                }
+                break;
+            }
+        }
+    }
+    
+    argTypes.forEach(argType =>
+    {
+        if (argType.default)
+        {
+            if (!params.hasOwnProperty(argType.key.long.substr(2)))
+            {
+                params[argType.key.long.substr(2)] = argType.default;
+            }
+        }
+    });    
+}
+parseArguments();
+
+var filters = Params.filters;
 console.log("filters: " + filters);
+var results = {};
 
 var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
@@ -275,17 +334,38 @@ async function asyncTest(name, expected, testFn)
             console.log(e);
             resolve_test();
         }
-                    
+        
+        test_result = {
+            name: name,
+            fullname: test_name,
+            method_name: name,
+            classname: module_name,
+            runstate: "Runnable"
+        };
+
         if (sub_testPass === expected)
         {
             ++test_passed;
+            test_result.result = "Passed"
             console.log("\x1b[36m" + test_name + " \x1b[32m[PASSED]\x1b[0m (" + sub_testPass + " == " + expected + ")");
         }
         else
         {
             var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[0m (" + sub_testPass + " != " + expected + ")";
             console.log(log);
+            test_result.result = "Failed"
+            test_result.failure_text = "(" + sub_testPass + " != " + expected + ")";
         }
+
+        if (!results[module_name]) results[module_name] = {
+            type: "TestFixture",
+            name: module_name,
+            fullname: module_name,
+            classname: module_name,
+            runstate: "Runnable",
+            tests: []
+        }
+        results[module_name].tests.push(test_result);
     }
     if (module_afterFn)
     {
@@ -6525,12 +6605,84 @@ async function run_tests()
     await testLobby();
 }
 
+let time_start = null
+let time_end = null
+function outputXML()
+{
+    let output = ""
+
+    output += '<?xml version="1.0" encoding="utf-8"?>\n'
+
+    let test_suites = []
+    let test_count = 0
+    let failed_count = 0
+    let id = 2;
+
+    for (const [key, value] of Object.entries(results))
+    {
+        test_suites.push(value)
+        value.fail_count = 0;
+        test_count += value.tests.length;
+        value.tests.forEach(test =>
+        {
+            if (test.result == "Failed")
+            {
+                failed_count++;
+                value.fail_count++;
+            }
+        });
+    }
+
+    // output += `<test-run testcasecount="${test_count}" result="${failed_count > 0 ? "Failed" : "Passed"}" total="${test_count}" passed="${test_count - failed_count}" failed="${failed_count}" inconclusive="0" skipped="0" asserts="0" start-time="${time_start.toString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}" end-time="${time_end.toString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}" duration="${(time_end.getTime() - time_start.getTime()) / 1000}">\n`
+    output += `<testsuites tests="${test_count}" failures="${failed_count}" disabled="0" errors="0" time="${(time_end.getTime() - time_start.getTime()) / 1000}" name="AllTests">\n`
+
+    test_suites.forEach(test_suite =>
+    {
+        // output += `  <test-suite type="${test_suite.type}" name="${test_suite.name}" fullname="${test_suite.fullname}" classname="${test_suite.classname}" runstate="${test_suite.runstate}" testcasecount="${test_suite.tests.length}" result="${test_suite.fail_count > 0 ? "Failed" : "Passed"}" total="${test_suite.tests.length}" passed="${test_suite.tests.length - test_suite.fail_count}" failed="${test_suite.fail_count}" inconclusive="0" skipped="0" asserts="0">\n`
+        output += `  <testsuite name="${test_suite.name}" tests="${test_suite.tests.length}" failures="${test_suite.fail_count}" disabled="0" errors="0">\n`
+
+        // if (test_suite.fail_count > 0)
+        // {
+        //     output += `>\n    <failure>\n      <message><![CDATA[One or more child tests had errors]]></message>\n    </failure>\n`
+        // }
+        // else
+        // {
+        //     output += ` />\n`
+        // }
+
+        test_suite.tests.forEach(test_case =>
+        {
+            // output += `    <test-case name="${test_case.name}" fullname="${test_case.fullname}" methodname="${test_case.method_name}" classname="${test_case.classname}" runstate="${test_case.runstate}" result="${test_case.result}">\n`
+            output += `    <testcase name="${test_case.name}" status="run" classname="${test_case.classname}"`
+            if (test_case.result == "Failed")
+            {
+                output += `>\n      <failure>\n        <message><![CDATA[${test_case.failure_text}]]></message>\n      </failure>\n    </testcase>\n`
+            }
+            else
+            {
+                output += ` />\n`
+            }
+        });
+
+        output += `  </testsuite>\n`
+    });
+    output += `</testsuites>\n`
+
+    fs.writeFileSync(`./${Params.results}`, output);
+    console.log(`${Params.results} saved`);
+}
+
 async function main()
 {
+    time_start = new Date()
     await run_tests();
+    time_end = new Date()
 
     console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + " passed\x1b[0m");
     console.log(fail_log.join("\n"));
+
+    // Generate results.xml
+    if (Params.results) outputXML();
 
     process.exit((test_count - test_passed) ? 1 : 0);
 }
