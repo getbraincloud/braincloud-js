@@ -507,7 +507,37 @@ function BrainCloudWrapper(wrapperName) {
             });
     };
 
-        /**
+    
+    /**
+     * A generic Authenticate method that translates to the same as calling a specific one, except it takes an extraJson
+     * that will be passed along to pre- or post- hooks.
+     *
+     * Service Name - Authenticate
+     * Service Operation - Authenticate
+     *
+     * @param authenticationType {string} Universal, Email, Facebook, etc. Please refer to the authentication type list here: https://getbraincloud.com/apidocs/apiref/#appendix-authtypes
+     * @param ids {object} Auth IDs object containing externalId, authenticationToken and optionally authenticationSubType.
+     * @param forceCreate  {boolean} Should a new profile be created for this user if the account does not exist?
+     * @param extraJson {object} Additional to piggyback along with the call, to be picked up by pre- or post- hooks. Leave empty string for no extraJson.
+     * @param responseHandler {function} - The user callback method
+     */
+     bcw.authenticateAdvanced = function(authenticationType, ids, forceCreate, extraJson, responseHandler) {
+
+        bcw._initializeIdentity(false);
+
+        bcw.brainCloudClient.authentication.authenticateAdvanced(
+            authenticationType,
+            ids,
+            forceCreate,
+            extraJson,
+            function(result) {
+                bcw._authResponseHandler(result);
+                responseHandler(result);
+            });
+    };
+
+
+    /**
      * Authenticate the user using a Pase userid and authentication token
      *
      * Service Name - Authenticate
@@ -859,6 +889,42 @@ function BrainCloudWrapper(wrapperName) {
                 userId,
                 userPassword,
                 forceCreate,
+                function(result) {
+                    bcw._authResponseHandler(result);
+                    responseHandler(result);
+                });
+        };
+
+        bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
+    };
+
+    /**
+     * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
+     * In event the current session was previously an anonymous account, the smart switch will delete that profile.
+     * Use this function to keep a clean designflow from anonymous to signed profiles
+     *
+     * A generic Authenticate method that translates to the same as calling a specific one, except it takes an extraJson
+     * that will be passed along to pre- or post- hooks.
+     *
+     * Service Name - Authenticate
+     * Service Operation - Authenticate
+     *
+     * @param authenticationType {string} Universal, Email, Facebook, etc. Please refer to the authentication type list here: https://getbraincloud.com/apidocs/apiref/#appendix-authtypes
+     * @param ids {object} Auth IDs object containing externalId, authenticationToken and optionally authenticationSubType.
+     * @param forceCreate  {boolean} Should a new profile be created for this user if the account does not exist?
+     * @param extraJson {object} Additional to piggyback along with the call, to be picked up by pre- or post- hooks. Leave empty string for no extraJson.
+     * @param responseHandler {function} - The user callback method
+     */
+    bcw.smartSwitchAuthenticateAdvanced = function(authenticationType, ids, forceCreate, extraJson, responseHandler) {
+
+        bcw._initializeIdentity(false);
+
+        authenticationCallback = function() {
+            bcw.brainCloudClient.authentication.authenticateAdvanced(
+                authenticationType,
+                ids,
+                forceCreate,
+                extraJson,
                 function(result) {
                     bcw._authResponseHandler(result);
                     responseHandler(result);
