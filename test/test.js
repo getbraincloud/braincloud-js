@@ -686,6 +686,21 @@ async function testAuthentication() {
                 });
     });
 
+    await asyncTest("authenticateAdvanced()", function() {
+
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateAdvanced(
+            bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL, 
+            { externalId: "authAdvancedUser", authenticationToken: "authAdvancedPass" }, 
+            true, 
+            { AnswerToEverything: 42 },
+            function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
     await asyncTest("resetEmailPassword()", function() {
         bc.brainCloudClient.authentication.resetEmailPassword(
                 "ryanr@bitheads.com",
@@ -719,6 +734,10 @@ async function testAuthentication() {
                     resolve_test();
                 });
             });
+
+
+            // KEEP COMMENTED ------------------------------------
+
 
             // await asyncTest("resetEmailPasswordWithExpiry()", function() {
             //     bc.brainCloudClient.authentication.resetEmailPasswordWithExpiry(
@@ -775,6 +794,8 @@ async function testAuthentication() {
             //                 resolve_test();
             //             });
             //         });
+
+            //----------------------------------
 
     //NO SESSION!?
     await asyncTest("resetUniversalIdPassword()", function() {
