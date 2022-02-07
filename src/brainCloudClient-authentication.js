@@ -40,6 +40,7 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_GOOGLE = "Google";
 	bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID = "GoogleOpenId";
 	bc.authentication.AUTHENTICATION_TYPE_APPLE = "Apple";
+	bc.authentication.AUTHENTICATION_TYPE_ULTRA = "Ultra";
 
 	bc.authentication.AUTHENTICATION_TYPE_UNIVERSAL = "Universal";
 	bc.authentication.AUTHENTICATION_TYPE_GAME_CENTER = "GameCenter";
@@ -344,6 +345,29 @@ function BCAuthentication() {
             null,
 			responseHandler);
 	};
+
+    /**
+     * Authenticate the user for Ultra.
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param ultraIdToken {string} - The "id_token" taken from Ultra's JWT.
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * If set to false, you need to handle errors in the case of new players.
+     * @param responseHandler {function} - The user callback method
+     */
+    bc.authentication.authenticateUltra = function(ultraUsername, ultraIdToken, forceCreate, responseHandler) {
+        bc.authentication.authenticate(
+            ultraUsername,
+            ultraIdToken,
+            bc.authentication.AUTHENTICATION_TYPE_ULTRA,
+            null,
+            forceCreate,
+            null,
+            responseHandler);
+    };
 
 	/**
 	 * Authenticate the user using a steam userId and session ticket (without any validation on the userId).

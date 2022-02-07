@@ -373,6 +373,31 @@ function BrainCloudWrapper(wrapperName) {
     };
 
     /**
+     * Authenticate the user for Ultra.
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param ultraIdToken {string} - The "id_token" taken from Ultra's JWT.
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * If set to false, you need to handle errors in the case of new players.
+     * @param responseHandler {function} - The user callback method
+     */
+     bcw.authenticateUltra = function(ultraUsername, ultraIdToken, forceCreate, responseHandler) {
+        bcw._initializeIdentity(false);
+
+        bcw.brainCloudClient.authentication.authenticateUltra(
+            ultraUsername, 
+            ultraIdToken, 
+            forceCreate,
+            function(result) {
+                bcw._authResponseHandler(result);
+                responseHandler(result);
+            });
+    };
+
+    /**
      * Authenticate the user using a google user id (email address) and google authentication token.
      *
      * Service Name - authenticationV2
@@ -788,6 +813,41 @@ function BrainCloudWrapper(wrapperName) {
 
         bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
     };
+
+    /**
+     * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
+     * In event the current session was previously an anonymous account, the smart switch will delete that profile.
+     * Use this function to keep a clean designflow from anonymous to signed profiles
+     * 
+     * Authenticate the user for Ultra.
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param ultraIdToken {string} - The "id_token" taken from Ultra's JWT.
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * If set to false, you need to handle errors in the case of new players.
+     * @param responseHandler {function} - The user callback method
+     */
+    bcw.smartSwitchAuthenticateUltra = function(ultraUsername, ultraIdToken, forceCreate, responseHandler)
+    {
+        bcw._initializeIdentity(false);
+
+        authenticationCallback = function() {
+            bcw.brainCloudClient.authentication.authenticateUltra(
+                ultraUsername,
+                ultraIdToken,
+                forceCreate,
+                function(result) {
+                    bcw._authResponseHandler(result);
+                    responseHandler(result);
+                });
+        };
+
+        bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
+    };
+    
 
 
     /**
