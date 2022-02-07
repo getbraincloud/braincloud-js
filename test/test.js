@@ -701,6 +701,62 @@ async function testAuthentication() {
                 });
     });
 
+    // Ultra only works on internal, internala, internalg and ultra.
+    // We use the server URL to detect (Kind of hacky, but also better than having to add extra flags to all tests in all languages + not forgetting those flags in Jenkins, etc.)
+    if (SERVER_URL.includes("api-internal.braincloudservers.com") ||
+        SERVER_URL.includes("internala.braincloudservers.com") ||
+        SERVER_URL.includes("api.internalg.braincloudservers.com") ||
+        SERVER_URL.includes("api.ultracloud.ultra.io"))
+    {
+        await asyncTest("authenticateUltra()", 3, function()
+        {
+            bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+            bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+            {
+                equal(result.status, 200, JSON.stringify(result));
+                if (result.status == 200)
+                {
+                    bc.brainCloudClient.script.runScript("getUltraToken", {}, function(result)
+                    {
+                        equal(result.status, 200, JSON.stringify(result));
+                        if (result.status == 200)
+                        {
+                            var d = result.data;
+                            if (d.response.data)
+                            {
+                                var id_token = d.response.data.json.id_token;
+
+                                bc.playerState.logout(() =>
+                                {
+                                    bc.brainCloudClient.resetCommunication();
+
+                                    bc.brainCloudClient.authentication.authenticateUltra("braincloud1", id_token, true, function(result)
+                                    {
+                                        equal(result.status, 200, JSON.stringify(result));
+                                        resolve_test();
+                                    });
+                                });
+                            }
+                            else
+                            {
+                                resolve_test();
+                            }
+                        }
+                        else
+                        {
+                            resolve_test();
+                        }
+                    });
+                }
+                else
+                {
+                    resolve_test();
+                }
+            });
+        });
+    }
+
     await asyncTest("resetEmailPassword()", function() {
         bc.brainCloudClient.authentication.resetEmailPassword(
                 "ryanr@bitheads.com",

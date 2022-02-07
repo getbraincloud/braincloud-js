@@ -115,6 +115,60 @@ function BCIdentity() {
     };
 
     /**
+     * Attach the user's Ultra credentials to the current profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Attach
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param ultraIdToken {string} - The "id_token" taken from Ultra's JWT.
+     * @param callback The method to be invoked when the server response is received
+     *
+     * Errors to watch for:  SWITCHING_PROFILES - this means that the Ultra identity you provided
+     * already points to a different profile.  You will likely want to offer the player the
+     * choice to *SWITCH* to that profile, or *MERGE* the profiles.
+     *
+     * To switch profiles, call ClearSavedProfileID() and call AuthenticateUltra().
+     */
+    bc.identity.attachUltraIdentity = function(ultraUsername, ultraIdToken, callback) {
+        bc.identity.attachIdentity(ultraUsername, ultraIdToken, bc.authentication.AUTHENTICATION_TYPE_ULTRA, callback);
+    };
+
+    /**
+     * Merge the profile associated with the provided Ultra credentials with the
+     * current profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Merge
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param ultraIdToken {string} - The "id_token" taken from Ultra's JWT.
+     * @param callback The method to be invoked when the server response is received
+     *
+     */
+    bc.identity.mergeUltraIdentity = function(ultraUsername, ultraIdToken, callback) {
+        bc.identity.mergeIdentity(ultraUsername, ultraIdToken, bc.authentication.AUTHENTICATION_TYPE_ULTRA, callback);
+    };
+
+    /**
+     * Detach the Ultra identity from this profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Detach
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param continueAnon Proceed even if the profile will revert to anonymous?
+     * @param callback The method to be invoked when the server response is received
+     *
+     * Watch for DOWNGRADING_TO_ANONYMOUS_ERROR - occurs if you set continueAnon to false, and
+     * disconnecting this identity would result in the profile being anonymous (which means that
+     * the profile wouldn't be retrievable if the user loses their device)
+     */
+    bc.identity.detachUltraIdentity = function(ultraUsername, continueAnon, callback) {
+        bc.identity.detachIdentity(ultraUsername, bc.authentication.AUTHENTICATION_TYPE_ULTRA, continueAnon, callback);
+    };
+
+    /**
      * Attach the user's credentials to the current profile.
      *
      * Service Name - Identity
