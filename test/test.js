@@ -740,6 +740,7 @@ async function testAuthentication() {
                             }
                             else
                             {
+                                failed("Bad script", "Bad script, returned empty response");
                                 resolve_test();
                             }
                         }
