@@ -705,8 +705,8 @@ async function testAuthentication() {
     // We use the server URL to detect (Kind of hacky, but also better than having to add extra flags to all tests in all languages + not forgetting those flags in Jenkins, etc.)
     if (SERVER_URL.includes("api-internal.braincloudservers.com") ||
         SERVER_URL.includes("internala.braincloudservers.com") ||
-        SERVER_URL.includes("api.internalg.braincloudservers.com") ||
-        SERVER_URL.includes("api.ultracloud.ultra.io"))
+        SERVER_URL.includes("api.internalg.braincloudservers.com")/* ||
+        SERVER_URL.includes("api.ultracloud.ultra.io")*/)
     {
         await asyncTest("authenticateUltra()", 3, function()
         {
