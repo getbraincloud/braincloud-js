@@ -60,7 +60,7 @@ function BrainCloudManager ()
     bcm._appId = "";
     bcm._secret = "";
     bcm._secretMap = {};
-    bcm._serverUrl = "https://sharedprod.braincloudservers.com";
+    bcm._serverUrl = "https://api.braincloudservers.com";
     bcm._dispatcherUrl = bcm._serverUrl + "/dispatcherv2";
     bcm._fileUploadUrl = bcm._serverUrl + "/uploader";
     bcm._appVersion = "";

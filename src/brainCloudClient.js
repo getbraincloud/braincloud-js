@@ -249,7 +249,7 @@ function BrainCloudClient() {
      * value.
      *
      * @param serverUrl
-     *            {string} - The server URL e.g. "https://sharedprod.braincloudservers.com"
+     *            {string} - The server URL e.g. "https://api.braincloudservers.com"
      */
     bcc.setServerUrl = function(serverUrl) {
         bcc.brainCloudManager.setServerUrl(serverUrl);

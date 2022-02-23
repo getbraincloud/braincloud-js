@@ -189,7 +189,7 @@ function initializeClient()
     secretMap[CHILD_APP_ID] = CHILD_SECRET;
     bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
 
-    // point to internal (default is sharedprod)
+    // point to internal (default is prod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
 
     bc.brainCloudClient.authentication.clearSavedProfileId();
@@ -5107,7 +5107,7 @@ async function testWrapper()
     //initialize with our game id, secret and game version
     bc.initialize(GAME_ID, SECRET, GAME_VERSION);
 
-    // point to internal (default is sharedprod)
+    // point to internal (default is prod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
 
 
