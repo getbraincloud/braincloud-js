@@ -1286,6 +1286,20 @@ async function testCustomEntity() {
         );
     });
 
+    await asyncTest("updateEntityFieldsSharded()", function() {
+        bc.customEntity.updateEntityFieldsSharded( 
+            "athletes",
+            "aaaa-bbbb-cccc-dddd",
+            1,
+            {"stats.gamesPlayedTotal":2,"stats.goalsTotal":2,"games.played":[{"date":"2022-01-21","goals":1,"assists":1,"penalties":0},{"date":"2022-01-10","goals":1,"assists":0,"penalties":1}]},
+            {"ownerId":"profileIdOfEntityOwner"},
+            function(result)
+            {
+                equal(result.status, 400, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
     await asyncTest("DeleteEntity()", function() {
         bc.customEntity.deleteEntity( 
             entityType,

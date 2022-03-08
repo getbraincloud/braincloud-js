@@ -15,7 +15,8 @@ function BCCustomEntity() {
 	bc.customEntity.OPERATION_GET_ENTITY_PAGE_OFFSET= "GET_ENTITY_PAGE_OFFSET";
 	bc.customEntity.OPERATION_READ_ENTITY= "READ_ENTITY";
 	bc.customEntity.OPERATION_UPDATE_ENTITY= "UPDATE_ENTITY";
-	bc.customEntity.OPERATION_UPDATE_ENTITY_FIELDS= "UPDATE_ENTITY_FIELDS";
+	bc.customEntity.OPERATION_UPDATE_ENTITY_FIELDS = "UPDATE_ENTITY_FIELDS";
+	bc.customEntity.OPERATION_UPDATE_ENTITY_FIELDS_SHARDED = "UPDATE_ENTITY_FIELDS_SHARDED";
 	bc.customEntity.OPERATION_DELETE_ENTITY = "DELETE_ENTITY";
 	bc.customEntity.OPERATION_DELETE_ENTITIES = "DELETE_ENTITIES";
 	bc.customEntity.OPERATION_DELETE_SINGLETON = "DELETE_SINGLETON";
@@ -314,6 +315,34 @@ function BCCustomEntity() {
 			callback : callback
 		});
 	};
+
+    /**
+     *Sets the specified fields within custom entity data on the server.
+     * 
+     * @param entityType {string} The entity type as defined by the user
+     * @param entityId
+     * @param version 
+     * @param fieldsJson {json} the fields in the entity
+     * @param shardKeyJson The shard key field(s) and value(s), as JSON, applicable to the entity being updated.
+     * @param callback {function} The callback handler.
+     */
+    bc.customEntity.updateEntityFieldsSharded = function(entityType, entityId, version, fieldsJson, shardKeyJson, callback) {
+        var message = {
+            entityType : entityType,
+            entityId : entityId,
+            version : version
+        };
+
+        if (fieldsJson) message.fieldsJson = fieldsJson;
+        if (shardKeyJson) message.shardKeyJson = shardKeyJson;
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_CUSTOM_ENTITY,
+            operation : bc.customEntity.OPERATION_UPDATE_ENTITY_FIELDS_SHARDED,
+            data : message,
+            callback : callback
+        });
+    };
 
 /**
 *deletes entities based on the delete criteria.
