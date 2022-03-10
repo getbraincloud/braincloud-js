@@ -55,11 +55,12 @@ function BrainCloudManager ()
     bcm._bundlerIntervalId = null;
     bcm._packetTimeouts = [15, 20, 35, 50];
     bcm._retry = 0;
+    bcm._requestId = 0; // This is not like packet id. We need this to make sure we don't trigger events on XMLHttpRequest responses if we already moved on. Had issues with retrying and losing internet
 
     bcm._appId = "";
     bcm._secret = "";
     bcm._secretMap = {};
-    bcm._serverUrl = "https://sharedprod.braincloudservers.com";
+    bcm._serverUrl = "https://api.braincloudservers.com";
     bcm._dispatcherUrl = bcm._serverUrl + "/dispatcherv2";
     bcm._fileUploadUrl = bcm._serverUrl + "/uploader";
     bcm._appVersion = "";
@@ -601,6 +602,8 @@ function BrainCloudManager ()
             xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
 
+        xmlhttp.requestId = ++bcm._requestId;
+
 //> REMOVE IF K6
         xmlhttp.ontimeout_bc = function()
         {
@@ -619,7 +622,7 @@ function BrainCloudManager ()
 
         xmlhttp.onreadystatechange = function()
         {
-            if (xmlhttp.hasTimedOut)
+            if (xmlhttp.hasTimedOut || xmlhttp.requestId != bcm._requestId)
             {
                 return;
             }
@@ -681,6 +684,9 @@ function BrainCloudManager ()
                     {
                         bcm._errorCallback(errorMessage);
                     }
+                    if (!errorMessage || errorMessage == "") errorMessage = "Unknown error. Did you lose internet connection?";
+                    bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, reasonCode,
+                        errorMessage);
                 }
             }
         }; // end inner function

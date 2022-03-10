@@ -13,6 +13,37 @@ var disconnectMessage= null;
 //> ADD IF K6
 //+ import ws from 'k6/ws';
 //+ import { check } from "k6";
+//+ function Utf8ArrayToStr(array) {
+//+     var out, i, len, c;
+//+     var char2, char3;
+//+     out = "";
+//+     len = array.length;
+//+     i = 0;
+//+     while(i < len) {
+//+     c = array[i++];
+//+     switch(c >> 4)
+//+     { 
+//+       case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+//+         // 0xxxxxxx
+//+         out += String.fromCharCode(c);
+//+         break;
+//+       case 12: case 13:
+//+         // 110x xxxx   10xx xxxx
+//+         char2 = array[i++];
+//+         out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+//+         break;
+//+       case 14:
+//+         // 1110 xxxx  10xx xxxx  10xx xxxx
+//+         char2 = array[i++];
+//+         char3 = array[i++];
+//+         out += String.fromCharCode(((c & 0x0F) << 12) |
+//+                        ((char2 & 0x3F) << 6) |
+//+                        ((char3 & 0x3F) << 0));
+//+         break;
+//+     }
+//+     }
+//+     return out;
+//+ }
 //> END
 
 function getBrowserName() {
@@ -103,12 +134,17 @@ function BrainCloudRttComms (m_client) {
 
 //> ADD IF K6
 //+     bcrtt._rttConnectionStatus = bcrtt.RTTConnectionStatus.CONNECTED;
-//+     var res = ws.connect(uri, {}, (socket) => {
+//+     var res = ws.connect(uri, {}, function (socket) {
 //+         bcrtt.socket = socket;
-//+         bcrtt.socket.on('error', bcrtt.onSocketError);
-//+         bcrtt.socket.on('close', bcrtt.onSocketClose);
-//+         bcrtt.socket.on('open', bcrtt.onSocketOpen);
-//+         bcrtt.socket.on('message', bcrtt.onSocketMessage);
+//+         socket.on('error', bcrtt.onSocketError);
+//+         socket.on('close', bcrtt.onSocketClose);
+//+         socket.on('open', bcrtt.onSocketOpen);
+//+         socket.on('message', bcrtt.onSocketMessage);
+//+         socket.on('binaryMessage', msg =>
+//+         {
+//+             var message = Utf8ArrayToStr(new Uint8Array(msg))
+//+             bcrtt.onSocketMessage(message);
+//+         });
 //+     });
 //> END
 //> REMOVE IF K6
@@ -176,9 +212,13 @@ function BrainCloudRttComms (m_client) {
     }
 
     bcrtt.onSocketMessage = function(e) {
+
         if (bcrtt.isRTTEnabled()) { // This should always be true, but just in case user called disabled and we end up receiving the even anyway
             var processResult = function(result) {
                 if (result.service == "rtt") {
+                    if (bcrtt._debugEnabled) {
+                        console.log("WS RECV: " + JSON.stringify(result));
+                    }
                     if(result.operation == "CONNECT")
                     {
                         bcrtt.connectionId = result.data.cxId;
@@ -245,10 +285,15 @@ function BrainCloudRttComms (m_client) {
     }
 
     bcrtt.startHeartbeat = function() {
+        if (!bcrtt.heartbeatId) {
+//> ADD IF K6
+//+         bcrtt.heartbeatId = true;
+//+         bcrtt.socket.setInterval(function() {
+//> END
 //> REMOVE IF K6
-        if (!this.heartbeatId) {
             bcrtt.heartbeatId = setInterval(function() {
-                // Send a connect request
+//> END
+                // Send a heartbeat request
                 var request = {
                     operation: "HEARTBEAT",
                     service: "rtt",
@@ -262,7 +307,6 @@ function BrainCloudRttComms (m_client) {
                 bcrtt.socket.send(JSON.stringify(request));
             }, 1000 * DEFAULT_RTT_HEARTBEAT);
         }
-//> END
     }
 
     bcrtt.onRecv = function(result) {
@@ -341,7 +385,9 @@ function BrainCloudRttComms (m_client) {
             bcrtt._rttConnectionStatus = bcrtt.RTTConnectionStatus.DISCONNECTING;
 
             if (bcrtt.heartbeatId) {
+//> REMOVE IF K6
                 clearInterval(bcrtt.heartbeatId);
+//> END
                 bcrtt.heartbeatId = null;
             }
     

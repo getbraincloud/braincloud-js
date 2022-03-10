@@ -1,7 +1,7 @@
 {
   "name": "test",
   "version": "1.0.0",
-  "description": "Usage: `node test.js {regex filters}`",
+  "description": "Usage: `node test.js {-f --filters regex filters} {-r --results generates results.xml}`",
   "main": "test.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

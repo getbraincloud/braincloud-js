@@ -116,20 +116,33 @@ function BrainCloudRelayComms(_client) {
         // build url with auth as arguments
         var uri = (ssl ? "wss://" : "ws://") + host + ":" + port;
 
+//> ADD IF K6
+//+     var res = ws.connect(uri, {}, function (socket) {
+//+         bcr.socket = socket;
+//+         socket.on('error', bcr.onSocketError);
+//+         socket.on('close', bcr.onSocketClose);
+//+         socket.on('open', bcr.onSocketOpen);
+//+         socket.on('binaryMessage', bcr.onSocketMessage);
+//+     });
+//> END
+//> REMOVE IF K6
         bcr.socket = new WebSocket(uri);
         bcr.socket.addEventListener('error', bcr.onSocketError);
         bcr.socket.addEventListener('close', bcr.onSocketClose);
         bcr.socket.addEventListener('open', bcr.onSocketOpen);
         bcr.socket.addEventListener('message', bcr.onSocketMessage);
+//> END
     }
 
     bcr.disconnect = function() {
         bcr.stopPing();
         if (bcr.socket) {
+//> REMOVE IF K6
             bcr.socket.removeEventListener('error', bcr.onSocketError);
             bcr.socket.removeEventListener('close', bcr.onSocketClose);
             bcr.socket.removeEventListener('open', bcr.onSocketOpen);
             bcr.socket.removeEventListener('message', bcr.onSocketMessage);
+//> END
             bcr.socket.close();
             bcr.socket = null;
         }
@@ -168,7 +181,9 @@ function BrainCloudRelayComms(_client) {
 
     bcr.stopPing = function() {
         if (bcr._pingIntervalId) {
+//> REMOVE IF K6
             clearInterval(bcr._pingIntervalId);
+//> END
             bcr._pingIntervalId = null;
         }
         bcr._pingInFlight = false;
@@ -176,7 +191,13 @@ function BrainCloudRelayComms(_client) {
 
     bcr.startPing = function() {
         bcr.stopPing();
+//> ADD IF K6
+//+     bcr._pingIntervalId = true;
+//+     bcr.socket.setInterval(function() {
+//> END
+//> REMOVE IF K6
         bcr._pingIntervalId = setInterval(function() {
+//> END
             if (!bcr._pingInFlight) {
                 bcr.sendPing();
             }
@@ -214,7 +235,13 @@ function BrainCloudRelayComms(_client) {
 
     bcr.onSocketMessage = function(e) {
         var processResult = function(data) {
+            console.log("Typeof data = " + (typeof data));
+//> ADD IF K6
+//+         var buffer = new Uint8Array(data);
+//> END
+//> REMOVE IF K6
             var buffer = new Buffer(data);
+//> END
             if (data.length < 3) {
                 bcr.disconnect();
                 if (bcr.connectCallback.failure) {
@@ -225,6 +252,10 @@ function BrainCloudRelayComms(_client) {
             bcr.onRecv(buffer);
         }
 
+//> ADD IF K6
+//+         processResult(e);
+//> END
+//> REMOVE IF K6
         if (typeof FileReader !== 'undefined') {
             // Web Browser
             var reader = new FileReader();
@@ -236,6 +267,7 @@ function BrainCloudRelayComms(_client) {
             // Node.js
             processResult(e.data);
         }
+//> END
     }
 
     bcr.sendJson = function(netId, json) {
@@ -243,10 +275,23 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.sendText = function(netId, text) {
+//> ADD IF K6
+//+     var buffer = new Uint8Array(text.length + 3);
+//+     var value_16u = text.length + 3;
+//+     buffer[0] = value_16u & 0xFF;
+//+     buffer[1] = (value_16u >> 8) & 0xFF;
+//+     buffer[2] = netId;
+//+     for (var i = 0; i < text.length; ++i)
+//+     {
+//+         buffer[3 + i] = text.charCodeAt(i);
+//+     }
+//> END
+//> REMOVE IF K6
         var buffer = new Buffer(text.length + 3)
         buffer.writeUInt16BE(text.length + 3, 0);
         buffer.writeUInt8(netId, 2);
         buffer.write(text, 3, text.length);
+//> END
         bcr.socket.send(buffer);
         
         if (bcr._debugEnabled) {
@@ -304,7 +349,12 @@ function BrainCloudRelayComms(_client) {
         var packetId = bcr._sendPacketId[p0][p1][p2][p3];
         rh += packetId;
 
+//> ADD IF K6
+//+     var buffer = new Uint8Array(data.length + 11);
+//> END
+//> REMOVE IF K6
         var buffer = new Buffer(data.length + 11)
+//> END
         buffer.writeUInt16BE(data.length + 11, 0)
         buffer.writeUInt8(bcr.CL2RS_RELAY, 2)
         buffer.writeUInt16BE(rh, 3)
@@ -325,10 +375,22 @@ function BrainCloudRelayComms(_client) {
         bcr._pingInFlight = true;
         bcr._pingTime = new Date().getTime();
 
+//> ADD IF K6
+//+     var buffer = new Uint8Array(5);
+//+     var value_16u = 5;
+//+     buffer[0] = value_16u & 0xFF;
+//+     buffer[1] = (value_16u >> 8) & 0xFF;
+//+     buffer[2] = bcr.CL2RS_PING;
+//+     value_16u = bcr.ping;
+//+     buffer[3] = value_16u & 0xFF;
+//+     buffer[4] = (value_16u >> 8) & 0xFF;
+//> END
+//> REMOVE IF K6
         var buffer = new Buffer(5)
         buffer.writeUInt16BE(5, 0);
         buffer.writeUInt8(bcr.CL2RS_PING, 2);
         buffer.writeUInt16BE(bcr.ping, 3);
+//> END
         bcr.socket.send(buffer);
     }
 
@@ -348,16 +410,33 @@ function BrainCloudRelayComms(_client) {
             return;
         }
 
+//> ADD IF K6
+//+     var buffer = new Uint8Array(data.length + 3);
+//+     var value_16u = data.length + 3;
+//+     buffer[0] = value_16u & 0xFF;
+//+     buffer[1] = (value_16u >> 8) & 0xFF;
+//+     buffer[2] = netId;
+//+     buffer.set(data, 3);
+//> END
+//> REMOVE IF K6
         var buffer = new Buffer(data.length + 3)
         buffer.writeUInt16BE(data.length + 3, 0);
         buffer.writeUInt8(netId, 2);
         buffer.set(data, 3);
+//> END
         bcr.socket.send(buffer);
     }
 
     bcr.onRecv = function(buffer) {
+//> ADD IF K6
+//+     buffer = new Uint8Array(buffer);
+//+     var size = buffer[0] | (buffer[1] << 8);
+//+     var controlByte = buffer[2];
+//> END
+//> REMOVE IF K6
         var size = buffer.readUInt16BE(0);
         var controlByte = buffer.readUInt8(2);
+//> END
 
         if (controlByte == bcr.RS2CL_RSMG) {
             bcr.onRSMG(buffer);
@@ -376,7 +455,12 @@ function BrainCloudRelayComms(_client) {
             // Ignore, don't throw.
         }
         else if (controlByte == bcr.RS2CL_RELAY) {
+//> ADD IF K6
+//+         var netId = buffer[10];
+//> END
+//> REMOVE IF K6
             var netId = buffer.readUInt8(10);
+//> END
             if (bcr._debugEnabled) {
                 console.log("RELAY RECV from netId: " + netId + " size: " + size);
             }

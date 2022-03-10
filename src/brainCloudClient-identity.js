@@ -115,6 +115,173 @@ function BCIdentity() {
     };
 
     /**
+     * Attach the user's Ultra credentials to the current profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Attach
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param ultraIdToken {string} - The "id_token" taken from Ultra's JWT.
+     * @param callback The method to be invoked when the server response is received
+     *
+     * Errors to watch for:  SWITCHING_PROFILES - this means that the Ultra identity you provided
+     * already points to a different profile.  You will likely want to offer the player the
+     * choice to *SWITCH* to that profile, or *MERGE* the profiles.
+     *
+     * To switch profiles, call ClearSavedProfileID() and call AuthenticateUltra().
+     */
+    bc.identity.attachUltraIdentity = function(ultraUsername, ultraIdToken, callback) {
+        bc.identity.attachIdentity(ultraUsername, ultraIdToken, bc.authentication.AUTHENTICATION_TYPE_ULTRA, callback);
+    };
+
+    /**
+     * Merge the profile associated with the provided Ultra credentials with the
+     * current profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Merge
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param ultraIdToken {string} - The "id_token" taken from Ultra's JWT.
+     * @param callback The method to be invoked when the server response is received
+     *
+     */
+    bc.identity.mergeUltraIdentity = function(ultraUsername, ultraIdToken, callback) {
+        bc.identity.mergeIdentity(ultraUsername, ultraIdToken, bc.authentication.AUTHENTICATION_TYPE_ULTRA, callback);
+    };
+
+    /**
+     * Detach the Ultra identity from this profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Detach
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param continueAnon Proceed even if the profile will revert to anonymous?
+     * @param callback The method to be invoked when the server response is received
+     *
+     * Watch for DOWNGRADING_TO_ANONYMOUS_ERROR - occurs if you set continueAnon to false, and
+     * disconnecting this identity would result in the profile being anonymous (which means that
+     * the profile wouldn't be retrievable if the user loses their device)
+     */
+    bc.identity.detachUltraIdentity = function(ultraUsername, continueAnon, callback) {
+        bc.identity.detachIdentity(ultraUsername, bc.authentication.AUTHENTICATION_TYPE_ULTRA, continueAnon, callback);
+    };
+
+    /**
+     * Attach the user's credentials to the current profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Attach
+     *
+     * @param authenticationType {string} Universal, Email, Facebook, etc. Please refer to the authentication type list here: https://getbraincloud.com/apidocs/apiref/#appendix-authtypes
+     * @param ids {object} Auth IDs object containing externalId, authenticationToken and optionally authenticationSubType.
+     * @param extraJson {object} Additional to piggyback along with the call, to be picked up by pre- or post- hooks. Leave empty string for no extraJson.
+     * @param callback The method to be invoked when the server response is received
+     *
+     * Errors to watch for:  SWITCHING_PROFILES - this means that the identity you provided
+     * already points to a different profile.  You will likely want to offer the player the
+     * choice to *SWITCH* to that profile, or *MERGE* the profiles.
+     *
+     * To switch profiles, call ClearSavedProfileID() and call AuthenticateAdvanced().
+     */
+    bc.identity.attachAdvancedIdentity = function(authenticationType, ids, extraJson, callback) {
+
+        var data = {
+            externalId : ids.externalId,
+            authenticationType : authenticationType,
+            authenticationToken : ids.authenticationToken
+        }
+
+        if (externalAuthName) {
+            data["externalAuthName"] = externalAuthName;
+        };
+
+        if (extraJson) {
+            data["extraJson"] = extraJson;
+        }
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_IDENTITY,
+            operation: bc.identity.OPERATION_ATTACH,
+            data: data,
+            callback: callback
+        });
+    };
+
+    /**
+     * Merge the profile associated with the provided credentials with the
+     * current profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Merge
+     *
+     * @param authenticationType {string} Universal, Email, Facebook, etc. Please refer to the authentication type list here: https://getbraincloud.com/apidocs/apiref/#appendix-authtypes
+     * @param ids {object} Auth IDs object containing externalId, authenticationToken and optionally authenticationSubType.
+     * @param extraJson {object} Additional to piggyback along with the call, to be picked up by pre- or post- hooks. Leave empty string for no extraJson.
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.identity.mergeAdvancedIdentity = function(authenticationType, ids, extraJson, callback) {
+
+        var data = {
+            externalId : ids.externalId,
+            authenticationType : authenticationType,
+            authenticationToken : ids.authenticationToken
+        }
+
+        if (externalAuthName) {
+            data["externalAuthName"] = externalAuthName;
+        };
+
+        if (extraJson) {
+            data["extraJson"] = extraJson;
+        }
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_IDENTITY,
+            operation: bc.identity.OPERATION_MERGE,
+            data: data,
+            callback: callback
+        });
+    };
+
+    /**
+     * Detach the identity from this profile.
+     *
+     * Service Name - Identity
+     * Service Operation - Detach
+     *
+     * @param authenticationType {string} Universal, Email, Facebook, etc. Please refer to the authentication type list here: https://getbraincloud.com/apidocs/apiref/#appendix-authtypes
+     * @param externalId The Facebook id of the user
+     * @param continueAnon Proceed even if the profile will revert to anonymous?
+     * @param extraJson {object} Additional to piggyback along with the call, to be picked up by pre- or post- hooks. Leave empty string for no extraJson.
+     * @param callback The method to be invoked when the server response is received
+     *
+     * Watch for DOWNGRADING_TO_ANONYMOUS_ERROR - occurs if you set continueAnon to false, and
+     * disconnecting this identity would result in the profile being anonymous (which means that
+     * the profile wouldn't be retrievable if the user loses their device)
+     */
+    bc.identity.detachAdvancedIdentity = function(authenticationType, externalId, continueAnon, extraJson, callback) {
+
+        var data = {
+            externalId : externalId,
+            authenticationType : authenticationType,
+            confirmAnonymous : continueAnon
+        }
+
+        if (extraJson) {
+            data["extraJson"] = extraJson;
+        }
+
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_IDENTITY,
+			operation: bc.identity.OPERATION_DETACH,
+			data: data,
+			callback: callback
+		});
+    };
+
+    /**
      * Attach the user's FacebookLimited credentials to the current profile.
      *
      * Service Name - Identity

@@ -40,6 +40,7 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_GOOGLE = "Google";
 	bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID = "GoogleOpenId";
 	bc.authentication.AUTHENTICATION_TYPE_APPLE = "Apple";
+	bc.authentication.AUTHENTICATION_TYPE_ULTRA = "Ultra";
 
 	bc.authentication.AUTHENTICATION_TYPE_UNIVERSAL = "Universal";
 	bc.authentication.AUTHENTICATION_TYPE_GAME_CENTER = "GameCenter";
@@ -108,6 +109,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_ANONYMOUS,
 			null,
 			forceCreate,
+            null,
 			callback);
 	};
 
@@ -133,6 +135,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_EMAIL,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -156,6 +159,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_EXTERNAL,
 			externalAuthName,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -178,6 +182,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_FACEBOOK,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -200,6 +205,7 @@ function BCAuthentication() {
 				bc.authentication.AUTHENTICATION_TYPE_FACEBOOK_LIMITED,
 				null,
 				forceCreate,
+                null,
 				responseHandler);
 		};
 
@@ -222,6 +228,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_APPLE,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -243,6 +250,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_GAME_CENTER,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -265,6 +273,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_APPLE,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
     };
 
@@ -287,6 +296,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_GOOGLE,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -309,6 +319,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -331,8 +342,32 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
+
+    /**
+     * Authenticate the user for Ultra.
+     *
+     * Service Name - authenticationV2
+     * Service Operation - AUTHENTICATE
+     *
+     * @param ultraUsername {string} - it's what the user uses to log into the Ultra endpoint initially
+     * @param ultraIdToken {string} - The "id_token" taken from Ultra's JWT.
+     * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+     * If set to false, you need to handle errors in the case of new players.
+     * @param responseHandler {function} - The user callback method
+     */
+    bc.authentication.authenticateUltra = function(ultraUsername, ultraIdToken, forceCreate, responseHandler) {
+        bc.authentication.authenticate(
+            ultraUsername,
+            ultraIdToken,
+            bc.authentication.AUTHENTICATION_TYPE_ULTRA,
+            null,
+            forceCreate,
+            null,
+            responseHandler);
+    };
 
 	/**
 	 * Authenticate the user using a steam userId and session ticket (without any validation on the userId).
@@ -352,6 +387,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_STEAM,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -376,6 +412,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_TWITTER,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -397,8 +434,33 @@ function BCAuthentication() {
             bc.authentication.AUTHENTICATION_TYPE_UNIVERSAL,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
+
+    /**
+     * A generic Authenticate method that translates to the same as calling a specific one, except it takes an extraJson
+     * that will be passed along to pre- or post- hooks.
+     *
+     * Service Name - Authenticate
+     * Service Operation - Authenticate
+     *
+     * @param authenticationType {string} Universal, Email, Facebook, etc. Please refer to the authentication type list here: https://getbraincloud.com/apidocs/apiref/#appendix-authtypes
+     * @param ids {object} Auth IDs object containing externalId, authenticationToken and optionally authenticationSubType.
+     * @param forceCreate  {boolean} Should a new profile be created for this user if the account does not exist?
+     * @param extraJson {object} Additional to piggyback along with the call, to be picked up by pre- or post- hooks. Leave empty string for no extraJson.
+     * @param responseHandler {function} - The user callback method
+     */
+    bc.authentication.authenticateAdvanced = function(authenticationType, ids, forceCreate, extraJson, responseHandler) {
+        bc.authentication.authenticate(
+            ids.externalId,
+            ids.authenticationToken,
+            authenticationType,
+            ids.authenticationSubType,
+            forceCreate,
+            extraJson,
+            responseHandler);
+    };
 
 	/**
 	 * Authenticate the user using a Pase userid and authentication token
@@ -418,6 +480,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_PARSE,
 			null,
 			forceCreate,
+            null,
 			responseHandler);
 	};
 
@@ -733,6 +796,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_HANDOFF,
 			null,
 			false,
+            null,
 			callback);
 	};
 
@@ -752,6 +816,7 @@ function BCAuthentication() {
 			bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF,
 			null,
 			false,
+            null,
 			callback);
 	};
 
@@ -767,7 +832,7 @@ function BCAuthentication() {
 	 * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
 	 * @param responseHandler {function} - The user callback method
 	 */
-	bc.authentication.authenticate = function(externalId, authenticationToken, authenticationType, externalAuthName, forceCreate, responseHandler) {
+	bc.authentication.authenticate = function(externalId, authenticationToken, authenticationType, externalAuthName, forceCreate, extraJson, responseHandler) {
 
         var callerCallback = responseHandler;
 		// The joy of closures...
@@ -809,6 +874,10 @@ function BCAuthentication() {
 		if (externalAuthName) {
 			data["externalAuthName"] = externalAuthName;
 		};
+
+        if (extraJson) {
+            data["extraJson"] = extraJson;
+        }
 
 
         var request = {

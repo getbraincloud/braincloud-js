@@ -169,7 +169,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "4.9.0";
+    bcc.version = "4.10.0";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -249,7 +249,7 @@ function BrainCloudClient() {
      * value.
      *
      * @param serverUrl
-     *            {string} - The server URL e.g. "https://sharedprod.braincloudservers.com"
+     *            {string} - The server URL e.g. "https://api.braincloudservers.com"
      */
     bcc.setServerUrl = function(serverUrl) {
         bcc.brainCloudManager.setServerUrl(serverUrl);

@@ -33,8 +33,67 @@ console.log("--- Running JS unit tests ---");
 
 var fail_log = [];
 
-var filters = process.argv[2];
+let Params = {};
+function parseArguments()
+{
+    let args = process.argv.slice(2);
+    
+    args = args.map(arg =>
+    {
+        if (arg.split(" ").length > 1)
+        {
+            return `\"${arg}\"`;
+        }
+        return arg;
+    });
+    
+    let argTypes = [
+        { key: { short: "-f", long: "--filters" }, description: "Unit Test filters" },
+        { key: { short: "-r", long: "--results" }, description: "Generate JUnit compatible xml" },
+    ];
+    
+    for (let i = 0; i < args.length; i++)
+    {
+        let arg = args[i];
+        let paramKey = arg.toLowerCase();
+        for (let j = 0; j < argTypes.length; j++)
+        {
+            let argType = argTypes[j];
+            if (argType.key.short == paramKey || argType.key.long == paramKey)
+            {
+                if (argType.singleFlag)
+                {
+                    Params[argType.key.long.substr(2)] = true;
+                    args.splice(i, 1);
+                    i -= 1;
+                }
+                else if (i < args.length - 1)
+                {
+                    Params[argType.key.long.substr(2)] = args[i + 1];
+                    args.splice(i, 2);
+                    i -= 1;
+                }
+                break;
+            }
+        }
+    }
+    
+    argTypes.forEach(argType =>
+    {
+        if (argType.default)
+        {
+            if (!params.hasOwnProperty(argType.key.long.substr(2)))
+            {
+                params[argType.key.long.substr(2)] = argType.default;
+            }
+        }
+    });    
+}
+parseArguments();
+
+var filters = Params.filters;
 console.log("filters: " + filters);
+var results = {};
 
 var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
@@ -130,7 +189,7 @@ function initializeClient()
     secretMap[CHILD_APP_ID] = CHILD_SECRET;
     bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
 
-    // point to internal (default is sharedprod)
+    // point to internal (default is prod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
 
     bc.brainCloudClient.authentication.clearSavedProfileId();
@@ -275,18 +334,38 @@ async function asyncTest(name, expected, testFn)
             console.log(e);
             resolve_test();
         }
-                    
+        
+        test_result = {
+            name: name,
+            fullname: test_name,
+            method_name: name,
+            classname: module_name,
+            runstate: "Runnable"
+        };
+
         if (sub_testPass === expected)
         {
             ++test_passed;
+            test_result.result = "Passed"
             console.log("\x1b[36m" + test_name + " \x1b[32m[PASSED]\x1b[0m (" + sub_testPass + " == " + expected + ")");
         }
         else
         {
             var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[0m (" + sub_testPass + " != " + expected + ")";
-            fail_log.push(log);
             console.log(log);
+            test_result.result = "Failed"
+            test_result.failure_text = "(" + sub_testPass + " != " + expected + ")";
         }
+
+        if (!results[module_name]) results[module_name] = {
+            type: "TestFixture",
+            name: module_name,
+            fullname: module_name,
+            classname: module_name,
+            runstate: "Runnable",
+            tests: []
+        }
+        results[module_name].tests.push(test_result);
     }
     if (module_afterFn)
     {
@@ -311,7 +390,8 @@ function passed(expr, log)
 function failed(expr, logex)
 {
     var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[36m (" + expr + ")\x1b[0m" + logex;
-    fail_log.push(log);
+    var finallog = "\x1b[36m" + test_name + "\x1b[0m";
+    fail_log.push("\x1b[31m[  FAILED  ]\x1b[36m " + finallog);
     console.log(log);
 }
 
@@ -606,6 +686,78 @@ async function testAuthentication() {
                 });
     });
 
+    await asyncTest("authenticateAdvanced()", function() {
+
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateAdvanced(
+            bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL, 
+            { externalId: "authAdvancedUser", authenticationToken: "authAdvancedPass" }, 
+            true, 
+            { AnswerToEverything: 42 },
+            function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    // Ultra only works on internal, internala, internalg and ultra.
+    // We use the server URL to detect (Kind of hacky, but also better than having to add extra flags to all tests in all languages + not forgetting those flags in Jenkins, etc.)
+    if (SERVER_URL.includes("api-internal.braincloudservers.com") ||
+        SERVER_URL.includes("internala.braincloudservers.com") ||
+        SERVER_URL.includes("api.internalg.braincloudservers.com")/* ||
+        SERVER_URL.includes("api.ultracloud.ultra.io")*/)
+    {
+        await asyncTest("authenticateUltra()", 3, function()
+        {
+            bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+            bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
+            {
+                equal(result.status, 200, JSON.stringify(result));
+                if (result.status == 200)
+                {
+                    bc.brainCloudClient.script.runScript("getUltraToken", {}, function(result)
+                    {
+                        equal(result.status, 200, JSON.stringify(result));
+                        if (result.status == 200)
+                        {
+                            var d = result.data;
+                            if (d.response.data)
+                            {
+                                var id_token = d.response.data.json.id_token;
+
+                                bc.playerState.logout(() =>
+                                {
+                                    bc.brainCloudClient.resetCommunication();
+
+                                    bc.brainCloudClient.authentication.authenticateUltra("braincloud1", id_token, true, function(result)
+                                    {
+                                        equal(result.status, 200, JSON.stringify(result));
+                                        resolve_test();
+                                    });
+                                });
+                            }
+                            else
+                            {
+                                failed("Bad script", "Bad script, returned empty response");
+                                resolve_test();
+                            }
+                        }
+                        else
+                        {
+                            resolve_test();
+                        }
+                    });
+                }
+                else
+                {
+                    resolve_test();
+                }
+            });
+        });
+    }
+
     await asyncTest("resetEmailPassword()", function() {
         bc.brainCloudClient.authentication.resetEmailPassword(
                 "ryanr@bitheads.com",
@@ -639,6 +791,10 @@ async function testAuthentication() {
                     resolve_test();
                 });
             });
+
+
+            // KEEP COMMENTED ------------------------------------
+
 
             // await asyncTest("resetEmailPasswordWithExpiry()", function() {
             //     bc.brainCloudClient.authentication.resetEmailPasswordWithExpiry(
@@ -695,6 +851,8 @@ async function testAuthentication() {
             //                 resolve_test();
             //             });
             //         });
+
+            //----------------------------------
 
     //NO SESSION!?
     await asyncTest("resetUniversalIdPassword()", function() {
@@ -1124,6 +1282,20 @@ async function testCustomEntity() {
             function(result)
             {
                 equal(result.status,200, JSON.stringify(result)); resolve_test();
+            }
+        );
+    });
+
+    await asyncTest("updateEntityFieldsSharded()", function() {
+        bc.customEntity.updateEntityFieldsSharded( 
+            "athletes",
+            "aaaa-bbbb-cccc-dddd",
+            1,
+            {"stats.gamesPlayedTotal":2,"stats.goalsTotal":2,"games.played":[{"date":"2022-01-21","goals":1,"assists":1,"penalties":0},{"date":"2022-01-10","goals":1,"assists":0,"penalties":1}]},
+            {"ownerId":"profileIdOfEntityOwner"},
+            function(result)
+            {
+                equal(result.status, 400, JSON.stringify(result)); resolve_test();
             }
         );
     });
@@ -1762,7 +1934,7 @@ async function testGlobalEntity() {
     var indexId = "12345";
 
     await asyncTest("createEntity()", function() {
-        bc.globalEntity.createEntity("BUILDING", 0, "", {
+        bc.globalEntity.createEntity("BUILDING", 3434343, "", {
             buildingName : "bob",
             buildingColour : "blue",
             buildingAddressNumber : 123,
@@ -1839,7 +2011,7 @@ async function testGlobalEntity() {
 
     await asyncTest("createEntityWithIndexedId()", function() {
         bc.globalEntity.createEntityWithIndexedId("BUILDING",
-                indexId, 0, "", {
+                indexId, 3434343, "", {
                     buildingName : "bob",
                     buildingColour : "blue",
                     buildingAddressNumber : 123
@@ -4683,6 +4855,7 @@ async function testComms() {
 
     if (!module("Comms", null, null)) return;
 
+    // [Keep commented]
     // Test bundling (Not really a test, it just goes through and we verify in the log)
     // Uncomment this, and comment out other tests in this function.
     // await asyncTest("Bundle", function()
@@ -4800,6 +4973,7 @@ async function testComms() {
         });
     });
 
+    // [Keep commented]
     // for (let i = 0; i < 50; ++i)
     // {
     //     await asyncTest("retry 45sec script", 2, () =>
@@ -4947,7 +5121,7 @@ async function testWrapper()
     //initialize with our game id, secret and game version
     bc.initialize(GAME_ID, SECRET, GAME_VERSION);
 
-    // point to internal (default is sharedprod)
+    // point to internal (default is prod)
     bc.brainCloudClient.setServerUrl(SERVER_URL);
 
 
@@ -6523,14 +6697,86 @@ async function run_tests()
     await testLobby();
 }
 
+let time_start = null
+let time_end = null
+function outputXML()
+{
+    let output = ""
+
+    output += '<?xml version="1.0" encoding="utf-8"?>\n'
+
+    let test_suites = []
+    let test_count = 0
+    let failed_count = 0
+    let id = 2;
+
+    for (const [key, value] of Object.entries(results))
+    {
+        test_suites.push(value)
+        value.fail_count = 0;
+        test_count += value.tests.length;
+        value.tests.forEach(test =>
+        {
+            if (test.result == "Failed")
+            {
+                failed_count++;
+                value.fail_count++;
+            }
+        });
+    }
+
+    // output += `<test-run testcasecount="${test_count}" result="${failed_count > 0 ? "Failed" : "Passed"}" total="${test_count}" passed="${test_count - failed_count}" failed="${failed_count}" inconclusive="0" skipped="0" asserts="0" start-time="${time_start.toString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}" end-time="${time_end.toString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}" duration="${(time_end.getTime() - time_start.getTime()) / 1000}">\n`
+    output += `<testsuites tests="${test_count}" failures="${failed_count}" disabled="0" errors="0" time="${(time_end.getTime() - time_start.getTime()) / 1000}" name="AllTests">\n`
+
+    test_suites.forEach(test_suite =>
+    {
+        // output += `  <test-suite type="${test_suite.type}" name="${test_suite.name}" fullname="${test_suite.fullname}" classname="${test_suite.classname}" runstate="${test_suite.runstate}" testcasecount="${test_suite.tests.length}" result="${test_suite.fail_count > 0 ? "Failed" : "Passed"}" total="${test_suite.tests.length}" passed="${test_suite.tests.length - test_suite.fail_count}" failed="${test_suite.fail_count}" inconclusive="0" skipped="0" asserts="0">\n`
+        output += `  <testsuite name="${test_suite.name}" tests="${test_suite.tests.length}" failures="${test_suite.fail_count}" disabled="0" errors="0">\n`
+
+        // if (test_suite.fail_count > 0)
+        // {
+        //     output += `>\n    <failure>\n      <message><![CDATA[One or more child tests had errors]]></message>\n    </failure>\n`
+        // }
+        // else
+        // {
+        //     output += ` />\n`
+        // }
+
+        test_suite.tests.forEach(test_case =>
+        {
+            // output += `    <test-case name="${test_case.name}" fullname="${test_case.fullname}" methodname="${test_case.method_name}" classname="${test_case.classname}" runstate="${test_case.runstate}" result="${test_case.result}">\n`
+            output += `    <testcase name="${test_case.name}" status="run" classname="${test_case.classname}"`
+            if (test_case.result == "Failed")
+            {
+                output += `>\n      <failure>\n        <message><![CDATA[${test_case.failure_text}]]></message>\n      </failure>\n    </testcase>\n`
+            }
+            else
+            {
+                output += ` />\n`
+            }
+        });
+
+        output += `  </testsuite>\n`
+    });
+    output += `</testsuites>\n`
+
+    fs.writeFileSync(`./${Params.results}`, output);
+    console.log(`${Params.results} saved`);
+}
+
 async function main()
 {
+    time_start = new Date()
     await run_tests();
+    time_end = new Date()
 
     console.log(((test_passed === test_count) ? "\x1b[32m[PASSED] " : "\x1b[31m[FAILED] ") + test_passed + "/" + test_count + " passed\x1b[0m");
     console.log(fail_log.join("\n"));
 
-    process.exit(test_count - test_passed);
+    // Generate results.xml
+    if (Params.results) outputXML();
+
+    process.exit((test_count - test_passed) ? 1 : 0);
 }
 
 main();
