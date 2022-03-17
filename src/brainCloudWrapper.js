@@ -84,6 +84,13 @@ function BrainCloudWrapper(wrapperName) {
     bcw.wrapperName = wrapperName === undefined ? "" : wrapperName;
 
     bcw._alwaysAllowProfileSwitch = true;
+    bcw.initializeParams = {
+        appId: "",
+        secretKey: "",
+        appVersion: "",
+        serverUrl: "",
+        secretMap: null
+    };
 
     bcw._initializeIdentity = function(isAnonymousAuth) {
         var profileId = bcw.getStoredProfileId();
@@ -115,7 +122,33 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.initializeIdentity(profileIdToAuthenticateWith, anonymousId);
     };
 
-    bcw._authResponseHandler = function(result) {
+    bcw._authResponseHandler = function(responseHandler, result) {
+
+        if (result.status == 202 && result.reason_code == bcw.reasonCodes.MANUAL_REDIRECT)
+        {
+            // Manual redirection
+            bcw.initializeParams.serverUrl = result.redirect_url ? result.redirect_url : bcw.initializeParams.serverUrl;
+            var newAppId = result.redirect_appid ? result.redirect_appid : null;
+
+            // re-initialize the client with our app info
+            if (bcw.initializeParams.secretMap == null)
+            {
+                if (newAppId != null) bcw.initializeParams.appId = newAppId;
+                bcw.brainCloudClient.initialize(bcw.initializeParams.appId, bcw.initializeParams.secretKey, bcw.initializeParams.appVersion);
+                bcw.brainCloudClient.setServerUrl(bcw.initializeParams.serverUrl);
+            }
+            else
+            {
+                // For initialize with apps, we ignore the new app id
+                bcw.brainCloudClient.initializeWithApps(bcw.initializeParams.appId, bcw.initializeParams.secretMap, bcw.initializeParams.appVersion);
+                bcw.brainCloudClient.setServerUrl(bcw.initializeParams.serverUrl);
+            }
+
+            bcw._initializeIdentity(true);
+            bcw.brainCloudClient.authentication.retryPreviousAuthenticate(responseHandler);
+
+            return;
+        }
 
         if (result.status == 200) {
             var profileId = result.data.profileId;
@@ -126,6 +159,8 @@ function BrainCloudWrapper(wrapperName) {
         }
         
         console.log("Updated saved profileId to " + profileId);
+
+        responseHandler(result);
     };
 
     ///////////////////////////////////////////////////////////////////////////
@@ -133,10 +168,24 @@ function BrainCloudWrapper(wrapperName) {
     ///////////////////////////////////////////////////////////////////////////
 
     bcw.initialize = function(appId, secret, appVersion) {
+        bcw.initializeParams = {
+            appId: appId,
+            secretKey: secret,
+            appVersion: appVersion,
+            serverUrl: "",
+            secretMap: null
+        };
         bcw.brainCloudClient.initialize(appId, secret, appVersion);
     };
 
     bcw.initializeWithApps = function(defaultAppId, secretMap, appVersion) {
+        bcw.initializeParams = {
+            appId: defaultAppId,
+            secretKey: "",
+            appVersion: appVersion,
+            serverUrl: "",
+            secretMap: secretMap
+        };
         bcw.brainCloudClient.initializeWithApps(defaultAppId, secretMap, appVersion);
     };
 
@@ -207,8 +256,8 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.authentication.authenticateAnonymous(
             true,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             }
             );
     };
@@ -237,8 +286,8 @@ function BrainCloudWrapper(wrapperName) {
             password,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -265,8 +314,8 @@ function BrainCloudWrapper(wrapperName) {
             externalAuthName,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -291,8 +340,8 @@ function BrainCloudWrapper(wrapperName) {
             facebookToken,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -317,8 +366,8 @@ function BrainCloudWrapper(wrapperName) {
                 facebookToken,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -341,8 +390,8 @@ function BrainCloudWrapper(wrapperName) {
             gameCenterId,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -367,8 +416,8 @@ function BrainCloudWrapper(wrapperName) {
             identityToken,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -392,8 +441,8 @@ function BrainCloudWrapper(wrapperName) {
             ultraIdToken, 
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -418,8 +467,8 @@ function BrainCloudWrapper(wrapperName) {
             serverAuthCode,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -445,8 +494,8 @@ function BrainCloudWrapper(wrapperName) {
             IdToken,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -474,8 +523,8 @@ function BrainCloudWrapper(wrapperName) {
             sessionTicket,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -502,8 +551,8 @@ function BrainCloudWrapper(wrapperName) {
             secret,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -527,8 +576,8 @@ function BrainCloudWrapper(wrapperName) {
             userPassword,
             forceCreate,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -556,8 +605,8 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             extraJson,
             function(result) {
-                bcw._authResponseHandler(result);
-                responseHandler(result);
+                bcw._authResponseHandler(responseHandler, result);
+                
             });
     };
 
@@ -632,8 +681,8 @@ function BrainCloudWrapper(wrapperName) {
                 password,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -668,8 +717,8 @@ function BrainCloudWrapper(wrapperName) {
                 token,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -703,8 +752,8 @@ function BrainCloudWrapper(wrapperName) {
                 facebookToken,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -738,8 +787,8 @@ function BrainCloudWrapper(wrapperName) {
                      facebookToken,
                      forceCreate,
                      function(result) {
-                         bcw._authResponseHandler(result);
-                         responseHandler(result);
+                         bcw._authResponseHandler(responseHandler, result);
+                         
                      });
              };
      
@@ -771,8 +820,8 @@ function BrainCloudWrapper(wrapperName) {
                 gameCenterId,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -806,8 +855,8 @@ function BrainCloudWrapper(wrapperName) {
                 googleToken,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -840,8 +889,8 @@ function BrainCloudWrapper(wrapperName) {
                 ultraIdToken,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -879,8 +928,8 @@ function BrainCloudWrapper(wrapperName) {
                 sessionTicket,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -916,8 +965,8 @@ function BrainCloudWrapper(wrapperName) {
                 secret,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -950,8 +999,8 @@ function BrainCloudWrapper(wrapperName) {
                 userPassword,
                 forceCreate,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 
@@ -986,8 +1035,8 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 extraJson,
                 function(result) {
-                    bcw._authResponseHandler(result);
-                    responseHandler(result);
+                    bcw._authResponseHandler(responseHandler, result);
+                    
                 });
         };
 

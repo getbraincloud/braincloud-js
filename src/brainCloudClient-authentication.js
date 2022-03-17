@@ -53,6 +53,14 @@ function BCAuthentication() {
 
 	bc.authentication.profileId = "";
 	bc.authentication.anonymousId = "";
+    bc.authentication.previousAuthParams = {
+        externalId: "",
+        authenticationToken: "",
+        authenticationType: "",
+        externalAuthName: "",
+        forceCreate: true,
+        extraJson: ""
+    };
 
 	/**
 	 * Initialize - initializes the identity service with the saved
@@ -809,7 +817,7 @@ function BCAuthentication() {
 	 * @param callback The method to be invoked when the server response is received
 	 *
 	 */
-	bc.authentication.authenticateSettopHandoff= function(handoffCode, callback) {
+	bc.authentication.authenticateSettopHandoff = function(handoffCode, callback) {
 		bc.authentication.authenticate(
 			handoffCode,
 			"",
@@ -819,6 +827,17 @@ function BCAuthentication() {
             null,
 			callback);
 	};
+
+    bc.authentication.retryPreviousAuthenticate = function(callback) {
+		bc.authentication.authenticate(
+			bc.authentication.previousAuthParams.externalId,
+			bc.authentication.previousAuthParams.authenticationToken,
+			bc.authentication.previousAuthParams.authenticationType,
+			bc.authentication.previousAuthParams.externalAuthName,
+			bc.authentication.previousAuthParams.forceCreate,
+            bc.authentication.previousAuthParams.extraJson,
+			callback);
+    };
 
 	/** Method allows a caller to authenticate with bc. Note that
 	 * callers should use the other authenticate methods in this class as
@@ -833,6 +852,13 @@ function BCAuthentication() {
 	 * @param responseHandler {function} - The user callback method
 	 */
 	bc.authentication.authenticate = function(externalId, authenticationToken, authenticationType, externalAuthName, forceCreate, extraJson, responseHandler) {
+
+        bc.authentication.previousAuthParams.externalId = externalId;
+        bc.authentication.previousAuthParams.authenticationToken = authenticationToken;
+        bc.authentication.previousAuthParams.authenticationType = authenticationType;
+        bc.authentication.previousAuthParams.externalAuthName = externalAuthName;
+        bc.authentication.previousAuthParams.forceCreate = forceCreate;
+        bc.authentication.previousAuthParams.extraJson = extraJson;
 
         var callerCallback = responseHandler;
 		// The joy of closures...
