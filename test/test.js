@@ -108,6 +108,7 @@ var SERVER_URL = "";
 var PARENT_LEVEL_NAME = "";
 var CHILD_APP_ID = "";
 var PEER_NAME = "";
+var REDIRECT_APP_ID = "";
 loadIDs();
 
 var bc = new BC.BrainCloudWrapper("PlayerOne");
@@ -145,6 +146,7 @@ function loadIDs()
     CHILD_APP_ID = ids.childAppId;
     CHILD_SECRET = ids.childSecret;
     PEER_NAME = ids.peerName;
+    REDIRECT_APP_ID = ids.redirectAppId;
 
     console.log("ids.txt:");
     console.log("  GAME_ID: " + GAME_ID);
@@ -155,6 +157,7 @@ function loadIDs()
     console.log("  CHILD_APP_ID: " + CHILD_APP_ID);
     console.log("  CHILD_SECRET: " + CHILD_SECRET);
     console.log("  PEER_NAME: " + PEER_NAME);
+    console.log("  REDIRECT_APP_ID: " + REDIRECT_APP_ID);
 }
 
 function getRandomInt(min, max)
@@ -945,6 +948,17 @@ async function testAuthentication() {
                        });
                    });
             });
+    });
+
+    await asyncTest("authManualRedirect()", 2, function() {
+        bc.initialize(REDIRECT_APP_ID, SECRET, GAME_VERSION);
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+        
+        bc.brainCloudClient.authentication.authenticateAnonymous(true, function(result) {
+            equal(result.status, 202, "Expecting 202");
+            equal(result.reason_code, bc.reasonCodes.MANUAL_REDIRECT, "Expecting 40308");
+            resolve_test();
+        });
     });
 }
 
@@ -5299,6 +5313,16 @@ async function testWrapper()
         bc.time.readServerTime(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 403, "No Session");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("manualRedirect()", function() {
+        bc.resetStoredProfileId();
+        bc.initialize(REDIRECT_APP_ID, SECRET, GAME_VERSION);
+        
+        bc.authenticateAnonymous(function(result) {
+            equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
