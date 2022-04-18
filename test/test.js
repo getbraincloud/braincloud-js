@@ -97,7 +97,7 @@ var results = {};
 
 var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
-var UserB = createUser("UserC", getRandomInt(0, 20000000));
+var UserC = createUser("UserC", getRandomInt(0, 20000000));
 
 var DEFAULT_TIMEOUT = 5000;
 
@@ -6447,7 +6447,7 @@ async function testPresence()
 
     await asyncTest("updateActivity()", 1, () =>
     {
-        bc.presence.updateActivity("testJSON", result =>
+        bc.presence.updateActivity({"status":"waiting"}, result =>
         {
             equal(result.status, 400, "Expecting 400");
             resolve_test();
