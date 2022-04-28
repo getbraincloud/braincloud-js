@@ -101,39 +101,6 @@ function BCFile() {
     };
 
     /**
-     * Method uploads the supplied file to the brainCloud server. Note that you must
-     * call prepareUserUpload to retrieve the uploadId before calling this method.
-     * It is assumed that any methods required to monitor the file upload including
-     * progress, and completion are attached to the XMLHttpRequest xhr object's
-     * events such as:
-     *
-     * xhr.upload.addEventListener("progress", uploadProgress);
-     * xhr.addEventListener("load", transferComplete);
-     * xhr.addEventListener("error", transferFailed);
-     * xhr.addEventListener("abort", transferCanceled);
-     *
-     * @param xhr The XMLHttpRequest object that the brainCloud client will
-     * use to upload the file.
-     * @param file The file object
-     * @param uploadId The upload id obtained via prepareUserUpload()
-     * @param peerCode - optional - peerCode.  A Peer needs to allow prepareUserUpload 
-     */
-    bc.file.uploadFile = function(xhr, file, uploadId, peerCode) {
-
-        var url = bc.brainCloudManager.getFileUploadUrl();
-        var fd = new FormData();
-        var fileSize = file.size;
-
-        xhr.open("POST", url, true);
-        fd.append("sessionId", bc.brainCloudManager.getSessionId());
-        if (peerCode !== undefined) fd.append("peerCode", peerCode);
-        fd.append("uploadId", uploadId);
-        fd.append("fileSize", fileSize);
-        fd.append("uploadFile", file);
-        xhr.send(fd);
-    };
-
-    /**
      * Upload screenshots from memory instead of local file storage. On success the file will begin uploading to the brainCloud server.
      * This method allows uploads to happen in situations where local file access is not possible or convenient.
      * For example, screenshots from Unity-based WebGL apps.
