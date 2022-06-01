@@ -420,7 +420,7 @@ function BrainCloudManager ()
                     bcm._sessionId = "";
                     bcm.authentication.profileId = "";
                 }
-                else if (bcm._inProgressQueue[c].operation == "AUTHENTICATE")
+                else if (data && bcm._inProgressQueue[c].operation == "AUTHENTICATE")
                 {
                     bcm._isAuthenticated = true;
                     if (data.hasOwnProperty("playerSessionExpiry"))
