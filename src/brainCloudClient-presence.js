@@ -244,12 +244,13 @@ function BCPresence() {
     * Service Name - Presence
     * Service Operation - UPDATE_ACTIVITY
     *
+    * @param activity Presence activity record json
     * @param callback The method to be invoked when the server response is received
     */
-    bc.presence.updateActivity = function(jsonActivity, callback)
+    bc.presence.updateActivity = function(activity, callback)
     {
         var message = {
-            jsonActivity: jsonActivity
+            activity: activity
         };
 
         bc.brainCloudManager.sendRequest({
