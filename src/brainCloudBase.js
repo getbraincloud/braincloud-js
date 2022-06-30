@@ -644,7 +644,7 @@ function BrainCloudManager ()
                     bcm._requestInProgress = false;
                     bcm.processQueue();
                 }
-                else if (xmlhttp.status == 503)
+                else if (xmlhttp.status == 502 || xmlhttp.status == 503 || xmlhttp.status == 504)
                 {
                     bcm.debugLog("packet in progress", false);
                     bcm.retry();
