@@ -5326,6 +5326,14 @@ async function testWrapper()
             resolve_test();
         });
     });
+
+    await asyncTest("reconnect()", function() {
+        bc.reconnect(
+            function(result) {
+                equal(result.status, 202, JSON.stringify(result));
+                resolve_test();
+        });
+    });
 }
 
 async function testChat()
