@@ -1156,7 +1156,15 @@ function BrainCloudWrapper(wrapperName) {
      * @param responseHandler {function} - The user callback method
      */
     bcw.reconnect = function(responseHandler) {
-        bcw.authenticateAnonymous(responseHandler);
+        bcw._initializeIdentity(true);
+
+        bcw.brainCloudClient.authentication.authenticateAnonymous(
+            false,
+            function (result) {
+                bcw._authResponseHandler(responseHandler, result);
+
+            }
+        );
     };
     
     /**
@@ -1233,14 +1241,6 @@ function BrainCloudWrapper(wrapperName) {
      */
     bcw.resetUniversalIdPasswordAdvancedWithExpiry = function(universalId, serviceParams, tokenTtlInMinutes, responseHandler) {
         bcw.brainCloudClient.authentication.resetUniversalIdPasswordAdvancedWithExpiry(universalId, serviceParams, tokenTtlInMinutes, responseHandler);
-    };
-
-    /** Method authenticates the user using universal credentials
-     *
-     * @param responseHandler {function} - The user callback method
-     */
-    bcw.reconnect = function(responseHandler) {
-        bcw.authenticateAnonymous(responseHandler);
     };
 
     /**
