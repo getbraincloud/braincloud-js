@@ -12,10 +12,10 @@ function BCBlockchain(){
   /**
   * Retrieves the blockchain items owned by the caller.
   */
-  bc.blockchain.getBlockchainItems = function(in_integrationID, in_contextJson, callback){
+  bc.blockchain.getBlockchainItems = function(integrationId, contextJson, callback) {
     var message = {
-      in_integrationID : in_integrationID,
-      in_contextJson : in_contextJson
+      integrationId : integrationId,
+      contextJson : contextJson
     };
 
     bc.brainCloudManager.sendRequest({
@@ -29,10 +29,10 @@ function BCBlockchain(){
   /**
   * Retrieves the uniqs owned by the caller.
   */
-  bc.blockchain.getUniqs = function(in_integrationID, in_contextJson, callback){
+  bc.blockchain.getUniqs = function(integrationId, contextJson, callback){
     var message = {
-      in_integrationID : in_integrationID,
-      in_contextJson : in_contextJson,
+      integrationId : integrationId,
+      contextJson : contextJson,
     };
 
     bc.brainCloudManager.sendRequest({

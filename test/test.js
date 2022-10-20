@@ -6693,14 +6693,14 @@ async function testBlockchain(){
   })) return;
 
   var _defaultIntegrationId = "default";
-  var _defaultContextJson = "{}";
+  var _defaultContextJson = {};
 
   await asyncTest("getBlockchainItems()", function(){
     bc.blockchain.getBlockchainItems(
       _defaultIntegrationId,
       _defaultContextJson,
       function(result){
-        equal(result.status, 200, JSON.stringify(result));
+        equal(result.status, 400, JSON.stringify(result));
         resolve_test();
       }
     );
@@ -6711,7 +6711,7 @@ async function testBlockchain(){
       _defaultIntegrationId,
       _defaultContextJson,
       function(result){
-        equal(result.status, 200, JSON.stringify(result));
+        equal(result.status, 400, JSON.stringify(result));
         resolve_test();
       }
     );
