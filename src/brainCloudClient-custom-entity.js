@@ -414,6 +414,18 @@ bc.customEntity.readSingleton = function(entityType, callback) {
 	});
 };
 
+/**
+* Increments the specified fields, of the singleton owned by the user, by the
+* specified amount within the custom entity data on the server.
+*
+* @param entityType
+*             {string} The type of custom entity being updated.
+* @param fieldsJson
+*             {json} Specific fields, as JSON, within entity's custom data,
+*                    with respective increment amount.
+* @param callback
+*             {function} The callback handler.
+*/
 bc.customEntity.incrementSingletonData = function(entityType, fieldsJson, callback){
   var message = {
     entityType : entityType,
