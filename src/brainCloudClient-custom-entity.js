@@ -21,6 +21,7 @@ function BCCustomEntity() {
 	bc.customEntity.OPERATION_DELETE_ENTITIES = "DELETE_ENTITIES";
 	bc.customEntity.OPERATION_DELETE_SINGLETON = "DELETE_SINGLETON";
 	bc.customEntity.OPERATION_READ_SINGLETON = "READ_SINGLETON";
+  bc.customEntity.OPERATION_INCREMENT_SINGLETON_DATA = "INCREMENT_SINGLETON_DATA";
 	bc.customEntity.OPERATION_UPDATE_SINGLETON = "UPDATE_SINGLETON";
 	bc.customEntity.OPERATION_UPDATE_SINGLETON_FIELDS = "UPDATE_SINGLETON_FIELDS";
 
@@ -43,8 +44,8 @@ function BCCustomEntity() {
 		var message = {
 			entityType : entityType,
 			dataJson : dataJson,
-			timeToLive : timeToLive, 
-			isOwned : isOwned 
+			timeToLive : timeToLive,
+			isOwned : isOwned
 		};
 
 		if (acl) {
@@ -116,13 +117,13 @@ function BCCustomEntity() {
 	 * @param entityType
 	 *            {string} The entity type as defined by the user
 	 * @param rowsPerPage
-	 *            {int} 
+	 *            {int}
 	 * @param searchJson
 	 * 			  {json} data to look for
 	 * @param sortJson
 	 * 			  {json} data to sort by
-	 * @param doCount 
-	 * 			  {bool} 
+	 * @param doCount
+	 * 			  {bool}
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
@@ -148,7 +149,7 @@ function BCCustomEntity() {
 		});
 	};
 
-	/** 
+	/**
 	* @param context The json context for the page request.
 	*                   See the portal appendix documentation for format.
 	* @param entityType
@@ -176,7 +177,7 @@ function BCCustomEntity() {
 	 * @param context
 	 * 			  {string} context
 	 * @param pageOffset
-	 *            {int} 
+	 *            {int}
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
@@ -207,7 +208,7 @@ function BCCustomEntity() {
 	 * @param context
 	 * 			  {string} context
 	 * @param pageOffset
-	 *            {int} 
+	 *            {int}
 	 * @param callback
 	 *            {function} The callback handler.
 	 */
@@ -261,8 +262,8 @@ function BCCustomEntity() {
 	 * @param version
 	 * @param dataJson
 	 * 			  {json} data of entity
-	 * @param acl 
-	 * 			  {json} 
+	 * @param acl
+	 * 			  {json}
 	 * @param timeToLive
 	 * @param callback
 	 *            {function} The callback handler.
@@ -288,7 +289,7 @@ function BCCustomEntity() {
 
 	/**
 	 *Sets the specified fields within custom entity data on the server.
-	 * 
+	 *
 	 * @param entityType
 	 *            {string} The entity type as defined by the user
 	 * @param entityId
@@ -318,10 +319,10 @@ function BCCustomEntity() {
 
     /**
      *Sets the specified fields within custom entity data on the server.
-     * 
+     *
      * @param entityType {string} The entity type as defined by the user
      * @param entityId
-     * @param version 
+     * @param version
      * @param fieldsJson {json} the fields in the entity
      * @param shardKeyJson The shard key field(s) and value(s), as JSON, applicable to the entity being updated.
      * @param callback {function} The callback handler.
@@ -346,7 +347,7 @@ function BCCustomEntity() {
 
 /**
 *deletes entities based on the delete criteria.
-* 
+*
 * @param entityType
 *            {string} The entity type as defined by the user
 * @param deleteCriteria
@@ -370,11 +371,11 @@ bc.customEntity.deleteEntities = function(entityType, deleteCriteria, callback) 
 
 /**
 *
-* 
+*
 * @param entityType
 *            {string} The entity type as defined by the user
 * @param version
-* 			  
+*
 * @param callback
 *            {function} The callback handler.
 */
@@ -394,7 +395,7 @@ bc.customEntity.deleteSingleton = function(entityType, version, callback) {
 
 /**
 *
-* 
+*
 * @param entityType
 *            {string} The entity type as defined by the user
 * @param callback
@@ -413,13 +414,27 @@ bc.customEntity.readSingleton = function(entityType, callback) {
 	});
 };
 
+bc.customEntity.incrementSingletonData = function(entityType, fieldsJson, callback){
+  var message = {
+    entityType : entityType,
+    fieldsJson : fieldsJson
+  };
+
+  bc.brainCloudManager.sendRequest({
+    service : bc.SERVICE_CUSTOM_ENTITY,
+    operation : bc.customEntity.OPERATION_INCREMENT_SINGLETON_DATA,
+    data : message,
+    callback : callback
+  });
+};
+
 /**
 *
-* 
+*
 * @param entityType
 *            {string} The entity type as defined by the user
 * @param version
-* 			  
+*
 * @param callback
 *            {function} The callback handler.
 */
@@ -442,11 +457,11 @@ bc.customEntity.updateSingleton = function(entityType, version, dataJson, acl, t
 
 /**
 *
-* 
+*
 * @param entityType
 *            {string} The entity type as defined by the user
 * @param version
-* 			  
+*
 * @param callback
 *            {function} The callback handler.
 */
@@ -467,11 +482,11 @@ bc.customEntity.updateSingletonFields = function(entityType, version, fieldsJson
 
 /**
 *
-* 
+*
 * @param entityType
 *            {string} The entity type as defined by the user
 * @param version
-* 			  
+*
 * @param callback
 *            {function} The callback handler.
 */
@@ -493,7 +508,7 @@ bc.customEntity.incrementData = function(entityType, entityId, fieldsJson, callb
 
 	/**
 	 *Deletes the specified custom entity on the server.
-	 * 
+	 *
 	 * @param entityType
 	 *            {string} The entity type as defined by the user
 	 * @param entityId
