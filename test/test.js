@@ -1354,6 +1354,24 @@ async function testCustomEntity() {
         );
     });
 
+    await asyncTest("IncrementSingletonData()", function(){
+      bc.customEntity.createEntity(entityType, {
+          firstName : "bob",
+          surName : "tester",
+          position : "forward",
+          goals : 2,
+          assists : 4
+      }, { "other" : 2 }, null, true);
+      bc.customEntity.incrementSingletonData(
+        entityType,
+        { goals : 3 },
+        function(result){
+          equal(result.status, 200, JSON.stringify(result));
+          resolve_test();
+        }
+      );
+    });
+
     await asyncTest("DeleteSingleton()", function() {
         bc.customEntity.createEntity(entityType, {
             firstName : "bob",
