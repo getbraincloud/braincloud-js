@@ -320,12 +320,16 @@ function BCCustomEntity() {
     /**
      *Sets the specified fields within custom entity data on the server.
      *
-     * @param entityType {string} The entity type as defined by the user
+     * @param entityType 
+     *              {string} The entity type as defined by the user
      * @param entityId
      * @param version
-     * @param fieldsJson {json} the fields in the entity
-     * @param shardKeyJson The shard key field(s) and value(s), as JSON, applicable to the entity being updated.
-     * @param callback {function} The callback handler.
+     * @param fieldsJson 
+     *              {json} the fields in the entity
+     * @param shardKeyJson 
+     *              The shard key field(s) and value(s), as JSON, applicable to the entity being updated.
+     * @param callback 
+     *              {function} The callback handler.
      */
     bc.customEntity.updateEntityFieldsSharded = function(entityType, entityId, version, fieldsJson, shardKeyJson, callback) {
         var message = {
