@@ -115,20 +115,20 @@ function BCCustomEntity() {
      * Retrieves first page of custom entities from the server based on the custom entity type and specified query context
      *
      * @param entityType
-     *            {string} The entity type as defined by the user
+     *              {string} The entity type as defined by the user
      * @param rowsPerPage
-     *            {int}
+     *              {int}
      * @param searchJson
-     * 			  {json} data to look for
+     *              {json} data to look for
      * @param sortJson
-     * 			  {json} data to sort by
+     *              {json} data to sort by
      * @param doCount
-     * 			  {bool}
+     *              {bool}
      * @param callback
-     *            {function} The callback handler.
+     *              {function} The callback handler.
      */
 
-    /**
+	/**
      * @deprecated Use getEntityPage() instead - Removal after October 21 2021
      */
     bc.customEntity.getPage = function(entityType, rowsPerPage, searchJson, sortJson, doCount, callback) {
@@ -173,13 +173,13 @@ function BCCustomEntity() {
      * Creates new custom entity.
      *
      * @param entityType
-     *            {string} The entity type as defined by the user
+     *              {string} The entity type as defined by the user
      * @param context
-     * 			  {string} context
+     * 			    {string} context
      * @param pageOffset
-     *            {int}
+     *              {int}
      * @param callback
-     *            {function} The callback handler.
+     *              {function} The callback handler.
      */
 
      /**
@@ -204,13 +204,13 @@ function BCCustomEntity() {
      * Creates new custom entity.
      *
      * @param entityType
-     *            {string} The entity type as defined by the user
+     *              {string} The entity type as defined by the user
      * @param context
-     * 			  {string} context
+     * 			    {string} context
      * @param pageOffset
-     *            {int}
+     *              {int}
      * @param callback
-     *            {function} The callback handler.
+     *              {function} The callback handler.
      */
     bc.customEntity.getEntityPageOffset = function(entityType, context, pageOffset, callback) {
         var message = {
@@ -232,11 +232,11 @@ function BCCustomEntity() {
      * Reads a custom entity.
      *
      * @param entityType
-     *            {string} The entity type as defined by the user
+     *              {string} The entity type as defined by the user
      * @param entityId
-     * 			  {string}
+     * 			    {string}
      * @param callback
-     *            {function} The callback handler.
+     *              {function} The callback handler.
      */
     bc.customEntity.readEntity = function(entityType, entityId, callback) {
         var message = {
@@ -256,17 +256,17 @@ function BCCustomEntity() {
      * Replaces the specified custom entity's data, and optionally updates the acl and expiry, on the server.
      *
      * @param entityType
-     *            {string} The entity type as defined by the user
+     *              {string} The entity type as defined by the user
      * @param entityId
-     * 			  {string}
+     * 			    {string}
      * @param version
      * @param dataJson
-     * 			  {json} data of entity
+     * 			    {json} data of entity
      * @param acl
-     * 			  {json}
+     * 			    {json}
      * @param timeToLive
      * @param callback
-     *            {function} The callback handler.
+     *              {function} The callback handler.
      */
     bc.customEntity.updateEntity = function(entityType, entityId, version, dataJson, acl, timeToLive, callback) {
         var message = {
@@ -291,14 +291,14 @@ function BCCustomEntity() {
      *Sets the specified fields within custom entity data on the server.
      *
      * @param entityType
-     *            {string} The entity type as defined by the user
+     *              {string} The entity type as defined by the user
      * @param entityId
-     * 			  {string}
+     *              {string}
      * @param version
      * @param fieldsJson
-     * 			  {json} the fields in the entity
+     * 			    {json} the fields in the entity
      * @param callback
-     *            {function} The callback handler.
+     *              {function} The callback handler.
      */
     bc.customEntity.updateEntityFields = function(entityType, entityId, version, fieldsJson, callback) {
         var message = {
@@ -349,11 +349,11 @@ function BCCustomEntity() {
 *deletes entities based on the delete criteria.
 *
 * @param entityType
-*            {string} The entity type as defined by the user
+*               {string} The entity type as defined by the user
 * @param deleteCriteria
-* 			  {json} delte criteria
+* 			    {json} delte criteria
 * @param callback
-*            {function} The callback handler.
+*               {function} The callback handler.
 */
 bc.customEntity.deleteEntities = function(entityType, deleteCriteria, callback) {
     var message = {
