@@ -206,7 +206,7 @@ function BCCustomEntity() {
      * @param entityType
      *              {string} The entity type as defined by the user
      * @param context
-     * 			    {string} context
+     *              {string} context
      * @param pageOffset
      *              {int}
      * @param callback
@@ -234,7 +234,7 @@ function BCCustomEntity() {
      * @param entityType
      *              {string} The entity type as defined by the user
      * @param entityId
-     * 			    {string}
+     *              {string}
      * @param callback
      *              {function} The callback handler.
      */
@@ -258,12 +258,12 @@ function BCCustomEntity() {
      * @param entityType
      *              {string} The entity type as defined by the user
      * @param entityId
-     * 			    {string}
+     *              {string}
      * @param version
      * @param dataJson
-     * 			    {json} data of entity
+     *              {json} data of entity
      * @param acl
-     * 			    {json}
+     *              {json}
      * @param timeToLive
      * @param callback
      *              {function} The callback handler.
@@ -296,7 +296,7 @@ function BCCustomEntity() {
      *              {string}
      * @param version
      * @param fieldsJson
-     * 			    {json} the fields in the entity
+     *              {json} the fields in the entity
      * @param callback
      *              {function} The callback handler.
      */
@@ -351,7 +351,7 @@ function BCCustomEntity() {
 * @param entityType
 *               {string} The entity type as defined by the user
 * @param deleteCriteria
-* 			    {json} delte criteria
+*               {json} delte criteria
 * @param callback
 *               {function} The callback handler.
 */
