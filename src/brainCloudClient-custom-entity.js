@@ -175,7 +175,7 @@ function BCCustomEntity() {
      * @param entityType
      *              {string} The entity type as defined by the user
      * @param context
-     * 			    {string} context
+     *              {string} context
      * @param pageOffset
      *              {int}
      * @param callback
