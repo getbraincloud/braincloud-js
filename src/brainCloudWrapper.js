@@ -67,6 +67,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.itemCatalog = bcw.brainCloudClient.itemCatalog;
         bcw.userItems = bcw.brainCloudClient.userItems;
         bcw.customEntity = bcw.brainCloudClient.customEntity;
+        bcw.blockchain = bcw.brainCloudClient.blockchain;
         bcw.timeUtils = bcw.brainCloudClient.timeUtils;
 
         bcw.brainCloudManager = bcw.brainCloudClient.brainCloudManager = bcw.brainCloudClient.brainCloudManager || {};
@@ -153,11 +154,11 @@ function BrainCloudWrapper(wrapperName) {
         if (result.status == 200) {
             var profileId = result.data.profileId;
             bcw.setStoredProfileId(profileId);
-    
+
             var sessionId = result.data.sessionId;
             bcw.setStoredSessionId(sessionId);
         }
-        
+
         console.log("Updated saved profileId to " + profileId);
 
         responseHandler(result);
@@ -257,7 +258,7 @@ function BrainCloudWrapper(wrapperName) {
             true,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             }
             );
     };
@@ -287,7 +288,7 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -315,7 +316,7 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -341,7 +342,7 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -360,14 +361,14 @@ function BrainCloudWrapper(wrapperName) {
          bcw.authenticateFacebookLimited = function(facebookLimitedId, facebookToken, forceCreate, responseHandler) {
 
             bcw._initializeIdentity(false);
-    
+
             bcw.brainCloudClient.authentication.authenticateFacebookLimited(
                 facebookLimitedId,
                 facebookToken,
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -391,7 +392,7 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -417,7 +418,7 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -437,12 +438,12 @@ function BrainCloudWrapper(wrapperName) {
         bcw._initializeIdentity(false);
 
         bcw.brainCloudClient.authentication.authenticateUltra(
-            ultraUsername, 
-            ultraIdToken, 
+            ultraUsername,
+            ultraIdToken,
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -468,11 +469,11 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
-    
+
     /**
      * Authenticate the user using a google user id (email address) and google authentication token.
      *
@@ -486,7 +487,7 @@ function BrainCloudWrapper(wrapperName) {
      * @param responseHandler {function} - The user callback method
      */
     bcw.authenticateGoogleOpenId = function(googleUserAccountEmail, IdToken, forceCreate, responseHandler) {
-        
+
         bcw._initializeIdentity(false);
 
         bcw.brainCloudClient.authentication.authenticateGoogleOpenId(
@@ -495,7 +496,7 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -524,7 +525,7 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -552,7 +553,7 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -577,11 +578,11 @@ function BrainCloudWrapper(wrapperName) {
             forceCreate,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
-    
+
     /**
      * A generic Authenticate method that translates to the same as calling a specific one, except it takes an extraJson
      * that will be passed along to pre- or post- hooks.
@@ -606,7 +607,7 @@ function BrainCloudWrapper(wrapperName) {
             extraJson,
             function(result) {
                 bcw._authResponseHandler(responseHandler, result);
-                
+
             });
     };
 
@@ -682,7 +683,7 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -718,7 +719,7 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -753,7 +754,7 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -778,9 +779,9 @@ function BrainCloudWrapper(wrapperName) {
      */
          bcw.smartSwitchAuthenticateFacebookLimited = function (facebookLimitedId, facebookToken, forceCreate, responseHandler)
          {
-     
+
              bcw._initializeIdentity(false);
-     
+
              authenticationCallback = function() {
                  bcw.brainCloudClient.authentication.authenticateFacebookLimited(
                      facebookLimitedId,
@@ -788,10 +789,10 @@ function BrainCloudWrapper(wrapperName) {
                      forceCreate,
                      function(result) {
                          bcw._authResponseHandler(responseHandler, result);
-                         
+
                      });
              };
-     
+
              bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
          };
 
@@ -821,7 +822,7 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -856,7 +857,7 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -867,7 +868,7 @@ function BrainCloudWrapper(wrapperName) {
      * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
      * In event the current session was previously an anonymous account, the smart switch will delete that profile.
      * Use this function to keep a clean designflow from anonymous to signed profiles
-     * 
+     *
      * Authenticate the user for Ultra.
      *
      * Service Name - authenticationV2
@@ -890,13 +891,13 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
         bcw.brainCloudClient.identity.getIdentities(getIdentitiesCallback(authenticationCallback));
     };
-    
+
 
 
     /**
@@ -929,7 +930,7 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -966,7 +967,7 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -1000,7 +1001,7 @@ function BrainCloudWrapper(wrapperName) {
                 forceCreate,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -1036,7 +1037,7 @@ function BrainCloudWrapper(wrapperName) {
                 extraJson,
                 function(result) {
                     bcw._authResponseHandler(responseHandler, result);
-                    
+
                 });
         };
 
@@ -1166,7 +1167,7 @@ function BrainCloudWrapper(wrapperName) {
             }
         );
     };
-    
+
     /**
      * Reset Email password - sends a password reset email to the specified address
      *
@@ -1257,7 +1258,7 @@ function BrainCloudWrapper(wrapperName) {
 
         bcw.brainCloudClient.brainCloudManager._isAuthenticated = true;
         bcw.brainCloudClient.brainCloudManager._packetId = localStorage.getItem("lastPacketId");
-        
+
         var sessionId = bcw.getStoredSessionId();
         bcw.brainCloudClient.brainCloudManager.setSessionId(sessionId);
         bcw.brainCloudClient.time.readServerTime(function(result) {

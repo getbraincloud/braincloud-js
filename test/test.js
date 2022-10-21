@@ -6698,6 +6698,44 @@ async function testUserItems()
     });
 }
 
+////////////////////////////////////////
+// Blockchain unit tests
+////////////////////////////////////////
+async function testBlockchain(){
+  if(!module("Blockchain", () =>
+  {
+      return setUpWithAuthenticate();
+  }, () =>
+  {
+    return tearDownLogout();
+  })) return;
+
+  var _defaultIntegrationId = "default";
+  var _defaultContextJson = {};
+
+  await asyncTest("getBlockchainItems()", function(){
+    bc.blockchain.getBlockchainItems(
+      _defaultIntegrationId,
+      _defaultContextJson,
+      function(result){
+        equal(result.status, 400, JSON.stringify(result));
+        resolve_test();
+      }
+    );
+  });
+
+  await asyncTest("getUniqs()", function(){
+    bc.blockchain.getUniqs(
+      _defaultIntegrationId,
+      _defaultContextJson,
+      function(result){
+        equal(result.status, 400, JSON.stringify(result));
+        resolve_test();
+      }
+    );
+  });
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -6739,6 +6777,7 @@ async function run_tests()
     await testUserItems();
     await testCustomEntity();
     await testGlobalFile();
+    await testBlockchain();
 
     await testRTT();
     await testComms();
