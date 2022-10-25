@@ -32,7 +32,7 @@ function BCBlockchain(){
   bc.blockchain.getUniqs = function(integrationId, contextJson, callback){
     var message = {
       integrationId : integrationId,
-      contextJson : contextJson,
+      contextJson : contextJson
     };
 
     bc.brainCloudManager.sendRequest({
