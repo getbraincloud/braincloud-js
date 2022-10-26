@@ -5107,7 +5107,7 @@ async function testFile() {
         });
     });
 
-    await asyncTest("listUserFiles(\"\", true)", 2, function() {
+    await asyncTest("listUserFiles(null, true)", 2, function() {
         bc.file.listUserFiles("", true, function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
