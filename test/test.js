@@ -5107,7 +5107,7 @@ async function testFile() {
         });
     });
 
-    await asyncTest("listUserFiles(null, true)", 2, function() {
+    await asyncTest("listUserFiles('', true)", 2, function() {
         bc.file.listUserFiles("", true, function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -6345,7 +6345,7 @@ async function testLobby() {
     });
 
     // Call all the <>WithPingData functions and make sure they go through braincloud
-    await asyncTest("<>WithPingData()", 6, () =>
+    await asyncTest("WithPingData()", 6, () =>
     {
         bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
         {
