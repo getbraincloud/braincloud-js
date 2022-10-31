@@ -1,6 +1,6 @@
 /**
  * Tests are running within NodeJS not a browser.
- * 
+ *
  * As a result, we need to set up the global 'window' object and
  * initialize the XMLHttpRequest, WebSocket and LocalStorage facilities.
  */
@@ -37,7 +37,7 @@ let Params = {};
 function parseArguments()
 {
     let args = process.argv.slice(2);
-    
+
     args = args.map(arg =>
     {
         if (arg.split(" ").length > 1)
@@ -46,12 +46,12 @@ function parseArguments()
         }
         return arg;
     });
-    
+
     let argTypes = [
         { key: { short: "-f", long: "--filters" }, description: "Unit Test filters" },
         { key: { short: "-r", long: "--results" }, description: "Generate JUnit compatible xml" },
     ];
-    
+
     for (let i = 0; i < args.length; i++)
     {
         let arg = args[i];
@@ -77,7 +77,7 @@ function parseArguments()
             }
         }
     }
-    
+
     argTypes.forEach(argType =>
     {
         if (argType.default)
@@ -87,7 +87,7 @@ function parseArguments()
                 params[argType.key.long.substr(2)] = argType.default;
             }
         }
-    });    
+    });
 }
 parseArguments();
 
@@ -237,7 +237,7 @@ function setUpWithAuthenticate(userId, password)
                 {
                     UserA.profileId = result["data"]["profileId"];
                 }
-                
+
                 resolve();
             });
         }
@@ -290,7 +290,7 @@ async function asyncTest(name, expected, testFn)
         testFn = expected;
         expected = 1;
     }
-    
+
     test_name = module_name + " : " + name;
 
     if (!isModuleRunnable)
@@ -304,7 +304,7 @@ async function asyncTest(name, expected, testFn)
     ++test_count;
 
     console.log("TEST: \x1b[36m" + test_name + "\x1b[0m");
-    
+
     if (module_beforeFn)
     {
         try
@@ -320,7 +320,7 @@ async function asyncTest(name, expected, testFn)
     if (testFn)
     {
         sub_testPass = 0;
-        
+
         try
         {
             await function()
@@ -337,7 +337,7 @@ async function asyncTest(name, expected, testFn)
             console.log(e);
             resolve_test();
         }
-        
+
         test_result = {
             name: name,
             fullname: test_name,
@@ -694,9 +694,9 @@ async function testAuthentication() {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
         bc.brainCloudClient.authentication.authenticateAdvanced(
-            bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL, 
-            { externalId: "authAdvancedUser", authenticationToken: "authAdvancedPass" }, 
-            true, 
+            bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL,
+            { externalId: "authAdvancedUser", authenticationToken: "authAdvancedPass" },
+            true,
             { AnswerToEverything: 42 },
             function(result) {
                     equal(result.status, 200, JSON.stringify(result));
@@ -812,18 +812,18 @@ async function testAuthentication() {
             // await asyncTest("authenticateUniversal()", function() {
 
             //     bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
-        
+
             //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
             //             UserA.password, true, function(result) {
             //                 equal(result.status, 200, JSON.stringify(result));
             //                 resolve_test();
             //             });
             // });
-        
+
             // await asyncTest("resetEmailPasswordAdvancedWithExpiry()", function() {
 
             //     bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
-        
+
             //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
             //             UserA.password, true, function(result) {
             //                 equal(result.status, 200, JSON.stringify(result));
@@ -869,7 +869,7 @@ async function testAuthentication() {
 
 
     await asyncTest("resetUniversalIdPasswordAdvanced()", function() {
-        content = "{\"templateId\": \"8f14c77d-61f4-4966-ab6d-0bee8b13d090\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
+        content = "{\"templateId\": \"8f14c77d-61f4-4966-ab6d-0bee8b13d090\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}";
 
         bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
             UserA.id,
@@ -892,7 +892,7 @@ async function testAuthentication() {
 
 
     await asyncTest("resetUniversalIdPasswordAdvancedWithExpiry()", function() {
-        content = "{\"templateId\": \"8f14c77d-61f4-4966-ab6d-0bee8b13d090\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}"; 
+        content = "{\"templateId\": \"8f14c77d-61f4-4966-ab6d-0bee8b13d090\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}";
 
         bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvancedWithExpiry(
             UserA.id,
@@ -905,11 +905,11 @@ async function testAuthentication() {
     });
 
     await asyncTest("authenticateHandoff()", 3, function() {
-        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());     
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
         var handoffId;
         var handoffToken;
-        
+
         bc.brainCloudClient.authentication.authenticateAnonymous(
             true, function(result) {
                 equal(result.status, 200, JSON.stringify(result));
@@ -929,10 +929,10 @@ async function testAuthentication() {
     });
 
     await asyncTest("authenticateSettopHandoff()", 3, function() {
-        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());     
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
         var handoffCode
-        
+
         bc.brainCloudClient.authentication.authenticateAnonymous(
             true, function(result) {
                 equal(result.status, 200, JSON.stringify(result));
@@ -953,7 +953,7 @@ async function testAuthentication() {
     await asyncTest("authManualRedirect()", 2, function() {
         bc.initialize(REDIRECT_APP_ID, SECRET, GAME_VERSION);
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
-        
+
         bc.brainCloudClient.authentication.authenticateAnonymous(true, function(result) {
             equal(result.status, 202, "Expecting 202");
             equal(result.reason_code, bc.reasonCodes.MANUAL_REDIRECT, "Expecting 40308");
@@ -1264,7 +1264,7 @@ async function testCustomEntity() {
     });
 
     await asyncTest("UpdateEntity()", function() {
-        bc.customEntity.updateEntity( 
+        bc.customEntity.updateEntity(
             entityType,
             entityId,
             1,
@@ -1275,7 +1275,7 @@ async function testCustomEntity() {
                 goals : 2,
                 assists : 4
             },
-            { "other" : 2 }, 
+            { "other" : 2 },
             null,
             function(result)
             {
@@ -1285,7 +1285,7 @@ async function testCustomEntity() {
     });
 
     await asyncTest("UpdateEntityFields()", function() {
-        bc.customEntity.updateEntityFields( 
+        bc.customEntity.updateEntityFields(
             entityType,
             entityId,
             2,
@@ -1301,7 +1301,7 @@ async function testCustomEntity() {
     });
 
     await asyncTest("updateEntityFieldsSharded()", function() {
-        bc.customEntity.updateEntityFieldsSharded( 
+        bc.customEntity.updateEntityFieldsSharded(
             "athletes",
             "aaaa-bbbb-cccc-dddd",
             1,
@@ -1315,7 +1315,7 @@ async function testCustomEntity() {
     });
 
     await asyncTest("DeleteEntity()", function() {
-        bc.customEntity.deleteEntity( 
+        bc.customEntity.deleteEntity(
             entityType,
             entityId,
             3,
@@ -1327,7 +1327,7 @@ async function testCustomEntity() {
     });
 
     await asyncTest("DeleteEntities()", function() {
-        bc.customEntity.deleteEntities( 
+        bc.customEntity.deleteEntities(
             entityType,
             { "entityId" : {"$in" : ["Test"]} },
             function(result)
@@ -1345,13 +1345,31 @@ async function testCustomEntity() {
             goals : 2,
             assists : 4
         }, { "other" : 2 }, null, true);
-        bc.customEntity.readSingleton( 
+        bc.customEntity.readSingleton(
             entityType,
             function(result)
             {
                 equal(result.status,200, JSON.stringify(result)); resolve_test();
             }
         );
+    });
+
+    await asyncTest("IncrementSingletonData()", function(){
+      bc.customEntity.createEntity(entityType, {
+          firstName : "bob",
+          surName : "tester",
+          position : "forward",
+          goals : 2,
+          assists : 4
+      }, { "other" : 2 }, null, true);
+      bc.customEntity.incrementSingletonData(
+        entityType,
+        { goals : 3 },
+        function(result){
+          equal(result.status, 200, JSON.stringify(result));
+          resolve_test();
+        }
+      );
     });
 
     await asyncTest("DeleteSingleton()", function() {
@@ -1362,7 +1380,7 @@ async function testCustomEntity() {
             goals : 2,
             assists : 4
         }, { "other" : 2 }, null, true);
-        bc.customEntity.deleteSingleton( 
+        bc.customEntity.deleteSingleton(
             entityType,
             -1,
             function(result)
@@ -2565,7 +2583,7 @@ async function testGroup() {
     });
 
     await asyncTest("setGroupOpen()", 2, function() {
-        
+
         bc.group.setGroupOpen(
                 groupId,
                 true,
@@ -2615,7 +2633,7 @@ async function testGroup() {
                     resolve_test();
                 });
     });
-    
+
     var groupTypes = ["test"];
 
     await asyncTest("autoJoinGroupMulti()", 2, function() {
@@ -2637,7 +2655,7 @@ async function testGroup() {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
-    });   
+    });
 
     await asyncTest("UpdateGroupSummaryData()", 2, function() {
         bc.group.updateGroupSummaryData(groupId,
@@ -2648,7 +2666,7 @@ async function testGroup() {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
-    });   
+    });
 
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
@@ -2751,7 +2769,7 @@ async function testIdentity() {
     });
 
     await asyncTest("attachEmailIdentity()", 2, function() {
-        bc.identity.attachEmailIdentity(UserA.email, 
+        bc.identity.attachEmailIdentity(UserA.email,
             UserA.password,
             function(result) {
                     ok(true, JSON.stringify(result));
@@ -2763,7 +2781,7 @@ async function testIdentity() {
     await asyncTest("changeEmailIdentity()", 2, function() {
 
         let newEmail = "test_" + getRandomInt(0,1000000) + "@bitheads.com";
-        
+
         bc.identity.changeEmailIdentity(
                 UserA.email,
                 UserA.password,
@@ -2774,7 +2792,7 @@ async function testIdentity() {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
-                
+
     });
 }
 
@@ -2840,7 +2858,7 @@ async function testMail() {
                 resolve_test();
             });
     });
-    
+
 
 }
 
@@ -4217,8 +4235,8 @@ async function testSocialLeaderboard() {
 
     await asyncTest("getSocialLeaderboardByVersion()", 2, function() {
         bc.leaderboard.getSocialLeaderboardByVersion(leaderboardName,
-                true, 
-                0, 
+                true,
+                0,
                 function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -4370,7 +4388,7 @@ async function testSocialLeaderboard() {
                     resolve_test();
                 });
     });
-    
+
 /////////////////////////
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
@@ -4393,7 +4411,7 @@ async function testSocialLeaderboard() {
                     resolve_test();
                 });
     });
-    
+
     await asyncTest("getPlayersSocialLeaderboardByVersion()", 2, function() {
         bc.leaderboard.getPlayersSocialLeaderboardByVersion(
                 leaderboardName,
@@ -4482,7 +4500,7 @@ async function testTime() {
         console.log("Converted: " + _convertedDate);
         var _dateAfter = bc.timeUtils.UTCDateTimeToUTCMillis(_convertedDate);
         console.log("Date After: " + _dateAfter);
-        
+
         if(_dateBefore == _dateAfter)
         {
             equal(_dateAfter, _dateBefore, "SUCCESS");
@@ -5067,7 +5085,7 @@ async function testFile() {
                     ok(false, error);
                     resolve_test();
                 });
-                
+
                 bc.file.uploadFile(xhr, file, uploadId);
             }
             else
@@ -5089,7 +5107,7 @@ async function testFile() {
         });
     });
 
-    await asyncTest("listUserFiles(\"\", true)", 2, function() {
+    await asyncTest("listUserFiles('', true)", 2, function() {
         bc.file.listUserFiles("", true, function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -5141,7 +5159,7 @@ async function testWrapper()
 
     await asyncTest("authenticateAnonymous()", 2, function() {
         bc.resetStoredProfileId();
-        
+
         bc.authenticateAnonymous(function(result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -5280,7 +5298,7 @@ async function testWrapper()
         var secretMap = {};
         secretMap[GAME_ID] = SECRET;
         secretMap[CHILD_APP_ID] = CHILD_SECRET;
-        
+
         var initCounter = 1;
         //case 1 multiple init
         bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
@@ -5320,7 +5338,7 @@ async function testWrapper()
     await asyncTest("manualRedirect()", function() {
         bc.resetStoredProfileId();
         bc.initialize(REDIRECT_APP_ID, SECRET, GAME_VERSION);
-        
+
         bc.authenticateAnonymous(function(result) {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
@@ -5379,7 +5397,7 @@ async function testChat()
             resolve_test();
         });
     });
-    
+
     await asyncTest("channelConnect()", 1, () =>
     {
         bc.chat.channelConnect(channelId, 50, result =>
@@ -5388,7 +5406,7 @@ async function testChat()
             resolve_test();
         });
     });
-    
+
     await asyncTest("getSubscribedChannels()", 2, () =>
     {
         bc.chat.getSubscribedChannels("gl", result =>
@@ -5409,7 +5427,7 @@ async function testChat()
     });
 
     let msgId = "";
-    
+
     await asyncTest("postChatMessage()", 2, () =>
     {
         bc.chat.postChatMessage(channelId, {text: "Hello World!", rich: {custom: 1}}, true, result =>
@@ -5423,7 +5441,7 @@ async function testChat()
             resolve_test();
         });
     });
-    
+
     await asyncTest("postChatMessageSimple()", 1, () =>
     {
         bc.chat.postChatMessageSimple(channelId, "Hello World Simple!", true, result =>
@@ -5451,7 +5469,7 @@ async function testChat()
             resolve_test();
         });
     });
-    
+
     await asyncTest("updateChatMessage()", 1, () =>
     {
         bc.chat.updateChatMessage(channelId, msgId, msgVersion, {text: "Hello World! edited", rich:{custom: 2}}, result =>
@@ -5976,7 +5994,7 @@ async function testRelay() {
         { // Impossible
             ok(false, "Relay Connected - This shouldn't have worked");
             resolve_test();
-        }, error => 
+        }, error =>
         {
             ok(true, error);
             resolve_test();
@@ -5996,7 +6014,7 @@ async function testRelay() {
         { // Impossible
             ok(false, "Relay Connected - This shouldn't have worked");
             resolve_test();
-        }, error => 
+        }, error =>
         {
             ok(true, error);
             ok(!bc.relay.isConnected(), "Is !connected");
@@ -6032,7 +6050,7 @@ async function testRelay() {
                 ok(ownerCxId == relayOwnerCxId, `getOwnerCxId: ${ownerCxId} == ${relayOwnerCxId}`)
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
-                
+
                 // Wait 5sec then check the ping.
                 // If we are pinging properly, we should get
                 // less than 999. unless we have godawful
@@ -6065,7 +6083,7 @@ async function testRelay() {
                     {
                         console.log(result)
                         ok(true, "Relay Connected")
-                    }, error => 
+                    }, error =>
                     {
                         ok(false, error);
                         resolve_test();
@@ -6309,7 +6327,7 @@ async function testLobby() {
             {
                 equal(result.status, 200, "Expecting 200");
                 console.log("PINGS 1: " + JSON.stringify(result));
-                    
+
                 // Do it again to make sure things are not cached and resulted pings not too low.
                 // We ping in different regions so it shouldn't be < 10ms
                 bc.lobby.pingRegions(result =>
@@ -6327,7 +6345,7 @@ async function testLobby() {
     });
 
     // Call all the <>WithPingData functions and make sure they go through braincloud
-    await asyncTest("<>WithPingData()", 6, () =>
+    await asyncTest("WithPingData()", 6, () =>
     {
         bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
         {
@@ -6443,7 +6461,7 @@ async function testPresence()
         });
     });
 
-    
+
     await asyncTest("stopListening()", 1, () =>
     {
         bc.presence.stopListening(result =>
@@ -6680,6 +6698,44 @@ async function testUserItems()
     });
 }
 
+////////////////////////////////////////
+// Blockchain unit tests
+////////////////////////////////////////
+async function testBlockchain(){
+  if(!module("Blockchain", () =>
+  {
+      return setUpWithAuthenticate();
+  }, () =>
+  {
+    return tearDownLogout();
+  })) return;
+
+  var _defaultIntegrationId = "default";
+  var _defaultContextJson = {};
+
+  await asyncTest("getBlockchainItems()", function(){
+    bc.blockchain.getBlockchainItems(
+      _defaultIntegrationId,
+      _defaultContextJson,
+      function(result){
+        equal(result.status, 400, JSON.stringify(result));
+        resolve_test();
+      }
+    );
+  });
+
+  await asyncTest("getUniqs()", function(){
+    bc.blockchain.getUniqs(
+      _defaultIntegrationId,
+      _defaultContextJson,
+      function(result){
+        equal(result.status, 400, JSON.stringify(result));
+        resolve_test();
+      }
+    );
+  });
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -6721,7 +6777,8 @@ async function run_tests()
     await testUserItems();
     await testCustomEntity();
     await testGlobalFile();
-    
+    await testBlockchain();
+
     await testRTT();
     await testComms();
     await testWrapper();

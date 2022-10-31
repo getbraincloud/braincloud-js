@@ -54,6 +54,7 @@ function BrainCloudClient() {
         BCTournament.apply(bcc);
         BCGlobalFile.apply(bcc);
         BCCustomEntity.apply(bcc);
+        BCBlockchain.apply(bcc);
 
         BCTimeUtils.apply(bcc);
 
@@ -104,8 +105,9 @@ function BrainCloudClient() {
         bcc.brainCloudManager.itemCatalog = bcc.itemCatalog;
         bcc.brainCloudManager.userItems = bcc.userItems;
         bcc.brainCloudManager.customEntity = bcc.customEntity;
+        bcc.brainCloudManager.blockchain = bcc.blockchain;
         bcc.brainCloudManager.timeUtils = bcc.timeUtils;
-        
+
         bcc.brainCloudRttComms.rtt = bcc.rtt;
         bcc.brainCloudRttComms.brainCloudClient = bcc; // Circular reference
         bcc.brainCloudRelayComms.brainCloudClient = bcc;
@@ -161,6 +163,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.itemCatalog = bcc.brainCloudClient.itemCatalog = bcc.brainCloudClient.itemCatalog || {};
         bcc.brainCloudManager.userItems = bcc.brainCloudClient.userItems = bcc.brainCloudClient.userItems || {};
         bcc.brainCloudManager.customEntity = bcc.brainCloudClient.customEntity = bcc.brainCloudClient.customEntity || {};
+        bcc.brainCloudManager.blockchain = bcc.brainCloudClient.blockchain = bcc.brainCloudClient.blockchain || {};
         bcc.brainCloudManager.timeUtils = bcc.brainCloudClient.timeUtils = bcc.brainCloudClient.timeUtils || {};
 
         bcc.brainCloudRttComms.rtt = bcc.brainCloudClient.rtt = bcc.brainCloudClient.rtt || {};
@@ -169,7 +172,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "4.12.1";
+    bcc.version = "4.13.0";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -266,7 +269,7 @@ function BrainCloudClient() {
 
     /**
      * Returns the app version
-     * 
+     *
      * @return {string} - The application version
      */
     bcc.getAppVersion = function() {
@@ -462,7 +465,7 @@ function BrainCloudClient() {
             callback : callback
         });
     };
-    
+
     /**
      * If the library is used through a command line nodejs app, the app need to be able to stop the heartbeat interval
      * otherwise the app can never exit once it's done processing.
