@@ -6025,6 +6025,11 @@ async function testRelay() {
     // // Full flow. Create lobby -> ready up -> connect to server
     await asyncTest("connect()", 8, () =>
     {
+
+        // Determines whether callback has already occured
+        let systemCallback = false;
+        let relayCallback = false;
+
         // Force timeout after 5 mins
         let timeoutId = setTimeout(() =>
         {
@@ -6037,20 +6042,28 @@ async function testRelay() {
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
-            ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
-            resolve_test();
+            if(relayCallback == false)
+            {
+                ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
+                
+                relayCallback = true;
+                
+                resolve_test();
+            }
         })
 
         bc.relay.registerSystemCallback(json =>
         {
-            if (json.op == "CONNECT")
+            if (json.op == "CONNECT" && systemCallback == false)
             {
                 ok(true, "System Callback")
                 let relayOwnerCxId = bc.relay.getOwnerCxId()
                 ok(ownerCxId == relayOwnerCxId, `getOwnerCxId: ${ownerCxId} == ${relayOwnerCxId}`)
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
-
+                
+                systemCallback = true;
+                
                 // Wait 5sec then check the ping.
                 // If we are pinging properly, we should get
                 // less than 999. unless we have godawful
