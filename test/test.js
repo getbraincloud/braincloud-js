@@ -6045,18 +6045,17 @@ async function testRelay() {
         {
             if(relayCallback == false)
             {
+                console.log("in RelayCallback...");
                 ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
                 
                 relayCallback = true;
 
                 //Cody
-                if(endMatch == true){
-                    var json = {
-                        "ownerCxId" : bc.relay.getOwnerCxId,
-                        "op" : "END_MATCH"
-                    }
-                    bc.relay.endMatch(json);
+                var json = {
+                    "ownerCxId" : bc.relay.getOwnerCxId,
+                    "op" : "END_MATCH"
                 }
+                bc.relay.endMatch(json);
                 
                 resolve_test();
             }
