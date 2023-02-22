@@ -162,8 +162,6 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.endMatch = function(json){
-        console.log("endMatch()");
-
         if(bcr.isConnected){
             
             // Send end match request
@@ -534,7 +532,6 @@ function BrainCloudRelayComms(_client) {
                 break;
             }
             case "END_MATCH": {
-                console.log("case END_MATCH");
                 bcr.endMatchRequested = true;
                 bcr.disconnect();
                 break;
