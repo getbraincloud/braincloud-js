@@ -46,7 +46,7 @@ function BrainCloudRelayComms(_client) {
     bcr._sendPacketId = {};
     bcr.ping = 999;
 
-    bcr.endMatchRequested = true;   //Cody
+    bcr.endMatchRequested = false;   //Cody
 
     bcr.setDebugEnabled = function(debugEnabled) {
         bcr._debugEnabled = debugEnabled;
@@ -97,6 +97,7 @@ function BrainCloudRelayComms(_client) {
         var passcode = options.passcode;
         var lobbyId = options.lobbyId;
         
+        bcr.endMatchRequested = false;  //Cody
         bcr.isConnected = false;
         bcr.connectCallback = {
             success: success,
@@ -138,23 +139,48 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.disconnect = function() {
+        console.log("disconnect()");    //Cody
         bcr.stopPing();
-        if (bcr.socket) {
+        
+        //Cody
+        if(!bcr.endMatchRequested){
+            if (bcr.socket) {
 //> REMOVE IF K6
-            bcr.socket.removeEventListener('error', bcr.onSocketError);
-            bcr.socket.removeEventListener('close', bcr.onSocketClose);
-            bcr.socket.removeEventListener('open', bcr.onSocketOpen);
-            bcr.socket.removeEventListener('message', bcr.onSocketMessage);
+                bcr.socket.removeEventListener('error', bcr.onSocketError);
+                bcr.socket.removeEventListener('close', bcr.onSocketClose);
+                bcr.socket.removeEventListener('open', bcr.onSocketOpen);
+                bcr.socket.removeEventListener('message', bcr.onSocketMessage);
 //> END
-            bcr.socket.close();
-            bcr.socket = null;
+                bcr.socket.close();
+                bcr.socket = null;
+            }
         }
+        //Cody
+        
         bcr.isConnected = false;
         bcr._sendPacketId = {};
         bcr._netIdToProfileId = {};
         bcr._profileIdToNetId = {};
         bcr.ping = 999;    
     }
+
+    //Cody
+    bcr.endMatch = function(json){
+        console.log("endMatch()");
+
+        //should i stop ping like disconnect()?
+        if(bcr.isConnected){
+            // Send end match request
+            var payload = {
+                jsonPayload: json
+            };
+
+            bcr.sendJson(bcr.CL2RS_ENDMATCH, payload);
+            
+            bcr.endMatchRequested = true;
+        }
+    }
+    //Cody
 
     bcr.registerRelayCallback = function(callback) {
         bcr._relayCallback = callback;
@@ -215,11 +241,8 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.onSocketClose = function(e) {
+        console.log("onSocketClose()"); //Cody
         bcr.disconnect();
-        //Cody
-        if(bcr.endMatchRequested){
-            console.log("Relay Connection closed: End Match");
-        }
         if (bcr.connectCallback.failure) {
             bcr.connectCallback.failure("Relay Connection closed");
         }
@@ -516,6 +539,14 @@ function BrainCloudRelayComms(_client) {
                 bcr._ownerId = json.cxId;
                 break;
             }
+            //Cody
+            case "END_MATCH": {
+                console.log("case END_MATCH");
+                bcr.endMatchRequested = true;
+                bcr.disconnect();
+                break;
+            }
+            //Cody
         }
 
         if (bcr._systemCallback) {
