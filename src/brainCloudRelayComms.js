@@ -13,7 +13,7 @@ function BrainCloudRelayComms(_client) {
     bcr.CL2RS_ACK           = 3;
     bcr.CL2RS_PING          = 4;
     bcr.CL2RS_RSMG_ACK      = 5;
-    bcr.CL2RS_ENDMATCH      = 6;    //Cody
+    bcr.CL2RS_ENDMATCH      = 6;
 
     // Messages sent from Relay-Server to Client
     bcr.RS2CL_RSMG          = 0;
@@ -46,7 +46,7 @@ function BrainCloudRelayComms(_client) {
     bcr._sendPacketId = {};
     bcr.ping = 999;
 
-    bcr.endMatchRequested = false;   //Cody
+    bcr.endMatchRequested = false;
 
     bcr.setDebugEnabled = function(debugEnabled) {
         bcr._debugEnabled = debugEnabled;
@@ -97,7 +97,7 @@ function BrainCloudRelayComms(_client) {
         var passcode = options.passcode;
         var lobbyId = options.lobbyId;
         
-        bcr.endMatchRequested = false;  //Cody
+        bcr.endMatchRequested = false;
         bcr.isConnected = false;
         bcr.connectCallback = {
             success: success,
@@ -139,10 +139,8 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.disconnect = function() {
-        console.log("disconnect()");    //Cody
         bcr.stopPing();
         
-        //Cody
         if(!bcr.endMatchRequested){
             if (bcr.socket) {
 //> REMOVE IF K6
@@ -155,7 +153,6 @@ function BrainCloudRelayComms(_client) {
                 bcr.socket = null;
             }
         }
-        //Cody
         
         bcr.isConnected = false;
         bcr._sendPacketId = {};
@@ -164,12 +161,11 @@ function BrainCloudRelayComms(_client) {
         bcr.ping = 999;    
     }
 
-    //Cody
     bcr.endMatch = function(json){
         console.log("endMatch()");
 
-        //should i stop ping like disconnect()?
         if(bcr.isConnected){
+            
             // Send end match request
             var payload = {
                 jsonPayload: json
@@ -180,7 +176,6 @@ function BrainCloudRelayComms(_client) {
             bcr.endMatchRequested = true;
         }
     }
-    //Cody
 
     bcr.registerRelayCallback = function(callback) {
         bcr._relayCallback = callback;
@@ -241,7 +236,6 @@ function BrainCloudRelayComms(_client) {
     }
 
     bcr.onSocketClose = function(e) {
-        console.log("onSocketClose()"); //Cody
         bcr.disconnect();
         if (bcr.connectCallback.failure) {
             bcr.connectCallback.failure("Relay Connection closed");
@@ -539,14 +533,12 @@ function BrainCloudRelayComms(_client) {
                 bcr._ownerId = json.cxId;
                 break;
             }
-            //Cody
             case "END_MATCH": {
                 console.log("case END_MATCH");
                 bcr.endMatchRequested = true;
                 bcr.disconnect();
                 break;
             }
-            //Cody
         }
 
         if (bcr._systemCallback) {

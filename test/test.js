@@ -6029,7 +6029,7 @@ async function testRelay() {
         let systemCallback = false;
         let relayCallback = false;
 
-        let endMatch = false;   //Cody
+        let endMatch = false;
 
         // Force timeout after 5 mins
         let timeoutId = setTimeout(() =>
@@ -6045,18 +6045,18 @@ async function testRelay() {
         {
             if(relayCallback == false)
             {
-                console.log("in RelayCallback...");
                 ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
                 
                 relayCallback = true;
 
-                //Cody
+                // Send end match request
                 var json = {
                     "ownerCxId" : bc.relay.getOwnerCxId,
                     "op" : "END_MATCH"
                 }
                 bc.relay.endMatch(json);
                 
+                //
                 resolve_test();
             }
         })
@@ -6085,7 +6085,6 @@ async function testRelay() {
                     bc.relay.send(Buffer.from("Echo"), netId, true, true, bc.relay.CHANNEL_HIGH_PRIORITY_1)
                 }, 5000)
             }
-            //Cody
             else if(json.op == "END_MATCH" && endMatch == false){
                 console.log("System callback END_MATCH");
                 
