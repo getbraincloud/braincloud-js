@@ -6051,7 +6051,6 @@ async function testRelay() {
 
                 // Send end match request
                 var json = {
-                    "ownerCxId" : bc.relay.getOwnerCxId,
                     "op" : "END_MATCH"
                 }
                 bc.relay.endMatch(json);
