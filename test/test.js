@@ -107,6 +107,7 @@ var GAME_VERSION = "";
 var SERVER_URL = "";
 var PARENT_LEVEL_NAME = "";
 var CHILD_APP_ID = "";
+var CHILD_SECRET = "";
 var PEER_NAME = "";
 var REDIRECT_APP_ID = "";
 loadIDs();
