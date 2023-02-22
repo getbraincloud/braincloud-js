@@ -13,6 +13,7 @@ function BrainCloudRelayComms(_client) {
     bcr.CL2RS_ACK           = 3;
     bcr.CL2RS_PING          = 4;
     bcr.CL2RS_RSMG_ACK      = 5;
+    bcr.CL2RS_ENDMATCH      = 6;    //Cody
 
     // Messages sent from Relay-Server to Client
     bcr.RS2CL_RSMG          = 0;
@@ -44,6 +45,8 @@ function BrainCloudRelayComms(_client) {
     bcr._pingTime = null;
     bcr._sendPacketId = {};
     bcr.ping = 999;
+
+    bcr.endMatchRequested = true;   //Cody
 
     bcr.setDebugEnabled = function(debugEnabled) {
         bcr._debugEnabled = debugEnabled;
@@ -213,6 +216,10 @@ function BrainCloudRelayComms(_client) {
 
     bcr.onSocketClose = function(e) {
         bcr.disconnect();
+        //Cody
+        if(bcr.endMatchRequested){
+            console.log("Relay Connection closed: End Match");
+        }
         if (bcr.connectCallback.failure) {
             bcr.connectCallback.failure("Relay Connection closed");
         }
