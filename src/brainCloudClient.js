@@ -24,6 +24,7 @@ function BrainCloudClient() {
         BCGlobalApp.apply(bcc);
         BCGlobalStatistics.apply(bcc);
         BCGlobalEntity.apply(bcc);
+        BCGroupFile.apply(bcc);
         BCGroup.apply(bcc);
         BCIdentity.apply(bcc);
         BCItemCatalog.apply(bcc);
@@ -75,6 +76,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.globalApp = bcc.globalApp;
         bcc.brainCloudManager.globalStatistics = bcc.globalStatistics;
         bcc.brainCloudManager.globalEntity = bcc.globalEntity;
+        bcc.brainCloudManager.groupFile = bcc.groupFile;
         bcc.brainCloudManager.group = bcc.group;
         bcc.brainCloudManager.identity = bcc.identity;
         bcc.brainCloudManager.lobby = bcc.lobby;
@@ -132,6 +134,7 @@ function BrainCloudClient() {
         bcc.brainCloudManager.globalApp = bcc.brainCloudClient.globalApp = bcc.brainCloudClient.globalApp || {};
         bcc.brainCloudManager.globalStatistics = bcc.brainCloudClient.globalStatistics = bcc.brainCloudClient.globalStatistics || {};
         bcc.brainCloudManager.globalEntity = bcc.brainCloudClient.globalEntity = bcc.brainCloudClient.globalEntity || {};
+        bcc.brainCloudManager.groupFile = bcc.brainCloudClient.groupFile = bcc.brainCloudClient.groupFile || {};
         bcc.brainCloudManager.group = bcc.brainCloudClient.group = bcc.brainCloudClient.group || {};
         bcc.brainCloudManager.identity = bcc.brainCloudClient.identity = bcc.brainCloudClient.identity || {};
         bcc.brainCloudManager.lobby = bcc.brainCloudClient.lobby = bcc.brainCloudClient.lobby || {};
