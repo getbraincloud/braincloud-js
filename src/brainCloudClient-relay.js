@@ -38,6 +38,14 @@ function BCRelay() {
     }
 
     /**
+     * Ends match. Disconnects from server while maintaining lobby
+     * @param json additional data to be sent with end match request
+     */
+    bc.relay.endMatch = function(json){
+        bc.brainCloudRelayComms.endMatch(json);
+    }
+
+    /**
      * Returns whether or not we have a successful connection with
      * the relay server
      */
