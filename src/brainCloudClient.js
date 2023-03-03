@@ -175,7 +175,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "4.13.0";
+    bcc.version = "4.14.0";
     bcc.countryCode;
     bcc.languageCode;
 
