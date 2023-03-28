@@ -6,10 +6,10 @@ function BCRelay() {
     bc.SERVICE_RELAY = "relay";
 
     bc.relay.TO_ALL_PLAYERS = 0x000000FFFFFFFFFF;
-    bc.relay.CHANNEL_HIGH_PRIORITY_1      = 0;
-    bc.relay.CHANNEL_HIGH_PRIORITY_2      = 1;
-    bc.relay.CHANNEL_NORMAL_PRIORITY      = 2;
-    bc.relay.CHANNEL_LOW_PRIORITY         = 3;
+    bc.relay.CHANNEL_HIGH_PRIORITY_1 = 0;
+    bc.relay.CHANNEL_HIGH_PRIORITY_2 = 1;
+    bc.relay.CHANNEL_NORMAL_PRIORITY = 2;
+    bc.relay.CHANNEL_LOW_PRIORITY = 3;
 
     /**
     * Start a connection, based on connection type to 
@@ -26,22 +26,30 @@ function BCRelay() {
     * @param success Called on success to establish a connection.
     * @param failure Called on failure to establish a connection or got disconnected.
     */
-    bc.relay.connect = function(options, success, failure) {
+    bc.relay.connect = function (options, success, failure) {
         bc.brainCloudRelayComms.connect(options, success, failure);
     };
 
     /**
      * Disconnects from the relay server
      */
-    bc.relay.disconnect = function() {
+    bc.relay.disconnect = function () {
         bc.brainCloudRelayComms.disconnect();
+    }
+
+    /**
+     * Terminate the match instance by the owner.
+     * @param json Payload data sent in JSON format. It will be relayed to other connnected players.
+     */
+    bc.relay.endMatch = function (json) {
+        bc.brainCloudRelayComms.endMatch(json);
     }
 
     /**
      * Returns whether or not we have a successful connection with
      * the relay server
      */
-    bc.relay.isConnected = function() {
+    bc.relay.isConnected = function () {
         return bc.brainCloudRelayComms.isConnected;
     }
 
@@ -50,7 +58,7 @@ function BCRelay() {
      * Note: Pings are not distributed amount other members. Your game will
      * have to bundle it inside a packet and distribute to other peers.
      */
-    bc.relay.getPing = function() {
+    bc.relay.getPing = function () {
         return bc.brainCloudRelayComms.ping;
     }
 
@@ -61,49 +69,49 @@ function BCRelay() {
      * 
      * @param interval in Seconds
      */
-    bc.relay.setPingInterval = function(interval) {
+    bc.relay.setPingInterval = function (interval) {
         bc.brainCloudRelayComms.setPingInterval(interval);
     }
 
     /**
      * Get the lobby's owner profile Id
      */
-    bc.relay.getOwnerProfileId = function() {
+    bc.relay.getOwnerProfileId = function () {
         return bc.brainCloudRelayComms.getOwnerProfileId();
     }
 
     /**
      * Get the lobby's owner Connection Id
      */
-    bc.relay.getOwnerCxId = function() {
+    bc.relay.getOwnerCxId = function () {
         return bc.brainCloudRelayComms.getOwnerCxId();
     }
 
     /**
      * Returns the profileId associated with a netId.
      */
-    bc.relay.getProfileIdForNetId = function(netId) {
+    bc.relay.getProfileIdForNetId = function (netId) {
         return bc.brainCloudRelayComms.getProfileIdForNetId(netId);
     }
 
     /**
      * Returns the Connection Id associated with a netId.
      */
-    bc.relay.getCxIdForNetId = function(netId) {
+    bc.relay.getCxIdForNetId = function (netId) {
         return bc.brainCloudRelayComms.getCxIdForNetId(netId);
     }
 
     /**
      * Returns the netId associated with a profileId.
      */
-    bc.relay.getNetIdForProfileId = function(profileId) {
+    bc.relay.getNetIdForProfileId = function (profileId) {
         return bc.brainCloudRelayComms.getNetIdForProfileId(profileId);
     }
 
     /**
      * Returns the netId associated with a connection Id.
      */
-    bc.relay.getNetIdForCxId = function(cxId) {
+    bc.relay.getNetIdForCxId = function (cxId) {
         return bc.brainCloudRelayComms.getNetIdForCxId(cxId);
     }
 
@@ -112,10 +120,10 @@ function BCRelay() {
      * 
      * @param callback Calle whenever a relay message was received. function(netId, data[])
      */
-    bc.relay.registerRelayCallback = function(callback) {
+    bc.relay.registerRelayCallback = function (callback) {
         bc.brainCloudRelayComms.registerRelayCallback(callback);
     }
-    bc.relay.deregisterRelayCallback = function() {
+    bc.relay.deregisterRelayCallback = function () {
         bc.brainCloudRelayComms.deregisterRelayCallback();
     }
 
@@ -163,10 +171,10 @@ function BCRelay() {
      *   profileId: "..."
      * }
      */
-    bc.relay.registerSystemCallback = function(callback) {
+    bc.relay.registerSystemCallback = function (callback) {
         bc.brainCloudRelayComms.registerSystemCallback(callback);
     }
-    bc.relay.deregisterSystemCallback = function() {
+    bc.relay.deregisterSystemCallback = function () {
         bc.brainCloudRelayComms.deregisterSystemCallback();
     }
 
@@ -179,13 +187,11 @@ function BCRelay() {
      * @param ordered Receive this ordered or not.
      * @param channel One of: (bc.relay.CHANNEL_HIGH_PRIORITY_1, bc.relay.CHANNEL_HIGH_PRIORITY_2, bc.relay.CHANNEL_NORMAL_PRIORITY, bc.relay.CHANNEL_LOW_PRIORITY)
      */
-    bc.relay.send = function(data, toNetId, reliable, ordered, channel) {
-        if (toNetId == bc.relay.TO_ALL_PLAYERS)
-        {
+    bc.relay.send = function (data, toNetId, reliable, ordered, channel) {
+        if (toNetId == bc.relay.TO_ALL_PLAYERS) {
             bc.relay.sendToAll(data, reliable, ordered, channel);
         }
-        else
-        {
+        else {
             // Fancy math here because using bitwise operation will transform the number into 32 bits
             var playerMask = Math.pow(2, toNetId);
             bc.brainCloudRelayComms.sendRelay(data, playerMask, reliable, ordered, channel);
@@ -201,7 +207,7 @@ function BCRelay() {
      * @param ordered Receive this ordered or not.
      * @param channel One of: (bc.relay.CHANNEL_HIGH_PRIORITY_1, bc.relay.CHANNEL_HIGH_PRIORITY_2, bc.relay.CHANNEL_NORMAL_PRIORITY, bc.relay.CHANNEL_LOW_PRIORITY)
      */
-    bc.relay.sendToPlayers = function(data, playerMask, reliable, ordered, channel) {
+    bc.relay.sendToPlayers = function (data, playerMask, reliable, ordered, channel) {
         bc.brainCloudRelayComms.sendRelay(data, playerMask, reliable, ordered, channel);
     }
 
@@ -213,7 +219,7 @@ function BCRelay() {
      * @param ordered Receive this ordered or not.
      * @param channel One of: (bc.relay.CHANNEL_HIGH_PRIORITY_1, bc.relay.CHANNEL_HIGH_PRIORITY_2, bc.relay.CHANNEL_NORMAL_PRIORITY, bc.relay.CHANNEL_LOW_PRIORITY)
      */
-    bc.relay.sendToAll = function(data, reliable, ordered, channel) {
+    bc.relay.sendToAll = function (data, reliable, ordered, channel) {
         var myProfileId = bc.authentication.profileId;
         var myNetId = bc.relay.getNetIdForProfileId(myProfileId);
 

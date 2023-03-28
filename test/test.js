@@ -2142,6 +2142,275 @@ async function testGlobalEntity() {
 }
 
 ////////////////////////////////////////
+// Group File tests
+////////////////////////////////////////
+async function testGroupFile(){
+    if (!module("GroupFile", () =>
+    {
+        initializeClient();
+
+        return new Promise(resolve => {
+            bc.brainCloudClient.authentication.authenticateUniversal("js-tester", "js-tester", true, (result) => {
+                resolve();
+            });
+        });
+
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    var groupID = "a7ff751c-3251-407a-b2fd-2bd1e9bca64a";
+    var groupFileID = "d2dd646a-f1af-4a96-90a7-a0310246f5a2";
+    var filename = "testingGroupFile.dat";
+    var tempFilename = "temporaryFile.dat"
+    var movedFilename = "movedGroupFile.dat";
+    var copiedFilename = "copiedGroupFile.dat";
+    var updatedFilename = "updatedGroupFile.dat";
+    var acl = {
+        "other" : 0,
+        "member" : 2
+    };
+   
+    await asyncTest("getFileInfo()", 2, function() {
+        bc.groupFile.getFileInfo(
+            groupID,
+            groupFileID,
+            function(result) {
+                
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+    await asyncTest("getFileInfoSimple()", 2, function() {
+        bc.groupFile.getFileInfoSimple(
+            groupID,
+            "",
+            filename,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+    
+    await asyncTest("getCDNUrl()", 2, function() {
+        bc.groupFile.getCDNUrl(
+            groupID,
+            groupFileID,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+    
+    await asyncTest("getFileList()", 2, function() {
+        bc.groupFile.getFileList(
+            groupID,
+            "",
+            true,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+    
+    await asyncTest("checkFilenameExists()", 2, function() {
+        bc.groupFile.checkFilenameExists(
+            groupID,
+            "",
+            filename,
+            function(result) {
+                if(result.data.exists == true){
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                }
+                else{
+                    resolve_test();
+                }
+            });
+    });
+    
+    await asyncTest("checkFullpathFilenameExists()", 2, function() {
+        bc.groupFile.checkFullpathFilenameExists(
+            groupID,
+            filename,
+            function(result) {
+                if(result.data.exists == true){
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                }
+                else{
+                    resolve_test();
+                }
+            });
+    });
+
+    await asyncTest("moveUserToGroupFile()", 3, function() {
+        var fileSize = fs.statSync("README.md").size;
+        bc.file.prepareFileUpload("TestFolder", "README.md", true, true, fileSize, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+            if (result.status == 200)
+            {
+                let uploadId = result.data.fileDetails.uploadId;
+                let xhr = new BC.XMLHttpRequest4Upload();
+                let file = fs.createReadStream("README.md");
+                file.size = fileSize;
+
+                xhr.addEventListener("load", result =>
+                {
+                    if (result.statusCode === 200)
+                    {
+                        ok(true, "done file upload");
+                        testMoveUserToGroupFile();
+                    }
+                    else
+                    {
+                        ok(false, "Failed upload " + result.statusMessage);
+                        resolve_test();
+                    }
+                    
+                });
+
+                xhr.addEventListener("error", result =>
+                {
+                    ok(false, error);
+                    resolve_test();
+                });
+
+                bc.file.uploadFile(xhr, file, uploadId);
+            }
+            else
+            {
+                resolve_test();
+            }
+        });
+
+        function testMoveUserToGroupFile(){
+            bc.groupFile.moveUserToGroupFile(
+                "TestFolder/",
+                "README.md",
+                groupID,
+                "",
+                tempFilename,
+                acl,
+                true,
+                function(result){
+                    var tempFileId = result.data.fileDetails.fileId;
+
+                    deleteTempFile(tempFileId, tempFilename);
+
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                }
+            )
+        }
+    });
+
+    await asyncTest("moveFile()", function(){
+        var moveBack = true;
+        
+        testMoveFile(movedFilename);
+
+        function testMoveFile(moveName){
+            bc.groupFile.moveFile(
+                groupID,
+                groupFileID,
+                -1,
+                "",
+                0,
+                moveName,
+                true,
+                function(result) {
+                    //Change the filename back to its original once it has been updated
+                    if(moveBack){
+                        moveBack = false;
+                        testMoveFile(filename);
+                    }
+                    else{
+                        equal(result.status, 200, "Expecting 200");
+                        resolve_test();
+                    }                    
+                }
+            );
+        };
+    })
+    
+    await asyncTest("copyFile()", function() {
+        bc.groupFile.copyFile(
+            groupID,
+            groupFileID,
+            -1,
+            "",
+            0,
+            copiedFilename,
+            true,
+            function(result) {
+                if(result.status == 200){
+                    console.log("File copied.");
+
+                    var tempFileId = result.data.fileDetails.fileId;
+                    var tempFilename = result.data.fileDetails.fileName;
+
+                    console.log("Deleting newly copied file...");
+                    deleteTempFile(tempFileId, tempFilename);
+                    
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                }
+            }
+        );
+    });
+    
+    await asyncTest("updateFileInfo()", function() {
+        var revertBack = true;
+
+        testUpdateInfo(updatedFilename);
+
+        function testUpdateInfo(updateName){
+            bc.groupFile.updateFileInfo(
+                groupID,
+                groupFileID,
+                -1,
+                updateName,
+                acl,
+                function(result) {
+                    //Change the filename back to its original once it has been updated
+                    if(revertBack){
+                        revertBack = false;
+                        testUpdateInfo(filename);
+                    }
+                    else{
+                        equal(result.status, 200, "Expecting 200");
+                        resolve_test();
+                    }                    
+                }
+            );
+        };
+    });
+
+    //Deletes a file that was created for a test (ex: Testing copy or upload functions)
+    //Also acts as groupFile.deleteFile test
+    function deleteTempFile(tempFileId, tempFilename){
+        bc.groupFile.deleteFile(
+            groupID,
+            tempFileId,
+            -1,
+            tempFilename,
+            function(){
+                console.log("Temp file deleted");
+            }
+        )
+    }
+}
+
+////////////////////////////////////////
 // Group tests
 ////////////////////////////////////////
 async function testGroup() {
@@ -6025,6 +6294,12 @@ async function testRelay() {
     // // Full flow. Create lobby -> ready up -> connect to server
     await asyncTest("connect()", 8, () =>
     {
+        // Determines whether callback has already occured
+        let systemCallback = false;
+        let relayCallback = false;
+
+        let endMatch = false;
+
         // Force timeout after 5 mins
         let timeoutId = setTimeout(() =>
         {
@@ -6037,20 +6312,35 @@ async function testRelay() {
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
-            ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
-            resolve_test();
+            if(relayCallback == false)
+            {
+                ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
+                
+                relayCallback = true;
+
+                // Send end match request
+                var json = {
+                    "op" : "END_MATCH"
+                }
+                bc.relay.endMatch(json);
+                
+                //
+                resolve_test();
+            }
         })
 
         bc.relay.registerSystemCallback(json =>
         {
-            if (json.op == "CONNECT")
+            if (json.op == "CONNECT" && systemCallback == false)
             {
                 ok(true, "System Callback")
                 let relayOwnerCxId = bc.relay.getOwnerCxId()
                 ok(ownerCxId == relayOwnerCxId, `getOwnerCxId: ${ownerCxId} == ${relayOwnerCxId}`)
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
-
+                
+                systemCallback = true;
+                
                 // Wait 5sec then check the ping.
                 // If we are pinging properly, we should get
                 // less than 999. unless we have godawful
@@ -6062,6 +6352,13 @@ async function testRelay() {
                     // Send an echo that should come back to us
                     bc.relay.send(Buffer.from("Echo"), netId, true, true, bc.relay.CHANNEL_HIGH_PRIORITY_1)
                 }, 5000)
+            }
+            else if(json.op == "END_MATCH" && endMatch == false){
+                console.log("System callback END_MATCH");
+                
+                ok(true, "End Match");
+
+                endMatch = true;
             }
         })
 
@@ -6749,6 +7046,7 @@ async function run_tests()
     await testGlobalApp();
     await testGlobalStatistics();
     await testGlobalEntity();
+    await testGroupFile();
     await testGroup();
     await testIdentity();
     await testMail();

@@ -36,6 +36,7 @@ function BrainCloudWrapper(wrapperName) {
         bcw.globalApp = bcw.brainCloudClient.globalApp;
         bcw.globalStatistics = bcw.brainCloudClient.globalStatistics;
         bcw.globalEntity = bcw.brainCloudClient.globalEntity;
+        bcw.groupFile = bcw.brainCloudClient.groupFile;
         bcw.group = bcw.brainCloudClient.group;
         bcw.identity = bcw.brainCloudClient.identity;
         bcw.lobby = bcw.brainCloudClient.lobby;
