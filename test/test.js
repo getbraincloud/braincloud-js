@@ -6312,6 +6312,9 @@ async function testRelay() {
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
+            //Temp Log
+            console.log("registerRelayCallback...");
+            
             if(relayCallback == false)
             {
                 ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
@@ -6324,13 +6327,15 @@ async function testRelay() {
                 }
                 bc.relay.endMatch(json);
                 
-                //
                 resolve_test();
             }
         })
 
         bc.relay.registerSystemCallback(json =>
         {
+            //Temp Log
+            console.log("registerSystemCallback...");
+
             if (json.op == "CONNECT" && systemCallback == false)
             {
                 ok(true, "System Callback")
@@ -6364,6 +6369,9 @@ async function testRelay() {
 
         bc.rttService.registerRTTLobbyCallback(result =>
         {
+            //Temp Log
+            console.log("registerRTTLobbyCallback...");
+
             console.log(result)
             if (result.operation === "DISBANDED")
             {
@@ -6394,6 +6402,8 @@ async function testRelay() {
             }
             else if (result.operation == "ROOM_ASSIGNED")
             {
+                console.log("ROOM_ASSIGNED...");
+                
                 bc.lobby.updateReady(result.data.lobbyId, true, {})
             }
             else if (result.operation == "STARTING")
@@ -6403,12 +6413,16 @@ async function testRelay() {
             }
             else if (result.operation == "ROOM_READY")
             {
+                console.log("ROOM_READY...");
+
                 server = result.data
             }
         });
 
         bc.rttService.enableRTT(result =>
         {
+            console.log("enableRTT...");
+            
             console.log(result);
             equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
             bc.lobby.findOrCreateLobby("READY_START_V2", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
