@@ -392,7 +392,7 @@ function passed(expr, log)
 
 function failed(expr, logex)
 {
-    var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[36m (" + expr + ")\x1b[0m" + logex;
+    var log = "\x1b[36m" + test_name + " \x1b[31m[failed]\x1b[36m (" + expr + ")\x1b[0m" + logex;
     var finallog = "\x1b[36m" + test_name + "\x1b[0m";
     fail_log.push("\x1b[31m[  FAILED  ]\x1b[36m " + finallog);
     console.log(log);
