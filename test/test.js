@@ -6453,6 +6453,7 @@ async function testLobby() {
     {
         bc.lobby.createLobby("MATCH_UNRANKED", 0, null, true, {}, "all", {}, result =>
         {
+            console.log("LobbyTest createLobby() callback rcv");
             equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
@@ -6466,6 +6467,8 @@ async function testLobby() {
             resolve_test();
         });
     });
+
+    ///*
 
     await asyncTest("getLobbyData()", 1, () =>
     {
@@ -6674,6 +6677,7 @@ async function testLobby() {
             });
         });
     });
+    //*/
 }
 
 async function testPresence()
