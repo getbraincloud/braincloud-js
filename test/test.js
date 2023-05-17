@@ -6292,11 +6292,11 @@ async function testRelay() {
     })
 
     // // Full flow. Create lobby -> ready up -> connect to server
-    await asyncTest("connect()", 8, () =>
+    await asyncTest("connect()", 9, () =>
     {
         // Determines whether callback has already occured
-        let systemCallback = false;
-        let relayCallback = false;
+        //let systemCallback = false;
+        //let relayCallback = false;
 
         let endMatch = false;
 
@@ -6316,7 +6316,7 @@ async function testRelay() {
             {
                 ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
                 
-                relayCallback = true;
+                //relayCallback = true;
 
                 // Send end match request
                 var json = {
@@ -6324,13 +6324,13 @@ async function testRelay() {
                 }
                 bc.relay.endMatch(json);
                 
-                resolve_test();
+                //resolve_test();
             }
         })
 
         bc.relay.registerSystemCallback(json =>
         {
-            if (json.op == "CONNECT" && systemCallback == false)
+            if (json.op == "CONNECT" /*&& systemCallback == false*/)
             {
                 ok(true, "System Callback")
                 let relayOwnerCxId = bc.relay.getOwnerCxId()
@@ -6338,7 +6338,7 @@ async function testRelay() {
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
                 
-                systemCallback = true;
+                //systemCallback = true;
                 
                 // Wait 5sec then check the ping.
                 // If we are pinging properly, we should get
@@ -6358,6 +6358,8 @@ async function testRelay() {
                 ok(true, "End Match");
 
                 endMatch = true;
+
+                resolve_test();
             }
         })
 
