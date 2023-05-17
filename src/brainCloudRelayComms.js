@@ -235,8 +235,6 @@ function BrainCloudRelayComms(_client) {
 
     bcr.onSocketClose = function(e) {
         bcr.disconnect();
-        console.log("endmatch:");
-        console.log(bcr.endMatchRequested);
         if (bcr.connectCallback.failure) {
             bcr.connectCallback.failure("Relay Connection closed");
         }

@@ -6292,7 +6292,7 @@ async function testRelay() {
     })
 
     // // Full flow. Create lobby -> ready up -> connect to server
-    await asyncTest("connect()", 9, () =>
+    await asyncTest("connect()", 10, () =>
     {
         // Determines whether callback has already occured
         //let systemCallback = false;
@@ -6359,7 +6359,7 @@ async function testRelay() {
 
                 endMatch = true;
 
-                resolve_test();
+                //resolve_test();
             }
         })
 
@@ -6386,8 +6386,18 @@ async function testRelay() {
                         ok(true, "Relay Connected")
                     }, error =>
                     {
-                        ok(false, error);
-                        resolve_test();
+                        // End match req closes socket which causes error ("Relay Connection Closed") but this is expected
+                        if(endMatch){
+                            ok(true, error); 
+                            resolve_test(); // Successful test ends here
+                        }
+                        else{   // If any other connectCallback fails that is a problem
+                            ok(false, error);
+                            resolve_test();
+                        }
+
+                       // ok(false, error);
+                        //resolve_test();
                     })
                 }
                 else
