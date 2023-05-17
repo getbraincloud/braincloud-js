@@ -6312,8 +6312,8 @@ async function testRelay() {
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
-            if(relayCallback == false)
-            {
+            //if(relayCallback == false)
+            //{
                 ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
                 
                 //relayCallback = true;
@@ -6325,7 +6325,7 @@ async function testRelay() {
                 bc.relay.endMatch(json);
                 
                 //resolve_test();
-            }
+            //}
         })
 
         bc.relay.registerSystemCallback(json =>
