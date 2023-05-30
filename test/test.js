@@ -2160,96 +2160,16 @@ async function testGroupFile(){
         return tearDownLogout();
     })) return;
 
-    var groupID = "a7ff751c-3251-407a-b2fd-2bd1e9bca64a";
-    var groupFileID = "d2dd646a-f1af-4a96-90a7-a0310246f5a2";
-    var filename = "testingGroupFile.dat";
-    var tempFilename = "temporaryFile.dat"
-    var movedFilename = "movedGroupFile.dat";
-    var copiedFilename = "copiedGroupFile.dat";
-    var updatedFilename = "updatedGroupFile.dat";
+    var groupId = "a7ff751c-3251-407a-b2fd-2bd1e9bca64a";
+    var _tempFilename = "testfile-js.txt";
+    var groupFileId = "";
+    var _movedFilename = "moved-testfile-js.txt";
+    var _copiedFilename = "copied-testfile-js.txt";
+    var _updatedFilename = "updated-testfile-js.txt";
     var acl = {
         "other" : 0,
         "member" : 2
     };
-   
-    await asyncTest("getFileInfo()", 2, function() {
-        bc.groupFile.getFileInfo(
-            groupID,
-            groupFileID,
-            function(result) {
-                
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-    await asyncTest("getFileInfoSimple()", 2, function() {
-        bc.groupFile.getFileInfoSimple(
-            groupID,
-            "",
-            filename,
-            function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-    
-    await asyncTest("getCDNUrl()", 2, function() {
-        bc.groupFile.getCDNUrl(
-            groupID,
-            groupFileID,
-            function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-    
-    await asyncTest("getFileList()", 2, function() {
-        bc.groupFile.getFileList(
-            groupID,
-            "",
-            true,
-            function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-    
-    await asyncTest("checkFilenameExists()", 2, function() {
-        bc.groupFile.checkFilenameExists(
-            groupID,
-            "",
-            filename,
-            function(result) {
-                if(result.data.exists == true){
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                }
-                else{
-                    resolve_test();
-                }
-            });
-    });
-    
-    await asyncTest("checkFullpathFilenameExists()", 2, function() {
-        bc.groupFile.checkFullpathFilenameExists(
-            groupID,
-            filename,
-            function(result) {
-                if(result.data.exists == true){
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                }
-                else{
-                    resolve_test();
-                }
-            });
-    });
 
     await asyncTest("moveUserToGroupFile()", 3, function() {
         var fileSize = fs.statSync("README.md").size;
@@ -2267,7 +2187,7 @@ async function testGroupFile(){
                 {
                     if (result.statusCode === 200)
                     {
-                        ok(true, "done file upload");
+                        ok(true, "Done file upload");
                         testMoveUserToGroupFile();
                     }
                     else
@@ -2288,23 +2208,26 @@ async function testGroupFile(){
             }
             else
             {
+                console.log("Status != 200");
                 resolve_test();
             }
         });
 
         function testMoveUserToGroupFile(){
+           console.log("moveUserToGroupFile");
             bc.groupFile.moveUserToGroupFile(
                 "TestFolder/",
                 "README.md",
-                groupID,
+                groupId,
                 "",
-                tempFilename,
+                _tempFilename,
                 acl,
                 true,
                 function(result){
-                    var tempFileId = result.data.fileDetails.fileId;
-
-                    deleteTempFile(tempFileId, tempFilename);
+                    groupFileId = result.data.fileDetails.fileId;
+                    if(groupFileId == ""){
+                        ok(false, "Group File ID not saved correctly");
+                    }
 
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
@@ -2313,25 +2236,105 @@ async function testGroupFile(){
         }
     });
 
+    await asyncTest("getFileInfo()", 2, function() {
+        bc.groupFile.getFileInfo(
+            groupId,
+            groupFileId,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getFileInfoSimple()", 2, function() {
+        bc.groupFile.getFileInfoSimple(
+            groupId,
+            "",
+            _tempFilename,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getCDNUrl()", 2, function() {
+        bc.groupFile.getCDNUrl(
+            groupId,
+            groupFileId,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getFileList()", 2, function() {
+        bc.groupFile.getFileList(
+            groupId,
+            "",
+            true,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("checkFilenameExists()", 1, function() {
+        bc.groupFile.checkFilenameExists(
+            groupId,
+            "",
+            _tempFilename,
+            function(result) {
+                if(result.data.exists == true){
+                    ok(true, "File exists");
+                    resolve_test();
+                }
+                else{
+                    ok(false, "File should exist but returned false...");
+                    resolve_test();
+                }
+            });
+    });
+
+    await asyncTest("checkFullpathFilenameExists()", 1, function() {
+        bc.groupFile.checkFullpathFilenameExists(
+            groupId,
+            _tempFilename,
+            function(result) {
+                if(result.data.exists == true){
+                    ok(true, "File exists");
+                    resolve_test();
+                }
+                else{
+                    ok(false, "File should exist but returned false...");
+                    resolve_test();
+                }
+            });
+    });
+
     await asyncTest("moveFile()", function(){
         var moveBack = true;
         
-        testMoveFile(movedFilename);
+        testMoveFile(_movedFilename);
 
         function testMoveFile(moveName){
             bc.groupFile.moveFile(
-                groupID,
-                groupFileID,
+                groupId,
+                groupFileId,
                 -1,
                 "",
                 0,
                 moveName,
                 true,
                 function(result) {
+
                     //Change the filename back to its original once it has been updated
                     if(moveBack){
                         moveBack = false;
-                        testMoveFile(filename);
+                        testMoveFile(_tempFilename);
                     }
                     else{
                         equal(result.status, 200, "Expecting 200");
@@ -2340,16 +2343,16 @@ async function testGroupFile(){
                 }
             );
         };
-    })
-    
+    });
+
     await asyncTest("copyFile()", function() {
         bc.groupFile.copyFile(
-            groupID,
-            groupFileID,
+            groupId,
+            groupFileId,
             -1,
             "",
             0,
-            copiedFilename,
+            _copiedFilename,
             true,
             function(result) {
                 if(result.status == 200){
@@ -2359,55 +2362,78 @@ async function testGroupFile(){
                     var tempFilename = result.data.fileDetails.fileName;
 
                     console.log("Deleting newly copied file...");
-                    deleteTempFile(tempFileId, tempFilename);
-                    
-                    equal(result.status, 200, "Expecting 200");
+                    bc.groupFile.deleteFile(
+                        groupId,
+                        tempFileId,
+                        -1,
+                        tempFilename,
+                        function(){
+                            ok(true, "Test file deleted");
+                            resolve_test();
+                        }
+                    )
+                }
+                else{
+                    ok(false, result.status_message);
                     resolve_test();
                 }
             }
         );
     });
-    
-    await asyncTest("updateFileInfo()", function() {
+
+    await asyncTest("updateFileInfo()", function() {        
         var revertBack = true;
 
-        testUpdateInfo(updatedFilename);
+        testUpdateInfo(_updatedFilename);
 
         function testUpdateInfo(updateName){
             bc.groupFile.updateFileInfo(
-                groupID,
-                groupFileID,
+                groupId,
+                groupFileId,
                 -1,
                 updateName,
                 acl,
                 function(result) {
-                    //Change the filename back to its original once it has been updated
-                    if(revertBack){
-                        revertBack = false;
-                        testUpdateInfo(filename);
+                    if(result.status == 200){
+                        
+                        //Change the filename back to its original once it has been updated
+                        if(revertBack){
+                            revertBack = false;
+                            testUpdateInfo(_tempFilename);
+                        }
+                        else{
+                            equal(result.status, 200, "Expecting 200");
+                            resolve_test();
+                        }   
                     }
                     else{
-                        equal(result.status, 200, "Expecting 200");
+                        ok(false, result.status_message);
                         resolve_test();
-                    }                    
+                    }
+                                     
                 }
             );
         };
     });
 
-    //Deletes a file that was created for a test (ex: Testing copy or upload functions)
-    //Also acts as groupFile.deleteFile test
-    function deleteTempFile(tempFileId, tempFilename){
+    await asyncTest("deleteFile()", 1, function(){
         bc.groupFile.deleteFile(
-            groupID,
-            tempFileId,
+            groupId,
+            groupFileId,
             -1,
-            tempFilename,
-            function(){
-                console.log("Temp file deleted");
+            _tempFilename,
+            function(result){
+                if(result.status == 200){
+                    ok(true, "Test file deleted");
+                    resolve_test();
+                }
+                else{
+                    ok(false, result.status_message);
+                    resolve_test();
+                }
             }
         )
-    }
+    });
 }
 
 ////////////////////////////////////////
