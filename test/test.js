@@ -2147,15 +2147,6 @@ async function testGlobalEntity() {
 async function testGroupFile(){
     if (!module("GroupFile", () =>
     {
-        //initializeClient();
-        /*
-        return new Promise(resolve => {
-            bc.brainCloudClient.authentication.authenticateUniversal("js-tester", "js-tester", true, (result) => {
-                resolve();
-            });
-        });
-        */
-
         return setUpWithAuthenticate();
 
     }, () =>
@@ -2164,11 +2155,11 @@ async function testGroupFile(){
     })) return;
 
     var groupId = "a7ff751c-3251-407a-b2fd-2bd1e9bca64a";
-    var _tempFilename = "testfile-js.txt";
+    var tempFilename = "testfile-js.txt";
     var groupFileId = "";
-    var _movedFilename = "moved-testfile-js.txt";
-    var _copiedFilename = "copied-testfile-js.txt";
-    var _updatedFilename = "updated-testfile-js.txt";
+    var movedFilename = "moved-testfile-js.txt";
+    var copiedFilename = "copied-testfile-js.txt";
+    var updatedFilename = "updated-testfile-js.txt";
     var acl = {
         "other" : 0,
         "member" : 2
@@ -2231,7 +2222,7 @@ async function testGroupFile(){
                 "README.md",
                 groupId,
                 "",
-                _tempFilename,
+                tempFilename,
                 acl,
                 true,
                 function(result){
@@ -2262,7 +2253,7 @@ async function testGroupFile(){
         bc.groupFile.getFileInfoSimple(
             groupId,
             "",
-            _tempFilename,
+            tempFilename,
             function(result) {
                 ok(true, JSON.stringify(result));
                 equal(result.status, 200, "Expecting 200");
@@ -2297,7 +2288,7 @@ async function testGroupFile(){
         bc.groupFile.checkFilenameExists(
             groupId,
             "",
-            _tempFilename,
+            tempFilename,
             function(result) {
                 if(result.data.exists == true){
                     ok(true, "File exists");
@@ -2313,7 +2304,7 @@ async function testGroupFile(){
     await asyncTest("checkFullpathFilenameExists()", 1, function() {
         bc.groupFile.checkFullpathFilenameExists(
             groupId,
-            _tempFilename,
+            tempFilename,
             function(result) {
                 if(result.data.exists == true){
                     ok(true, "File exists");
@@ -2329,7 +2320,7 @@ async function testGroupFile(){
     await asyncTest("moveFile()", function(){
         var moveBack = true;
         
-        testMoveFile(_movedFilename);
+        testMoveFile(movedFilename);
 
         function testMoveFile(moveName){
             bc.groupFile.moveFile(
@@ -2345,7 +2336,7 @@ async function testGroupFile(){
                     //Change the filename back to its original once it has been updated
                     if(moveBack){
                         moveBack = false;
-                        testMoveFile(_tempFilename);
+                        testMoveFile(tempFilename);
                     }
                     else{
                         equal(result.status, 200, "Expecting 200");
@@ -2363,7 +2354,7 @@ async function testGroupFile(){
             -1,
             "",
             0,
-            _copiedFilename,
+            copiedFilename,
             true,
             function(result) {
                 if(result.status == 200){
@@ -2395,7 +2386,7 @@ async function testGroupFile(){
     await asyncTest("updateFileInfo()", function() {        
         var revertBack = true;
 
-        testUpdateInfo(_updatedFilename);
+        testUpdateInfo(updatedFilename);
 
         function testUpdateInfo(updateName){
             bc.groupFile.updateFileInfo(
@@ -2410,7 +2401,7 @@ async function testGroupFile(){
                         //Change the filename back to its original once it has been updated
                         if(revertBack){
                             revertBack = false;
-                            testUpdateInfo(_tempFilename);
+                            testUpdateInfo(tempFilename);
                         }
                         else{
                             equal(result.status, 200, "Expecting 200");
@@ -2432,7 +2423,7 @@ async function testGroupFile(){
             groupId,
             groupFileId,
             -1,
-            _tempFilename,
+            tempFilename,
             function(result){
                 if(result.status == 200){
                     ok(true, "Test file deleted");
