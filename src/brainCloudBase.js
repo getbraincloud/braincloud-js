@@ -44,7 +44,7 @@ function BrainCloudManager ()
     bcm._inProgressQueue = [];
     bcm._abTestingId = -1;
     bcm._sessionId = "";
-    bcm._packetId = -1;
+    bcm._packetId = 0;
     bcm._loader = null;
     bcm._eventCallback = null;
     bcm._rewardCallback = null;
@@ -150,7 +150,7 @@ function BrainCloudManager ()
         }
         else
         {
-            bcm._packetId = -1; 
+            bcm._packetId = 0; 
         }
         bcm._sessionId = sessionId;
     };
@@ -282,7 +282,7 @@ function BrainCloudManager ()
         bcm._sendQueue = [];
         bcm._inProgressQueue = [];
         bcm._sessionId = "";
-        bcm.packetId = -1;
+        bcm.packetId = 0;
         bcm._isAuthenticated = false;
         bcm._requestInProgress = false;
 

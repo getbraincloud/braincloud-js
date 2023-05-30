@@ -6292,11 +6292,9 @@ async function testRelay() {
     })
 
     // // Full flow. Create lobby -> ready up -> connect to server
-    await asyncTest("connect()", 8, () =>
+    await asyncTest("connect()", 10, () =>
     {
         // Determines whether callback has already occured
-        let systemCallback = false;
-        let relayCallback = false;
 
         let endMatch = false;
 
@@ -6312,33 +6310,24 @@ async function testRelay() {
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
-            if(relayCallback == false)
-            {
-                ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
-                
-                relayCallback = true;
+            ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
 
-                // Send end match request
-                var json = {
-                    "op" : "END_MATCH"
-                }
-                bc.relay.endMatch(json);
-                
-                resolve_test();
+            // Send end match request
+            var json = {
+                "op" : "END_MATCH"
             }
+            bc.relay.endMatch(json);
         })
 
         bc.relay.registerSystemCallback(json =>
         {
-            if (json.op == "CONNECT" && systemCallback == false)
+            if (json.op == "CONNECT")
             {
                 ok(true, "System Callback")
                 let relayOwnerCxId = bc.relay.getOwnerCxId()
                 ok(ownerCxId == relayOwnerCxId, `getOwnerCxId: ${ownerCxId} == ${relayOwnerCxId}`)
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
-                
-                systemCallback = true;
                 
                 // Wait 5sec then check the ping.
                 // If we are pinging properly, we should get
@@ -6384,8 +6373,15 @@ async function testRelay() {
                         ok(true, "Relay Connected")
                     }, error =>
                     {
-                        ok(false, error);
-                        resolve_test();
+                        // End match req closes socket which causes error ("Relay Connection Closed") but this is expected
+                        if(endMatch){
+                            ok(true, error); 
+                            resolve_test(); // Successful test ends here
+                        }
+                        else{   // If any other connectCallback fails that is a problem
+                            ok(false, error);
+                            resolve_test();
+                        }
                     })
                 }
                 else
