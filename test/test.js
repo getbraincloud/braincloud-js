@@ -6295,8 +6295,6 @@ async function testRelay() {
     await asyncTest("connect()", 10, () =>
     {
         // Determines whether callback has already occured
-        //let systemCallback = false;
-        //let relayCallback = false;
 
         let endMatch = false;
 
@@ -6312,33 +6310,24 @@ async function testRelay() {
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
-            //if(relayCallback == false)
-            //{
-                ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
-                
-                //relayCallback = true;
+            ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
 
-                // Send end match request
-                var json = {
-                    "op" : "END_MATCH"
-                }
-                bc.relay.endMatch(json);
-                
-                //resolve_test();
-            //}
+            // Send end match request
+            var json = {
+                "op" : "END_MATCH"
+            }
+            bc.relay.endMatch(json);
         })
 
         bc.relay.registerSystemCallback(json =>
         {
-            if (json.op == "CONNECT" /*&& systemCallback == false*/)
+            if (json.op == "CONNECT")
             {
                 ok(true, "System Callback")
                 let relayOwnerCxId = bc.relay.getOwnerCxId()
                 ok(ownerCxId == relayOwnerCxId, `getOwnerCxId: ${ownerCxId} == ${relayOwnerCxId}`)
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
-                
-                //systemCallback = true;
                 
                 // Wait 5sec then check the ping.
                 // If we are pinging properly, we should get
@@ -6358,8 +6347,6 @@ async function testRelay() {
                 ok(true, "End Match");
 
                 endMatch = true;
-
-                //resolve_test();
             }
         })
 
@@ -6395,9 +6382,6 @@ async function testRelay() {
                             ok(false, error);
                             resolve_test();
                         }
-
-                       // ok(false, error);
-                        //resolve_test();
                     })
                 }
                 else

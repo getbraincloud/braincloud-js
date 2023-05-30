@@ -178,7 +178,7 @@ function BrainCloudRelayComms(_client) {
     bcr.registerRelayCallback = function(callback) {
         bcr._relayCallback = callback;
     }
-    bcr.RelayCallback = function() {
+    bcr.deregisterRelayCallback = function() {
         bcr._relayCallback = null;
     }
 
