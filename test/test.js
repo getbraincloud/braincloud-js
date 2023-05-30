@@ -2147,13 +2147,16 @@ async function testGlobalEntity() {
 async function testGroupFile(){
     if (!module("GroupFile", () =>
     {
-        initializeClient();
-
+        //initializeClient();
+        /*
         return new Promise(resolve => {
             bc.brainCloudClient.authentication.authenticateUniversal("js-tester", "js-tester", true, (result) => {
                 resolve();
             });
         });
+        */
+
+        return setUpWithAuthenticate();
 
     }, () =>
     {
@@ -2214,7 +2217,15 @@ async function testGroupFile(){
         });
 
         function testMoveUserToGroupFile(){
-           console.log("moveUserToGroupFile");
+            console.log("Joining group...");
+
+            bc.group.joinGroup(groupId, result =>
+            {
+                var status = result.status;
+                console.log(status + " : " + JSON.stringify(result, null, 2));
+            });
+           
+            console.log("moveUserToGroupFile");
             bc.groupFile.moveUserToGroupFile(
                 "TestFolder/",
                 "README.md",
