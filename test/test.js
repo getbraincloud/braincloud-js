@@ -3132,8 +3132,8 @@ async function testIdentity() {
     });
 
     await asyncTest("attachEmailIdentity()", 2, function() {
-        bc.identity.attachEmailIdentity(UserA.email,
-            UserA.password,
+        bc.identity.attachEmailIdentity(UserC.email,
+            UserC.password,
             function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3146,8 +3146,8 @@ async function testIdentity() {
         let newEmail = "test_" + getRandomInt(0,1000000) + "@bitheads.com";
 
         bc.identity.changeEmailIdentity(
-                UserA.email,
-                UserA.password,
+                UserC.email,
+                UserC.password,
                 newEmail,
                 true,
                 function(result) {
