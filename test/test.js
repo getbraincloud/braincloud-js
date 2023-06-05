@@ -97,9 +97,6 @@ var results = {};
 
 var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
-var UserC = createUser("UserC", getRandomInt(0, 20000000));
-
-var DEFAULT_TIMEOUT = 5000;
 
 var GAME_ID = "";
 var SECRET = "";
@@ -689,6 +686,15 @@ async function testAuthentication() {
                 });
     });
 
+    await asyncTest("authenticateEmailPassword()", function(){
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateEmailPassword(UserA.email, UserA.password, true, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
     await asyncTest("authenticateAdvanced()", function() {
 
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
@@ -763,7 +769,7 @@ async function testAuthentication() {
 
     await asyncTest("resetEmailPassword()", function() {
         bc.brainCloudClient.authentication.resetEmailPassword(
-                "ryanr@bitheads.com",
+                UserA.email,
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
@@ -773,11 +779,11 @@ async function testAuthentication() {
 
     await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.brainCloudClient.authentication.resetEmailPasswordAdvanced(
-                "ryanr@bitheads.com",
+                UserA.email,
                 {
-                    fromAddress: "ryanr@bitheads.com",
+                    fromAddress: UserA.email,
                     fromName: "fromName",
-                    replyToAddress: "ryanr@bitheads.com",
+                    replyToAddress: UserA.email,
                     replyToName: "replyToName",
                     templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
                     substitutions: {
@@ -5560,7 +5566,7 @@ async function testWrapper()
 
     await asyncTest("resetEmailPassword()", function() {
         bc.resetEmailPassword(
-            "ryanr@bitheads.com",
+            UserA.email,
             function(result) {
                 equal(result.status, 200, JSON.stringify(result));
                 resolve_test();
@@ -5569,11 +5575,11 @@ async function testWrapper()
 
     await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.resetEmailPasswordAdvanced(
-            "ryanr@bitheads.com",
+            UserA.email,
             {
-                fromAddress: "ryanr@bitheads.com",
+                fromAddress: UserA.email,
                 fromName: "fromName",
-                replyToAddress: "ryanr@bitheads.com",
+                replyToAddress: UserA.email,
                 replyToName: "replyToName",
                 templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
                 substitutions: {
