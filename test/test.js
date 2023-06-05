@@ -767,101 +767,92 @@ async function testAuthentication() {
         });
     }
 
-    await asyncTest("resetEmailPassword()", function() {
+    await asyncTest("resetEmailPassword()", function () {
         bc.brainCloudClient.authentication.resetEmailPassword(
-                UserA.email,
-                function(result) {
+            UserA.email,
+            function (result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
+    });
+
+    await asyncTest("resetEmailPasswordWithExpiry()", function () {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateEmailPassword(UserA.email, UserA.password, true, function(result) {
+            
+            // If authentication fails, the password reset will fail as well: "No session"
+            if(result.status == 200){
+                bc.brainCloudClient.authentication.resetEmailPasswordWithExpiry(UserA.email, 1, function (result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
+            }
+            else{
+                resolve_test();
+            }
+        });
     });
 
-
-    await asyncTest("resetEmailPasswordAdvanced()", function() {
+    await asyncTest("resetEmailPasswordAdvanced()", function () {
+        var serviceParams = {
+            fromAddress: UserA.email,
+            fromName: "fromName",
+            replyToAddress: UserA.email,
+            replyToName: "replyToName",
+            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            substitutions: {
+                [":name"]: "John Doe",
+                [":resetLink"]: "www.dummuyLink.io"
+            },
+            categories: [
+                "category1",
+                "category2"
+            ]
+        };
+        
         bc.brainCloudClient.authentication.resetEmailPasswordAdvanced(
-                UserA.email,
-                {
-                    fromAddress: UserA.email,
-                    fromName: "fromName",
-                    replyToAddress: UserA.email,
-                    replyToName: "replyToName",
-                    templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
-                    substitutions: {
-                      [":name"]: "John Doe",
-                      [":resetLink"]: "www.dummuyLink.io"
-                    },
-                    categories: [
-                      "category1",
-                      "category2"
-                    ]
-                },
-                function(result) {
-                    equal(result.status, 200,  JSON.stringify(result));
+            UserA.email,
+            serviceParams,
+            function (result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
+    });
+
+    await asyncTest("resetEmailPasswordAdvancedWithExpiry()", function(){
+        var serviceParams = {
+            fromAddress: UserA.email,
+            fromName: "fromName",
+            replyToAddress: UserA.email,
+            replyToName: "replyToName",
+            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            substitutions: {
+                [":name"]: "John Doe",
+                [":resetLink"]: "www.dummuyLink.io"
+            },
+            categories: [
+                "category1",
+                "category2"
+            ]
+        };
+
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateEmailPassword(UserA.email, UserA.password, true, function(result) {
+            
+            // If authentication fails, the password reset will fail as well: "No session"
+            if(result.status == 200){
+                bc.brainCloudClient.authentication.resetEmailPasswordAdvancedWithExpiry(UserA.email, serviceParams, 1, function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
-            });
-
-
-            // KEEP COMMENTED ------------------------------------
-
-
-            // await asyncTest("resetEmailPasswordWithExpiry()", function() {
-            //     bc.brainCloudClient.authentication.resetEmailPasswordWithExpiry(
-            //             "ryanr@bitheads.com",
-            //             1,
-            //             function(result) {
-            //                 equal(result.status, 200, JSON.stringify(result));
-            //                 resolve_test();
-            //             });
-            // });
-
-            // await asyncTest("authenticateUniversal()", function() {
-
-            //     bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
-
-            //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-            //             UserA.password, true, function(result) {
-            //                 equal(result.status, 200, JSON.stringify(result));
-            //                 resolve_test();
-            //             });
-            // });
-
-            // await asyncTest("resetEmailPasswordAdvancedWithExpiry()", function() {
-
-            //     bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
-
-            //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-            //             UserA.password, true, function(result) {
-            //                 equal(result.status, 200, JSON.stringify(result));
-            //                 resolve_test();
-            //             });
-
-
-            //     bc.brainCloudClient.authentication.resetEmailPasswordAdvancedWithExpiry(
-            //             "ryanr@bitheads.com",
-            //             {
-            //                 fromAddress: "ryanr@bitheads.com",
-            //                 fromName: "fromName",
-            //                 replyToAddress: "ryanr@bitheads.com",
-            //                 replyToName: "replyToName",
-            //                 templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
-            //                 substitutions: {
-            //                   [":name"]: "John Doe",
-            //                   [":resetLink"]: "www.dummuyLink.io"
-            //                 },
-            //                 categories: [
-            //                   "category1",
-            //                   "category2"
-            //                 ]
-            //             },
-            //             1,
-            //             function(result) {
-            //                 equal(result.status, 200,  JSON.stringify(result));
-            //                 resolve_test();
-            //             });
-            //         });
-
-            //----------------------------------
+            }
+            else{
+                resolve_test();
+            }
+        });
+    })
 
     //NO SESSION!?
     await asyncTest("resetUniversalIdPassword()", function() {
