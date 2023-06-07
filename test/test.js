@@ -2273,34 +2273,33 @@ async function testGroupFile(){
             }
         });
 
-        function testMoveUserToGroupFile(){
+        function testMoveUserToGroupFile() {
             console.log("Joining group...");
 
-            bc.group.joinGroup(groupId, result =>
-            {
+            bc.group.joinGroup(groupId, result => {
                 var status = result.status;
                 console.log(status + " : " + JSON.stringify(result, null, 2));
-            });
-           
-            console.log("moveUserToGroupFile");
-            bc.groupFile.moveUserToGroupFile(
-                "TestFolder/",
-                "README.md",
-                groupId,
-                "",
-                tempFilename,
-                acl,
-                true,
-                function(result){
-                    groupFileId = result.data.fileDetails.fileId;
-                    if(groupFileId == ""){
-                        ok(false, "Group File ID not saved correctly");
-                    }
 
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                }
-            )
+                console.log("moveUserToGroupFile");
+                bc.groupFile.moveUserToGroupFile(
+                    "TestFolder/",
+                    "README.md",
+                    groupId,
+                    "",
+                    tempFilename,
+                    acl,
+                    true,
+                    function (result) {
+                        groupFileId = result.data.fileDetails.fileId;
+                        if (groupFileId == "") {
+                            ok(false, "Group File ID not saved correctly");
+                        }
+
+                        equal(result.status, 200, "Expecting 200");
+                        resolve_test();
+                    }
+                )
+            });
         }
     });
 
@@ -2484,7 +2483,7 @@ async function testGroupFile(){
         };
     });
 
-    await asyncTest("deleteFile()", 1, function(){
+    await asyncTest("deleteFile()", 2, function(){
         bc.groupFile.deleteFile(
             groupId,
             groupFileId,
@@ -2493,15 +2492,29 @@ async function testGroupFile(){
             function(result){
                 if(result.status == 200){
                     ok(true, "Test file deleted");
-                    resolve_test();
                 }
                 else{
                     ok(false, result.status_message);
-                    resolve_test();
                 }
+                
+                leaveGroup();
             }
         )
     });
+
+    // If the user does not leave the group, the group will fill up and cause errors
+    function leaveGroup(){
+        bc.group.leaveGroup(groupId, function(result){
+            if(result.status == 200){
+                ok(true, "Test user left group");
+                resolve_test();
+            }
+            else{
+                ok(false, "Test user failed to leave group");
+                resolve_test();
+            }
+        })
+    }
 }
 
 ////////////////////////////////////////
