@@ -99,8 +99,6 @@ var UserA = createUser("UserA", getRandomInt(0, 20000000));
 var UserB = createUser("UserB", getRandomInt(0, 20000000));
 var UserC = createUser("UserC", getRandomInt(0, 20000000));
 
-var DEFAULT_TIMEOUT = 5000;
-
 var GAME_ID = "";
 var SECRET = "";
 var GAME_VERSION = "";
@@ -392,7 +390,7 @@ function passed(expr, log)
 
 function failed(expr, logex)
 {
-    var log = "\x1b[36m" + test_name + " \x1b[31m[FAILED]\x1b[36m (" + expr + ")\x1b[0m" + logex;
+    var log = "\x1b[36m" + test_name + " \x1b[31m[failed]\x1b[36m (" + expr + ")\x1b[0m" + logex;
     var finallog = "\x1b[36m" + test_name + "\x1b[0m";
     fail_log.push("\x1b[31m[  FAILED  ]\x1b[36m " + finallog);
     console.log(log);
@@ -660,36 +658,43 @@ async function testAsyncMatch()
 // Authentication tests
 ////////////////////////////////////////
 async function testAuthentication() {
-    if (!module("Authentication", () =>
-    {
+    if (!module("Authentication", () => {
         initializeClient();
-    }, () =>
-    {
+    }, () => {
         return tearDownLogout();
     })) return;
 
-    await asyncTest("authenticateAnonymous()", function() {
+    await asyncTest("authenticateAnonymous()", function () {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
         bc.brainCloudClient.authentication.authenticateAnonymous(
-            true, function(result) {
+            true, function (result) {
                 equal(result.status, 200, JSON.stringify(result));
                 resolve_test();
             });
     });
 
-    await asyncTest("authenticateUniversal()", function() {
+    await asyncTest("authenticateUniversal()", function () {
 
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
         bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-                UserA.password, true, function(result) {
-                    equal(result.status, 200, JSON.stringify(result));
-                    resolve_test();
-                });
+            UserA.password, true, function (result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
     });
 
-    await asyncTest("authenticateAdvanced()", function() {
+    await asyncTest("authenticateEmailPassword()", function () {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateEmailPassword(UserA.email, UserA.password, true, function (result) {
+            equal(result.status, 200, JSON.stringify(result));
+            resolve_test();
+        });
+    });
+
+    await asyncTest("authenticateAdvanced()", function () {
 
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
@@ -698,10 +703,10 @@ async function testAuthentication() {
             { externalId: "authAdvancedUser", authenticationToken: "authAdvancedPass" },
             true,
             { AnswerToEverything: 42 },
-            function(result) {
-                    equal(result.status, 200, JSON.stringify(result));
-                    resolve_test();
-                });
+            function (result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
     });
 
     // Ultra only works on internal, internala, internalg and ultra.
@@ -709,257 +714,318 @@ async function testAuthentication() {
     if (SERVER_URL.includes("api-internal.braincloudservers.com") ||
         SERVER_URL.includes("internala.braincloudservers.com") ||
         SERVER_URL.includes("api.internalg.braincloudservers.com")/* ||
-        SERVER_URL.includes("api.ultracloud.ultra.io")*/)
-    {
-        await asyncTest("authenticateUltra()", 3, function()
-        {
+        SERVER_URL.includes("api.ultracloud.ultra.io")*/) {
+        await asyncTest("authenticateUltra()", 3, function () {
             bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
-            bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function(result)
-            {
+            bc.brainCloudClient.authentication.authenticateUniversal(UserA.name, UserA.password, true, function (result) {
                 equal(result.status, 200, JSON.stringify(result));
-                if (result.status == 200)
-                {
-                    bc.brainCloudClient.script.runScript("getUltraToken", {}, function(result)
-                    {
+                if (result.status == 200) {
+                    bc.brainCloudClient.script.runScript("getUltraToken", {}, function (result) {
                         equal(result.status, 200, JSON.stringify(result));
-                        if (result.status == 200)
-                        {
+                        if (result.status == 200) {
                             var d = result.data;
-                            if (d.response.data)
-                            {
+                            if (d.response.data) {
                                 var id_token = d.response.data.json.id_token;
 
-                                bc.playerState.logout(() =>
-                                {
+                                bc.playerState.logout(() => {
                                     bc.brainCloudClient.resetCommunication();
 
-                                    bc.brainCloudClient.authentication.authenticateUltra("braincloud1", id_token, true, function(result)
-                                    {
+                                    bc.brainCloudClient.authentication.authenticateUltra("braincloud1", id_token, true, function (result) {
                                         equal(result.status, 200, JSON.stringify(result));
                                         resolve_test();
                                     });
                                 });
                             }
-                            else
-                            {
+                            else {
                                 failed("Bad script", "Bad script, returned empty response");
                                 resolve_test();
                             }
                         }
-                        else
-                        {
+                        else {
                             resolve_test();
                         }
                     });
                 }
-                else
-                {
+                else {
                     resolve_test();
                 }
             });
         });
     }
 
-    await asyncTest("resetEmailPassword()", function() {
+    await asyncTest("resetEmailPassword()", function () {
         bc.brainCloudClient.authentication.resetEmailPassword(
-                "ryanr@bitheads.com",
-                function(result) {
+            UserA.email,
+            function (result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
+    });
+
+    await asyncTest("resetEmailPasswordWithExpiry()", function () {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateEmailPassword(UserA.email, UserA.password, true, function (result) {
+
+            // If authentication fails, the password reset will fail as well: "No session"
+            if (result.status == 200) {
+                bc.brainCloudClient.authentication.resetEmailPasswordWithExpiry(UserA.email, 1, function (result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
+            }
+            else {
+                ok(false, "Authentication failed");
+                resolve_test();
+            }
+        });
     });
 
+    await asyncTest("resetEmailPasswordAdvanced()", function () {
+        var serviceParams = {
+            fromAddress: UserA.email,
+            fromName: "fromName",
+            replyToAddress: UserA.email,
+            replyToName: "replyToName",
+            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            substitutions: {
+                [":name"]: "John Doe",
+                [":resetLink"]: "www.dummuyLink.io"
+            },
+            categories: [
+                "category1",
+                "category2"
+            ]
+        };
 
-    await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.brainCloudClient.authentication.resetEmailPasswordAdvanced(
-                "ryanr@bitheads.com",
-                {
-                    fromAddress: "ryanr@bitheads.com",
-                    fromName: "fromName",
-                    replyToAddress: "ryanr@bitheads.com",
-                    replyToName: "replyToName",
-                    templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
-                    substitutions: {
-                      [":name"]: "John Doe",
-                      [":resetLink"]: "www.dummuyLink.io"
-                    },
-                    categories: [
-                      "category1",
-                      "category2"
-                    ]
-                },
-                function(result) {
-                    equal(result.status, 200,  JSON.stringify(result));
+            UserA.email,
+            serviceParams,
+            function (result) {
+                equal(result.status, 200, JSON.stringify(result));
+                resolve_test();
+            });
+    });
+
+    await asyncTest("resetEmailPasswordAdvancedWithExpiry()", function () {
+        var serviceParams = {
+            fromAddress: UserA.email,
+            fromName: "fromName",
+            replyToAddress: UserA.email,
+            replyToName: "replyToName",
+            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            substitutions: {
+                [":name"]: "John Doe",
+                [":resetLink"]: "www.dummuyLink.io"
+            },
+            categories: [
+                "category1",
+                "category2"
+            ]
+        };
+
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateEmailPassword(UserA.email, UserA.password, true, function (result) {
+
+            // If authentication fails, the password reset will fail as well: "No session"
+            if (result.status == 200) {
+                bc.brainCloudClient.authentication.resetEmailPasswordAdvancedWithExpiry(UserA.email, serviceParams, 1, function (result) {
+                    equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
                 });
-            });
+            }
+            else {
+                ok(false, "Authentication failed");
+                resolve_test();
+            }
+        });
+    });
 
+    await asyncTest("resetUniversalIdPassword()", function () {
+        resetUniversalIDPassword(testResetUniversalIdPassword);
+    });
 
-            // KEEP COMMENTED ------------------------------------
+    await asyncTest("resetUniversalIdPasswordAdvanced()", function () {
+        resetUniversalIDPassword(testResetUniversalIdPasswordAdvanced);
+    });
 
+    await asyncTest("resetUniversalIdPasswordWithExpiry()", function () {
+        resetUniversalIDPassword(testResetUniversalIdPasswordWithExpiry);
+    });
 
-            // await asyncTest("resetEmailPasswordWithExpiry()", function() {
-            //     bc.brainCloudClient.authentication.resetEmailPasswordWithExpiry(
-            //             "ryanr@bitheads.com",
-            //             1,
-            //             function(result) {
-            //                 equal(result.status, 200, JSON.stringify(result));
-            //                 resolve_test();
-            //             });
-            // });
+    await asyncTest("resetUniversalIdPasswordAdvancedWithExpiry()", function () {
+        resetUniversalIDPassword(testResetUniversalIdPasswordAdvancedWithExpiry);
+    });
 
-            // await asyncTest("authenticateUniversal()", function() {
-
-            //     bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
-
-            //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-            //             UserA.password, true, function(result) {
-            //                 equal(result.status, 200, JSON.stringify(result));
-            //                 resolve_test();
-            //             });
-            // });
-
-            // await asyncTest("resetEmailPasswordAdvancedWithExpiry()", function() {
-
-            //     bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
-
-            //     bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-            //             UserA.password, true, function(result) {
-            //                 equal(result.status, 200, JSON.stringify(result));
-            //                 resolve_test();
-            //             });
-
-
-            //     bc.brainCloudClient.authentication.resetEmailPasswordAdvancedWithExpiry(
-            //             "ryanr@bitheads.com",
-            //             {
-            //                 fromAddress: "ryanr@bitheads.com",
-            //                 fromName: "fromName",
-            //                 replyToAddress: "ryanr@bitheads.com",
-            //                 replyToName: "replyToName",
-            //                 templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
-            //                 substitutions: {
-            //                   [":name"]: "John Doe",
-            //                   [":resetLink"]: "www.dummuyLink.io"
-            //                 },
-            //                 categories: [
-            //                   "category1",
-            //                   "category2"
-            //                 ]
-            //             },
-            //             1,
-            //             function(result) {
-            //                 equal(result.status, 200,  JSON.stringify(result));
-            //                 resolve_test();
-            //             });
-            //         });
-
-            //----------------------------------
-
-    //NO SESSION!?
-    await asyncTest("resetUniversalIdPassword()", function() {
+    // This test is expected to fail since it does not authenticate
+    await asyncTest("noSession_resetUniversalIdPassword()", function () {
         bc.brainCloudClient.authentication.resetUniversalIdPassword(
             UserA.id,
-            function(result) {
-            equal(result.status, 403);
-            resolve_test();
+            function (result) {
+                equal(result.status, 403);  // "reason_code":40304,"status_message":"No session"
+                resolve_test();
             });
     });
 
-
-    await asyncTest("resetUniversalIdPasswordAdvanced()", function() {
-        content = "{\"templateId\": \"8f14c77d-61f4-4966-ab6d-0bee8b13d090\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}";
-
-        bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
-            UserA.id,
-            content,
-            function(result) {
-            equal(result.status, 403);
-            resolve_test();
-            });
-    });
-
-    await asyncTest("resetUniversalIdPasswordWithExpiry()", function() {
-        bc.brainCloudClient.authentication.resetUniversalIdPasswordWithExpiry(
-            UserA.id,
-            1,
-            function(result) {
-            equal(result.status, 403);
-            resolve_test();
-            });
-    });
-
-
-    await asyncTest("resetUniversalIdPasswordAdvancedWithExpiry()", function() {
-        content = "{\"templateId\": \"8f14c77d-61f4-4966-ab6d-0bee8b13d090\", \"substitutions\": { \":name\": \"John Doe\",\":resetLink\": \"www.dummuyLink.io\"}, \"categories\": [\"category1\",\"category2\" ]}";
-
-        bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvancedWithExpiry(
-            UserA.id,
-            content,
-            1,
-            function(result) {
-            equal(result.status, 403);
-            resolve_test();
-            });
-    });
-
-    await asyncTest("authenticateHandoff()", 3, function() {
+    await asyncTest("authenticateHandoff()", 3, function () {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
         var handoffId;
         var handoffToken;
 
         bc.brainCloudClient.authentication.authenticateAnonymous(
-            true, function(result) {
+            true, function (result) {
                 equal(result.status, 200, JSON.stringify(result));
 
-                bc.brainCloudClient.script.runScript("createHandoffId", {}, function(result) {
+                bc.brainCloudClient.script.runScript("createHandoffId", {}, function (result) {
                     equal(result.status, 200, JSON.stringify(result));
                     var d = result.data;
                     handoffId = d.response.handoffId;
                     handoffToken = d.response.securityToken;
 
-                    bc.brainCloudClient.authentication.authenticateHandoff(handoffId, handoffToken, function(result) {
+                    bc.brainCloudClient.authentication.authenticateHandoff(handoffId, handoffToken, function (result) {
                         equal(result.status, 200, JSON.stringify(result));
                         resolve_test();
-                       });
-                   });
+                    });
+                });
             });
     });
 
-    await asyncTest("authenticateSettopHandoff()", 3, function() {
+    await asyncTest("authenticateSettopHandoff()", 3, function () {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
         var handoffCode
 
         bc.brainCloudClient.authentication.authenticateAnonymous(
-            true, function(result) {
+            true, function (result) {
                 equal(result.status, 200, JSON.stringify(result));
 
-                bc.brainCloudClient.script.runScript("CreateSettopHandoffCode", {}, function(result) {
+                bc.brainCloudClient.script.runScript("CreateSettopHandoffCode", {}, function (result) {
                     equal(result.status, 200, JSON.stringify(result));
                     var d = result.data;
                     handoffCode = d.response.handoffCode
 
-                    bc.brainCloudClient.authentication.authenticateSettopHandoff(handoffCode, function(result) {
+                    bc.brainCloudClient.authentication.authenticateSettopHandoff(handoffCode, function (result) {
                         equal(result.status, 200, JSON.stringify(result));
                         resolve_test();
-                       });
-                   });
+                    });
+                });
             });
     });
 
-    await asyncTest("authManualRedirect()", 2, function() {
+    await asyncTest("authManualRedirect()", 2, function () {
         bc.initialize(REDIRECT_APP_ID, SECRET, GAME_VERSION);
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
-        bc.brainCloudClient.authentication.authenticateAnonymous(true, function(result) {
+        bc.brainCloudClient.authentication.authenticateAnonymous(true, function (result) {
             equal(result.status, 202, "Expecting 202");
             equal(result.reason_code, bc.reasonCodes.MANUAL_REDIRECT, "Expecting 40308");
             resolve_test();
         });
     });
+
+    // Generic function for each of the resetUniversalId tests
+    // Each test must authenticate with brainCloud, ensure that the profile has a contact email, and then perform the specified request
+    function resetUniversalIDPassword(resetFunction) {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
+            UserA.password, true, function (result) {
+
+                // If authentication fails, the password reset will fail as well: "No session"
+                if (result.status == 200) {
+
+                    // For universal reset, must ensure that user has a valid email ID
+                    bc.brainCloudClient.playerState.updateContactEmail(UserC.email, function (result) {
+                        if (result.status == 200) {
+                            resetFunction();    // specified variation of the resetUniversalId call
+                        }
+                        else {
+                            ok(false, "Update contact email failed");
+                            resolve_test();
+                        }
+                    });
+                }
+                else {
+                    ok(false, "Authentication failed");
+                    resolve_test();
+                }
+            });
+    }
+
+    function testResetUniversalIdPassword() {
+        bc.brainCloudClient.authentication.resetUniversalIdPassword(
+            UserA.name,
+            function (result) {
+                equal(result.status, 200);
+                resolve_test();
+            });
+    }
+
+    function testResetUniversalIdPasswordAdvanced() {
+        var serviceParams = {
+            fromAddress: UserA.email,
+            fromName: "fromName",
+            replyToAddress: UserA.email,
+            replyToName: "replyToName",
+            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            substitutions: {
+                [":name"]: "John Doe",
+                [":resetLink"]: "www.dummuyLink.io"
+            },
+            categories: [
+                "category1",
+                "category2"
+            ]
+        };
+
+        bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvanced(
+            UserA.name,
+            serviceParams,
+            function (result) {
+                equal(result.status, 200);
+                resolve_test();
+            });
+    }
+
+    function testResetUniversalIdPasswordWithExpiry() {
+        bc.brainCloudClient.authentication.resetUniversalIdPasswordWithExpiry(
+            UserA.name,
+            1,
+            function (result) {
+                equal(result.status, 200);
+                resolve_test();
+            });
+    }
+
+    function testResetUniversalIdPasswordAdvancedWithExpiry() {
+        var serviceParams = {
+            fromAddress: UserA.email,
+            fromName: "fromName",
+            replyToAddress: UserA.email,
+            replyToName: "replyToName",
+            templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
+            substitutions: {
+                [":name"]: "John Doe",
+                [":resetLink"]: "www.dummuyLink.io"
+            },
+            categories: [
+                "category1",
+                "category2"
+            ]
+        };
+
+        bc.brainCloudClient.authentication.resetUniversalIdPasswordAdvancedWithExpiry(
+            UserA.name,
+            serviceParams,
+            1,
+            function (result) {
+                equal(result.status, 200);
+                resolve_test();
+            });
+    }
 }
 
 ////////////////////////////////////////
@@ -2147,109 +2213,23 @@ async function testGlobalEntity() {
 async function testGroupFile(){
     if (!module("GroupFile", () =>
     {
-        initializeClient();
-
-        return new Promise(resolve => {
-            bc.brainCloudClient.authentication.authenticateUniversal("js-tester", "js-tester", true, (result) => {
-                resolve();
-            });
-        });
+        return setUpWithAuthenticate();
 
     }, () =>
     {
         return tearDownLogout();
     })) return;
 
-    var groupID = "a7ff751c-3251-407a-b2fd-2bd1e9bca64a";
-    var groupFileID = "d2dd646a-f1af-4a96-90a7-a0310246f5a2";
-    var filename = "testingGroupFile.dat";
-    var tempFilename = "temporaryFile.dat"
-    var movedFilename = "movedGroupFile.dat";
-    var copiedFilename = "copiedGroupFile.dat";
-    var updatedFilename = "updatedGroupFile.dat";
+    var groupId = "a7ff751c-3251-407a-b2fd-2bd1e9bca64a";
+    var tempFilename = "testfile-js.txt";
+    var groupFileId = "";
+    var movedFilename = "moved-testfile-js.txt";
+    var copiedFilename = "copied-testfile-js.txt";
+    var updatedFilename = "updated-testfile-js.txt";
     var acl = {
         "other" : 0,
         "member" : 2
     };
-   
-    await asyncTest("getFileInfo()", 2, function() {
-        bc.groupFile.getFileInfo(
-            groupID,
-            groupFileID,
-            function(result) {
-                
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-    await asyncTest("getFileInfoSimple()", 2, function() {
-        bc.groupFile.getFileInfoSimple(
-            groupID,
-            "",
-            filename,
-            function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-    
-    await asyncTest("getCDNUrl()", 2, function() {
-        bc.groupFile.getCDNUrl(
-            groupID,
-            groupFileID,
-            function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-    
-    await asyncTest("getFileList()", 2, function() {
-        bc.groupFile.getFileList(
-            groupID,
-            "",
-            true,
-            function(result) {
-                ok(true, JSON.stringify(result));
-                equal(result.status, 200, "Expecting 200");
-                resolve_test();
-            });
-    });
-    
-    await asyncTest("checkFilenameExists()", 2, function() {
-        bc.groupFile.checkFilenameExists(
-            groupID,
-            "",
-            filename,
-            function(result) {
-                if(result.data.exists == true){
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                }
-                else{
-                    resolve_test();
-                }
-            });
-    });
-    
-    await asyncTest("checkFullpathFilenameExists()", 2, function() {
-        bc.groupFile.checkFullpathFilenameExists(
-            groupID,
-            filename,
-            function(result) {
-                if(result.data.exists == true){
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                }
-                else{
-                    resolve_test();
-                }
-            });
-    });
 
     await asyncTest("moveUserToGroupFile()", 3, function() {
         var fileSize = fs.statSync("README.md").size;
@@ -2267,7 +2247,7 @@ async function testGroupFile(){
                 {
                     if (result.statusCode === 200)
                     {
-                        ok(true, "done file upload");
+                        ok(true, "Done file upload");
                         testMoveUserToGroupFile();
                     }
                     else
@@ -2288,29 +2268,118 @@ async function testGroupFile(){
             }
             else
             {
+                console.log("Status != 200");
                 resolve_test();
             }
         });
 
-        function testMoveUserToGroupFile(){
-            bc.groupFile.moveUserToGroupFile(
-                "TestFolder/",
-                "README.md",
-                groupID,
-                "",
-                tempFilename,
-                acl,
-                true,
-                function(result){
-                    var tempFileId = result.data.fileDetails.fileId;
+        function testMoveUserToGroupFile() {
+            console.log("Joining group...");
 
-                    deleteTempFile(tempFileId, tempFilename);
+            bc.group.joinGroup(groupId, result => {
+                var status = result.status;
+                console.log(status + " : " + JSON.stringify(result, null, 2));
 
-                    equal(result.status, 200, "Expecting 200");
+                console.log("moveUserToGroupFile");
+                bc.groupFile.moveUserToGroupFile(
+                    "TestFolder/",
+                    "README.md",
+                    groupId,
+                    "",
+                    tempFilename,
+                    acl,
+                    true,
+                    function (result) {
+                        groupFileId = result.data.fileDetails.fileId;
+                        if (groupFileId == "") {
+                            ok(false, "Group File ID not saved correctly");
+                        }
+
+                        equal(result.status, 200, "Expecting 200");
+                        resolve_test();
+                    }
+                )
+            });
+        }
+    });
+
+    await asyncTest("getFileInfo()", 2, function() {
+        bc.groupFile.getFileInfo(
+            groupId,
+            groupFileId,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getFileInfoSimple()", 2, function() {
+        bc.groupFile.getFileInfoSimple(
+            groupId,
+            "",
+            tempFilename,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getCDNUrl()", 2, function() {
+        bc.groupFile.getCDNUrl(
+            groupId,
+            groupFileId,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getFileList()", 2, function() {
+        bc.groupFile.getFileList(
+            groupId,
+            "",
+            true,
+            function(result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("checkFilenameExists()", 1, function() {
+        bc.groupFile.checkFilenameExists(
+            groupId,
+            "",
+            tempFilename,
+            function(result) {
+                if(result.data.exists == true){
+                    ok(true, "File exists");
                     resolve_test();
                 }
-            )
-        }
+                else{
+                    ok(false, "File should exist but returned false...");
+                    resolve_test();
+                }
+            });
+    });
+
+    await asyncTest("checkFullpathFilenameExists()", 1, function() {
+        bc.groupFile.checkFullpathFilenameExists(
+            groupId,
+            tempFilename,
+            function(result) {
+                if(result.data.exists == true){
+                    ok(true, "File exists");
+                    resolve_test();
+                }
+                else{
+                    ok(false, "File should exist but returned false...");
+                    resolve_test();
+                }
+            });
     });
 
     await asyncTest("moveFile()", function(){
@@ -2320,18 +2389,19 @@ async function testGroupFile(){
 
         function testMoveFile(moveName){
             bc.groupFile.moveFile(
-                groupID,
-                groupFileID,
+                groupId,
+                groupFileId,
                 -1,
                 "",
                 0,
                 moveName,
                 true,
                 function(result) {
+
                     //Change the filename back to its original once it has been updated
                     if(moveBack){
                         moveBack = false;
-                        testMoveFile(filename);
+                        testMoveFile(tempFilename);
                     }
                     else{
                         equal(result.status, 200, "Expecting 200");
@@ -2340,12 +2410,12 @@ async function testGroupFile(){
                 }
             );
         };
-    })
-    
+    });
+
     await asyncTest("copyFile()", function() {
         bc.groupFile.copyFile(
-            groupID,
-            groupFileID,
+            groupId,
+            groupFileId,
             -1,
             "",
             0,
@@ -2359,54 +2429,91 @@ async function testGroupFile(){
                     var tempFilename = result.data.fileDetails.fileName;
 
                     console.log("Deleting newly copied file...");
-                    deleteTempFile(tempFileId, tempFilename);
-                    
-                    equal(result.status, 200, "Expecting 200");
+                    bc.groupFile.deleteFile(
+                        groupId,
+                        tempFileId,
+                        -1,
+                        tempFilename,
+                        function(){
+                            ok(true, "Test file deleted");
+                            resolve_test();
+                        }
+                    )
+                }
+                else{
+                    ok(false, result.status_message);
                     resolve_test();
                 }
             }
         );
     });
-    
-    await asyncTest("updateFileInfo()", function() {
+
+    await asyncTest("updateFileInfo()", function() {        
         var revertBack = true;
 
         testUpdateInfo(updatedFilename);
 
         function testUpdateInfo(updateName){
             bc.groupFile.updateFileInfo(
-                groupID,
-                groupFileID,
+                groupId,
+                groupFileId,
                 -1,
                 updateName,
                 acl,
                 function(result) {
-                    //Change the filename back to its original once it has been updated
-                    if(revertBack){
-                        revertBack = false;
-                        testUpdateInfo(filename);
+                    if(result.status == 200){
+                        
+                        //Change the filename back to its original once it has been updated
+                        if(revertBack){
+                            revertBack = false;
+                            testUpdateInfo(tempFilename);
+                        }
+                        else{
+                            equal(result.status, 200, "Expecting 200");
+                            resolve_test();
+                        }   
                     }
                     else{
-                        equal(result.status, 200, "Expecting 200");
+                        ok(false, result.status_message);
                         resolve_test();
-                    }                    
+                    }
+                                     
                 }
             );
         };
     });
 
-    //Deletes a file that was created for a test (ex: Testing copy or upload functions)
-    //Also acts as groupFile.deleteFile test
-    function deleteTempFile(tempFileId, tempFilename){
+    await asyncTest("deleteFile()", 2, function(){
         bc.groupFile.deleteFile(
-            groupID,
-            tempFileId,
+            groupId,
+            groupFileId,
             -1,
             tempFilename,
-            function(){
-                console.log("Temp file deleted");
+            function(result){
+                if(result.status == 200){
+                    ok(true, "Test file deleted");
+                }
+                else{
+                    ok(false, result.status_message);
+                }
+                
+                leaveGroup();
             }
         )
+    });
+
+    // If the user does not leave the group, the group will fill up and cause errors
+    function leaveGroup(){
+        bc.group.leaveGroup(groupId, function(result){
+            if(result.status == 200){
+                ok(true, "Test user left group");
+                resolve_test();
+            }
+            else{
+                ok(false, "Test user failed to leave group");
+                resolve_test();
+            }
+        })
     }
 }
 
@@ -3038,8 +3145,8 @@ async function testIdentity() {
     });
 
     await asyncTest("attachEmailIdentity()", 2, function() {
-        bc.identity.attachEmailIdentity(UserA.email,
-            UserA.password,
+        bc.identity.attachEmailIdentity(UserC.email,
+            UserC.password,
             function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
@@ -3052,8 +3159,8 @@ async function testIdentity() {
         let newEmail = "test_" + getRandomInt(0,1000000) + "@bitheads.com";
 
         bc.identity.changeEmailIdentity(
-                UserA.email,
-                UserA.password,
+                UserC.email,
+                UserC.password,
                 newEmail,
                 true,
                 function(result) {
@@ -5532,7 +5639,7 @@ async function testWrapper()
 
     await asyncTest("resetEmailPassword()", function() {
         bc.resetEmailPassword(
-            "ryanr@bitheads.com",
+            UserA.email,
             function(result) {
                 equal(result.status, 200, JSON.stringify(result));
                 resolve_test();
@@ -5541,11 +5648,11 @@ async function testWrapper()
 
     await asyncTest("resetEmailPasswordAdvanced()", function() {
         bc.resetEmailPasswordAdvanced(
-            "ryanr@bitheads.com",
+            UserA.email,
             {
-                fromAddress: "ryanr@bitheads.com",
+                fromAddress: UserA.email,
                 fromName: "fromName",
-                replyToAddress: "ryanr@bitheads.com",
+                replyToAddress: UserA.email,
                 replyToName: "replyToName",
                 templateId: "8f14c77d-61f4-4966-ab6d-0bee8b13d090",
                 substitutions: {
@@ -6292,11 +6399,9 @@ async function testRelay() {
     })
 
     // // Full flow. Create lobby -> ready up -> connect to server
-    await asyncTest("connect()", 8, () =>
+    await asyncTest("connect()", 10, () =>
     {
         // Determines whether callback has already occured
-        let systemCallback = false;
-        let relayCallback = false;
 
         let endMatch = false;
 
@@ -6312,34 +6417,24 @@ async function testRelay() {
 
         bc.relay.registerRelayCallback((netId, data) =>
         {
-            if(relayCallback == false)
-            {
-                ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
-                
-                relayCallback = true;
+            ok(netId == bc.relay.getNetIdForProfileId(UserA.profileId) && data.toString('ascii') == "Echo", "Relay callback")
 
-                // Send end match request
-                var json = {
-                    "op" : "END_MATCH"
-                }
-                bc.relay.endMatch(json);
-                
-                //
-                resolve_test();
+            // Send end match request
+            var json = {
+                "op" : "END_MATCH"
             }
+            bc.relay.endMatch(json);
         })
 
         bc.relay.registerSystemCallback(json =>
         {
-            if (json.op == "CONNECT" && systemCallback == false)
+            if (json.op == "CONNECT")
             {
                 ok(true, "System Callback")
                 let relayOwnerCxId = bc.relay.getOwnerCxId()
                 ok(ownerCxId == relayOwnerCxId, `getOwnerCxId: ${ownerCxId} == ${relayOwnerCxId}`)
                 let netId = bc.relay.getNetIdForProfileId(UserA.profileId)
                 ok(UserA.profileId == bc.relay.getProfileIdForNetId(netId), "getNetIdForProfileId and getProfileIdForNetId")
-                
-                systemCallback = true;
                 
                 // Wait 5sec then check the ping.
                 // If we are pinging properly, we should get
@@ -6364,7 +6459,10 @@ async function testRelay() {
 
         bc.rttService.registerRTTLobbyCallback(result =>
         {
+            console.log("RTTLobbyCallback.");
+
             console.log(result)
+
             if (result.operation === "DISBANDED")
             {
                 clearTimeout(timeoutId)
@@ -6382,8 +6480,15 @@ async function testRelay() {
                         ok(true, "Relay Connected")
                     }, error =>
                     {
-                        ok(false, error);
-                        resolve_test();
+                        // End match req closes socket which causes error ("Relay Connection Closed") but this is expected
+                        if(endMatch){
+                            ok(true, error); 
+                            resolve_test(); // Successful test ends here
+                        }
+                        else{   // If any other connectCallback fails that is a problem
+                            ok(false, error);
+                            resolve_test();
+                        }
                     })
                 }
                 else
@@ -6393,13 +6498,13 @@ async function testRelay() {
                 }
             }
             else if (result.operation == "ROOM_ASSIGNED")
-            {
+            {                
                 bc.lobby.updateReady(result.data.lobbyId, true, {})
             }
-            else if (result.operation == "STARTING")
+            else if (result.operation == "MEMBER_JOIN") // || result.operation == "STARTING"
             {
                 ownerCxId = result.data.lobby.ownerCxId
-                console.log("STARTING ownerCxId = " + ownerCxId)
+                console.log("ownerCxId = " + ownerCxId)
             }
             else if (result.operation == "ROOM_READY")
             {
@@ -6409,6 +6514,8 @@ async function testRelay() {
 
         bc.rttService.enableRTT(result =>
         {
+            console.log("enableRTT...");
+            
             console.log(result);
             equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
             bc.lobby.findOrCreateLobby("READY_START_V2", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
@@ -6449,6 +6556,7 @@ async function testLobby() {
     {
         bc.lobby.createLobby("MATCH_UNRANKED", 0, null, true, {}, "all", {}, result =>
         {
+            console.log("LobbyTest createLobby() callback rcv");
             equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
@@ -6462,6 +6570,8 @@ async function testLobby() {
             resolve_test();
         });
     });
+
+    ///*
 
     await asyncTest("getLobbyData()", 1, () =>
     {
@@ -6670,6 +6780,7 @@ async function testLobby() {
             });
         });
     });
+    //*/
 }
 
 async function testPresence()
