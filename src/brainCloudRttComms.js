@@ -142,7 +142,7 @@ function BrainCloudRttComms (m_client) {
 //+         socket.on('message', bcrtt.onSocketMessage);
 //+         socket.on('binaryMessage', msg =>
 //+         {
-//+             var message = Utf8ArrayToStr(new Uint8Array(msg))
+//+             var message = String.fromCharCode.apply(null, new Uint8Array(msg));
 //+             bcrtt.onSocketMessage(message);
 //+         });
 //+     });
