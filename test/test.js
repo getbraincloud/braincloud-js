@@ -454,6 +454,9 @@ async function testKillSwitch()
     });
 }
 
+////////////////////////////////////////
+// Async Match tests
+////////////////////////////////////////
 async function testAsyncMatch()
 {
     if (!module("Async Match", () =>
@@ -1029,7 +1032,7 @@ async function testAuthentication() {
 }
 
 ////////////////////////////////////////
-// DataStream unit tests
+// Data Stream tests
 ////////////////////////////////////////
 async function testDataStream() {
     if (!module("DataStream", () =>
@@ -1078,7 +1081,7 @@ async function testDataStream() {
 }
 
 ////////////////////////////////////////
-// Entity unit tests
+// Entity tests
 ////////////////////////////////////////
 async function testEntity() {
     if (!module("Entity", () =>
@@ -1243,7 +1246,7 @@ async function testEntity() {
 }
 
 ////////////////////////////////////////
-// Custom Entity unit tests
+// Custom Entity tests
 ////////////////////////////////////////
 async function testCustomEntity() {
     if (!module("CustomEntity", () =>
@@ -1459,7 +1462,7 @@ async function testCustomEntity() {
 }
 
 ////////////////////////////////////////
-// Event unit tests
+// Event tests
 ////////////////////////////////////////
 async function testEvent() {
     if (!module("Event", null, () =>
@@ -1732,7 +1735,7 @@ async function testFriend() {
 }
 
 ////////////////////////////////////////
-// Gamification unit tests
+// Gamification tests
 ////////////////////////////////////////
 async function testGamification() {
     if (!module("Gamification", () =>
@@ -1918,7 +1921,7 @@ async function testGamification() {
 }
 
 ////////////////////////////////////////
-// Global App unit tests
+// Global App tests
 ////////////////////////////////////////
 async function testGlobalApp() {
     if (!module("GlobalApp", () =>
@@ -1955,7 +1958,7 @@ async function testGlobalApp() {
 }
 
 ////////////////////////////////////////
-// GlobalStatistics unit tests
+// Global Statistics tests
 ////////////////////////////////////////
 async function testGlobalStatistics() {
     if (!module("GlobalStatistics", () =>
@@ -2015,9 +2018,8 @@ async function testGlobalStatistics() {
 }
 
 ////////////////////////////////////////
-// GlobalEntity unit tests
+// Global Entity tests
 ////////////////////////////////////////
-
 async function testGlobalEntity() {
     if (!module("GlobalEntity", () =>
     {
@@ -3748,7 +3750,7 @@ async function testPlayerStatisticsEvent() {
 }
 
 ////////////////////////////////////////
-// PlayerStatistics unit tests
+// Player Statistics tests
 ////////////////////////////////////////
 async function testPlayerStatistics() {
 
@@ -3839,6 +3841,9 @@ async function testPlayerStatistics() {
     });
 }
 
+////////////////////////////////////////
+// Virtual Currency tests
+////////////////////////////////////////
 async function testVirtualCurrency() {
     if (!module("VirtualCurrency", () =>
     {
@@ -3907,6 +3912,9 @@ async function testVirtualCurrency() {
     });
 }
 
+////////////////////////////////////////
+// App Store tests
+////////////////////////////////////////
 async function testAppStore() {
     if (!module("AppStore", () =>
     {
@@ -3986,7 +3994,7 @@ async function testAppStore() {
 }
 
 ////////////////////////////////////////
-// Profanity unit tests
+// Profanity tests
 ////////////////////////////////////////
 async function testProfanity() {
     if (!module("Profanity", () =>
@@ -4027,7 +4035,7 @@ async function testProfanity() {
 
 
 ////////////////////////////////////////
-// Push notification unit tests
+// Push Notification tests
 ////////////////////////////////////////
 async function testPushNotification() {
     if (!module("PushNotification", () =>
@@ -4230,7 +4238,7 @@ async function testPushNotification() {
 }
 
 ////////////////////////////////////////
-// Redemption Code unit tests
+// Redemption Code tests
 ////////////////////////////////////////
 async function testRedemptionCode() {
     if (!module("RedemptionCode", () =>
@@ -4468,7 +4476,7 @@ async function testScript() {
 }
 
 ////////////////////////////////////////
-// SocialLeaderboard unit tests
+// Social Leaderboard tests
 ////////////////////////////////////////
 async function testSocialLeaderboard() {
     if (!module("SocialLeaderboard", () =>
@@ -4847,7 +4855,7 @@ async function testSocialLeaderboard() {
 
 
 ////////////////////////////////////////
-// Time unit tests
+// Time tests
 ////////////////////////////////////////
 async function testTime() {
     if (!module("Time", () =>
@@ -4889,7 +4897,7 @@ async function testTime() {
 }
 
 ////////////////////////////////////////
-// Global File unit tests
+// Global File tests
 ////////////////////////////////////////
 async function testGlobalFile() {
     if (!module("GlobalFile", () =>
@@ -4948,7 +4956,7 @@ async function testGlobalFile() {
 }
 
 ////////////////////////////////////////
-// Tournament unit tests
+// Tournament tests
 ////////////////////////////////////////
 async function testTournament() {
     if (!module("Tournament", () =>
@@ -5103,7 +5111,7 @@ async function testTournament() {
 }
 
 ////////////////////////////////////////
-// Shared identity unit tests
+// Shared Identity tests
 ////////////////////////////////////////
 async function testSharedIdentity() {
 
@@ -5255,7 +5263,7 @@ async function testSharedIdentity() {
 }
 
 ////////////////////////////////////////
-// Comms unit tests
+// Comms tests
 ////////////////////////////////////////
 async function testComms() {
 
@@ -5418,7 +5426,7 @@ async function testComms() {
 }
 
 ////////////////////////////////////////
-// File unit tests
+// File tests
 ////////////////////////////////////////
 async function testFile() {
     if (!module("SingleFile", () =>
@@ -5517,7 +5525,7 @@ async function testFile() {
 }
 
 ////////////////////////////////////////
-// Wrapper unit tests
+// Wrapper tests
 ////////////////////////////////////////
 async function testWrapper()
 {
@@ -5728,8 +5736,57 @@ async function testWrapper()
                 resolve_test();
         });
     });
+
+    await asyncTest("authenticateHandoff()", 3, function () {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        var handoffId;
+        var handoffToken;
+
+        bc.brainCloudClient.authentication.authenticateAnonymous(
+            true, function (result) {
+                equal(result.status, 200, JSON.stringify(result));
+
+                bc.brainCloudClient.script.runScript("createHandoffId", {}, function (result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    var d = result.data;
+                    handoffId = d.response.handoffId;
+                    handoffToken = d.response.securityToken;
+
+                    bc.authenticateHandoff(handoffId, handoffToken, function (result) {
+                        equal(result.status, 200, JSON.stringify(result));
+                        resolve_test();
+                    });
+                });
+            });
+    });
+
+    await asyncTest("authenticateSettopHandoff()", 3, function () {
+        bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
+
+        var handoffCode
+
+        bc.brainCloudClient.authentication.authenticateAnonymous(
+            true, function (result) {
+                equal(result.status, 200, JSON.stringify(result));
+
+                bc.brainCloudClient.script.runScript("CreateSettopHandoffCode", {}, function (result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    var d = result.data;
+                    handoffCode = d.response.handoffCode
+
+                    bc.authenticateSettopHandoff(handoffCode, function (result) {
+                        equal(result.status, 200, JSON.stringify(result));
+                        resolve_test();
+                    });
+                });
+            });
+    });
 }
 
+////////////////////////////////////////
+// Chat tests
+////////////////////////////////////////
 async function testChat()
 {
     if (!module("Chat", () =>
@@ -5913,6 +5970,9 @@ async function testChat()
     });
 }
 
+////////////////////////////////////////
+// Messaging tests
+////////////////////////////////////////
 async function testMessaging()
 {
     initializeClient();
@@ -6107,6 +6167,9 @@ async function testMessaging()
     await tearDownLogout();
 }
 
+////////////////////////////////////////
+// RTT tests
+////////////////////////////////////////
 async function testRTT()
 {
     if (!module("RTT", null, null)) return;
@@ -6783,6 +6846,9 @@ async function testLobby() {
     //*/
 }
 
+////////////////////////////////////////
+// Presence tests
+////////////////////////////////////////
 async function testPresence()
 {
     if (!module("Presence", () =>
@@ -6890,6 +6956,9 @@ async function testPresence()
 
 }
 
+////////////////////////////////////////
+// Item Catalog tests
+////////////////////////////////////////
 async function testItemCatalog()
 {
     if (!module("ItemCatalog", () =>
@@ -6938,6 +7007,9 @@ async function testItemCatalog()
     });
 }
 
+////////////////////////////////////////
+// User Items tests
+////////////////////////////////////////
 async function testUserItems()
 {
     let itemId;
@@ -7107,7 +7179,7 @@ async function testUserItems()
 }
 
 ////////////////////////////////////////
-// Blockchain unit tests
+// Blockchain tests
 ////////////////////////////////////////
 async function testBlockchain(){
   if(!module("Blockchain", () =>
