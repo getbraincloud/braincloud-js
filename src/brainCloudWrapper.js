@@ -627,9 +627,6 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.authentication.authenticateHandoff(
             handoffId,
             securityToken,
-            bc.authentication.AUTHENTICATION_TYPE_HANDOFF,
-            null,
-            false,
             callback);
     };
 
@@ -646,10 +643,6 @@ function BrainCloudWrapper(wrapperName) {
     bcw.authenticateSettopHandoff= function(handoffCode, callback) {
         bcw.brainCloudClient.authentication.authenticateSettopHandoff(
             handoffCode,
-            "",
-            bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF,
-            null,
-            false,
             callback);
     };
 
