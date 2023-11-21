@@ -6462,7 +6462,7 @@ async function testRelay() {
     })
 
     // // Full flow. Create lobby -> ready up -> connect to server
-    await asyncTest("connect()", 10, () =>
+    await asyncTest("connect()", 9, () =>
     {
         // Determines whether callback has already occured
 
@@ -6511,12 +6511,10 @@ async function testRelay() {
                     bc.relay.send(Buffer.from("Echo"), netId, true, true, bc.relay.CHANNEL_HIGH_PRIORITY_1)
                 }, 5000)
             }
-            else if(json.op == "END_MATCH" && endMatch == false){
-                console.log("System callback END_MATCH");
-                
-                ok(true, "End Match");
+            else if(json.op == "END_MATCH"){
+                ok(true, "END_MATCH received");
 
-                endMatch = true;
+                resolve_test();
             }
         })
 
@@ -6543,15 +6541,8 @@ async function testRelay() {
                         ok(true, "Relay Connected")
                     }, error =>
                     {
-                        // End match req closes socket which causes error ("Relay Connection Closed") but this is expected
-                        if(endMatch){
-                            ok(true, error); 
-                            resolve_test(); // Successful test ends here
-                        }
-                        else{   // If any other connectCallback fails that is a problem
-                            ok(false, error);
-                            resolve_test();
-                        }
+                        ok(false, error);
+                        resolve_test();
                     })
                 }
                 else
