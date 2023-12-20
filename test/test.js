@@ -5782,6 +5782,32 @@ async function testWrapper()
                 });
             });
     });
+
+    function testLogout(forgetUser, logoutCallback){
+        bc.resetStoredProfileId()
+
+        bc.authenticateAnonymous(function() {
+            bc.logout(forgetUser, logoutCallback)
+        });
+    }
+
+    await asyncTest("logout() remember user", 2, function () {
+        testLogout(false, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+
+            equal(bc.getStoredProfileId() == "", false, "Profile ID was NOT reset: " + bc.getStoredProfileId())
+            resolve_test()
+        })
+    })
+
+    await asyncTest("logout() forget user", 2, function () {
+        testLogout(true, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+
+            equal(bc.getStoredProfileId() == "", true, "Profile ID WAS reset: " + bc.getStoredProfileId())
+            resolve_test()
+        })
+    })
 }
 
 ////////////////////////////////////////
