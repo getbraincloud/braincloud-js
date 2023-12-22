@@ -252,7 +252,6 @@ function BrainCloudWrapper(wrapperName) {
      *
      */
     bcw.authenticateAnonymous = function(responseHandler) {
-
         bcw._initializeIdentity(true);
 
         bcw.brainCloudClient.authentication.authenticateAnonymous(
@@ -1262,6 +1261,19 @@ function BrainCloudWrapper(wrapperName) {
                 callback(result);
             }
         });
+    }
+
+    /**
+     * Logs user out of server.
+     * @param {boolean} forgetUser Determines whether the stored profile ID should be reset or not
+     * @param {*} responseHandler Function to invoke when request is processed
+     */
+    bcw.logout = function(forgetUser, responseHandler){
+        if(forgetUser){
+            bcw.resetStoredProfileId()
+        }
+
+        bcw.brainCloudClient.playerState.logout(responseHandler)
     }
 }
 
