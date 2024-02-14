@@ -168,7 +168,7 @@ function createUser(prefix, randomId)
     return {
         name : prefix + "-" + randomId,
         password : prefix + "-" + randomId,
-        email : prefix + "-" + randomId + "@testuser.test",
+        email : prefix + "-" + randomId + "@test.getbraincloud.com",
         playerId : null
     };
 }
@@ -3158,7 +3158,7 @@ async function testIdentity() {
 
     await asyncTest("changeEmailIdentity()", 2, function() {
 
-        let newEmail = "test_" + getRandomInt(0,1000000) + "@bitheads.com";
+        let newEmail = "test_" + getRandomInt(0,1000000) + "@test.getbraincloud.com";
 
         bc.identity.changeEmailIdentity(
                 UserC.email,
@@ -3189,7 +3189,7 @@ async function testMail() {
 
     await asyncTest("updateContactEmail()", 2, function() {
         bc.playerState.updateContactEmail(
-            "braincloudunittest@gmail.com",
+            "braincloudunittest@test.getbraincloud.com",
             function(result) {
                 ok(true, JSON.stringify(result));
                 equal(result.status, 200, "Expecting 200");
@@ -3619,7 +3619,7 @@ async function testPlayerState() {
     });
 
     await asyncTest("updateContactEmail()", 2, function() {
-        bc.playerState.updateContactEmail("something@bctestdomain.com", function(
+        bc.playerState.updateContactEmail("something@test.getbraincloud.com", function(
                 result) {
             ok(true, JSON.stringify(result));
             equal(result.status, 200, "Expecting 200");
@@ -5248,14 +5248,14 @@ async function testSharedIdentity() {
     });
 
     await asyncTest("attachNonLoginUniversalId()", function() {
-        bc.identity.attachNonLoginUniversalId("braincloudtest@gmail.com", function(result) {
+        bc.identity.attachNonLoginUniversalId("braincloudtest@test.getbraincloud.com", function(result) {
             equal(result.status, 403, JSON.stringify(result));
             resolve_test();
         });
     });
 
     await asyncTest("updateUniversalLoginId()", function() {
-        bc.identity.updateUniversalIdLogin("braincloudtest@gmail.com", function(result) {
+        bc.identity.updateUniversalIdLogin("braincloudtest@test.getbraincloud.com", function(result) {
             equal(result.status, 403, JSON.stringify(result));
             resolve_test();
         });
@@ -5782,6 +5782,32 @@ async function testWrapper()
                 });
             });
     });
+
+    function testLogout(forgetUser, logoutCallback){
+        bc.resetStoredProfileId()
+
+        bc.authenticateAnonymous(function() {
+            bc.logout(forgetUser, logoutCallback)
+        });
+    }
+
+    await asyncTest("logout() remember user", 2, function () {
+        testLogout(false, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+
+            equal(bc.getStoredProfileId() == "", false, "Profile ID was NOT reset: " + bc.getStoredProfileId())
+            resolve_test()
+        })
+    })
+
+    await asyncTest("logout() forget user", 2, function () {
+        testLogout(true, function(result) {
+            equal(result.status, 200, JSON.stringify(result));
+
+            equal(bc.getStoredProfileId() == "", true, "Profile ID WAS reset: " + bc.getStoredProfileId())
+            resolve_test()
+        })
+    })
 }
 
 ////////////////////////////////////////
