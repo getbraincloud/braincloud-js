@@ -1243,7 +1243,9 @@ function BrainCloudWrapper(wrapperName) {
      * refresh (F5) a webpage and restore.
      */
     bcw.restoreSession = function(callback) {
-        console.log("Attempting restoring session with id: " + sessionId);
+        var sessionId = bcw.getStoredSessionId();
+        
+        console.log("Attempting to restore session with id: " + sessionId);
 
         var profileId = bcw.getStoredProfileId();
         var anonymousId = bcw.getStoredAnonymousId();
@@ -1252,7 +1254,6 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.brainCloudManager._isAuthenticated = true;
         bcw.brainCloudClient.brainCloudManager._packetId = localStorage.getItem("lastPacketId");
 
-        var sessionId = bcw.getStoredSessionId();
         bcw.brainCloudClient.brainCloudManager.setSessionId(sessionId);
         bcw.brainCloudClient.time.readServerTime(function(result) {
             if (result.status === 200) {
@@ -1274,6 +1275,14 @@ function BrainCloudWrapper(wrapperName) {
         }
 
         bcw.brainCloudClient.playerState.logout(responseHandler)
+    }
+
+    /**
+     * Logs user out of server.
+     * Intended to be used when the user closes the page.
+     */
+    bcw.logoutOnApplicationClose =  function(){
+        bcw.brainCloudClient.playerState.logoutOnApplicationClose()
     }
 }
 
