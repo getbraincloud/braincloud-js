@@ -1326,7 +1326,7 @@ function BrainCloudWrapper(wrapperName) {
                         data: {
                             scriptName: scriptName,
                             scriptData: jsonString
-                        },
+                        }
                     },
                     {
                         service: bcw.brainCloudClient.SERVICE_PLAYERSTATE,
