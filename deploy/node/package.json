@@ -1,6 +1,6 @@
 {
   "name": "braincloud",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "description": " brainCloud client for NodeJS",
   "main": "index.js",
   "react-native": "react-native.js",
@@ -31,7 +31,7 @@
     "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
-    "crypto-js": "^4.1.1",
+    "crypto-js": "^4.2.0",
     "form-data": "^2.3.2",
     "get-user-locale": "^1.4.0",
     "md5": "^2.3.0"
