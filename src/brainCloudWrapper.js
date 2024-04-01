@@ -1290,7 +1290,7 @@ function BrainCloudWrapper(wrapperName) {
             bcw.resetStoredProfileId()
         }
         
-        const messages = JSON.stringify(
+        var messages = JSON.stringify(
             {
                 messages: [{
                     service: bcw.brainCloudClient.SERVICE_PLAYERSTATE,
@@ -1300,7 +1300,7 @@ function BrainCloudWrapper(wrapperName) {
                 sessionId: bcw.brainCloudClient.brainCloudManager._sessionId,
                 packetId: bcw.brainCloudClient.brainCloudManager._packetId++
             });
-        const sig = CryptoJS.MD5(messages + bcw.brainCloudClient.brainCloudManager._secret);
+        var sig = CryptoJS.MD5(messages + bcw.brainCloudClient.brainCloudManager._secret);
         bcw.brainCloudClient.brainCloudManager._packetId++;
 
         fetch(bcw.brainCloudClient.brainCloudManager._dispatcherUrl, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "X-APPID": bcw.brainCloudClient.brainCloudManager._appId, "X-SIG": sig }, body: messages });
@@ -1317,7 +1317,7 @@ function BrainCloudWrapper(wrapperName) {
             bcw.resetStoredProfileId()
         }
         
-        const messages = JSON.stringify(
+        var messages = JSON.stringify(
             {
                 messages: [
                     {
@@ -1326,7 +1326,7 @@ function BrainCloudWrapper(wrapperName) {
                         data: {
                             scriptName: scriptName,
                             scriptData: jsonString
-                        },
+                        }
                     },
                     {
                         service: bcw.brainCloudClient.SERVICE_PLAYERSTATE,
@@ -1337,7 +1337,7 @@ function BrainCloudWrapper(wrapperName) {
                 sessionId: bcw.brainCloudClient.brainCloudManager._sessionId,
                 packetId: bcw.brainCloudClient.brainCloudManager._packetId++
             });
-        const sig = CryptoJS.MD5(messages + bcw.brainCloudClient.brainCloudManager._secret);
+        var sig = CryptoJS.MD5(messages + bcw.brainCloudClient.brainCloudManager._secret);
         bcw.brainCloudClient.brainCloudManager._packetId++;
 
         fetch(bcw.brainCloudClient.brainCloudManager._dispatcherUrl, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "X-APPID": bcw.brainCloudClient.brainCloudManager._appId, "X-SIG": sig }, body: messages });
