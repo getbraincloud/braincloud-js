@@ -100,30 +100,6 @@ function BCPlayerState() {
     };
 
     /**
-     * Logs user out of the server.
-     * Intended to be used when the user closes the page.
-     * 
-     * Service Name - PlayerState
-     * Service Operation - Logout
-     */
-    bc.playerState.logoutOnApplicationClose = function(){
-        const messages = JSON.stringify(
-            {
-                messages: [{
-                    service: bc.SERVICE_PLAYERSTATE,
-                    operation: bc.playerState.OPERATION_LOGOUT
-                }],
-                gameId: bc.brainCloudManager._appId,
-                sessionId: bc.brainCloudManager._sessionId,
-                packetId: bc.brainCloudManager._packetId++
-            });
-        const sig = CryptoJS.MD5(messages + bc.brainCloudManager._secret);
-        bc.brainCloudManager._packetId++;
-
-        fetch(bc.brainCloudManager._dispatcherUrl, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "X-APPID": bc.brainCloudManager._appId, "X-SIG": sig }, body: messages });
-    }
-
-    /**
      * Read the state of the currently logged in user.
      * This method returns a JSON object describing most of the
      * user's data: entities, statistics, level, currency.
