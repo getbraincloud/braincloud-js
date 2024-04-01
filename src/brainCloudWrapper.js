@@ -1243,7 +1243,9 @@ function BrainCloudWrapper(wrapperName) {
      * refresh (F5) a webpage and restore.
      */
     bcw.restoreSession = function(callback) {
-        console.log("Attempting restoring session with id: " + sessionId);
+        var sessionId = bcw.getStoredSessionId();
+        
+        console.log("Attempting to restore session with id: " + sessionId);
 
         var profileId = bcw.getStoredProfileId();
         var anonymousId = bcw.getStoredAnonymousId();
@@ -1252,7 +1254,6 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.brainCloudManager._isAuthenticated = true;
         bcw.brainCloudClient.brainCloudManager._packetId = localStorage.getItem("lastPacketId");
 
-        var sessionId = bcw.getStoredSessionId();
         bcw.brainCloudClient.brainCloudManager.setSessionId(sessionId);
         bcw.brainCloudClient.time.readServerTime(function(result) {
             if (result.status === 200) {
@@ -1274,6 +1275,72 @@ function BrainCloudWrapper(wrapperName) {
         }
 
         bcw.brainCloudClient.playerState.logout(responseHandler)
+    }
+
+    /**
+     * Logs user out of the server.
+     * Intended to be used when the user closes the page.
+     * 
+     * Service Name - PlayerState
+     * Service Operation - Logout
+     * @param {boolean} forgetUser
+     */
+    bcw.logoutOnApplicationClose = function(forgetUser){
+        if(forgetUser){
+            bcw.resetStoredProfileId()
+        }
+        
+        const messages = JSON.stringify(
+            {
+                messages: [{
+                    service: bcw.brainCloudClient.SERVICE_PLAYERSTATE,
+                    operation: bcw.brainCloudClient.playerState.OPERATION_LOGOUT
+                }],
+                gameId: bcw.brainCloudClient.brainCloudManager._appId,
+                sessionId: bcw.brainCloudClient.brainCloudManager._sessionId,
+                packetId: bcw.brainCloudClient.brainCloudManager._packetId++
+            });
+        const sig = CryptoJS.MD5(messages + bcw.brainCloudClient.brainCloudManager._secret);
+        bcw.brainCloudClient.brainCloudManager._packetId++;
+
+        fetch(bcw.brainCloudClient.brainCloudManager._dispatcherUrl, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "X-APPID": bcw.brainCloudClient.brainCloudManager._appId, "X-SIG": sig }, body: messages });
+    }
+
+    /**
+     * Execute a script on the server and Logout in one frame, meant to be used when application closes/exits.
+     * @param {boolean} forgetUser 
+     * @param {string} scriptName 
+     * @param {string} jsonString 
+     */
+    bcw.runScriptAndLogoutOnApplicationClose = function(forgetUser, scriptName, jsonString){
+        if(forgetUser){
+            bcw.resetStoredProfileId()
+        }
+        
+        const messages = JSON.stringify(
+            {
+                messages: [
+                    {
+                        service: bcw.brainCloudClient.SERVICE_SCRIPT,
+                        operation: bcw.brainCloudClient.script.OPERATION_RUN,
+                        data: {
+                            scriptName: scriptName,
+                            scriptData: jsonString
+                        },
+                    },
+                    {
+                        service: bcw.brainCloudClient.SERVICE_PLAYERSTATE,
+                        operation: bcw.brainCloudClient.playerState.OPERATION_LOGOUT
+                    }
+                ],
+                gameId: bcw.brainCloudClient.brainCloudManager._appId,
+                sessionId: bcw.brainCloudClient.brainCloudManager._sessionId,
+                packetId: bcw.brainCloudClient.brainCloudManager._packetId++
+            });
+        const sig = CryptoJS.MD5(messages + bcw.brainCloudClient.brainCloudManager._secret);
+        bcw.brainCloudClient.brainCloudManager._packetId++;
+
+        fetch(bcw.brainCloudClient.brainCloudManager._dispatcherUrl, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "X-APPID": bcw.brainCloudClient.brainCloudManager._appId, "X-SIG": sig }, body: messages });
     }
 }
 
