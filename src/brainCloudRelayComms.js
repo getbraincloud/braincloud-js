@@ -1,6 +1,8 @@
 function BrainCloudRelayComms(_client) {
     var bcr = this;
 
+    var Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
+
     bcr.CONTROL_BYTES_SIZE = 1;
 
     bcr.MAX_PLAYERS     = 40;
@@ -264,7 +266,7 @@ function BrainCloudRelayComms(_client) {
 //+         var buffer = new Uint8Array(data);
 //> END
 //> REMOVE IF K6
-            var buffer = new Buffer(data);
+            var buffer = Buffer.from(data);
 //> END
             if (data.length < 3) {
                 bcr.disconnect();
@@ -311,7 +313,7 @@ function BrainCloudRelayComms(_client) {
 //+     }
 //> END
 //> REMOVE IF K6
-        var buffer = new Buffer(text.length + 3)
+        var buffer = Buffer.alloc(text.length + 3)
         buffer.writeUInt16BE(text.length + 3, 0);
         buffer.writeUInt8(netId, 2);
         buffer.write(text, 3, text.length);
@@ -377,7 +379,7 @@ function BrainCloudRelayComms(_client) {
 //+     var buffer = new Uint8Array(data.length + 11);
 //> END
 //> REMOVE IF K6
-        var buffer = new Buffer(data.length + 11)
+        var buffer = Buffer.alloc(data.length + 11)
 //> END
         buffer.writeUInt16BE(data.length + 11, 0)
         buffer.writeUInt8(bcr.CL2RS_RELAY, 2)
@@ -410,7 +412,7 @@ function BrainCloudRelayComms(_client) {
 //+     buffer[4] = (value_16u >> 8) & 0xFF;
 //> END
 //> REMOVE IF K6
-        var buffer = new Buffer(5)
+        var buffer = Buffer.alloc(5)
         buffer.writeUInt16BE(5, 0);
         buffer.writeUInt8(bcr.CL2RS_PING, 2);
         buffer.writeUInt16BE(bcr.ping, 3);
@@ -443,7 +445,7 @@ function BrainCloudRelayComms(_client) {
 //+     buffer.set(data, 3);
 //> END
 //> REMOVE IF K6
-        var buffer = new Buffer(data.length + 3)
+        var buffer = Buffer.alloc(data.length + 3)
         buffer.writeUInt16BE(data.length + 3, 0);
         buffer.writeUInt8(netId, 2);
         buffer.set(data, 3);

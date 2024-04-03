@@ -175,7 +175,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "5.2.1";
+    bcc.version = "5.2.2";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -458,7 +458,7 @@ function BrainCloudClient() {
      * @param languageCode ISO 639-1 two-letter language code
      */
     bcc.overrideLanguageCode = function(languageCode) {
-        brainCloudClient.languageCode = languageCode;
+        bcc.languageCode = languageCode;
     }
 
     bcc.heartbeat = function(callback) {
