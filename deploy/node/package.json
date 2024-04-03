@@ -1,6 +1,6 @@
 {
   "name": "braincloud",
-  "version": "5.2.1",
+  "version": "5.2.2",
   "description": " brainCloud client for NodeJS",
   "main": "index.js",
   "react-native": "react-native.js",
