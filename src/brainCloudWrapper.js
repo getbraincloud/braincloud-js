@@ -1143,23 +1143,27 @@ function BrainCloudWrapper(wrapperName) {
      */
     bcw.resetEmailPasswordAdvancedWithExpiry = function(emailAddress, serviceParams, tokenTtlInMinutes, responseHandler) {
         bcw.brainCloudClient.authentication.resetEmailPasswordAdvancedWithExpiry(emailAddress, serviceParams, tokenTtlInMinutes, responseHandler);
-    };
+    }
+
+    bcw.canReconnect = function () {
+        return bcw.getStoredProfileId() !== "" && bcw.getStoredAnonymousId() !== ""
+    }
 
     /** Method authenticates the user using universal credentials
      *
      * @param responseHandler {function} - The user callback method
      */
     bcw.reconnect = function(responseHandler) {
-        bcw._initializeIdentity(true);
+        bcw._initializeIdentity(true)
 
         bcw.brainCloudClient.authentication.authenticateAnonymous(
             false,
             function (result) {
-                bcw._authResponseHandler(responseHandler, result);
+                bcw._authResponseHandler(responseHandler, result)
 
             }
-        );
-    };
+        )
+    }
 
     /**
      * Reset Email password - sends a password reset email to the specified address
