@@ -1145,6 +1145,10 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.authentication.resetEmailPasswordAdvancedWithExpiry(emailAddress, serviceParams, tokenTtlInMinutes, responseHandler);
     }
 
+    /**
+     * Check if a user can reconnect via saved profile and anonymous IDs from a previously authenticated session.
+     * @returns True if a saved profile and anonymous ID exist in localStorage
+     */
     bcw.canReconnect = function () {
         return bcw.getStoredProfileId() !== "" && bcw.getStoredAnonymousId() !== ""
     }
