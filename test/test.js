@@ -5729,13 +5729,52 @@ async function testWrapper()
         });
     });
 
-    await asyncTest("reconnect()", function() {
-        bc.reconnect(
-            function(result) {
-                equal(result.status, 202, JSON.stringify(result));
-                resolve_test();
-        });
-    });
+    await asyncTest("reconnect()", 7, function () {
+
+        // Initial Authentication
+        console.log("Authenticating . . .")
+        bc.authenticateAnonymous(onAuthSuccess => {
+            equal(onAuthSuccess.status, 200, "Initial Auth success")
+
+            // Initial Logout
+            // Log out and KEEP profile ID
+            console.log("Logging out but KEEPING profile ID . . .")
+            bc.logout(false, onRememUserSuccess => {
+                equal(onRememUserSuccess.status, 200, "Logout RememberUser success")
+
+                // Attempt successful reconnect
+                equal(bc.canReconnect(), true, "canReconnect is true")
+                bc.reconnect(onReconnectSuccess => {
+                    equal(onReconnectSuccess.status, 200, "Initial Reconnect success")
+
+                    // Log out and FORGET profile ID
+                    console.log("Logging out but FORGETTING profile ID . . .")
+                    bc.logout(true, onForgetUserSuccess => {
+                        equal(onForgetUserSuccess.status, 200, "Logout ForgetUser success")
+
+                        // Attempt reconnect fail
+                        equal(bc.canReconnect(), false, "canReconnect is false")
+                        bc.reconnect(result => {
+                            equal(result.status, 202, JSON.stringify(result))
+                            resolve_test()
+                        })
+                    }, onForgetUserFail => {
+                        ok(false, "Logout ForgetUser failed: " + onForgetUserFail)
+                        resolve_test()
+                    })
+                }, onReconnectFail => {
+                    ok(false, "Initial Reconnect failed: " + onReconnectFail)
+                    resolve_test()
+                })
+            }, onRememUserFail => {
+                ok(false, "Initial Logout failed: " + onRememUserFail)
+                resolve_test()
+            })
+        }, onAuthFail => {
+            ok(false, "Initial Auth failed: " + onAuthFail)
+            resolve_test()
+        })
+    })
 
     await asyncTest("authenticateHandoff()", 3, function () {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
