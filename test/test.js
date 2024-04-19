@@ -5730,8 +5730,6 @@ async function testWrapper()
     });
 
     await asyncTest("reconnect()", 7, function () {
-
-        // Initial Authentication
         console.log("Authenticating . . .")
         bc.authenticateAnonymous(onAuthSuccess => {
             equal(onAuthSuccess.status, 200, "Initial Auth success")
@@ -5771,7 +5769,7 @@ async function testWrapper()
                 resolve_test()
             })
         }, onAuthFail => {
-            ok(false, "Initial Auth failed: " + onAuthFail)
+            ok(false, "Auth failed: " + onAuthFail)
             resolve_test()
         })
     })
