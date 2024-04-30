@@ -16,12 +16,12 @@ function BCPlayerState() {
     bc.playerState.OPERATION_READ_FRIENDS = "READ_FRIENDS";
     bc.playerState.OPERATION_READ_FRIEND_PLAYER_STATE = "READ_FRIEND_PLAYER_STATE";
 
-    bc.playerState.UPDATE_ATTRIBUTES = "UPDATE_ATTRIBUTES";
-    bc.playerState.REMOVE_ATTRIBUTES = "REMOVE_ATTRIBUTES";
-    bc.playerState.GET_ATTRIBUTES = "GET_ATTRIBUTES";
+    bc.playerState.OPERATION_UPDATE_ATTRIBUTES = "UPDATE_ATTRIBUTES";
+    bc.playerState.OPERATION_REMOVE_ATTRIBUTES = "REMOVE_ATTRIBUTES";
+    bc.playerState.OPERATION_GET_ATTRIBUTES = "GET_ATTRIBUTES";
 
-    bc.playerState.UPDATE_PICTURE_URL = "UPDATE_PICTURE_URL";
-    bc.playerState.UPDATE_CONTACT_EMAIL = "UPDATE_CONTACT_EMAIL";
+    bc.playerState.OPERATION_UPDATE_PICTURE_URL = "UPDATE_PICTURE_URL";
+    bc.playerState.OPERATION_UPDATE_CONTACT_EMAIL = "UPDATE_CONTACT_EMAIL";
 
     bc.playerState.OPERATION_READ = "READ";
 
@@ -77,7 +77,7 @@ function BCPlayerState() {
     bc.playerState.getAttributes = function(callback) {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_PLAYERSTATE,
-            operation : bc.playerState.GET_ATTRIBUTES,
+            operation : bc.playerState.OPERATION_GET_ATTRIBUTES,
             callback : callback
         });
     };
@@ -131,7 +131,7 @@ function BCPlayerState() {
     bc.playerState.removeAttributes = function(attributes, callback) {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_PLAYERSTATE,
-            operation : bc.playerState.REMOVE_ATTRIBUTES,
+            operation : bc.playerState.OPERATION_REMOVE_ATTRIBUTES,
             data : {
                 attributes : attributes
             },
@@ -213,7 +213,7 @@ function BCPlayerState() {
                                                              wipeExisting, callback) {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_PLAYERSTATE,
-            operation : bc.playerState.UPDATE_ATTRIBUTES,
+            operation : bc.playerState.OPERATION_UPDATE_ATTRIBUTES,
             data : {
                 attributes : attributes,
                 wipeExisting : wipeExisting
@@ -294,7 +294,7 @@ function BCPlayerState() {
     bc.playerState.updateUserPictureUrl = function(pictureUrl, callback) {
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_PLAYERSTATE,
-            operation: bc.playerState.UPDATE_PICTURE_URL,
+            operation: bc.playerState.OPERATION_UPDATE_PICTURE_URL,
             data: {
                 playerPictureUrl: pictureUrl
             },
@@ -315,7 +315,7 @@ function BCPlayerState() {
     bc.playerState.updateContactEmail = function(contactEmail, callback) {
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_PLAYERSTATE,
-            operation: bc.playerState.UPDATE_CONTACT_EMAIL,
+            operation: bc.playerState.OPERATION_UPDATE_CONTACT_EMAIL,
             data: {
                 contactEmail: contactEmail
             },
