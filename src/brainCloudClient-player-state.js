@@ -16,12 +16,12 @@ function BCPlayerState() {
     bc.playerState.OPERATION_READ_FRIENDS = "READ_FRIENDS";
     bc.playerState.OPERATION_READ_FRIEND_PLAYER_STATE = "READ_FRIEND_PLAYER_STATE";
 
-    bc.playerState.UPDATE_ATTRIBUTES = "UPDATE_ATTRIBUTES";
-    bc.playerState.REMOVE_ATTRIBUTES = "REMOVE_ATTRIBUTES";
-    bc.playerState.GET_ATTRIBUTES = "GET_ATTRIBUTES";
+    bc.playerState.OPERATION_UPDATE_ATTRIBUTES = "UPDATE_ATTRIBUTES";
+    bc.playerState.OPERATION_REMOVE_ATTRIBUTES = "REMOVE_ATTRIBUTES";
+    bc.playerState.OPERATION_GET_ATTRIBUTES = "GET_ATTRIBUTES";
 
-    bc.playerState.UPDATE_PICTURE_URL = "UPDATE_PICTURE_URL";
-    bc.playerState.UPDATE_CONTACT_EMAIL = "UPDATE_CONTACT_EMAIL";
+    bc.playerState.OPERATION_UPDATE_PICTURE_URL = "UPDATE_PICTURE_URL";
+    bc.playerState.OPERATION_UPDATE_CONTACT_EMAIL = "UPDATE_CONTACT_EMAIL";
 
     bc.playerState.OPERATION_READ = "READ";
 
@@ -35,6 +35,7 @@ function BCPlayerState() {
 
     bc.playerState.OPERATION_UPDATE_TIME_ZONE_OFFSET = "UPDATE_TIMEZONE_OFFSET";
     bc.playerState.OPERATION_UPDATE_LANGUAGE_CODE = "UPDATE_LANGUAGE_CODE";
+    bc.playerState.OPERATION_UPDATE_COUNTRY_CODE = "UPDATE_COUNTRY_CODE";
 
     /**
      * @deprecated Use deleteUser instead - Will be removed after October 21 2021
@@ -77,7 +78,7 @@ function BCPlayerState() {
     bc.playerState.getAttributes = function(callback) {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_PLAYERSTATE,
-            operation : bc.playerState.GET_ATTRIBUTES,
+            operation : bc.playerState.OPERATION_GET_ATTRIBUTES,
             callback : callback
         });
     };
@@ -131,7 +132,7 @@ function BCPlayerState() {
     bc.playerState.removeAttributes = function(attributes, callback) {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_PLAYERSTATE,
-            operation : bc.playerState.REMOVE_ATTRIBUTES,
+            operation : bc.playerState.OPERATION_REMOVE_ATTRIBUTES,
             data : {
                 attributes : attributes
             },
@@ -180,6 +181,26 @@ function BCPlayerState() {
     };
 
     /**
+	 * Update the country code on the user's profile.
+	 *
+	 * Service Name - PlayerState 
+	 * Service Operation - UPDATE_COUNTRY_CODE
+	 *
+	 * @param countryCode The country code to set on user's profile (ISO 3166-1 alpha-2 codes).
+     * @param callback The method to be invoked when the server response is received
+	 */
+    bc.playerState.updateCountryCode = function(countryCode, callback){
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_PLAYERSTATE,
+            operation : bc.playerState.OPERATION_UPDATE_COUNTRY_CODE,
+            data : {
+                countryCode : countryCode
+            },
+            callback : callback
+        })
+    }
+
+    /**
      * This method will delete *most* data for the currently logged in user.
      * Data which is not deleted includes: currency, credentials, and
      * purchase transactions. ResetUser is different from DeleteUser in that
@@ -213,7 +234,7 @@ function BCPlayerState() {
                                                              wipeExisting, callback) {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_PLAYERSTATE,
-            operation : bc.playerState.UPDATE_ATTRIBUTES,
+            operation : bc.playerState.OPERATION_UPDATE_ATTRIBUTES,
             data : {
                 attributes : attributes,
                 wipeExisting : wipeExisting
@@ -294,7 +315,7 @@ function BCPlayerState() {
     bc.playerState.updateUserPictureUrl = function(pictureUrl, callback) {
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_PLAYERSTATE,
-            operation: bc.playerState.UPDATE_PICTURE_URL,
+            operation: bc.playerState.OPERATION_UPDATE_PICTURE_URL,
             data: {
                 playerPictureUrl: pictureUrl
             },
@@ -315,7 +336,7 @@ function BCPlayerState() {
     bc.playerState.updateContactEmail = function(contactEmail, callback) {
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_PLAYERSTATE,
-            operation: bc.playerState.UPDATE_CONTACT_EMAIL,
+            operation: bc.playerState.OPERATION_UPDATE_CONTACT_EMAIL,
             data: {
                 contactEmail: contactEmail
             },

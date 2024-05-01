@@ -3682,6 +3682,14 @@ async function testPlayerState() {
                     resolve_test();
                 });
     });
+
+    await asyncTest("updateCountryCode()", function() {
+        bc.playerState.updateCountryCode("us",
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result))
+                    resolve_test()
+                })
+    })
 }
 
 ////////////////////////////////////////
