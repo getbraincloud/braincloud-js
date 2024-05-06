@@ -172,6 +172,7 @@ function BCAsyncMatch() {
 		if (matchState) {
 			data["matchState"] = matchState;
 		}
+		else data["matchState"] = {};
 		if (nextPlayer) {
 			data["status"] = { currentPlayer: nextPlayer };
 		}
@@ -409,17 +410,26 @@ function BCAsyncMatch() {
 	 * @param callback			The method to be invoked when the server response is received
 	 */
 	bc.asyncMatch.updateMatchStateCurrentTurn = function (ownerId, matchId, version, matchState, statistics, callback) {
+		var data = {
+			ownerId: ownerId,
+			matchId: matchId,
+			version: version
+		}
+
+		if (matchState) {
+			data["matchState"] = matchState;
+		}
+		else data["matchState"] = {};
+
+		if (statistics) {
+			data["statistics"] = statistics;
+		}
+
 		bc.brainCloudManager.sendRequest(
 			{
 				service: bc.SERVICE_ASYNC_MATCH,
 				operation: bc.asyncMatch.OPERATION_UPDATE_MATCH_STATE_CURRENT_TURN,
-				data: {
-					ownerId: ownerId,
-					matchId: matchId,
-					version: version,
-					matchState: matchState,
-					statistics: statistics
-				},
+				data: data,
 				callback: callback
 			}
 		)
