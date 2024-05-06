@@ -18,6 +18,7 @@ function BCAsyncMatch() {
 	bc.asyncMatch.OPERATION_DELETE_MATCH = "DELETE_MATCH";
 	bc.asyncMatch.OPERATION_ABANDON_MATCH_WITH_SUMMARY_DATA = "ABANDON_MATCH_WITH_SUMMARY_DATA";
 	bc.asyncMatch.OPERATION_COMPLETE_MATCH_WITH_SUMMARY_DATA = "COMPLETE_MATCH_WITH_SUMMARY_DATA";
+	bc.asyncMatch.OPERATION_UPDATE_MATCH_STATE_CURRENT_TURN = "UPDATE_MATCH_STATE_CURRENT_TURN";
 
 	/**
 	 * Creates an instance of an asynchronous match.
@@ -392,6 +393,37 @@ function BCAsyncMatch() {
 			callback: callback
 		});
 	};
+
+	/**
+	 * Allows the current player in the game to overwrite the matchState and
+	 * statistics without completing their turn or adding to matchHistory.
+	 * 
+	 * Service Name - AsyncMatch
+	 * Service Operation - UpdateMatchStateCurrentTurn
+	 * 
+	 * @param ownerId           Match owner identifier
+	 * @param matchId           Match identifier
+	 * @param version           Game state version being updated, to ensure data integrity
+	 * @param matchState    	JSON object provided by the caller. Overwrites the matchState. Required.
+	 * @param statistics    	Optional JSON object provided by the caller. Overwrites the statistics.
+	 * @param callback			The method to be invoked when the server response is received
+	 */
+	bc.asyncMatch.updateMatchStateCurrentTurn = function (ownerId, matchId, version, matchState, statistics, callback) {
+		bc.brainCloudManager.sendRequest(
+			{
+				service: bc.SERVICE_ASYNC_MATCH,
+				operation: bc.asyncMatch.OPERATION_UPDATE_MATCH_STATE_CURRENT_TURN,
+				data: {
+					ownerId: ownerId,
+					matchId: matchId,
+					version: version,
+					matchState: matchState,
+					statistics: statistics
+				},
+				callback: callback
+			}
+		)
+	}
 
 }
 

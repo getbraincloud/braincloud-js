@@ -494,11 +494,25 @@ async function testAsyncMatch()
                 });
     });
 
+    await asyncTest("updateMatchStateCurrentTurn", function () {
+        bc.asyncMatch.updateMatchStateCurrentTurn(
+            UserA.profileId,
+            matchId,
+            1,
+            { "map": "level1" },
+            { "summary": "sum" },
+            function (result) {
+                equal(result.status, 200, JSON.stringify(result))
+                resolve_test()
+            }
+        )
+    })
+
     await asyncTest("submitTurn()", function() {
         bc.asyncMatch.submitTurn(
                 UserA.profileId,
                 matchId,
-                1,
+                2,
                 {"summary" : "sum"},
                 null,
                 UserB.profileId,
