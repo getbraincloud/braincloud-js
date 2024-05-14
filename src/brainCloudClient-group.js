@@ -16,6 +16,7 @@ function BCGroup() {
     bc.group.OPERATION_CREATE_GROUP_ENTITY = "CREATE_GROUP_ENTITY";
     bc.group.OPERATION_DELETE_GROUP = "DELETE_GROUP";
     bc.group.OPERATION_DELETE_GROUP_ENTITY = "DELETE_GROUP_ENTITY";
+    bc.group.OPERATION_DELETE_GROUP_JOIN_REQUEST = "DELETE_GROUP_JOIN_REQUEST";
     bc.group.OPERATION_DELETE_MEMBER_FROM_GROUP = "DELETE_MEMBER_FROM_GROUP";
     bc.group.OPERATION_GET_MY_GROUPS = "GET_MY_GROUPS";
     bc.group.OPERATION_INCREMENT_GROUP_DATA = "INCREMENT_GROUP_DATA";
@@ -499,6 +500,28 @@ function BCGroup() {
             callback : callback
         });
     };
+
+    /**
+     * Delete a request to join a group.
+     * 
+     * Service Name - group
+     * Service Operation - DELETE_GROUP_JOIN_REQUEST
+     * 
+     * @param {string} groupId ID of the group
+     * @param {function} callback the function to be invoked when the server response is received
+     */
+    bc.group.deleteGroupJoinRequest = function(groupId, callback){
+        var message = {
+            groupId : groupId
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_GROUP,
+            operation : bc.group.OPERATION_DELETE_GROUP_JOIN_REQUEST,
+            data : message,
+            callback : callback
+        });
+    }
 
     /**
      * Leave a group in which the user is a member.
