@@ -1,7 +1,8 @@
 function BrainCloudRelayComms(_client) {
     var bcr = this;
-
+//> REMOVE IF K6
     var Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
+//> END
 
     bcr.CONTROL_BYTES_SIZE = 1;
 

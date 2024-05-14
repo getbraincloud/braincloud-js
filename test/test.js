@@ -494,11 +494,25 @@ async function testAsyncMatch()
                 });
     });
 
+    await asyncTest("updateMatchStateCurrentTurn", function () {
+        bc.asyncMatch.updateMatchStateCurrentTurn(
+            UserA.profileId,
+            matchId,
+            1,
+            { "map": "level1" },
+            { "summary": "sum" },
+            function (result) {
+                equal(result.status, 200, JSON.stringify(result))
+                resolve_test()
+            }
+        )
+    })
+
     await asyncTest("submitTurn()", function() {
         bc.asyncMatch.submitTurn(
                 UserA.profileId,
                 matchId,
-                1,
+                2,
                 {"summary" : "sum"},
                 null,
                 UserB.profileId,
@@ -3056,6 +3070,113 @@ async function testGroup() {
                     resolve_test();
                 });
     });
+
+    await asyncTest("deleteGroupJoinRequest()", 6, function () {
+        var testGroupId = ""
+
+        if(bc.brainCloudClient.isAuthenticated()){
+            bc.playerState.logout(result => {
+                setupGroupForTest()
+            })
+        }
+        else{
+            setupGroupForTest()
+        }
+
+        function setupGroupForTest() {
+            bc.authenticateUniversal("JS-Tester1", "JS-Tester1", true, () => {
+                ok(true, "Authenticated group creator")
+
+                var name = "JS-Test-ClosedGroup";
+                var groupType = "test";
+                var isOpenGroup = false;
+                var acl = {
+                    "member": 2,
+                    "other": 0
+                };
+                var jsonData = {};
+                var ownerAttributes = {};
+                var defaultMemberAttributes = {};
+
+                bc.group.createGroup(name, groupType, isOpenGroup, acl, jsonData, ownerAttributes, defaultMemberAttributes, result => {
+                    if(result.status === 200){
+                        ok(true, "Group created")
+
+                        testGroupId = result.data.groupId
+
+                        bc.logout(false, testDeleteGroupJoinRequest)
+                    }
+                    else{
+                        ok(false, "Failed to create group")
+                        resolve_test()
+                    }
+                });
+            })
+        }
+
+        function testDeleteGroupJoinRequest() {
+            var groupJoinRequestExists = false
+
+            bc.authenticateUniversal("JS-Tester2", "JS-Tester2", true, () => {
+                ok(true, "Authenticated group tester")
+
+                bc.group.joinGroup(testGroupId, () => {
+                    bc.group.getMyGroups(response => {
+                        var requestedGroups = response.data.requested
+                        requestedGroups.forEach(requestedGroup => {
+                            if (requestedGroup.groupId === testGroupId) {
+                                groupJoinRequestExists = true
+                            }
+                        })
+
+                        if (groupJoinRequestExists) {
+                            ok(true, "Group Join Request exists")
+
+                            // Reset for second check
+                            groupJoinRequestExists = false
+
+                            bc.group.deleteGroupJoinRequest(testGroupId, () => {
+                                bc.group.getMyGroups(response => {
+                                    requestedGroups = response.data.requested
+                                    requestedGroups.forEach(requestedGroup => {
+                                        if (requestedGroup.groupId === testGroupId) {
+                                            groupJoinRequestExists = true
+                                        }
+                                    })
+
+                                    if (groupJoinRequestExists) {
+                                        resolve_test()
+                                    }
+                                    else {
+                                        ok(true, "Group Join Request no longer exists")
+
+                                        completeDeleteGroupJoinRequestTest()
+                                    }
+                                })
+                            })
+                        }
+                        else {
+                            resolve_test()
+                        }
+                    })
+                })
+            })
+        }
+
+        function completeDeleteGroupJoinRequestTest(){
+            bc.logout(true, () => {
+                bc.authenticateUniversal("JS-Tester1", "JS-Tester1", false, () => {
+                    bc.group.deleteGroup(testGroupId, -1, response => {
+                        equal(response.status, 200, "Expected 200")
+
+                        bc.logout(true, () => {
+                            resolve_test()
+                        })
+                    })
+                })
+            })
+        }
+    })
 }
 
 ////////////////////////////////////////
@@ -5730,8 +5851,6 @@ async function testWrapper()
     });
 
     await asyncTest("reconnect()", 7, function () {
-
-        // Initial Authentication
         console.log("Authenticating . . .")
         bc.authenticateAnonymous(onAuthSuccess => {
             equal(onAuthSuccess.status, 200, "Initial Auth success")
@@ -5771,7 +5890,7 @@ async function testWrapper()
                 resolve_test()
             })
         }, onAuthFail => {
-            ok(false, "Initial Auth failed: " + onAuthFail)
+            ok(false, "Auth failed: " + onAuthFail)
             resolve_test()
         })
     })
