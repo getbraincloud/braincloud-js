@@ -1,7 +1,11 @@
 function BrainCloudRelayComms(_client) {
     var bcr = this;
 //> REMOVE IF K6
+
+// Check window and document objects to determine if environment is browser or node
+if ([typeof window, typeof document].includes('undefined')) {
     var Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
+}
 //> END
 
     bcr.CONTROL_BYTES_SIZE = 1;
