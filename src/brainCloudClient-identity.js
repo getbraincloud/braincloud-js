@@ -1226,32 +1226,38 @@ function BCIdentity() {
 		});
 	};
 
-	bc.identity.switchToChildProfileInternal = function(childProfileId, childAppId, forceCreate, forceSingleton, callback) {
+    bc.identity.switchToChildProfileInternal = function (childProfileId, childAppId, forceCreate, forceSingleton, callback) {
 
-		var _navLangCode = window.navigator.userLanguage || window.navigator.language;
-		_navLangCode = _navLangCode.split("-");
-		var languageCode = _navLangCode[0];
-		var countryCode = _navLangCode[1];
+        var _navLangCode = window.navigator.userLanguage || window.navigator.language;
+        _navLangCode = _navLangCode.split("-");
+        var languageCode = _navLangCode[0];
+        var countryCode = _navLangCode[1];
+        if (countryCode === "419") {
+            countryCode = "_LA_"
+        }
+        if (countryCode === "Hans" || countryCode === "Hant") {
+            countryCode = "CN"
+        }
 
-		var now = new Date();
-		var timeZoneOffset = -now.getTimezoneOffset() / 60.0;
+        var now = new Date();
+        var timeZoneOffset = -now.getTimezoneOffset() / 60.0;
 
-		bc.brainCloudManager.sendRequest({
-			service: bc.SERVICE_IDENTITY,
-			operation: bc.identity.OPERATION_SWITCH_TO_CHILD_PROFILE,
-			data: {
-				profileId : childProfileId,
-				gameId : childAppId,
-				forceCreate : forceCreate,
-				forceSingleton : forceSingleton,
-				releasePlatform: "WEB",
-				timeZoneOffset : timeZoneOffset,
-				languageCode : languageCode,
-				countryCode : countryCode
-			},
-			callback: callback
-		});
-	};
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_IDENTITY,
+            operation: bc.identity.OPERATION_SWITCH_TO_CHILD_PROFILE,
+            data: {
+                profileId: childProfileId,
+                gameId: childAppId,
+                forceCreate: forceCreate,
+                forceSingleton: forceSingleton,
+                releasePlatform: "WEB",
+                timeZoneOffset: timeZoneOffset,
+                languageCode: languageCode,
+                countryCode: countryCode
+            },
+            callback: callback
+        });
+    };
 
 }
 
