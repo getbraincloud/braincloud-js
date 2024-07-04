@@ -461,7 +461,7 @@ function BCLobby() {
     /// </summary>
     bc.lobby.cancelFindRequest = function(lobbyType, callback) {
         var data = {
-            lobbyType: lobbyType,
+            lobbyType: lobbyType
         };
 
         bc.brainCloudManager.sendRequest({
