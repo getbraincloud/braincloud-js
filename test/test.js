@@ -4702,6 +4702,44 @@ async function testSocialLeaderboard() {
                 });
     });
 
+    await asyncTest("postScoreToDynamicLeaderboardUTC()", 2, function() {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        bc.leaderboard.postScoreToDynamicLeaderboardUTC(
+                "testDynamicJs", 1000, {
+                    "extra" : 123
+                },  bc.leaderboard.leaderboardType.HIGH_VALUE,
+                    bc.leaderboard.rotationType.DAILY, tomorrow,
+                3, function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("postScoreToDynamicLeaderboardUsingConfig", 2, function () {
+        var leaderboardId = "testDynamicJs";
+        var score = 9999;
+        var scoreData = {
+            "nickname": "tarnished"
+        };
+        var configJson = {
+            "leaderboardType": "HIGH_VALUE",
+            "rotationType": "DAYS",
+            "numDaysToRotate": 4,
+            "resetAt": "[[#ts+60000]]",
+            "retainedCount": 2,
+            "expireInMins": null
+        };
+        bc.leaderboard.postScoreToDynamicLeaderboardUsingConfig(leaderboardId, score, scoreData, configJson, result => {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     await asyncTest("postScoreToDynamicLeaderboardDays()", 2, function() {
         var today = new Date();
         var tomorrow = new Date(today);

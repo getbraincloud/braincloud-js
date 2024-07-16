@@ -11,6 +11,7 @@ function BCSocialLeaderboard() {
 
     bc.socialLeaderboard.OPERATION_POST_SCORE = "POST_SCORE";
     bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC = "POST_SCORE_DYNAMIC";
+    bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC_USING_CONFIG = "POST_SCORE_DYNAMIC_USING_CONFIG";
     bc.socialLeaderboard.OPERATION_RESET = "RESET";
     bc.socialLeaderboard.OPERATION_GET_SOCIAL_LEADERBOARD = "GET_SOCIAL_LEADERBOARD";
     bc.socialLeaderboard.OPERATION_GET_SOCIAL_LEADERBOARD_BY_VERSION = "GET_SOCIAL_LEADERBOARD_BY_VERSION";
@@ -423,25 +424,55 @@ function BCSocialLeaderboard() {
      * @param retainedCount How many rotations to keep
      * @param callback The method to be invoked when the server response is received
      */
-    bc.socialLeaderboard.postScoreToDynamicLeaderboardUTC = function(leaderboardName, score,
-                                                                     data, leaderboardType, rotationType, 
-                                                                     rotationReset, retainedCount, callback ) {
+    bc.socialLeaderboard.postScoreToDynamicLeaderboardUTC = function (leaderboardName, score,
+        data, leaderboardType, rotationType,
+        rotationReset, retainedCount, callback) {
+        
         bc.brainCloudManager
             .sendRequest({
-                service : bc.SERVICE_LEADERBOARD,
-                operation : bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
-                data : {
-                    leaderboardId : leaderboardName,
-                    score : score,
-                    data : data,
-                    leaderboardType : leaderboardType,
-                    rotationType : rotationType,
-                    rotationResetTime : rotationReset.getTime().toFixed(0),
-                    retainedCount : retainedCount
+                service: bc.SERVICE_LEADERBOARD,
+                operation: bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
+                data: {
+                    leaderboardId: leaderboardName,
+                    score: score,
+                    data: data,
+                    leaderboardType: leaderboardType,
+                    rotationType: rotationType,
+                    rotationResetTime: rotationReset.getTime().toFixed(0),
+                    retainedCount: retainedCount
                 },
-                callback : callback
+                callback: callback
             });
     };
+
+    /**
+     * Post the player's score to the given social leaderboard, dynamically creating the leaderboard if it does not exist yet.
+     * To create new leaderboard, configJson must specify:
+     * 
+     * leaderboardType,
+     * rotationType,
+     * resetAt, 
+     * and retainedCount, at a minimum, with support to optionally specify an expiry in minutes.
+     * 
+     * @param {*} leaderboardId 
+     * @param {*} score 
+     * @param {*} scoreData 
+     * @param {*} configJson 
+     * @param {*} callback 
+     */
+    bc.socialLeaderboard.postScoreToDynamicLeaderboardUsingConfig = function(leaderboardId, score, scoreData, configJson, callback){
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_LEADERBOARD,
+            operation: bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC_USING_CONFIG,
+            data: {
+                leaderboardId: leaderboardId,
+                score: score,
+                scoreData: scoreData,
+                configJson: configJson
+            },
+            callback: callback
+        })
+    }
 
     /**
      *@deprecated Use postScoreToDynamicLeaderboardDaysUTC instead - Will be removed on March 1, 2022
