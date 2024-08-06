@@ -4820,7 +4820,7 @@ async function testSocialLeaderboard() {
             "leaderboardType": "HIGH_VALUE",
             "rotationType": "DAYS",
             "numDaysToRotate": 4,
-            "resetAt": "[[#ts+60000]]",
+            "resetAt": "1722965911665",
             "retainedCount": 2,
             "expireInMins": null
         };
