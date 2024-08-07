@@ -4811,7 +4811,11 @@ async function testSocialLeaderboard() {
     });
 
     await asyncTest("postScoreToDynamicLeaderboardUsingConfig", 2, function () {
-        var leaderboardId = "testDynamicJs";
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        
+        var leaderboardId = "testDynamicJs"
         var score = 9999;
         var scoreData = {
             "nickname": "tarnished"
@@ -4820,7 +4824,7 @@ async function testSocialLeaderboard() {
             "leaderboardType": "HIGH_VALUE",
             "rotationType": "DAYS",
             "numDaysToRotate": 4,
-            "resetAt": "1722965911665",
+            "resetAt": tomorrow,
             "retainedCount": 2,
             "expireInMins": null
         };
