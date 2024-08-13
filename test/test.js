@@ -1490,6 +1490,19 @@ async function testEvent() {
     var eventId;
 
     await setUpWithAuthenticate();
+    await asyncTest("updateIncomingEventDataIfExistsFalse()", function() {
+        var nonExistentEventId = "999999999999999999999999"
+        
+        bc.event.updateIncomingEventDataIfExists(
+                nonExistentEventId,
+                {eventDataKey : 118 },
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await setUpWithAuthenticate();
     await asyncTest("sendEvent()", 2, function() {
         var sendEventSemi = 0;
         bc.brainCloudClient.registerEventCallback(function() {
@@ -1520,6 +1533,17 @@ async function testEvent() {
         bc.event.updateIncomingEventData(
                 eventId,
                 {eventDataKey : 117 },
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await setUpWithAuthenticate();
+    await asyncTest("updateIncomingEventDataIfExistsTrue()", function() {
+        bc.event.updateIncomingEventDataIfExists(
+                eventId,
+                {eventDataKey : 118 },
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
