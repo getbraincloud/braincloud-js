@@ -1490,6 +1490,19 @@ async function testEvent() {
     var eventId;
 
     await setUpWithAuthenticate();
+    await asyncTest("updateIncomingEventDataIfExistsFalse()", function() {
+        var nonExistentEventId = "999999999999999999999999"
+        
+        bc.event.updateIncomingEventDataIfExists(
+                nonExistentEventId,
+                {eventDataKey : 118 },
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await setUpWithAuthenticate();
     await asyncTest("sendEvent()", 2, function() {
         var sendEventSemi = 0;
         bc.brainCloudClient.registerEventCallback(function() {
@@ -1520,6 +1533,17 @@ async function testEvent() {
         bc.event.updateIncomingEventData(
                 eventId,
                 {eventDataKey : 117 },
+                function(result) {
+                    equal(result.status, 200, JSON.stringify(result));
+                    resolve_test();
+                });
+    });
+
+    await setUpWithAuthenticate();
+    await asyncTest("updateIncomingEventDataIfExistsTrue()", function() {
+        bc.event.updateIncomingEventDataIfExists(
+                eventId,
+                {eventDataKey : 118 },
                 function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     resolve_test();
@@ -4622,15 +4646,59 @@ async function testSocialLeaderboard() {
                 });
     });
 
-    await asyncTest("getGlobalLeaderboardView()", 2, function() {
-        bc.leaderboard.getGlobalLeaderboardView(
+    await asyncTest("getGlobalLeaderboardPageIfExistsTrue()", 2, function() {
+        bc.leaderboard.getGlobalLeaderboardPageIfExists(
                 leaderboardName,
                 bc.leaderboard.sortOrder.HIGH_TO_LOW,
-                4, 5, function(result) {
+                0, 10, function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
+    });
+
+    await asyncTest("getGlobalLeaderboardPageIfExistsFalse()", 2, function() {
+        bc.leaderboard.getGlobalLeaderboardPageIfExists(
+                "nonExistentLeaderboard",
+                bc.leaderboard.sortOrder.HIGH_TO_LOW,
+                0, 10, function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("getGlobalLeaderboardView()", 2, function () {
+        bc.leaderboard.getGlobalLeaderboardView(
+            leaderboardName,
+            bc.leaderboard.sortOrder.HIGH_TO_LOW,
+            4, 5, function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getGlobalLeaderboardViewIfExistsTrue()", 2, function () {
+        bc.leaderboard.getGlobalLeaderboardViewIfExists(
+            leaderboardName,
+            bc.leaderboard.sortOrder.HIGH_TO_LOW,
+            4, 5, function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getGlobalLeaderboardViewIfExistsFalse()", 2, function () {
+        bc.leaderboard.getGlobalLeaderboardViewIfExists(
+            "nonExistentLeaderboard",
+            bc.leaderboard.sortOrder.HIGH_TO_LOW,
+            4, 5, function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
     });
 
     var versionId = 0;
@@ -4647,33 +4715,80 @@ async function testSocialLeaderboard() {
                 });
     });
 
-    await asyncTest(
-            "getGlobalLeaderboardPageByVersion()",
-            2,
-            function() {
-                bc.leaderboard
-                        .getGlobalLeaderboardPageByVersion(
-                                leaderboardName,
-                                bc.leaderboard.sortOrder.HIGH_TO_LOW,
-                                0, 10, versionId, function(result) {
-                                    ok(true, JSON.stringify(result));
-                                    equal(result.status, 200,
-                                            "Expecting 200");
-                                    resolve_test();
-                                });
-            });
-
-    await asyncTest("getGlobalLeaderboardViewByVersion()", 2, function() {
+    await asyncTest("getGlobalLeaderboardPageByVersion()", 2, function () {
         bc.leaderboard
-                .getGlobalLeaderboardViewByVersion(
-                        leaderboardName,
-                        bc.leaderboard.sortOrder.HIGH_TO_LOW,
-                        4, 5, versionId, function(result) {
-                            ok(true, JSON.stringify(result));
-                            equal(result.status, 200,
-                                    "Expecting 200");
-                            resolve_test();
-                        });
+            .getGlobalLeaderboardPageByVersion(
+                leaderboardName,
+                bc.leaderboard.sortOrder.HIGH_TO_LOW,
+                0, 10, versionId, function (result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("getGlobalLeaderboardPageByVersionIfExistsTrue()", 2, function () {
+        bc.leaderboard
+            .getGlobalLeaderboardPageByVersionIfExists(
+                leaderboardName,
+                bc.leaderboard.sortOrder.HIGH_TO_LOW,
+                0, 10, versionId, function (result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("getGlobalLeaderboardPageByVersionIfExistsFalse()", 2, function () {
+        bc.leaderboard
+            .getGlobalLeaderboardPageByVersionIfExists(
+                "nonExistentLeaderboard",
+                bc.leaderboard.sortOrder.HIGH_TO_LOW,
+                0, 10, versionId, function (result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("getGlobalLeaderboardViewByVersion()", 2, function () {
+        bc.leaderboard
+            .getGlobalLeaderboardViewByVersion(
+                leaderboardName,
+                bc.leaderboard.sortOrder.HIGH_TO_LOW,
+                4, 5, versionId, function (result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("getGlobalLeaderboardViewByVersionIfExistsTrue()", 2, function () {
+        bc.leaderboard.getGlobalLeaderboardViewByVersionIfExists(
+            leaderboardName,
+            bc.leaderboard.sortOrder.HIGH_TO_LOW,
+            4,
+            5,
+            versionId,
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getGlobalLeaderboardViewByVersionIfExistsFalse()", 2, function () {
+        bc.leaderboard.getGlobalLeaderboardViewByVersionIfExists(
+            "nonExistentLeaderboard",
+            bc.leaderboard.sortOrder.HIGH_TO_LOW,
+            4,
+            5,
+            versionId,
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
     });
 
     await asyncTest("getGlobalLeaderboardEntryCount()", 2, function() {
@@ -4700,6 +4815,48 @@ async function testSocialLeaderboard() {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
+    });
+
+    await asyncTest("postScoreToDynamicLeaderboardUTC()", 2, function() {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        bc.leaderboard.postScoreToDynamicLeaderboardUTC(
+                "testDynamicJs", 1000, {
+                    "extra" : 123
+                },  bc.leaderboard.leaderboardType.HIGH_VALUE,
+                    bc.leaderboard.rotationType.DAILY, tomorrow,
+                3, function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
+    await asyncTest("postScoreToDynamicLeaderboardUsingConfig", 2, function () {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        
+        var leaderboardId = "testDynamicJs"
+        var score = 9999;
+        var scoreData = {
+            "nickname": "tarnished"
+        };
+        var configJson = {
+            "leaderboardType": "HIGH_VALUE",
+            "rotationType": "DAYS",
+            "numDaysToRotate": 4,
+            "resetAt": tomorrow,
+            "retainedCount": 2,
+            "expireInMins": null
+        };
+        bc.leaderboard.postScoreToDynamicLeaderboardUsingConfig(leaderboardId, score, scoreData, configJson, result => {
+            ok(true, JSON.stringify(result));
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
     });
 
     await asyncTest("postScoreToDynamicLeaderboardDays()", 2, function() {
@@ -4729,24 +4886,64 @@ async function testSocialLeaderboard() {
                 });
     });
 
-    await asyncTest("getSocialLeaderboard()", 2, function() {
+    await asyncTest("getSocialLeaderboard()", 2, function () {
         bc.leaderboard.getSocialLeaderboard(leaderboardName,
-                true, function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
+            true, function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
     });
 
-    await asyncTest("getSocialLeaderboardByVersion()", 2, function() {
+    await asyncTest("getSocialLeaderboardIfExistsTrue()", 2, function () {
+        bc.leaderboard.getSocialLeaderboardIfExists(leaderboardName,
+            true, function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getSocialLeaderboardIfExistsFalse()", 2, function () {
+        bc.leaderboard.getSocialLeaderboardIfExists("nonExistentLeaderboard",
+            true, function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getSocialLeaderboardByVersion()", 2, function () {
         bc.leaderboard.getSocialLeaderboardByVersion(leaderboardName,
-                true,
-                0,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
+            true,
+            0,
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getSocialLeaderboardByVersionIfExistsTrue()", 2, function () {
+        bc.leaderboard.getSocialLeaderboardByVersionIfExists(leaderboardName,
+            true,
+            0,
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getSocialLeaderboardByVersionIfExistsFalse()", 2, function () {
+        bc.leaderboard.getSocialLeaderboardByVersionIfExists("nonExistentLeaderboard",
+            true,
+            0,
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
     });
 
     await asyncTest("getMultiSocialLeaderboard()", 2, function() {
@@ -4894,7 +5091,6 @@ async function testSocialLeaderboard() {
                 });
     });
 
-/////////////////////////
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
             groupId,
@@ -4906,27 +5102,73 @@ async function testSocialLeaderboard() {
             });
     });
 
-    await asyncTest("getPlayersSocialLeaderboard()", 2, function() {
+    await asyncTest("getPlayersSocialLeaderboard()", 2, function () {
         bc.leaderboard.getPlayersSocialLeaderboard(
-                leaderboardName,
-                [ UserA.profileId, UserB.profileId ],
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
+            leaderboardName,
+            [UserA.profileId, UserB.profileId],
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
     });
 
-    await asyncTest("getPlayersSocialLeaderboardByVersion()", 2, function() {
+    await asyncTest("getPlayersSocialLeaderboardIfExistsTrue()", 2, function () {
+        bc.leaderboard.getPlayersSocialLeaderboardIfExists(
+            leaderboardName,
+            [UserA.profileId, UserB.profileId],
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getPlayersSocialLeaderboardIfExistsFalse()", 2, function () {
+        bc.leaderboard.getPlayersSocialLeaderboardIfExists(
+            "nonExistentLeaderboard",
+            [UserA.profileId, UserB.profileId],
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getPlayersSocialLeaderboardByVersion()", 2, function () {
         bc.leaderboard.getPlayersSocialLeaderboardByVersion(
-                leaderboardName,
-                [ UserA.profileId, UserB.profileId ],
-                0,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
+            leaderboardName,
+            [UserA.profileId, UserB.profileId],
+            0,
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getPlayersSocialLeaderboardByVersionIfExistsTrue()", 2, function () {
+        bc.leaderboard.getPlayersSocialLeaderboardByVersionIfExists(
+            leaderboardName,
+            [UserA.profileId, UserB.profileId],
+            0,
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
+
+    await asyncTest("getPlayersSocialLeaderboardByVersionIfExistsFalse()", 2, function () {
+        bc.leaderboard.getPlayersSocialLeaderboardByVersionIfExists(
+            "nonExistentLeaderboard",
+            [UserA.profileId, UserB.profileId],
+            0,
+            function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
     });
 
     await asyncTest("getPlayerScore()", 2, function() {

@@ -461,8 +461,7 @@ function BCLobby() {
     /// </summary>
     bc.lobby.cancelFindRequest = function(lobbyType, callback) {
         var data = {
-            lobbyType: lobbyType,
-            cxId: bc.rttService.getRTTConnectionId()
+            lobbyType: lobbyType
         };
 
         bc.brainCloudManager.sendRequest({

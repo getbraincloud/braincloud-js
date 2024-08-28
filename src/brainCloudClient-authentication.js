@@ -870,6 +870,12 @@ function BCAuthentication() {
 		_navLangCode = _navLangCode.split("-");
 		var languageCode =  bc.languageCode == null ? _navLangCode[0] : bc.languageCode;
 		var countryCode = bc.countryCode == null ? _navLangCode[1] : bc.countryCode;
+		if (countryCode === "419") {
+			countryCode = "_LA_"
+		}
+		if (countryCode === "Hans" || countryCode === "Hant") {
+			countryCode = "CN"
+		}
 
 		var now = new Date();
 		var timeZoneOffset = -now.getTimezoneOffset() / 60.0;
