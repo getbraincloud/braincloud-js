@@ -879,11 +879,11 @@ async function testAuthentication() {
     await asyncTest("getServerVersion()", 2, function () {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
-        bc.authentication.authenticateAnonymous(true, function (response) {
+        bc.brainCloudClient.authentication.authenticateAnonymous(true, function (response) {
             equal(response.status, 200, JSON.stringify(response))
 
             bc.brainCloudClient.authentication.getServerVersion(function (response) {
-                if (result.status == 200) {
+                if (response.status == 200) {
                     ok(true, "Server Version Retrieved: " + response.data.serverVersion)
                     resolve_test()
                 }
