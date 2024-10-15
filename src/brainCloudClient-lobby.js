@@ -459,9 +459,10 @@ function BCLobby() {
     /// <summary>
     /// Cancel this members Find, Join and Searching of Lobbies
     /// </summary>
-    bc.lobby.cancelFindRequest = function(lobbyType, callback) {
+    bc.lobby.cancelFindRequest = function(lobbyType, entryId, callback) {
         var data = {
-            lobbyType: lobbyType
+            lobbyType: lobbyType,
+            entryId: entryId
         };
 
         bc.brainCloudManager.sendRequest({

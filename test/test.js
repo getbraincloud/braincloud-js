@@ -7023,6 +7023,8 @@ async function testLobby() {
         return tearDownLogout();
     })) return;
 
+    var entryId
+
     await asyncTest("findLobby()", 1, () =>
     {
         bc.lobby.findLobby("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, true, {}, "all", result =>
@@ -7047,6 +7049,7 @@ async function testLobby() {
         bc.lobby.findOrCreateLobby("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
         {
             equal(result.status, 200, "Expecting 200");
+            entryId = result.data.entryId
             resolve_test();
         });
     });
@@ -7134,7 +7137,7 @@ async function testLobby() {
                 equal(result.operation, "CONNECT", "Expecting \"CONNECT\"");
                 resolve_test();
 
-                bc.lobby.cancelFindRequest("MATCH_UNRANKED", result =>
+                bc.lobby.cancelFindRequest("MATCH_UNRANKED", entryId, result =>
                 {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
