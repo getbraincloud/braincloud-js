@@ -501,10 +501,28 @@ function BCLobby() {
 
     /// <summary>
     /// Cancel this members Find, Join and Searching of Lobbies
+    /// Deprecated: Use cancelFindRequest with entryId parameter
     /// </summary>
     bc.lobby.cancelFindRequest = function(lobbyType, callback) {
         var data = {
             lobbyType: lobbyType
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_LOBBY,
+            operation: bc.lobby.OPERATION_CANCEL_FIND_REQUEST,
+            data: data,
+            callback: callback
+        });
+    };
+
+    /// <summary>
+    /// Cancel this members Find, Join and Searching of Lobbies
+    /// </summary>
+    bc.lobby.cancelFindRequest = function(lobbyType, entryId, callback) {
+        var data = {
+            lobbyType: lobbyType,
+            entryId: entryId
         };
 
         bc.brainCloudManager.sendRequest({
