@@ -193,8 +193,8 @@ function BCIdentity() {
             authenticationToken : ids.authenticationToken
         }
 
-        if (externalAuthName) {
-            data["externalAuthName"] = externalAuthName;
+        if (ids.authenticationSubType !== null || ids.authenticationSubType !== "") {
+            data["externalAuthName"] = ids.authenticationSubType;
         };
 
         if (extraJson) {
@@ -229,8 +229,8 @@ function BCIdentity() {
             authenticationToken : ids.authenticationToken
         }
 
-        if (externalAuthName) {
-            data["externalAuthName"] = externalAuthName;
+        if (ids.authenticationSubType !== null || ids.authenticationSubType !== "") {
+            data["externalAuthName"] = ids.authenticationSubType;
         };
 
         if (extraJson) {

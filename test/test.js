@@ -3241,41 +3241,37 @@ async function testNewIdentity() {
 
     // TODO:  All Identity Service APIs per API DOCS
 
-    // TODO:  AttachAdvancedIdentity
-    // TODO:  bug in attachAdvancedIdentity - undefined "externalAuthName"
-    //        should be checking if ids.authenticationSubType instead of if externalAuthName
-    // await asyncTest("testAttachDetacAdvancedIdentity()", 4, function () {
+    // AttachAdvancedIdentity
+    await asyncTest("testAttachDetacAdvancedIdentity()", 4, function () {
 
-    //     bc.resetStoredProfileId();
+        bc.resetStoredProfileId();
 
-    //     var authenticationType = bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL;
-    //     var ids = { externalId: universalId, authenticationToken: password, authenticationSubType: "" };
-    //     var forceCreate = true;
-    //     var extraJson = { "key": "value" };
+        var authenticationType = bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL;
+        var ids = { externalId: universalId + "Advanced", authenticationToken: password, authenticationSubType: "" };
+        var extraJson = { "key": "value" };
 
-    //     bc.authenticateAnonymous(function (authResponse) {
-    //         if (authResponse.status === 200) {
-    //             console.log("success")
-    //             bc.identity.attachAdvancedIdentity(authenticationType, ids, forceCreate, extraJson, (attachResponse) => {
-    //                 ok(true, JSON.stringify(attachResponse));
-    //                 equal(attachResponse.status, 200, "Expecting 200");
+        bc.authenticateAnonymous(function (authResponse) {
+            if (authResponse.status === 200) {
+                console.log("success")
+                bc.identity.attachAdvancedIdentity(authenticationType, ids, extraJson, (attachResponse) => {
+                    ok(true, JSON.stringify(attachResponse));
+                    equal(attachResponse.status, 200, "Expecting 200");
 
-    //                 bc.identity.detachAdvancedIdentity(authenticationType, ids, forceCreate, extraJson, (detachResponse) => {
-    //                     ok(true, JSON.stringify(detachResponse));
-    //                     equal(detachResponse.status, 200, "Expecting 200");
-    //                     resolve_test();
-    //                 });
-    //             });
-    //         }
-    //         else {
-    //             console.log("fail")
-    //             resolve_test()
-    //         }
-    //     });
-    // });
+                    bc.identity.detachAdvancedIdentity(authenticationType, universalId + "Advanced", true, extraJson, (detachResponse) => {
+                        ok(true, JSON.stringify(detachResponse));
+                        equal(detachResponse.status, 200, "Expecting 200");
+                        resolve_test();
+                    });
+                });
+            }
+            else {
+                console.log("fail")
+                resolve_test()
+            }
+        });
+    });
 
     // TODO:  AttachAppleIdentity
-
 
     // AttachBlockchainIdentity
     await asyncTest("testAttachDetachBlockchainIdentity()", 5, function () {
@@ -3750,118 +3746,119 @@ async function testNewIdentity() {
 ////////////////////////////////////////
 // Identity tests
 ////////////////////////////////////////
-async function testIdentity() {
-    if (!module("Identity", () =>
-    {
-        return setUpWithAuthenticate();
-    }, () =>
-    {
-        return tearDownLogout();
-    })) return;
+// TODO:  remove this test once NewIdentity is confirmed
+// async function testIdentity() {
+//     if (!module("Identity", () =>
+//     {
+//         return setUpWithAuthenticate();
+//     }, () =>
+//     {
+//         return tearDownLogout();
+//     })) return;
 
-    await asyncTest("attachBlockchainIdentity()", 2, function() {
-        bc.identity.attachBlockchainIdentity("config",
-                "thisisAgreattestKey", function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("attachBlockchainIdentity()", 2, function() {
+//         bc.identity.attachBlockchainIdentity("config",
+//                 "thisisAgreattestKey", function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("detachBlockchainIdentity()", 2, function() {
-        bc.identity.detachBlockchainIdentity("config",
-                    function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("detachBlockchainIdentity()", 2, function() {
+//         bc.identity.detachBlockchainIdentity("config",
+//                     function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("attachFacebookId()", 2, function() {
-        bc.identity.attachFacebookIdentity("test",
-                "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
-                    ok(true, JSON.stringify(result));
-                    nequal(result.status, 200, "Expecting failure");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("attachFacebookId()", 2, function() {
+//         bc.identity.attachFacebookIdentity("test",
+//                 "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     nequal(result.status, 200, "Expecting failure");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("mergeFacebookId()", 2, function() {
-        bc.identity.mergeFacebookIdentity("test",
-                "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 202, "Expecting 202");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("mergeFacebookId()", 2, function() {
+//         bc.identity.mergeFacebookIdentity("test",
+//                 "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 202, "Expecting 202");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("detachFacebookId()", 2, function() {
-        bc.identity.detachFacebookIdentity("test", true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 202, "Expecting 202");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("detachFacebookId()", 2, function() {
+//         bc.identity.detachFacebookIdentity("test", true,
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 202, "Expecting 202");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("getIdentities()", 2, function() {
-        bc.identity.getIdentities(
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("getIdentities()", 2, function() {
+//         bc.identity.getIdentities(
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("getExpiredIdentities()", 2, function() {
-        bc.identity.getExpiredIdentities(
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("getExpiredIdentities()", 2, function() {
+//         bc.identity.getExpiredIdentities(
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("refreshIdentity()", 3, function() {
-        bc.identity.refreshIdentity(
-                UserA.name,
-                UserA.password,
-                bc.identity.authenticationType.universal,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 400, "Expecting 400");
-                    equal(result.reason_code, 40464, "Expecting 40464");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("refreshIdentity()", 3, function() {
+//         bc.identity.refreshIdentity(
+//                 UserA.name,
+//                 UserA.password,
+//                 bc.identity.authenticationType.universal,
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 400, "Expecting 400");
+//                     equal(result.reason_code, 40464, "Expecting 40464");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("attachEmailIdentity()", 2, function() {
-        bc.identity.attachEmailIdentity(UserC.email,
-            UserC.password,
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("attachEmailIdentity()", 2, function() {
+//         bc.identity.attachEmailIdentity(UserC.email,
+//             UserC.password,
+//             function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("changeEmailIdentity()", 2, function() {
+//     await asyncTest("changeEmailIdentity()", 2, function() {
 
-        let newEmail = "test_" + getRandomInt(0,1000000) + "@test.getbraincloud.com";
+//         let newEmail = "test_" + getRandomInt(0,1000000) + "@test.getbraincloud.com";
 
-        bc.identity.changeEmailIdentity(
-                UserC.email,
-                UserC.password,
-                newEmail,
-                true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
+//         bc.identity.changeEmailIdentity(
+//                 UserC.email,
+//                 UserC.password,
+//                 newEmail,
+//                 true,
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
 
-    });
-}
+//     });
+// }
 
 
 ////////////////////////////////////////
@@ -6020,157 +6017,158 @@ async function testTournament() {
 ////////////////////////////////////////
 // Shared Identity tests
 ////////////////////////////////////////
-async function testSharedIdentity() {
+// TODO:  remove this test once new identity is confirmed
+// async function testSharedIdentity() {
 
 
-    // TODO:  remove following tests after refactoring
+//     // TODO:  remove following tests after refactoring
 
-    initializeClient();
+//     initializeClient();
 
-    if (!module("SharedIdentity", null, null)) return;
+//     if (!module("SharedIdentity", null, null)) return;
 
-    var currencyType = "credits";
-    var scriptName = "testScript";
-    var scriptData = { "testParam1" : 1 };
+//     var currencyType = "credits";
+//     var scriptName = "testScript";
+//     var scriptData = { "testParam1" : 1 };
 
-    await asyncTest("authenticateUniversal()", function() {
-        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-                UserA.password, true, function(result) {
-                    equal(result.status, 200, JSON.stringify(result));
-                    resolve_test();
-                });
-    });
+//     await asyncTest("authenticateUniversal()", function() {
+//         bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
+//                 UserA.password, true, function(result) {
+//                     equal(result.status, 200, JSON.stringify(result));
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("switchToChildProfile()", 2, function() {
-        bc.identity.switchToChildProfile(null,
-                CHILD_APP_ID,
-                true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("switchToChildProfile()", 2, function() {
+//         bc.identity.switchToChildProfile(null,
+//                 CHILD_APP_ID,
+//                 true,
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("switchToParentProfile()", 2, function() {
-        bc.identity.switchToParentProfile(PARENT_LEVEL_NAME,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("switchToParentProfile()", 2, function() {
+//         bc.identity.switchToParentProfile(PARENT_LEVEL_NAME,
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("getChildProfiles()", 2, function() {
-        bc.identity.getChildProfiles(true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("getChildProfiles()", 2, function() {
+//         bc.identity.getChildProfiles(true,
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("switchToSingletonChildProfile()", 2, function() {
-        bc.identity.switchToSingletonChildProfile(
-                CHILD_APP_ID,
-                true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("switchToSingletonChildProfile()", 2, function() {
+//         bc.identity.switchToSingletonChildProfile(
+//                 CHILD_APP_ID,
+//                 true,
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("runParentScript()", 2, function() {
-        bc.script.runParentScript(scriptName,
-                scriptData, PARENT_LEVEL_NAME, function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("runParentScript()", 2, function() {
+//         bc.script.runParentScript(scriptName,
+//                 scriptData, PARENT_LEVEL_NAME, function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("detachParent()", 2, function() {
-        bc.identity.detachParent(function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("detachParent()", 2, function() {
+//         bc.identity.detachParent(function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("attachParentWithIdentity()", 2, function() {
-        bc.identity.attachParentWithIdentity(
-            UserA.name, UserA.password,
-            bc.identity.authenticationType.universal,
-            null, true,
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("attachParentWithIdentity()", 2, function() {
+//         bc.identity.attachParentWithIdentity(
+//             UserA.name, UserA.password,
+//             bc.identity.authenticationType.universal,
+//             null, true,
+//             function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("switchToParentProfile()", 2, function() {
-        bc.identity.switchToParentProfile(PARENT_LEVEL_NAME,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("switchToParentProfile()", 2, function() {
+//         bc.identity.switchToParentProfile(PARENT_LEVEL_NAME,
+//                 function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("attachPeerProfile()", 2, function() {
-        bc.identity.attachPeerProfile(
-            PEER_NAME,UserA.name, UserA.password,
-            bc.identity.authenticationType.universal,
-                null, true,
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("attachPeerProfile()", 2, function() {
+//         bc.identity.attachPeerProfile(
+//             PEER_NAME,UserA.name, UserA.password,
+//             bc.identity.authenticationType.universal,
+//                 null, true,
+//             function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("detachPeer()", 2, function() {
-        bc.identity.detachPeer(
-            PEER_NAME,
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("detachPeer()", 2, function() {
+//         bc.identity.detachPeer(
+//             PEER_NAME,
+//             function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("getPeerProfiles()", 2, function() {
-        bc.identity.getPeerProfiles(
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+//     await asyncTest("getPeerProfiles()", 2, function() {
+//         bc.identity.getPeerProfiles(
+//             function(result) {
+//                     ok(true, JSON.stringify(result));
+//                     equal(result.status, 200, "Expecting 200");
+//                     resolve_test();
+//                 });
+//     });
 
-    await asyncTest("logout()", function() {
-        bc.playerState.logout(function(result) {
-            equal(result.status, 200, JSON.stringify(result));
-            resolve_test();
-        });
-    });
+//     await asyncTest("logout()", function() {
+//         bc.playerState.logout(function(result) {
+//             equal(result.status, 200, JSON.stringify(result));
+//             resolve_test();
+//         });
+//     });
 
-    await asyncTest("attachNonLoginUniversalId()", function() {
-        bc.identity.attachNonLoginUniversalId("braincloudtest@test.getbraincloud.com", function(result) {
-            equal(result.status, 403, JSON.stringify(result));
-            resolve_test();
-        });
-    });
+//     await asyncTest("attachNonLoginUniversalId()", function() {
+//         bc.identity.attachNonLoginUniversalId("braincloudtest@test.getbraincloud.com", function(result) {
+//             equal(result.status, 403, JSON.stringify(result));
+//             resolve_test();
+//         });
+//     });
 
-    await asyncTest("updateUniversalLoginId()", function() {
-        bc.identity.updateUniversalIdLogin("braincloudtest@test.getbraincloud.com", function(result) {
-            equal(result.status, 403, JSON.stringify(result));
-            resolve_test();
-        });
-    });
-}
+//     await asyncTest("updateUniversalLoginId()", function() {
+//         bc.identity.updateUniversalIdLogin("braincloudtest@test.getbraincloud.com", function(result) {
+//             equal(result.status, 403, JSON.stringify(result));
+//             resolve_test();
+//         });
+//     });
+// }
 
 ////////////////////////////////////////
 // Comms tests
@@ -8198,7 +8196,7 @@ async function run_tests()
     await testGlobalEntity();
     await testGroupFile();
     await testGroup();
-    await testIdentity();
+    //await testIdentity();     // TODO
     await testNewIdentity();    // TODO
     await testMail();
     await testMatchMaking();
@@ -8218,7 +8216,7 @@ async function run_tests()
     await testSocialLeaderboard();
     await testTime();
     await testTournament();
-    await testSharedIdentity();
+    //await testSharedIdentity(); // TODO
     await testFile();
     await testChat();
     await testMessaging();
