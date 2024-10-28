@@ -3222,118 +3222,404 @@ async function testGroup() {
 // Identity tests
 ////////////////////////////////////////
 async function testIdentity() {
-    if (!module("Identity", () =>
-    {
-        return setUpWithAuthenticate();
-    }, () =>
-    {
-        return tearDownLogout();
-    })) return;
+    bc.brainCloudClient.setDebugEnabled(true)
 
-    await asyncTest("attachBlockchainIdentity()", 2, function() {
-        bc.identity.attachBlockchainIdentity("config",
-                "thisisAgreattestKey", function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+    bc.initialize(GAME_ID, SECRET, GAME_VERSION)
 
-    await asyncTest("detachBlockchainIdentity()", 2, function() {
-        bc.identity.detachBlockchainIdentity("config",
-                    function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+    bc.brainCloudClient.setServerUrl(SERVER_URL)
 
-    await asyncTest("attachFacebookId()", 2, function() {
-        bc.identity.attachFacebookIdentity("test",
-                "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
-                    ok(true, JSON.stringify(result));
-                    nequal(result.status, 200, "Expecting failure");
-                    resolve_test();
-                });
-    });
+    var today = new Date()
+    var time = today.getTime()
+    var universalId = "identityTestUserUniversalId" + time
+    var email = "identityTestUserEmail" + time + "@email.com"
+    var password = "password"
+    var blockChainPublicKey = "publicKey" + time
+    var nonLoginUniversalId = "identityTestUserNonLoginUniversalId" + time
+    var parentUniversalId = "identityTestUserParentUniversalId" + time
 
-    await asyncTest("mergeFacebookId()", 2, function() {
-        bc.identity.mergeFacebookIdentity("test",
-                "3780516b-14f8-4055-8899-8eaab6ac7e82", function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 202, "Expecting 202");
-                    resolve_test();
-                });
-    });
+    if (!module("NewIdentity", null, null)) return
 
-    await asyncTest("detachFacebookId()", 2, function() {
-        bc.identity.detachFacebookIdentity("test", true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 202, "Expecting 202");
-                    resolve_test();
-                });
-    });
+    await asyncTest("testAttachDetachAdvancedIdentity()", 2, function () {
 
-    await asyncTest("getIdentities()", 2, function() {
-        bc.identity.getIdentities(
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+        bc.resetStoredProfileId();
 
-    await asyncTest("getExpiredIdentities()", 2, function() {
-        bc.identity.getExpiredIdentities(
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+        var authenticationType = bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL
+        var ids = { externalId: universalId + "Advanced", authenticationToken: password, authenticationSubType: "" }
+        var extraJson = { "key": "value" }
 
-    await asyncTest("refreshIdentity()", 3, function() {
-        bc.identity.refreshIdentity(
-                UserA.name,
-                UserA.password,
-                bc.identity.authenticationType.universal,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 400, "Expecting 400");
-                    equal(result.reason_code, 40464, "Expecting 40464");
-                    resolve_test();
-                });
-    });
+        bc.authenticateAnonymous(function (authResponse) {
+            if (authResponse.status === 200) {
+                bc.identity.attachAdvancedIdentity(authenticationType, ids, extraJson, (attachResponse) => {
+                    equal(attachResponse.status, 200, "Expecting 200")
 
-    await asyncTest("attachEmailIdentity()", 2, function() {
-        bc.identity.attachEmailIdentity(UserC.email,
-            UserC.password,
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
+                    bc.identity.detachAdvancedIdentity(authenticationType, universalId + "Advanced", true, extraJson, (detachResponse) => {
+                        equal(detachResponse.status, 200, "Expecting 200")
+                        
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
 
-    await asyncTest("changeEmailIdentity()", 2, function() {
+    await asyncTest("testAttachDetachBlockchainIdentity()", 2, function () {
 
-        let newEmail = "test_" + getRandomInt(0,1000000) + "@test.getbraincloud.com";
+        bc.resetStoredProfileId()
 
-        bc.identity.changeEmailIdentity(
-                UserC.email,
-                UserC.password,
-                newEmail,
-                true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
+        bc.authenticateUniversal("identityBlockchainTestUser", password, true, function (authResponse) {
+            if (authResponse.status === 200) {
+                bc.identity.attachBlockchainIdentity("config", blockChainPublicKey, (attachResponse) => {
+                    equal(attachResponse.status, 200, "Expecting 200")
 
-    });
+                    bc.identity.detachBlockchainIdentity("config", (detachResponse) => {
+                        equal(detachResponse.status, 200, "Expecting 200")
+
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    // AttachEmailIdentity
+    await asyncTest("testAttachDetachEmailIdentity()", 2, function () {
+
+        bc.resetStoredProfileId()
+
+        bc.authenticateAnonymous(function (authResponse) {
+            if (authResponse.status === 200) {
+                bc.identity.attachEmailIdentity(email, password, (attachResponse) => {
+                    equal(attachResponse.status, 200, "Expecting 200")
+
+                    bc.identity.detachEmailIdentity(email, true, (detachResponse) => {
+                        equal(detachResponse.status, 200, "Expecting 200")
+                        
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testAttachNonLoginUniversalId()", 1, function () {
+
+        bc.resetStoredProfileId()
+
+        bc.authenticateEmailPassword(email, password, true, function (authResponse) {
+            if (authResponse.status === 200) {
+                bc.identity.attachNonLoginUniversalId(nonLoginUniversalId, (attachResponse) => {
+                    equal(attachResponse.status, 200, "Expecting 200")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testAttachDetachParentWithIdentity()", 3, function () {
+
+        initializeClient()
+
+        var externalId = parentUniversalId
+        var authenticationToken = password
+        var authenticationType = bc.identity.authenticationType.universal
+        var externalAuthName = null
+        var forceCreate = true
+
+        bc.authenticateAnonymous(function (authResponse) {
+            if (authResponse.status === 200) {
+
+                // Switch to Child
+                bc.identity.switchToChildProfile(null, CHILD_APP_ID, true, (switchToChildResponse) => {
+                    equal(switchToChildResponse.status, 200, "Expecting 200")
+
+                    bc.identity.detachParent(detachResponse => {
+                        equal(detachResponse.status, 200, " expecting successful detach")
+
+                        // Attach
+                        bc.identity.attachParentWithIdentity(externalId, authenticationToken, authenticationType, externalAuthName, forceCreate, (attachResponse) => {
+                            equal(attachResponse.status, 200, "Expecting 200")
+
+                            bc.playerState.logout(() => {
+                                resolve_test()
+                            })
+                        })
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testAttachDetachPeerProfile()", 2, function () {
+
+        initializeClient()
+
+        bc.authenticateUniversal(UserA.name, UserA.password, true, function (authResponse) {
+            if (authResponse.status === 200) {
+                var authenticationType = bc.identity.authenticationType.universal
+                var externalAuthName = ""
+
+                bc.identity.attachPeerProfile(PEER_NAME, UserA.name + "_peer", password, authenticationType, externalAuthName, true, (attachResponse) => {
+                    equal(attachResponse.status, 200, "Expecting Successful Attach")
+
+                    bc.identity.detachPeer(PEER_NAME, (detachResponse) => {
+                        equal(detachResponse.status, 200, "Expecting Successful Detach")
+
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testAttachDetachUniversalIdentity()", 2, function () {
+
+        bc.resetStoredProfileId()
+
+        bc.authenticateAnonymous(function (authResponse) {
+            if (authResponse.status === 200) {
+                bc.identity.attachUniversalIdentity(universalId, password, (attachResponse) => {
+                    equal(attachResponse.status, 200, "Expecting 200")
+
+                    bc.identity.detachUniversalIdentity(universalId, true, (detachResponse) => {
+                        equal(detachResponse.status, 200, "Expecting 200")
+                        
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testChangeEmailIdentity()", 1, function () {
+        bc.authenticateEmailPassword(email, password, true, (authResponse) => {
+            if (authResponse.status === 200) {
+                bc.identity.changeEmailIdentity(email, password, "new" + email, true, (changeEmailResponse) => {
+                    equal(changeEmailResponse.status, 200, "Expecting 200")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testGetChildProfiles()", 1, function () {
+        bc.authenticateAnonymous((authResponse) => {
+            if (authResponse.status === 200) {
+                bc.identity.getChildProfiles(true, (response) => {
+                    equal(response.status, 200, "Expecting 200")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testGetExpiredIdentities()", 1, function () {
+        bc.authenticateAnonymous((authResponse) => {
+            if (authResponse.status === 200) {
+                bc.identity.getExpiredIdentities((response) => {
+                    equal(response.status, 200, "Expecting 200")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testGetIdentities()", 1, function () {
+        bc.authenticateAnonymous((authResponse) => {
+            if (authResponse.status === 200) {
+                bc.identity.getIdentities((response) => {
+                    equal(response.status, 200, "Expecting 200")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testGetIdentityStatus()", 1, function () {
+
+        bc.authenticateUniversal(universalId, password, true, (authResponse) => {
+            if (authResponse.status === 200) {
+                
+                var authenticationType = bc.identity.authenticationType.universal;
+                var externalAuthName = "";
+
+                bc.identity.getIdentityStatus(authenticationType, externalAuthName, (response) => {
+                    equal(response.status, 200, " Expecting Successful Response")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testGetPeerProfiles()", 1, function () {
+        
+        bc.authenticateAnonymous((authResponse) => {
+            if(authResponse.status === 200){
+                bc.identity.getPeerProfiles((response) => {
+                    equal(response.status, 200, " Expecting Successful Response")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else{
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testMergeEmailIdentity()", 1, function () {
+        var mergeEmail = "merge" + email
+
+        bc.authenticateEmailPassword(mergeEmail, password, true, () => {
+            bc.playerState.logout(() => {
+                bc.authenticateUniversal(universalId, password, true, (authResponse) => {
+                    if (authResponse.status === 200) {
+                        bc.identity.mergeEmailIdentity(mergeEmail, password, (mergeResponse) => {
+                            equal(mergeResponse.status, 200, " Expecting Successful Merge")
+
+                            bc.playerState.logout(() => {
+                                resolve_test()
+                            })
+                        })
+                    }
+                    else {
+                        resolve_test()
+                    }
+                })
+            })
+        })
+    })
+
+    await asyncTest("testMergeUniversalIdentity()", 1, function () {
+        var mergeUniversalId = "merge" + universalId
+        
+        bc.authenticateUniversal(mergeUniversalId, password, true, () => {
+            bc.playerState.logout(() => {
+                bc.authenticateEmailPassword(email, password, true, (authResponse) => {
+                    if (authResponse.status === 200) {
+                        bc.identity.mergeUniversalIdentity(mergeUniversalId, password, (mergeResponse) => {
+                            equal(mergeResponse.status, 200, " Expecting Successful Merge")
+
+                            bc.playerState.logout(() => {
+                                resolve_test()
+                            })
+                        })
+                    }
+                    else {
+                        resolve_test()
+                    }
+                })
+            })
+        })
+    })
+
+    await asyncTest("testSwitchToSingletonChildAndParentProfile()", 2, () => {
+        bc.resetStoredProfileId()
+
+        initializeClient()
+
+        bc.authenticateUniversal(UserA.name, UserA.password, true, authResponse => {
+            if(authResponse.status === 200){
+                bc.identity.switchToSingletonChildProfile(CHILD_APP_ID, true, switchToChildResponse => {
+                    equal(switchToChildResponse.status, 200, " Expecting successful switch")
+
+                    bc.identity.switchToParentProfile(PARENT_LEVEL_NAME, switchToParentResponse => {
+                        equal(switchToParentResponse.status, 200, " Expecting successful switch")
+
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
+            }
+            else{
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("testUpdateUniversalIdLogin()", 1, () => {
+        bc.authenticateUniversal(universalId, password, true, authResponse => {
+            if(authResponse.status === 200){
+                bc.identity.updateUniversalIdLogin(universalId + "Updated", response => {
+                    equal(response.status, 200, " Expecting successful update")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else{
+                resolve_test()
+            }
+        })
+    })
 }
-
 
 ////////////////////////////////////////
 // Mail tests
@@ -5489,158 +5775,6 @@ async function testTournament() {
 }
 
 ////////////////////////////////////////
-// Shared Identity tests
-////////////////////////////////////////
-async function testSharedIdentity() {
-
-    initializeClient();
-
-    if (!module("SharedIdentity", null, null)) return;
-
-    var currencyType = "credits";
-    var scriptName = "testScript";
-    var scriptData = { "testParam1" : 1 };
-
-    await asyncTest("authenticateUniversal()", function() {
-        bc.brainCloudClient.authentication.authenticateUniversal(UserA.name,
-                UserA.password, true, function(result) {
-                    equal(result.status, 200, JSON.stringify(result));
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("switchToChildProfile()", 2, function() {
-        bc.identity.switchToChildProfile(null,
-                CHILD_APP_ID,
-                true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("switchToParentProfile()", 2, function() {
-        bc.identity.switchToParentProfile(PARENT_LEVEL_NAME,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("getChildProfiles()", 2, function() {
-        bc.identity.getChildProfiles(true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("switchToSingletonChildProfile()", 2, function() {
-        bc.identity.switchToSingletonChildProfile(
-                CHILD_APP_ID,
-                true,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("runParentScript()", 2, function() {
-        bc.script.runParentScript(scriptName,
-                scriptData, PARENT_LEVEL_NAME, function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("detachParent()", 2, function() {
-        bc.identity.detachParent(function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("attachParentWithIdentity()", 2, function() {
-        bc.identity.attachParentWithIdentity(
-            UserA.name, UserA.password,
-            bc.identity.authenticationType.universal,
-            null, true,
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("switchToParentProfile()", 2, function() {
-        bc.identity.switchToParentProfile(PARENT_LEVEL_NAME,
-                function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("attachPeerProfile()", 2, function() {
-        bc.identity.attachPeerProfile(
-            PEER_NAME,UserA.name, UserA.password,
-            bc.identity.authenticationType.universal,
-                null, true,
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("detachPeer()", 2, function() {
-        bc.identity.detachPeer(
-            PEER_NAME,
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("getPeerProfiles()", 2, function() {
-        bc.identity.getPeerProfiles(
-            function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("logout()", function() {
-        bc.playerState.logout(function(result) {
-            equal(result.status, 200, JSON.stringify(result));
-            resolve_test();
-        });
-    });
-
-    await asyncTest("attachNonLoginUniversalId()", function() {
-        bc.identity.attachNonLoginUniversalId("braincloudtest@test.getbraincloud.com", function(result) {
-            equal(result.status, 403, JSON.stringify(result));
-            resolve_test();
-        });
-    });
-
-    await asyncTest("updateUniversalLoginId()", function() {
-        bc.identity.updateUniversalIdLogin("braincloudtest@test.getbraincloud.com", function(result) {
-            equal(result.status, 403, JSON.stringify(result));
-            resolve_test();
-        });
-    });
-}
-
-////////////////////////////////////////
 // Comms tests
 ////////////////////////////////////////
 async function testComms() {
@@ -7685,7 +7819,6 @@ async function run_tests()
     await testSocialLeaderboard();
     await testTime();
     await testTournament();
-    await testSharedIdentity();
     await testFile();
     await testChat();
     await testMessaging();
