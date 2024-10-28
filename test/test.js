@@ -3218,342 +3218,279 @@ async function testGroup() {
     })
 }
 
-// TODO:  Create new Identity Service test
+////////////////////////////////////////
+// Identity tests
+////////////////////////////////////////
 async function testIdentity() {
-    bc.brainCloudClient.setDebugEnabled(true);
+    bc.brainCloudClient.setDebugEnabled(true)
 
-    bc.initialize(GAME_ID, SECRET, GAME_VERSION);
+    bc.initialize(GAME_ID, SECRET, GAME_VERSION)
 
-    bc.brainCloudClient.setServerUrl(SERVER_URL);
+    bc.brainCloudClient.setServerUrl(SERVER_URL)
 
-    var today = new Date();
-    var time = today.getTime();
-    var universalId = "identityTestUserUniversalId" + time;
-    var email = "identityTestUserEmail" + time + "@email.com";
-    var password = "password";
-    var blockChainPublicKey = "publicKey" + time;
-    var nonLoginUniversalId = "identityTestUserNonLoginUniversalId" + time;
-    var parentUniversalId = "identityTestUserParentUniversalId" + time;
-    var peerExternalId = "identityTestUserPeerExternalId" + time + "@email.com";
-    //var peer = "peerapp" + time;
+    var today = new Date()
+    var time = today.getTime()
+    var universalId = "identityTestUserUniversalId" + time
+    var email = "identityTestUserEmail" + time + "@email.com"
+    var password = "password"
+    var blockChainPublicKey = "publicKey" + time
+    var nonLoginUniversalId = "identityTestUserNonLoginUniversalId" + time
+    var parentUniversalId = "identityTestUserParentUniversalId" + time
 
-    if (!module("NewIdentity", null, null)) return;
+    if (!module("NewIdentity", null, null)) return
 
-    // TODO:  All Identity Service APIs per API DOCS
-
-    // AttachAdvancedIdentity
-    await asyncTest("testAttachDetacAdvancedIdentity()", 4, function () {
+    await asyncTest("testAttachDetachAdvancedIdentity()", 2, function () {
 
         bc.resetStoredProfileId();
 
-        var authenticationType = bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL;
-        var ids = { externalId: universalId + "Advanced", authenticationToken: password, authenticationSubType: "" };
-        var extraJson = { "key": "value" };
+        var authenticationType = bc.brainCloudClient.authentication.AUTHENTICATION_TYPE_UNIVERSAL
+        var ids = { externalId: universalId + "Advanced", authenticationToken: password, authenticationSubType: "" }
+        var extraJson = { "key": "value" }
 
         bc.authenticateAnonymous(function (authResponse) {
             if (authResponse.status === 200) {
-                console.log("success")
                 bc.identity.attachAdvancedIdentity(authenticationType, ids, extraJson, (attachResponse) => {
-                    ok(true, JSON.stringify(attachResponse));
-                    equal(attachResponse.status, 200, "Expecting 200");
+                    equal(attachResponse.status, 200, "Expecting 200")
 
                     bc.identity.detachAdvancedIdentity(authenticationType, universalId + "Advanced", true, extraJson, (detachResponse) => {
-                        ok(true, JSON.stringify(detachResponse));
-                        equal(detachResponse.status, 200, "Expecting 200");
-                        resolve_test();
-                    });
-                });
+                        equal(detachResponse.status, 200, "Expecting 200")
+                        
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
             }
             else {
-                console.log("fail")
                 resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // TODO:  AttachAppleIdentity
+    await asyncTest("testAttachDetachBlockchainIdentity()", 2, function () {
 
-    // AttachBlockchainIdentity
-    await asyncTest("testAttachDetachBlockchainIdentity()", 5, function () {
-
-        bc.resetStoredProfileId();
+        bc.resetStoredProfileId()
 
         bc.authenticateUniversal("identityBlockchainTestUser", password, true, function (authResponse) {
             if (authResponse.status === 200) {
                 bc.identity.attachBlockchainIdentity("config", blockChainPublicKey, (attachResponse) => {
-                    ok(true, JSON.stringify(attachResponse));
-                    equal(attachResponse.status, 200, "Expecting 200");
+                    equal(attachResponse.status, 200, "Expecting 200")
 
                     bc.identity.detachBlockchainIdentity("config", (detachResponse) => {
-                        ok(true, JSON.stringify(detachResponse));
-                        equal(detachResponse.status, 200, "Expecting 200");
+                        equal(detachResponse.status, 200, "Expecting 200")
 
-                        bc.playerState.logout((logoutResponse) => {
-                            equal(logoutResponse.status, 200, "Expecting 200");
-                            resolve_test();
-                        });
-                    });
-                });
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
             }
             else {
-                console.log("fail")
                 resolve_test()
             }
-        });
-    });
+        })
+    })
 
     // AttachEmailIdentity
-    await asyncTest("testAttachDetachEmailIdentity()", 5, function () {
+    await asyncTest("testAttachDetachEmailIdentity()", 2, function () {
 
-        bc.resetStoredProfileId();
+        bc.resetStoredProfileId()
 
         bc.authenticateAnonymous(function (authResponse) {
             if (authResponse.status === 200) {
-                console.log("success")
                 bc.identity.attachEmailIdentity(email, password, (attachResponse) => {
-                    ok(true, JSON.stringify(attachResponse));
-                    equal(attachResponse.status, 200, "Expecting 200");
+                    equal(attachResponse.status, 200, "Expecting 200")
 
                     bc.identity.detachEmailIdentity(email, true, (detachResponse) => {
-                        ok(true, JSON.stringify(detachResponse));
-                        equal(detachResponse.status, 200, "Expecting 200");
+                        equal(detachResponse.status, 200, "Expecting 200")
                         
-                        bc.playerState.logout((logoutResponse) => {
-                            equal(logoutResponse.status, 200, "Expecting 200");
-                            resolve_test();
-                        });
-                    });
-                });
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
             }
             else {
-                console.log("fail")
                 resolve_test()
             }
-        });
-    });
-    // TODO:  AttachFacebookIdentity
-    // TODO:  AttachFacebookLimitedIdentity
-    // TODO:  AttachGameCenterIdentity
-    // TODO:  AttachGoogleIdentity
-    // TODO:  AttachGoogleOpenIdIdentity
+        })
+    })
 
-    // AttachNonLoginUniversalId
-    await asyncTest("testAttachNonLoginUniversalId()", 3, function () {
+    await asyncTest("testAttachNonLoginUniversalId()", 1, function () {
 
-        bc.resetStoredProfileId();
+        bc.resetStoredProfileId()
 
         bc.authenticateEmailPassword(email, password, true, function (authResponse) {
             if (authResponse.status === 200) {
-                console.log("success")
                 bc.identity.attachNonLoginUniversalId(nonLoginUniversalId, (attachResponse) => {
-                    ok(true, JSON.stringify(attachResponse));
-                    equal(attachResponse.status, 200, "Expecting 200");
-                    
-                    bc.playerState.logout((logoutResponse) => {
-                        equal(logoutResponse.status, 200, "Expecting 200");
-                        resolve_test();
-                    });
-                });
+                    equal(attachResponse.status, 200, "Expecting 200")
+
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
             }
             else {
-                console.log("fail")
                 resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // TODO:  AttachParentWithIdentity
     await asyncTest("testAttachDetachParentWithIdentity()", 3, function () {
 
-        //bc.resetStoredProfileId();
         initializeClient()
 
-        var externalId = parentUniversalId;
-        var authenticationToken = password;
+        var externalId = parentUniversalId
+        var authenticationToken = password
         var authenticationType = bc.identity.authenticationType.universal
-        var externalAuthName = null;
-        var forceCreate = true;
+        var externalAuthName = null
+        var forceCreate = true
 
         bc.authenticateAnonymous(function (authResponse) {
             if (authResponse.status === 200) {
 
                 // Switch to Child
                 bc.identity.switchToChildProfile(null, CHILD_APP_ID, true, (switchToChildResponse) => {
-                    equal(switchToChildResponse.status, 200, "Expecting 200");
+                    equal(switchToChildResponse.status, 200, "Expecting 200")
 
                     bc.identity.detachParent(detachResponse => {
                         equal(detachResponse.status, 200, " expecting successful detach")
 
                         // Attach
                         bc.identity.attachParentWithIdentity(externalId, authenticationToken, authenticationType, externalAuthName, forceCreate, (attachResponse) => {
-                            equal(attachResponse.status, 200, "Expecting 200");
+                            equal(attachResponse.status, 200, "Expecting 200")
 
                             bc.playerState.logout(() => {
-                                resolve_test();
-                            });
-                        });
+                                resolve_test()
+                            })
+                        })
                     })
                 })
             }
             else {
-                console.log("fail")
                 resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // TODO:  AttachParseIdentity
-
-    // AttachPeerProfile
-    await asyncTest("testAttachDetachPeerProfile()", 3, function () {
+    await asyncTest("testAttachDetachPeerProfile()", 2, function () {
 
         initializeClient()
 
         bc.authenticateUniversal(UserA.name, UserA.password, true, function (authResponse) {
             if (authResponse.status === 200) {
-                var authenticationType = bc.identity.authenticationType.universal;
-                var externalAuthName = "";
+                var authenticationType = bc.identity.authenticationType.universal
+                var externalAuthName = ""
 
                 bc.identity.attachPeerProfile(PEER_NAME, UserA.name + "_peer", password, authenticationType, externalAuthName, true, (attachResponse) => {
-                    equal(attachResponse.status, 200, "Expecting Successful Attach");
+                    equal(attachResponse.status, 200, "Expecting Successful Attach")
 
                     bc.identity.detachPeer(PEER_NAME, (detachResponse) => {
-                        equal(detachResponse.status, 200, "Expecting Successful Detach");
+                        equal(detachResponse.status, 200, "Expecting Successful Detach")
 
-                        bc.playerState.logout((logoutResponse) => {
-                            equal(logoutResponse.status, 200, "Expecting Successful Logout");
-                            resolve_test();
-                        });
-                    });
-                });
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
             }
             else {
-                console.log("Initial authentication failed. Test cannot proceed.");
-                resolve_test();
+                resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // TODO:  AttachSteamIdentity
-    // TODO:  AttachTwitterIdentity
-    // TODO:  AttachUltraIdentity
+    await asyncTest("testAttachDetachUniversalIdentity()", 2, function () {
 
-    // AttachUniversalIdentity
-    await asyncTest("testAttachDetachUniversalIdentity()", 5, function () {
-
-        bc.resetStoredProfileId();
+        bc.resetStoredProfileId()
 
         bc.authenticateAnonymous(function (authResponse) {
             if (authResponse.status === 200) {
-                console.log("success")
                 bc.identity.attachUniversalIdentity(universalId, password, (attachResponse) => {
-                    ok(true, JSON.stringify(attachResponse));
-                    equal(attachResponse.status, 200, "Expecting 200");
+                    equal(attachResponse.status, 200, "Expecting 200")
 
                     bc.identity.detachUniversalIdentity(universalId, true, (detachResponse) => {
-                        ok(true, JSON.stringify(detachResponse));
-                        equal(detachResponse.status, 200, "Expecting 200");
+                        equal(detachResponse.status, 200, "Expecting 200")
                         
-                        bc.playerState.logout((logoutResponse) => {
-                            equal(logoutResponse.status, 200, "Expecting 200");
-                            resolve_test();
-                        });
-                    });
-                });
+                        bc.playerState.logout(() => {
+                            resolve_test()
+                        })
+                    })
+                })
             }
             else {
-                console.log("fail")
                 resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // ChangeEmailIdentity
-    await asyncTest("testChangeEmailIdentity()", 2, function () {
+    await asyncTest("testChangeEmailIdentity()", 1, function () {
         bc.authenticateEmailPassword(email, password, true, (authResponse) => {
             if (authResponse.status === 200) {
                 bc.identity.changeEmailIdentity(email, password, "new" + email, true, (changeEmailResponse) => {
-                    equal(changeEmailResponse.status, 200, "Expecting 200");
+                    equal(changeEmailResponse.status, 200, "Expecting 200")
 
-                    bc.playerState.logout((logoutResponse) => {
-                        equal(logoutResponse.status, 200, "Expecting 200");
-                        resolve_test();
-                    });
-                });
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
             }
             else {
-                resolve_test();
+                resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // TODO:  DetachAppleIdentity
-    // TODO:  DetachFacebookIdentity
-    // TODO:  DetachFacebookLimitedIdentity
-    // TODO:  DetachGameCenterIdentity
-    // TODO:  DetachGoogleIdentity
-    // TODO:  DetachGoogleOpenIdIdentity
-    // TODO:  DetachParseIdentity
-    // TODO:  DetachSteamIdentity
-    // TODO:  DetachTwitterIdentity
-    // TODO:  DetachUltraIdentity
-
-    // GetChildProfiles
-    await asyncTest("testGetChildProfiles()", 2, function () {
+    await asyncTest("testGetChildProfiles()", 1, function () {
         bc.authenticateAnonymous((authResponse) => {
             if (authResponse.status === 200) {
                 bc.identity.getChildProfiles(true, (response) => {
-                    equal(response.status, 200, "Expecting 200");
+                    equal(response.status, 200, "Expecting 200")
 
-                    bc.playerState.logout((logoutResponse) => {
-                        equal(logoutResponse.status, 200, "Expecting 200");
-                        resolve_test();
-                    });
-                });
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
             }
             else {
-                resolve_test();
+                resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // GetExpiredIdentities
-    await asyncTest("testGetExpiredIdentities()", 2, function () {
+    await asyncTest("testGetExpiredIdentities()", 1, function () {
         bc.authenticateAnonymous((authResponse) => {
             if (authResponse.status === 200) {
                 bc.identity.getExpiredIdentities((response) => {
-                    equal(response.status, 200, "Expecting 200");
+                    equal(response.status, 200, "Expecting 200")
 
-                    bc.playerState.logout((logoutResponse) => {
-                        equal(logoutResponse.status, 200, "Expecting 200");
-                        resolve_test();
-                    });
-                });
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
             }
             else {
-                resolve_test();
+                resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // GetIdentities
-    await asyncTest("testGetIdentities()", 2, function () {
+    await asyncTest("testGetIdentities()", 1, function () {
         bc.authenticateAnonymous((authResponse) => {
             if (authResponse.status === 200) {
                 bc.identity.getIdentities((response) => {
-                    equal(response.status, 200, "Expecting 200");
+                    equal(response.status, 200, "Expecting 200")
 
-                    bc.playerState.logout((logoutResponse) => {
-                        equal(logoutResponse.status, 200, "Expecting 200");
-                        resolve_test();
-                    });
-                });
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
             }
             else {
-                resolve_test();
+                resolve_test()
             }
-        });
-    });
+        })
+    })
 
     // TODO:  GetIdentityStatus
     // TODO: getIdentityStatus is not a function
@@ -3581,121 +3518,74 @@ async function testIdentity() {
     //     });
     // });
 
-    // TODO:  GetPeerProfiles
-    await asyncTest("testGetPeerProfiles()", 2, function () {
+    await asyncTest("testGetPeerProfiles()", 1, function () {
         
         bc.authenticateAnonymous((authResponse) => {
             if(authResponse.status === 200){
                 bc.identity.getPeerProfiles((response) => {
-                    equal(response.status, 200, " Expecting Successful Response");
+                    equal(response.status, 200, " Expecting Successful Response")
 
-                    bc.playerState.logout((logoutResponse) => {
-                        equal(logoutResponse.status, 200, " Expecting Successful Logout");
-                        resolve_test();
-                    });
-                });
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
             }
             else{
-                console.log("Initial authentication failed. Test cannot proceed.");
-                resolve_test();
+                resolve_test()
             }
-        });
-    });
+        })
+    })
 
-    // TODO:  MergeAdvancedIdentity
-    // TODO:  MergeAppleIdentity
-
-    // MergeEmailIdentity
     await asyncTest("testMergeEmailIdentity()", 1, function () {
-        var mergeEmail = "merge" + email;
-
+        var mergeEmail = "merge" + email
 
         bc.authenticateEmailPassword(mergeEmail, password, true, () => {
             bc.playerState.logout(() => {
                 bc.authenticateUniversal(universalId, password, true, (authResponse) => {
                     if (authResponse.status === 200) {
                         bc.identity.mergeEmailIdentity(mergeEmail, password, (mergeResponse) => {
-                            equal(mergeResponse.status, 200, " Expecting Successful Merge");
+                            equal(mergeResponse.status, 200, " Expecting Successful Merge")
 
                             bc.playerState.logout(() => {
-                                resolve_test();
+                                resolve_test()
                             })
-                        });
+                        })
                     }
                     else {
-                        console.log("Authentication failed. Test cannot proceed.");
-                        resolve_test();
+                        resolve_test()
                     }
-                });
-            });
-        });
-    });
+                })
+            })
+        })
+    })
 
-    // TODO:  MergeFacebookIdentity
-    // TODO:  MergeFacebookLimitedIdentity
-    // TODO:  MergeGameCenterIdentity
-    // TODO:  MergeGoogleIdentity
-    // TODO:  MergeGoogleOpenIdIdentity
-    // TODO:  MergeParseIdentity
-    // TODO:  MergeSteamIdentity
-    // TODO:  MergeTwitterIdentity
-    // TODO:  MergeUltraIdentity
-
-    // MergeUniversalIdentity
     await asyncTest("testMergeUniversalIdentity()", 1, function () {
-        var mergeUniversalId = "merge" + universalId;
+        var mergeUniversalId = "merge" + universalId
         
         bc.authenticateUniversal(mergeUniversalId, password, true, () => {
             bc.playerState.logout(() => {
                 bc.authenticateEmailPassword(email, password, true, (authResponse) => {
                     if (authResponse.status === 200) {
                         bc.identity.mergeUniversalIdentity(mergeUniversalId, password, (mergeResponse) => {
-                            equal(mergeResponse.status, 200, " Expecting Successful Merge");
+                            equal(mergeResponse.status, 200, " Expecting Successful Merge")
 
                             bc.playerState.logout(() => {
-                                resolve_test();
+                                resolve_test()
                             })
-                        });
+                        })
                     }
                     else {
-                        console.log("Authentication failed. Test cannot proceed.");
-                        resolve_test();
+                        resolve_test()
                     }
-                });
-            });
-        });
-    });
+                })
+            })
+        })
+    })
 
-    // TODO:  RefreshIdentity
-    // TODO:  intended for things like facebook:
-    //          we get a token that is used for requests but this token can expire so we would need to refresh
-    // await asyncTest("testRefreshIdentity()", 1, function () {
-    //     bc.resetStoredProfileId();
-
-    //     bc.authenticateAnonymous((authResponse) => {
-    //         if(authResponse.status === 200){
-    //             var authenticationType = bc.identity.authenticationType.universal
-                
-    //             bc.identity.refreshIdentity(universalId, password, authenticationType, (response) => {
-    //                 equal(response.status, 200, " Expecting Successful Response");
-
-    //                 bc.playerState.logout(() => {
-    //                     resolve_test();
-    //                 });
-    //             });
-    //         }
-    //         else{
-    //             console.log("Initial authentication failed. Test cannot proceed.");
-    //             resolve_test();
-    //         }
-    //     });
-    // });
-
-    // SwitchToParentProfile
     await asyncTest("testSwitchToSingletonChildAndParentProfile()", 2, () => {
-        bc.resetStoredProfileId();
+        bc.resetStoredProfileId()
 
-        initializeClient();
+        initializeClient()
 
         bc.authenticateUniversal(UserA.name, UserA.password, true, authResponse => {
             if(authResponse.status === 200){
@@ -3712,13 +3602,11 @@ async function testIdentity() {
                 })
             }
             else{
-                console.log("Authentication failed. Test cannot proceed.")
                 resolve_test()
             }
         })
     })
 
-    // UpdateUniversalIdLogin
     await asyncTest("testUpdateUniversalIdLogin()", 1, () => {
         bc.authenticateUniversal(universalId, password, true, authResponse => {
             if(authResponse.status === 200){
@@ -3731,7 +3619,6 @@ async function testIdentity() {
                 })
             }
             else{
-                console.log("Authentication failed. Test cannot proceed.")
                 resolve_test()
             }
         })
