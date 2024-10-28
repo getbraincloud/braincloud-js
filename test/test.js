@@ -3492,31 +3492,27 @@ async function testIdentity() {
         })
     })
 
-    // TODO:  GetIdentityStatus
-    // TODO: getIdentityStatus is not a function
-    // await asyncTest("testGetIdentityStatus()", 2, function () {
+    await asyncTest("testGetIdentityStatus()", 1, function () {
 
-    //     bc.authenticateAnonymous((authResponse) => {
-    //         if (authResponse.status === 200) {
-    //             //
-    //             var authenticationType = bc.identity.authenticationType.email;
-    //             var externalAuthName = "";
+        bc.authenticateUniversal(universalId, password, true, (authResponse) => {
+            if (authResponse.status === 200) {
+                
+                var authenticationType = bc.identity.authenticationType.universal;
+                var externalAuthName = "";
 
-    //             bc.identity.getIdentityStatus(authenticationType, externalAuthName, (response) => {
-    //                 equal(response.status, 200, " Expecting Successful Response");
+                bc.identity.getIdentityStatus(authenticationType, externalAuthName, (response) => {
+                    equal(response.status, 200, " Expecting Successful Response")
 
-    //                 bc.playerState.logout((logoutResponse) => {
-    //                     equal(logoutResponse.status, 200, " Expecting Successful Logout");
-    //                     resolve_test();
-    //                 });
-    //             });
-    //         }
-    //         else {
-    //             console.log("Initial authentication failed. Test cannot proceed.");
-    //             resolve_test();
-    //         }
-    //     });
-    // });
+                    bc.playerState.logout(() => {
+                        resolve_test()
+                    })
+                })
+            }
+            else {
+                resolve_test()
+            }
+        })
+    })
 
     await asyncTest("testGetPeerProfiles()", 1, function () {
         
