@@ -242,6 +242,49 @@ function BCLobby() {
         attachPingDataAndSend(data, bc.lobby.OPERATION_FIND_OR_CREATE_LOBBY_WITH_PING_DATA, callback);
     };
 
+    //> ADD IF K6
+    //+ /**
+    //+  * Adds the caller to the lobby entry queue and will create a lobby if none are found.  Allows caller to directly provide the ping data. Useful for automated testing.
+    //+  *
+    //+  * Service Name - Lobby
+    //+  * Service Operation - FIND_OR_CREATE_LOBBY_WITH_PING_DATA
+    //+  *
+    //+  * @param lobbyType The type of lobby to look for. Lobby types are defined in the portal.
+    //+  * @param rating The skill rating to use for finding the lobby. Provided as a separate parameter because it may not exactly match the user's rating (especially in cases where parties are involved).
+    //+  * @param maxSteps The maximum number of steps to wait when looking for an applicable lobby. Each step is ~5 seconds.
+    //+  * @param algo The algorithm to use for increasing the search scope.
+    //+  * @param filterJson Used to help filter the list of rooms to consider. Passed to the matchmaking filter, if configured.
+    //+  * @param otherUserCxIds Array of other users (i.e. party members) to add to the lobby as well. Will constrain things so that only lobbies with room for all players will be considered.
+    //+  * @param settings Configuration data for the room.
+    //+  * @param isReady Initial ready-status of this user.
+    //+  * @param extraJson Initial extra-data about this user.
+    //+  * @param teamCode Preferred team for this user, if applicable. Send "" or null for automatic assignment.
+    //+  * @param pingData Manually provided ping data.
+    //+  */
+    //+ bc.lobby.findOrCreateLobbyWithManualPingData = function (lobbyType, rating, maxSteps, algo, filterJson, otherUserCxIds, settings, isReady, extraJson, teamCode, pingData, callback) {
+    //+     var data = {
+    //+         lobbyType: lobbyType,
+    //+         rating: rating,
+    //+         maxSteps: maxSteps,
+    //+         algo: algo,
+    //+         filterJson: filterJson,
+    //+         otherUserCxIds: otherUserCxIds,
+    //+         settings: settings,
+    //+         isReady: isReady,
+    //+         extraJson: extraJson,
+    //+         teamCode: teamCode,
+    //+         pingData: pingData
+    //+     };
+    //+
+    //+     bc.brainCloudManager.sendRequest({
+    //+         service: bc.SERVICE_LOBBY,
+    //+         operation: bc.lobby.OPERATION_FIND_OR_CREATE_LOBBY_WITH_PING_DATA,
+    //+         data: data,
+    //+         callback: callback
+    //+     });
+    //+ };
+    //> END
+
     /**
      * Returns the data for the specified lobby, including member data.
      *
@@ -458,10 +501,28 @@ function BCLobby() {
 
     /// <summary>
     /// Cancel this members Find, Join and Searching of Lobbies
+    /// Deprecated: Use cancelFindRequest with entryId parameter
     /// </summary>
     bc.lobby.cancelFindRequest = function(lobbyType, callback) {
         var data = {
             lobbyType: lobbyType
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_LOBBY,
+            operation: bc.lobby.OPERATION_CANCEL_FIND_REQUEST,
+            data: data,
+            callback: callback
+        });
+    };
+
+    /// <summary>
+    /// Cancel this members Find, Join and Searching of Lobbies
+    /// </summary>
+    bc.lobby.cancelFindRequest = function(lobbyType, entryId, callback) {
+        var data = {
+            lobbyType: lobbyType,
+            entryId: entryId
         };
 
         bc.brainCloudManager.sendRequest({

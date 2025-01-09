@@ -30,6 +30,7 @@ function BCIdentity() {
     bc.identity.OPERATION_SWITCH_TO_PARENT_PROFILE = "SWITCH_TO_PARENT_PROFILE";
     bc.identity.OPERATION_GET_CHILD_PROFILES = "GET_CHILD_PROFILES";
     bc.identity.OPERATION_GET_IDENTITIES = "GET_IDENTITIES";
+    bc.identity.OPERATION_GET_IDENTITY_STATUS = "GET_IDENTITY_STATUS";
     bc.identity.OPERATION_GET_EXPIRED_IDENTITIES = "GET_EXPIRED_IDENTITIES";
     bc.identity.OPERATION_REFRESH_IDENTITY = "REFRESH_IDENTITY";
     bc.identity.OPERATION_CHANGE_EMAIL_IDENTITY = "CHANGE_EMAIL_IDENTITY";
@@ -193,8 +194,8 @@ function BCIdentity() {
             authenticationToken : ids.authenticationToken
         }
 
-        if (externalAuthName) {
-            data["externalAuthName"] = externalAuthName;
+        if (ids.authenticationSubType !== null || ids.authenticationSubType !== "") {
+            data["externalAuthName"] = ids.authenticationSubType;
         };
 
         if (extraJson) {
@@ -229,8 +230,8 @@ function BCIdentity() {
             authenticationToken : ids.authenticationToken
         }
 
-        if (externalAuthName) {
-            data["externalAuthName"] = externalAuthName;
+        if (ids.authenticationSubType !== null || ids.authenticationSubType !== "") {
+            data["externalAuthName"] = ids.authenticationSubType;
         };
 
         if (extraJson) {
@@ -997,6 +998,24 @@ function BCIdentity() {
 			callback: callback
 		});
 	};
+
+    /**
+     * Retrieves identity status for given identity type for this profile.
+     * @param  authenticationType Type of authentication
+     * @param  externalAuthName The name of the external authentication mechanism (optional, used for custom authentication types)
+     * @param  callback The method to be invoked when the server response is received
+     */
+    bc.identity.getIdentityStatus = function(authenticationType, externalAuthName, callback) {
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_IDENTITY,
+            operation: bc.identity.OPERATION_GET_IDENTITY_STATUS,
+            data: {
+                authenticationType: authenticationType,
+                externalAuthName: externalAuthName
+            },
+            callback: callback
+        })
+    }
 
 	/**
 	 * Retrieve list of expired identities

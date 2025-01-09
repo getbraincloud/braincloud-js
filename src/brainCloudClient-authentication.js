@@ -30,6 +30,7 @@ function BCAuthentication() {
 	bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD_ADVANCED = "RESET_UNIVERSAL_ID_PASSWORD_ADVANCED";
 	bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD_WITH_EXPIRY = "RESET_UNIVERSAL_ID_PASSWORD_WITH_EXPIRY";
 	bc.authentication.OPERATION_RESET_UNIVERSAL_ID_PASSWORD_ADVANCED_WITH_EXPIRY = "RESET_UNIVERSAL_ID_PASSWORD_ADVANCED_WITH_EXPIRY";
+	bc.authentication.OPERATION_GET_SERVER_VERSION = "GET_SERVER_VERSION"
 
 	bc.authentication.AUTHENTICATION_TYPE_ANONYMOUS = "Anonymous";
 	bc.authentication.AUTHENTICATION_TYPE_EMAIL = "Email";
@@ -786,6 +787,29 @@ function BCAuthentication() {
 		};
 		bc.brainCloudManager.sendRequest(request);
     };
+
+	/**
+	 * Get server version
+	 * 
+	 * Service - authenticationV2
+	 * Operation - GET_SERVER_VERSION
+	 * 
+	 * @param {function} responseHandler The user callback method
+	 */
+	bc.authentication.getServerVersion = function(responseHandler) {
+		var appId = bc.brainCloudManager.getAppId()
+		
+		var request = {
+			service: bc.SERVICE_AUTHENTICATION,
+			operation: bc.authentication.OPERATION_GET_SERVER_VERSION,
+			data: {
+				gameId: appId
+			},
+			callback: responseHandler
+		}
+
+		bc.brainCloudManager.sendRequest(request)
+	}
     
 	/**
 	 * Authenticate the user using a Pase userid and authentication token
