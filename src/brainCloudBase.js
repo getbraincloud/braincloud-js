@@ -834,7 +834,8 @@ function BrainCloudManager ()
                 {
                     if (bcm._inProgressQueue[i].operation == "AUTHENTICATE" || 
                         bcm._inProgressQueue[i].operation == "RESET_EMAIL_PASSWORD" || 
-                        bcm._inProgressQueue[i].operation == "RESET_EMAIL_PASSWORD_ADVANCED")
+                        bcm._inProgressQueue[i].operation == "RESET_EMAIL_PASSWORD_ADVANCED" ||
+                        bcm._inProgressQueue[i].operation == "GET_SERVER_VERSION")
                     {
                         isAuth = true;
                         break;

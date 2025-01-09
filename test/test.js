@@ -876,18 +876,15 @@ async function testAuthentication() {
         resetUniversalIDPassword(testResetUniversalIdPasswordAdvancedWithExpiry);
     });
 
-    await asyncTest("getServerVersion()", 2, function () {
+    await asyncTest("getServerVersion()", 1, function () {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
-        bc.brainCloudClient.authentication.authenticateAnonymous(true, function (response) {
-            equal(response.status, 200, JSON.stringify(response))
-
-            bc.brainCloudClient.authentication.getServerVersion(function (response) {
-                if (response.status == 200) {
-                    ok(true, "Server Version Retrieved: " + response.data.serverVersion)
-                    resolve_test()
-                }
-            })
+        bc.brainCloudClient.authentication.getServerVersion(function (response) {
+            if (response.status == 200) {
+                ok(true, "Server Version Retrieved: " + response.data.serverVersion)
+                
+            }
+            resolve_test()
         })
     })
 
