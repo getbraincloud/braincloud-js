@@ -1660,6 +1660,15 @@ async function testFriend() {
                 });
     });
 
+    await asyncTest("getProfileInfoForCredentialIfExists()", 2, function() {
+        bc.friend.getProfileInfoForCredentialIfExists(
+                UserA.name, "Universal", function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("getProfileInfoForExternalAuthId()", 2, function() {
         bc.friend.getProfileInfoForExternalAuthId(
                 "externalId", "Facebook", function(result) {
