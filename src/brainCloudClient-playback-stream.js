@@ -15,6 +15,7 @@ function BCPlaybackStream() {
     bc.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER = "GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER";
     bc.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER = "GET_RECENT_STREAMS_FOR_INITIATING_PLAYER";
     bc.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER = "GET_RECENT_STREAMS_FOR_TARGET_PLAYER";
+    bc.playbackStream.OPERATION_PROTECT_STREAM_UNTIL = "PROTECT_STREAM_UNTIL";
 
     /**
      * Method starts a new playback stream.
@@ -177,6 +178,20 @@ function BCPlaybackStream() {
             callback : callback
         });
     };
+
+    bc.playbackStream.protectStreamUntil = function(playbackStreamId, numDays, callback){
+        var message = {
+            playbackStreamId : playbackStreamId,
+            numDays : numDays
+        }
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_PLAYBACK_STREAM,
+            operation : bc.playbackStream.OPERATION_PROTECT_STREAM_UNTIL,
+            data : message,
+            callback : callback
+        })
+    }
 
 }
 

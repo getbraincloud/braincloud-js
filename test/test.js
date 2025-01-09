@@ -3973,6 +3973,15 @@ async function testPlaybackStream() {
             });
     });
 
+    await asyncTest("protectStreamUntil()", 1, function () {
+        bc.playbackStream.protectStreamUntil(streamId, 1, (response) => {
+            if (response.status === 200) {
+                equal(response.status, 200, "Expecting 200")
+            }
+            resolve_test()
+        })
+    })
+
     await asyncTest("deleteStream()", 2, function() {
         bc.playbackStream.deleteStream(
                 streamId,
