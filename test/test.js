@@ -2800,11 +2800,16 @@ async function testGroup() {
     });
 
     await asyncTest("createGroupEntity()", 2, function() {
+        var acl = {
+            "other" : 2,
+            "member" : 2
+        }
+        
         bc.group.createGroupEntity(
                 groupId,
                 "test",
-                false,
-                null,
+                true,
+                acl,
                 testData,
                 function(result) {
                     ok(true, JSON.stringify(result));
@@ -2850,6 +2855,18 @@ async function testGroup() {
                     resolve_test();
                 });
     });
+
+    await asyncTest("updateGroupEntityAcl()", 1, function () {
+        var acl = {
+            "other": 2,
+            "member": 2
+        }
+
+        bc.group.updateGroupEntityAcl(groupId, entityId, acl, (response) => {
+            equal(response.status, 200, "Expecting 200")
+            resolve_test()
+        })
+    })
 
     await asyncTest("deleteGroupEntity()", 2, function() {
         bc.group.deleteGroupEntity(
