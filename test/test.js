@@ -1541,6 +1541,17 @@ async function testEvent() {
     });
 
     await setUpWithAuthenticate();
+    await asyncTest("sendEventToProfiles()", 1, function() {
+        var toIds = [UserA.profileId];
+        var eventData = {eventDataKey : 24};
+
+        bc.event.sendEventToProfiles(toIds, eventType, eventData, function(response) {
+            equal(response.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await setUpWithAuthenticate();
     await asyncTest("updateIncomingEventData()", function() {
         bc.event.updateIncomingEventData(
                 eventId,
