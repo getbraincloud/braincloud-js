@@ -3738,6 +3738,20 @@ async function testMail() {
             });
     });
 
+    await asyncTest("sendAdvancedEmailByAddresses()", 1, function () {
+        var emailAddresses = ["bc-client-team@bitheads.com"];
+        var serviceParams = {
+            subject: "Test Subject - TestSendAdvancedEmailSendGrid",
+            body: "Test body content message.",
+            categories: ["unit-test"]
+        }
+
+        bc.mail.sendAdvancedEmailByAddresses(
+            emailAddresses, serviceParams, function (result) {
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
 
 }
 
