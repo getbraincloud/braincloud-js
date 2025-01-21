@@ -3048,6 +3048,18 @@ async function testGroup() {
                 });
     });
 
+    await asyncTest("testUpdateGroupAcl()", 1, function () {
+        var acl = {
+            "other": 2,
+            "member": 2
+        }
+
+        bc.group.updateGroupAcl(groupId, acl, function (response) {
+            equal(response.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     await asyncTest("deleteGroup()", 2, function() {
         bc.group.deleteGroup(
                 groupId,
