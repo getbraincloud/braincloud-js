@@ -5383,6 +5383,30 @@ async function testSocialLeaderboard() {
             });
     });
 
+    await asyncTest("postScoreToDynamicGroupLeaderboardUsingConfig()", 1, function () {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        var leaderboardId = groupLeaderboard;
+        var score = 99;
+        var scoreData = {
+            "nickname": "tarnished"
+        };
+        var configJson = {
+            "leaderboardType": "HIGH_VALUE",
+            "rotationType": "DAYS",
+            "numDaysToRotate": 4,
+            "resetAt": tomorrow,
+            "retainedCount": 2,
+            "expireInMins": null
+        };
+
+        bc.leaderboard.postScoreToDynamicGroupLeaderboardUsingConfig(leaderboardId, groupId, score, scoreData, configJson, function (response) {
+            equal(response.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     await asyncTest("removeGroupScore())", 2, function() {
         bc.leaderboard.removeGroupScore(
             groupLeaderboard,
