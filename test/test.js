@@ -3739,11 +3739,16 @@ async function testMail() {
     });
 
     await asyncTest("sendAdvancedEmailByAddresses()", 1, function () {
-        var emailAddresses = ["bc-client-team@bitheads.com"];
+        var emailAddresses = ["testemail@email.com"];
         var serviceParams = {
-            subject: "Test Subject - TestSendAdvancedEmailSendGrid",
-            body: "Test body content message.",
-            categories: ["unit-test"]
+            fromAddress: "testemail@email.com",
+            fromName: "James Reece",
+            subject: "Advanced Email Test",
+            body: "Advanced Email Test",
+            replyToAddress: "",
+            replyToName: "",
+            categories: [],
+            attachments: []
         }
 
         bc.mail.sendAdvancedEmailByAddresses(
