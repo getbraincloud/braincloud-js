@@ -8,7 +8,9 @@ function BCFriend() {
 
 	bc.friend.OPERATION_GET_FRIEND_PROFILE_INFO_FOR_EXTERNAL_ID = "GET_FRIEND_PROFILE_INFO_FOR_EXTERNAL_ID";
 	bc.friend.OPERATION_GET_PROFILE_INFO_FOR_CREDENTIAL = "GET_PROFILE_INFO_FOR_CREDENTIAL";
+	bc.friend.OPERATION_GET_PROFILE_INFO_FOR_CREDENTIAL_IF_EXISTS = "GET_PROFILE_INFO_FOR_CREDENTIAL_IF_EXISTS";
 	bc.friend.OPERATION_GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID = "GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID";
+	bc.friend.OPERATION_GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID_IF_EXISTS = "GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID_IF_EXISTS";
 	bc.friend.OPERATION_GET_EXTERNAL_ID_FOR_PROFILE_ID = "GET_EXTERNAL_ID_FOR_PROFILE_ID";
 	bc.friend.OPERATION_READ_FRIENDS = "READ_FRIENDS";
 	bc.friend.OPERATION_READ_FRIEND_ENTITY = "READ_FRIEND_ENTITY";
@@ -55,6 +57,28 @@ function BCFriend() {
 	};
 
 	/**
+	 * Retrieves profile information for the specified user. Silently fails, if profile does not exist, just returns null and success, instead of an error.
+	 *
+	 * Service Name - friend
+	 * Service Operation - GET_PROFILE_INFO_FOR_CREDENTIAL_IF_EXISTS
+	 *
+	 * @param externalId The users's external ID
+	 * @param authenticationType The authentication type of the user ID
+	 * @param callback Method to be invoked when the server response is received.
+	 */
+	bc.friend.getProfileInfoForCredentialIfExists = function (externalId, authenticationType, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_FRIEND,
+			operation: bc.friend.OPERATION_GET_PROFILE_INFO_FOR_CREDENTIAL_IF_EXISTS,
+			data: {
+				externalId: externalId,
+				authenticationType: authenticationType
+			},
+			callback: callback
+		});
+	};
+
+	/**
 	 * Retrieves profile information for the specified external auth user.
 	 *
 	 * Service Name - friend
@@ -71,6 +95,29 @@ function BCFriend() {
 			data : {
 				externalId : externalId,
 				externalAuthType : externalAuthType
+			},
+			callback: callback
+		});
+	};
+
+	/**
+	 * Retrieves profile information for the specified user.
+	 * Silently fails, if profile does not exist, just returns null and success, instead of an error.
+	 *
+	 * Service Name - Friend
+	 * Service Operation - GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID_IF_EXISTS
+	 *
+	 * @param externalId External ID of the friend to find
+	 * @param externalAuthType The external authentication type used for this friend's external ID
+	 * @param callback Method to be invoked when the server response is received.
+	 */
+	bc.friend.getProfileInfoForExternalAuthIdIfExists = function (externalId, externalAuthType, callback) {
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_FRIEND,
+			operation: bc.friend.OPERATION_GET_PROFILE_INFO_FOR_EXTERNAL_AUTH_ID_IF_EXISTS,
+			data: {
+				externalId: externalId,
+				externalAuthType: externalAuthType
 			},
 			callback: callback
 		});

@@ -15,6 +15,7 @@ function BCPlaybackStream() {
     bc.playbackStream.OPERATION_GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER = "GET_STREAM_SUMMARIES_FOR_TARGET_PLAYER";
     bc.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_INITIATING_PLAYER = "GET_RECENT_STREAMS_FOR_INITIATING_PLAYER";
     bc.playbackStream.OPERATION_GET_RECENT_STREAMS_FOR_TARGET_PLAYER = "GET_RECENT_STREAMS_FOR_TARGET_PLAYER";
+    bc.playbackStream.OPERATION_PROTECT_STREAM_UNTIL = "PROTECT_STREAM_UNTIL";
 
     /**
      * Method starts a new playback stream.
@@ -177,6 +178,29 @@ function BCPlaybackStream() {
             callback : callback
         });
     };
+
+    /**
+     * Protects a playback stream from being purged (but not deleted) for the given number of days (from now). 
+     * If the number of days given is less than the normal purge interval days (from createdAt), the longer protection date is applied. 
+     * Can only be called by users involved in the playback stream.
+     * 
+     * @param playbackStreamId Identifies the stream to protect
+     * @param numDays The number of days the stream is to be protected (from now)
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.playbackStream.protectStreamUntil = function(playbackStreamId, numDays, callback){
+        var message = {
+            playbackStreamId : playbackStreamId,
+            numDays : numDays
+        }
+
+        bc.brainCloudManager.sendRequest({
+            service : bc.SERVICE_PLAYBACK_STREAM,
+            operation : bc.playbackStream.OPERATION_PROTECT_STREAM_UNTIL,
+            data : message,
+            callback : callback
+        })
+    }
 
 }
 

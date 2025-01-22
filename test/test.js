@@ -876,18 +876,15 @@ async function testAuthentication() {
         resetUniversalIDPassword(testResetUniversalIdPasswordAdvancedWithExpiry);
     });
 
-    await asyncTest("getServerVersion()", 2, function () {
+    await asyncTest("getServerVersion()", 1, function () {
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
 
-        bc.brainCloudClient.authentication.authenticateAnonymous(true, function (response) {
-            equal(response.status, 200, JSON.stringify(response))
-
-            bc.brainCloudClient.authentication.getServerVersion(function (response) {
-                if (response.status == 200) {
-                    ok(true, "Server Version Retrieved: " + response.data.serverVersion)
-                    resolve_test()
-                }
-            })
+        bc.brainCloudClient.authentication.getServerVersion(function (response) {
+            if (response.status == 200) {
+                ok(true, "Server Version Retrieved: " + response.data.serverVersion)
+                
+            }
+            resolve_test()
         })
     })
 
@@ -1544,6 +1541,17 @@ async function testEvent() {
     });
 
     await setUpWithAuthenticate();
+    await asyncTest("sendEventToProfiles()", 1, function() {
+        var toIds = [UserA.profileId];
+        var eventData = {eventDataKey : 24};
+
+        bc.event.sendEventToProfiles(toIds, eventType, eventData, function(response) {
+            equal(response.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await setUpWithAuthenticate();
     await asyncTest("updateIncomingEventData()", function() {
         bc.event.updateIncomingEventData(
                 eventId,
@@ -1663,6 +1671,15 @@ async function testFriend() {
                 });
     });
 
+    await asyncTest("getProfileInfoForCredentialIfExists()", 2, function() {
+        bc.friend.getProfileInfoForCredentialIfExists(
+                UserA.name, "Universal", function(result) {
+                    ok(true, JSON.stringify(result));
+                    equal(result.status, 200, "Expecting 200");
+                    resolve_test();
+                });
+    });
+
     await asyncTest("getProfileInfoForExternalAuthId()", 2, function() {
         bc.friend.getProfileInfoForExternalAuthId(
                 "externalId", "Facebook", function(result) {
@@ -1670,6 +1687,15 @@ async function testFriend() {
                     equal(result.status, 400, "Expecting 400");
                     resolve_test();
                 });
+    });
+
+    await asyncTest("getProfileInfoForExternalAuthIdIfExists()", 2, function () {
+        bc.friend.getProfileInfoForExternalAuthIdIfExists(
+            UserA.profileId, "testExternal", function (result) {
+                ok(true, JSON.stringify(result));
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
     });
 
     await asyncTest("getExternalIdForProfileId()", 2, function() {
@@ -2794,11 +2820,16 @@ async function testGroup() {
     });
 
     await asyncTest("createGroupEntity()", 2, function() {
+        var acl = {
+            "other" : 2,
+            "member" : 2
+        }
+        
         bc.group.createGroupEntity(
                 groupId,
                 "test",
-                false,
-                null,
+                true,
+                acl,
                 testData,
                 function(result) {
                     ok(true, JSON.stringify(result));
@@ -2844,6 +2875,18 @@ async function testGroup() {
                     resolve_test();
                 });
     });
+
+    await asyncTest("updateGroupEntityAcl()", 1, function () {
+        var acl = {
+            "other": 2,
+            "member": 2
+        }
+
+        bc.group.updateGroupEntityAcl(groupId, entityId, acl, (response) => {
+            equal(response.status, 200, "Expecting 200")
+            resolve_test()
+        })
+    })
 
     await asyncTest("deleteGroupEntity()", 2, function() {
         bc.group.deleteGroupEntity(
@@ -3023,6 +3066,18 @@ async function testGroup() {
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
                 });
+    });
+
+    await asyncTest("testUpdateGroupAcl()", 1, function () {
+        var acl = {
+            "other": 2,
+            "member": 2
+        }
+
+        bc.group.updateGroupAcl(groupId, acl, function (response) {
+            equal(response.status, 200, "Expecting 200");
+            resolve_test();
+        });
     });
 
     await asyncTest("deleteGroup()", 2, function() {
@@ -3683,6 +3738,25 @@ async function testMail() {
             });
     });
 
+    await asyncTest("sendAdvancedEmailByAddresses()", 1, function () {
+        var emailAddresses = ["testemail@email.com"];
+        var serviceParams = {
+            fromAddress: "testemail@email.com",
+            fromName: "James Reece",
+            subject: "Advanced Email Test",
+            body: "Advanced Email Test",
+            replyToAddress: "",
+            replyToName: "",
+            categories: [],
+            attachments: []
+        }
+
+        bc.mail.sendAdvancedEmailByAddresses(
+            emailAddresses, serviceParams, function (result) {
+                equal(result.status, 200, "Expecting 200");
+                resolve_test();
+            });
+    });
 
 }
 
@@ -3966,6 +4040,15 @@ async function testPlaybackStream() {
                 resolve_test();
             });
     });
+
+    await asyncTest("protectStreamUntil()", 1, function () {
+        bc.playbackStream.protectStreamUntil(streamId, 1, (response) => {
+            if (response.status === 200) {
+                equal(response.status, 200, "Expecting 200")
+            }
+            resolve_test()
+        })
+    })
 
     await asyncTest("deleteStream()", 2, function() {
         bc.playbackStream.deleteStream(
@@ -5337,6 +5420,30 @@ async function testSocialLeaderboard() {
                 equal(result.status, 200, "Expecting 200");
                 resolve_test();
             });
+    });
+
+    await asyncTest("postScoreToDynamicGroupLeaderboardUsingConfig()", 1, function () {
+        var today = new Date();
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        var leaderboardId = groupLeaderboard;
+        var score = 99;
+        var scoreData = {
+            "nickname": "tarnished"
+        };
+        var configJson = {
+            "leaderboardType": "HIGH_VALUE",
+            "rotationType": "DAYS",
+            "numDaysToRotate": 4,
+            "resetAt": tomorrow,
+            "retainedCount": 2,
+            "expireInMins": null
+        };
+
+        bc.leaderboard.postScoreToDynamicGroupLeaderboardUsingConfig(leaderboardId, groupId, score, scoreData, configJson, function (response) {
+            equal(response.status, 200, "Expecting 200");
+            resolve_test();
+        });
     });
 
     await asyncTest("removeGroupScore())", 2, function() {

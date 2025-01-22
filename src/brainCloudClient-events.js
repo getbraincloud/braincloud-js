@@ -7,6 +7,7 @@ function BCEvents() {
 	bc.SERVICE_EVENT = "event";
 
 	bc.event.OPERATION_SEND = "SEND";
+	bc.event.OPERATION_SEND_EVENT_TO_PROFILES = "SEND_EVENT_TO_PROFILES";
 	bc.event.OPERATION_UPDATE_EVENT_DATA = "UPDATE_EVENT_DATA";
 	bc.event.OPERATION_UPDATE_EVENT_DATA_IF_EXISTS = "UPDATE_EVENT_DATA_IF_EXISTS";
 	bc.event.OPERATION_DELETE_INCOMING = "DELETE_INCOMING";
@@ -47,6 +48,32 @@ function BCEvents() {
 			service: bc.SERVICE_EVENT,
 			operation: bc.event.OPERATION_SEND,
 			data: message,
+			callback: callback
+		});
+	};
+
+	/**
+	 * Sends an event to multiple users with the attached json data.
+	 * 
+	 * Service Name - Event
+	 * Service Operation - SEND_EVENT_TO_PROFILES
+	 * 
+	 * @param toIds The profile ids of the users to send the event
+	 * @param eventType The user-defined type of the event
+	 * @param eventData The user-defined data for this event encoded in JSON
+	 * @param callback The method to be invoked when the server response is received
+	 */
+	bc.event.sendEventToProfiles = function (toIds, eventType, eventData, callback) {
+		var data = {
+			toIds: toIds,
+			eventType: eventType,
+			evemtData: eventData
+		};
+
+		bc.brainCloudManager.sendRequest({
+			service: bc.SERVICE_EVENT,
+			operation: bc.event.OPERATION_SEND_EVENT_TO_PROFILES,
+			data: data,
 			callback: callback
 		});
 	};

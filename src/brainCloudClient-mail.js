@@ -9,6 +9,7 @@ function BCMail() {
     bc.mail.OPERATION_SEND_BASIC_EMAIL = "SEND_BASIC_EMAIL";
     bc.mail.OPERATION_SEND_ADVANCED_EMAIL = "SEND_ADVANCED_EMAIL";
     bc.mail.OPERATION_SEND_ADVANCED_EMAIL_BY_ADDRESS = "SEND_ADVANCED_EMAIL_BY_ADDRESS";
+    bc.mail.OPERATION_SEND_ADVANCED_EMAIL_BY_ADDRESSES = "SEND_ADVANCED_EMAIL_BY_ADDRESSES";
 
     /**
      * Sends a simple text email to the specified player
@@ -74,6 +75,28 @@ function BCMail() {
             operation: bc.mail.OPERATION_SEND_ADVANCED_EMAIL_BY_ADDRESS,
             data: {
                 emailAddress: emailAddress,
+                serviceParams: serviceParams
+            },
+            callback: callback
+        });
+    };
+
+    /**
+     * Sends an advanced email to the specified email addresses
+     *
+     * Service Name - Mail
+     * Service Operation - SEND_ADVANCED_EMAIL_BY_ADDRESSES
+     *
+     * @param emailAddresses The list of addresses to send the email to
+     * @param serviceParams Set of parameters dependant on the mail service configured
+     * @param in_callback The method to be invoked when the server response is received
+     */
+    bc.mail.sendAdvancedEmailByAddresses = function (emailAddresses, serviceParams, callback) {
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_MAIL,
+            operation: bc.mail.OPERATION_SEND_ADVANCED_EMAIL_BY_ADDRESSES,
+            data: {
+                emailAddresses: emailAddresses,
                 serviceParams: serviceParams
             },
             callback: callback
