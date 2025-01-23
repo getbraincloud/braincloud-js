@@ -39,6 +39,7 @@ function BCGroup() {
     bc.group.OPERATION_SET_GROUP_OPEN = "SET_GROUP_OPEN";
     bc.group.OPERATION_UPDATE_GROUP_ACL = "UPDATE_GROUP_ACL";
     bc.group.OPERATION_UPDATE_GROUP_DATA = "UPDATE_GROUP_DATA";
+    bc.group.OPERATION_UPDATE_GROUP_ENTITY_ACL = "UPDATE_GROUP_ENTITY_ACL";
     bc.group.OPERATION_UPDATE_GROUP_ENTITY = "UPDATE_GROUP_ENTITY_DATA";
     bc.group.OPERATION_UPDATE_GROUP_MEMBER = "UPDATE_GROUP_MEMBER";
     bc.group.OPERATION_UPDATE_GROUP_NAME = "UPDATE_GROUP_NAME";
@@ -844,6 +845,30 @@ function BCGroup() {
     };
 
     /**
+     * Set a group's access conditions.
+     * 
+     * Service Name - Group
+     * Service Operation - UPDATE_GROUP_ACL
+     * 
+     * @param groupId ID of the group
+     * @param acl The group's access control list. A null ACL implies default
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.group.updateGroupAcl = function (groupId, acl, callback) {
+        var data = {
+            groupId: groupId,
+            acl: acl
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_GROUP,
+            operation: bc.group.OPERATION_UPDATE_GROUP_ACL,
+            data: data,
+            callback: callback
+        });
+    }
+
+    /**
      * Updates a group's data.
      *
      * Service Name - group
@@ -868,6 +893,29 @@ function BCGroup() {
             callback : callback
         });
     };
+
+    /**
+     * Update the acl settings for a group entity, enforcing ownership.
+     * 
+     * @param groupId The id of the group
+     * @param entityId The id of the entity to update
+     * @param acl Access control list for the group entity
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.group.updateGroupEntityAcl = function (groupId, entityId, acl, callback) {
+        var message = {
+            groupId: groupId,
+            entityId: entityId,
+            acl : acl
+        }
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_GROUP,
+            operation: bc.group.OPERATION_UPDATE_GROUP_ENTITY_ACL,
+            data: message,
+            callback: callback
+        })
+    }
 
     /**
      * Update a group entity.

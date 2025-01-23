@@ -40,6 +40,7 @@ function BCSocialLeaderboard() {
     bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW = "GET_GROUP_LEADERBOARD_VIEW";
     bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW_BY_VERSION = "GET_GROUP_LEADERBOARD_VIEW_BY_VERSION";
     bc.socialLeaderboard.OPERATION_POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD = "POST_GROUP_SCORE_DYNAMIC"
+    bc.socialLeaderboard.OPERATION_POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD_USING_CONFIG = "POST_GROUP_SCORE_DYNAMIC_USING_CONFIG"
 
 
 
@@ -806,6 +807,35 @@ function BCSocialLeaderboard() {
                 },
                 callback : callback
             });
+    };
+
+    /**
+     * Post the group's score to the given social leaderboard, dynamically creating the group leaderboard if it does not exist yet.
+     * To create new leaderboard, configJson must specify leaderboardType, rotationType, resetAt, and retainedCount, at a minimum, with support to optionally specify an expiry in minutes.
+     * 
+     * Service Name - Leaderboard
+     * Service Operation - POST_GROUP_SCORE_DYNAMIC_USING_CONFIG
+     * 
+     * @param leaderboardId The leaderboard to post to
+     * @param groupId The id of the group
+     * @param score A score to post
+     * @param scoreData Optional user-defined data to post with the score
+     * @param configJson Configuration for the leaderboard if it does not exist yet, specified as JSON object. The supporting configuration fields are listed in the following table of configJson fields
+     * @param callback The method to be invoked when the server response is received
+     */
+    bc.socialLeaderboard.postScoreToDynamicGroupLeaderboardUsingConfig = function (leaderboardId, groupId, score, scoreData, configJson, callback) {
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_LEADERBOARD,
+            operation: bc.socialLeaderboard.OPERATION_POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD_USING_CONFIG,
+            data: {
+                leaderboardId: leaderboardId,
+                groupId: groupId,
+                score: score,
+                scoreData: scoreData,
+                configJson: configJson
+            },
+            callback: callback
+        });
     };
 
     /**
