@@ -7,6 +7,7 @@ function BrainCloudRelayComms(_client) {
 // if ([typeof window, typeof document].includes('undefined')) {
 //     var Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
 // }
+var Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
 //> END
 
     bcr.CONTROL_BYTES_SIZE = 1;
