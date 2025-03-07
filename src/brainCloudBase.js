@@ -65,6 +65,7 @@ function BrainCloudManager ()
     bcm._fileUploadUrl = bcm._serverUrl + "/uploader";
     bcm._appVersion = "";
     bcm._debugEnabled = false;
+    bcm._compressionEnabled = true;
 
     bcm._requestInProgress = false;
     bcm._bundleDelayActive = false;
@@ -551,11 +552,15 @@ function BrainCloudManager ()
             if (bcm._retry === 1)
             {
                 bcm.debugLog("Retrying right away", false);
+
+                // TODO:  check for compression enabled
                 bcm.performQuery();
             }
             else
             {
                 bcm.debugLog("Waiting for " + bcm._packetTimeouts[bcm._retry - 1] + " sec...", false);
+
+                // TODO:  check for compression enabled
                 setTimeout(bcm.performQuery, bcm._packetTimeouts[bcm._retry - 1] * 1000);
             }
         }
@@ -577,8 +582,34 @@ function BrainCloudManager ()
         }
     }
 
+    bcm.compressRequest = async function (requestToCompress) {
+        console.log("in compressRequest");
+        let textEncoder = new TextEncoder();
+        let encodedData = textEncoder.encode(JSON.stringify(requestToCompress));
+
+        let compressionStream = new Blob([encodedData]).stream()
+            .pipeThrough(new CompressionStream("gzip"));
+
+        return await new Response(compressionStream).blob();
+    }
+
     bcm.performQuery = function()
     {
+        console.log("In performQuery");
+        if (bcm._compressionEnabled && !(bcm._jsonedQueue instanceof Blob)) {
+            console.log("compress this sh")
+            bcm.compressRequest(bcm._jsonedQueue).then(compressedRequest => {
+                bcm._jsonedQueue = compressedRequest;
+                bcm.performQuery();
+            });
+
+            return;
+        }
+
+        else {
+            console.log("no need to compress");
+        }
+
 //> REMOVE IF K6
         clearTimeout(bcm.xml_timeoutId);
 //> END
@@ -698,7 +729,30 @@ function BrainCloudManager ()
         var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
         xmlhttp.setRequestHeader("X-SIG", sig);
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
-        xmlhttp.send(bcm._jsonedQueue);
+
+        if(bcm._compressionEnabled){
+            console.log("compression enabled, let's set request header to gzip")
+            xmlhttp.setRequestHeader("Content-Encoding", "gzip");
+        }
+        else{
+            console.log("compression not enabled, ignore request header")
+        }
+        
+        // Compressing the request returns a Blob, conver it to an ArrayBuffer before sending
+        if(bcm._jsonedQueue instanceof Blob){
+            console.log("deblobbing");
+            bcm._jsonedQueue.arrayBuffer().then(arrayBuffer => {
+                console.log("What is this lil jsonedQueue ting? --- " + JSON.stringify(arrayBuffer))
+                
+                xmlhttp.send(new Uint8Array(arrayBuffer));
+            });
+        }
+        else{
+            console.log("no need to deblob")
+            
+            xmlhttp.send(bcm._jsonedQueue);
+        }
+        
 //> END
 
         // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
@@ -777,6 +831,7 @@ function BrainCloudManager ()
 
     bcm.processQueue = function()
     {
+        console.log("in processQueue");
         if (bcm._sendQueue.length > 0)
         {
             // Uncomment if you want to debug bundles
