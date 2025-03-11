@@ -84,6 +84,21 @@ function BrainCloudManager ()
     bcm._isInitialized = false;
     bcm._isAuthenticated = false;
 
+    bcm.compressRequest = function(requestToCompress) {    
+        var encodedData = new TextEncoder().encode(requestToCompress);
+    
+        var compressionStream = new Blob([encodedData]).stream().pipeThrough(new CompressionStream("gzip"));
+    
+        return new Response(compressionStream).blob()
+            .then(function(compressedBlob) {
+                return compressedBlob.arrayBuffer();
+            })
+            .catch(function(error) {
+                console.error("Error during compression:", error);
+                throw error;
+            });
+    };
+
     bcm.initialize = function(appId, secret, appVersion)
     {
         bcm._appId = appId;
@@ -581,35 +596,9 @@ function BrainCloudManager ()
             bcm.processQueue();
         }
     }
-
-    bcm.compressRequest = async function (requestToCompress) {
-        console.log("in compressRequest");
-        let textEncoder = new TextEncoder();
-        let encodedData = textEncoder.encode(JSON.stringify(requestToCompress));
-
-        let compressionStream = new Blob([encodedData]).stream()
-            .pipeThrough(new CompressionStream("gzip"));
-
-        return await new Response(compressionStream).blob();
-    }
-
+    
     bcm.performQuery = function()
     {
-        console.log("In performQuery");
-        if (bcm._compressionEnabled && !(bcm._jsonedQueue instanceof Blob)) {
-            console.log("compress this sh")
-            bcm.compressRequest(bcm._jsonedQueue).then(compressedRequest => {
-                bcm._jsonedQueue = compressedRequest;
-                bcm.performQuery();
-            });
-
-            return;
-        }
-
-        else {
-            console.log("no need to compress");
-        }
-
 //> REMOVE IF K6
         clearTimeout(bcm.xml_timeoutId);
 //> END
@@ -730,26 +719,23 @@ function BrainCloudManager ()
         xmlhttp.setRequestHeader("X-SIG", sig);
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
 
-        if(bcm._compressionEnabled){
-            console.log("compression enabled, let's set request header to gzip")
+        if (bcm._compressionEnabled) {
             xmlhttp.setRequestHeader("Content-Encoding", "gzip");
+
+            bcm.compressRequest(bcm._jsonedQueue)
+                .then(function (compressedData) {
+                    
+                    // Convert the ArrayBuffer to a Uint8Array so that we can send it
+                    var uint8ArrayData = new Uint8Array(compressedData);
+                    
+                    xmlhttp.send(uint8ArrayData)
+                })
+                .catch(function (err) {
+                    console.error("Compression failed:", err);
+                });
+
         }
         else{
-            console.log("compression not enabled, ignore request header")
-        }
-        
-        // Compressing the request returns a Blob, conver it to an ArrayBuffer before sending
-        if(bcm._jsonedQueue instanceof Blob){
-            console.log("deblobbing");
-            bcm._jsonedQueue.arrayBuffer().then(arrayBuffer => {
-                console.log("What is this lil jsonedQueue ting? --- " + JSON.stringify(arrayBuffer))
-                
-                xmlhttp.send(new Uint8Array(arrayBuffer));
-            });
-        }
-        else{
-            console.log("no need to deblob")
-            
             xmlhttp.send(bcm._jsonedQueue);
         }
         
@@ -831,7 +817,6 @@ function BrainCloudManager ()
 
     bcm.processQueue = function()
     {
-        console.log("in processQueue");
         if (bcm._sendQueue.length > 0)
         {
             // Uncomment if you want to debug bundles
