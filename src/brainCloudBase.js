@@ -596,13 +596,11 @@ function BrainCloudManager ()
     }
 
     bcm.handleResponse = function (status, response) {
-        
-        // TODO:  what is this??
         clearTimeout(bcm.xml_timeoutId);
         bcm.xml_timeoutId = null;
 
         bcm.debugLog("Response Status: " + status);
-        bcm.debugLog("Response: " + response);
+        bcm.debugLog("Response: " + JSON.stringify(response));
 
         if (status == 200) {
             bcm.handleSuccessResponse(response);
@@ -633,8 +631,6 @@ function BrainCloudManager ()
                 statusMessage = response;
             }
 
-            // TODO: New error handling will split out the parts... for now
-            // just send back the response text.
             var errorMessage = response;
             bcm.debugLog("Failed", true);
 
