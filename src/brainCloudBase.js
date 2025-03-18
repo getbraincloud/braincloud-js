@@ -693,56 +693,8 @@ function BrainCloudManager ()
             }
 
             if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-                clearTimeout(bcm.xml_timeoutId);
-                bcm.xml_timeoutId = null;
 
-                bcm.debugLog("response status : " + xmlhttp.status);
-                bcm.debugLog("response : " + xmlhttp.responseText);
-
-                if (xmlhttp.status == 200) {
-                    var response = JSON.parse(xmlhttp.responseText);
-
-                    bcm.handleSuccessResponse(response);
-
-                    bcm._requestInProgress = false;
-                    bcm.processQueue();
-                }
-                else if (xmlhttp.status == 502 || xmlhttp.status == 503 || xmlhttp.status == 504) {
-                    bcm.debugLog("packet in progress", false);
-                    bcm.retry();
-                    return;
-                }
-                else {
-                    try {
-                        var errorResponse = JSON.parse(xmlhttp.responseText);
-                        if (errorResponse["reason_code"]) {
-                            reasonCode = errorResponse["reason_code"];
-                        }
-                        if (errorResponse["status_message"]) {
-                            statusMessage = errorResponse["status_message"];
-                        }
-                        else {
-                            statusMessage = xmlhttp.responseText;
-                        }
-                    }
-                    catch (e) {
-                        reasonCode = 0;
-                        statusMessage = xmlhttp.responseText;
-                    }
-
-                    // TODO: New error handling will split out the parts... for now
-                    // just send back the response text.
-                    var errorMessage = xmlhttp.responseText;
-                    bcm.debugLog("Failed", true);
-
-                    if ((bcm._errorCallback != undefined) &&
-                        (typeof bcm._errorCallback == 'function')) {
-                        bcm._errorCallback(errorMessage);
-                    }
-                    if (!errorMessage || errorMessage == "") errorMessage = "Unknown error. Did you lose internet connection?";
-                    bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, reasonCode,
-                        errorMessage);
-                }
+                bcm.handleResponse(xmlhttp.status, JSON.parse(xmlhttp.responseText))
             }
         };
 
