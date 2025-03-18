@@ -65,7 +65,7 @@ function BrainCloudManager ()
     bcm._fileUploadUrl = bcm._serverUrl + "/uploader";
     bcm._appVersion = "";
     bcm._debugEnabled = false;
-    bcm._compressionEnabled = true;
+    bcm._compressionEnabled = false;
 
     bcm._requestInProgress = false;
     bcm._bundleDelayActive = false;
@@ -507,7 +507,7 @@ function BrainCloudManager ()
                     bcm._statusMessageCache = messages[c].status_message;
                 }
 
-                bcm.debugLog("STATUSCodes:" + bcm.statusCodes.CLIENT_NETWORK_ERROR);
+                bcm.debugLog("STATUSCodes: " + bcm.statusCodes.CLIENT_NETWORK_ERROR);
                 bcm.updateKillSwitch(bcm._inProgressQueue[c].service, bcm._inProgressQueue[c].operation, statusCode)
             }
 
@@ -596,6 +596,59 @@ function BrainCloudManager ()
             bcm.processQueue();
         }
     }
+
+    bcm.handleResponse = function (status, response) {
+        
+        // TODO:  what is this??
+        clearTimeout(bcm.xml_timeoutId);
+        bcm.xml_timeoutId = null;
+
+        bcm.debugLog("Response Status: " + status);
+        bcm.debugLog("Response: " + response);
+
+        if (status == 200) {
+            bcm.handleSuccessResponse(response);
+            bcm._requestInProgress = false;
+            bcm.processQueue();
+        }
+        else if (status == 502 || status == 503 || status == 504) {
+            bcm.debugLog("packet in progress", false);
+            bcm.retry();
+
+            return;
+        }
+        else {
+            try {
+                var errorResponse = response;
+                if (errorResponse["reason_code"]) {
+                    reasonCode = errorResponse["reason_code"];
+                }
+                if (errorResponse["status_message"]) {
+                    statusMessage = errorResponse["status_message"];
+                }
+                else {
+                    statusMessage = response;
+                }
+            }
+            catch (e) {
+                reasonCode = 0;
+                statusMessage = response;
+            }
+
+            // TODO: New error handling will split out the parts... for now
+            // just send back the response text.
+            var errorMessage = response;
+            bcm.debugLog("Failed", true);
+
+            if ((bcm._errorCallback != undefined) &&
+                (typeof bcm._errorCallback == 'function')) {
+                bcm._errorCallback(errorMessage);
+            }
+            if (!errorMessage || errorMessage == "") errorMessage = "Unknown error. Did you lose internet connection?";
+            bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, reasonCode,
+                errorMessage);
+        }
+    }
     
     bcm.performQuery = function()
     {
@@ -640,23 +693,19 @@ function BrainCloudManager ()
             }
         }
 
-        xmlhttp.onreadystatechange = function()
-        {
-            if (xmlhttp.hasTimedOut || xmlhttp.requestId != bcm._requestId)
-            {
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.hasTimedOut || xmlhttp.requestId != bcm._requestId) {
                 return;
             }
 
-            if (xmlhttp.readyState == XMLHttpRequest.DONE)
-            {
+            if (xmlhttp.readyState == XMLHttpRequest.DONE) {
                 clearTimeout(bcm.xml_timeoutId);
                 bcm.xml_timeoutId = null;
 
                 bcm.debugLog("response status : " + xmlhttp.status);
                 bcm.debugLog("response : " + xmlhttp.responseText);
 
-                if (xmlhttp.status == 200)
-                {
+                if (xmlhttp.status == 200) {
                     var response = JSON.parse(xmlhttp.responseText);
 
                     bcm.handleSuccessResponse(response);
@@ -664,32 +713,25 @@ function BrainCloudManager ()
                     bcm._requestInProgress = false;
                     bcm.processQueue();
                 }
-                else if (xmlhttp.status == 502 || xmlhttp.status == 503 || xmlhttp.status == 504)
-                {
+                else if (xmlhttp.status == 502 || xmlhttp.status == 503 || xmlhttp.status == 504) {
                     bcm.debugLog("packet in progress", false);
                     bcm.retry();
                     return;
                 }
-                else
-                {
-                    try
-                    {
+                else {
+                    try {
                         var errorResponse = JSON.parse(xmlhttp.responseText);
-                        if (errorResponse["reason_code"])
-                        {
+                        if (errorResponse["reason_code"]) {
                             reasonCode = errorResponse["reason_code"];
                         }
-                        if (errorResponse["status_message"])
-                        {
+                        if (errorResponse["status_message"]) {
                             statusMessage = errorResponse["status_message"];
                         }
-                        else
-                        {
+                        else {
                             statusMessage = xmlhttp.responseText;
                         }
                     }
-                    catch (e)
-                    {
+                    catch (e) {
                         reasonCode = 0;
                         statusMessage = xmlhttp.responseText;
                     }
@@ -700,8 +742,7 @@ function BrainCloudManager ()
                     bcm.debugLog("Failed", true);
 
                     if ((bcm._errorCallback != undefined) &&
-                        (typeof bcm._errorCallback == 'function'))
-                    {
+                        (typeof bcm._errorCallback == 'function')) {
                         bcm._errorCallback(errorMessage);
                     }
                     if (!errorMessage || errorMessage == "") errorMessage = "Unknown error. Did you lose internet connection?";
@@ -709,7 +750,7 @@ function BrainCloudManager ()
                         errorMessage);
                 }
             }
-        }; // end inner function
+        };
 
         bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
 
@@ -720,18 +761,48 @@ function BrainCloudManager ()
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
 
         if (bcm._compressionEnabled) {
-            xmlhttp.setRequestHeader("Content-Encoding", "gzip");
-
             bcm.compressRequest(bcm._jsonedQueue)
                 .then(function (compressedData) {
-                    
-                    // Convert the ArrayBuffer to a Uint8Array so that we can send it
-                    var uint8ArrayData = new Uint8Array(compressedData);
-                    
-                    xmlhttp.send(uint8ArrayData)
+                    fetch(bcm._dispatcherUrl, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-SIG": sig,
+                            "X-APPID": bcm._appId,
+                            "Content-Encoding": "gzip"
+                        },
+                        body: compressedData
+                    })
+                        .then(function (response) {
+                            var status = response.status; // Get HTTP status
+                            var encoding = response.headers.get("Content-Encoding"); // Check response encoding
+                            console.log("Response Content-Encoding: " + encoding);
+
+                            return response.arrayBuffer().then(function (buffer) {
+                                return { status: status, buffer: buffer }; // Pass both status & buffer
+                            });
+                        })
+                        .then(function (result) {
+
+                            // Status of the fetch request
+                            var responseStatus = result.status;
+
+                            // brainCloud response
+                            var jsonString = new TextDecoder().decode(result.buffer);
+                            var responseJSON = JSON.parse(jsonString);
+
+                            bcm.handleResponse(responseStatus, responseJSON)
+                        })
+                        .catch(function (error) {
+                            console.error(error);
+                        });
                 })
                 .catch(function (err) {
                     console.error("Compression failed:", err);
+                    console.log("Sending request without compression...");
+
+                    // TODO: yay or nay?
+                    xmlhttp.send(bcm._jsonedQueue);
                 });
 
         }

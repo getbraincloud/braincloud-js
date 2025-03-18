@@ -52,6 +52,7 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_HANDOFF = "Handoff";
 	bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF = "SettopHandoff";
 
+	bc.authentication.compressResponses = false;
 	bc.authentication.profileId = "";
 	bc.authentication.anonymousId = "";
     bc.authentication.previousAuthParams = {
@@ -919,6 +920,7 @@ function BCAuthentication() {
 			authenticationToken: authenticationToken,
 			authenticationType: authenticationType,
 			forceCreate: forceCreate,
+			compressResponses: bc.authentication.compressResponses,
 			anonymousId: bc.authentication.anonymousId,
 			profileId: bc.authentication.profileId,
 			timeZoneOffset: timeZoneOffset,

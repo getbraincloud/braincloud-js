@@ -183,6 +183,7 @@ function initializeClient()
 
     // we want to log debug messages
     bc.brainCloudClient.setDebugEnabled(true);
+    bc.brainCloudClient.enableCompression(true);
 
     //initialize with our game id, secret and game version
     var secretMap = {};
@@ -6341,7 +6342,6 @@ async function testWrapper()
     await asyncTest("manualRedirect()", function() {
         bc.resetStoredProfileId();
         bc.initialize(REDIRECT_APP_ID, SECRET, GAME_VERSION);
-
         bc.authenticateAnonymous(function(result) {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
