@@ -568,14 +568,12 @@ function BrainCloudManager ()
             {
                 bcm.debugLog("Retrying right away", false);
 
-                // TODO:  check for compression enabled
                 bcm.performQuery();
             }
             else
             {
                 bcm.debugLog("Waiting for " + bcm._packetTimeouts[bcm._retry - 1] + " sec...", false);
 
-                // TODO:  check for compression enabled
                 setTimeout(bcm.performQuery, bcm._packetTimeouts[bcm._retry - 1] * 1000);
             }
         }
@@ -774,20 +772,16 @@ function BrainCloudManager ()
                         body: compressedData
                     })
                         .then(function (response) {
-                            var status = response.status; // Get HTTP status
-                            var encoding = response.headers.get("Content-Encoding"); // Check response encoding
+                            var status = response.status;
+                            var encoding = response.headers.get("Content-Encoding");
                             console.log("Response Content-Encoding: " + encoding);
 
                             return response.arrayBuffer().then(function (buffer) {
-                                return { status: status, buffer: buffer }; // Pass both status & buffer
+                                return { status: status, buffer: buffer }; 
                             });
                         })
                         .then(function (result) {
-
-                            // Status of the fetch request
                             var responseStatus = result.status;
-
-                            // brainCloud response
                             var jsonString = new TextDecoder().decode(result.buffer);
                             var responseJSON = JSON.parse(jsonString);
 
