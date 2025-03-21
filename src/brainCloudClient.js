@@ -180,6 +180,31 @@ function BrainCloudClient() {
     bcc.languageCode;
 
     /**
+     * Enables or disables both compressed requests AND compressed responses
+     * @param {boolean} compressionEnabled determines if requests and responses should be compressed
+     */
+    bcc.enableCompression = function(compressionEnabled){
+        bcc.enableCompressedRequests(compressionEnabled);
+        bcc.enableCompressedResponses(compressionEnabled)
+    }
+
+    /**
+     * Used to tell the client to compress or not compress requests
+     * @param {boolean} compressedRequestsEnabled determines if requests should be compressed
+     */
+    bcc.enableCompressedRequests = function(compressedRequestsEnabled){
+        bcc.brainCloudManager._compressionEnabled = compressedRequestsEnabled;
+    }
+
+    /**
+     * Used to tell the server to compress or not compress responses
+     * @param {boolean} compressedResponsesEnabled determines if the server should compress responses
+     */
+    bcc.enableCompressedResponses = function(compressedResponsesEnabled){
+        bcc.authentication.compressResponses = compressedResponsesEnabled;
+    }
+
+    /**
      * Initializes the brainCloud client with your app information. This method
      * must be called before any API method is invoked.
      *
