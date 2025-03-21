@@ -722,7 +722,7 @@ function BrainCloudManager ()
                         .then(function (response) {
                             var status = response.status;
                             var encoding = response.headers.get("Content-Encoding");
-                            console.log("Response Content-Encoding: " + encoding);
+                            bcm.debugLog("Response Content-Encoding: " + encoding);
 
                             return response.arrayBuffer().then(function (buffer) {
                                 return { status: status, buffer: buffer }; 
@@ -743,7 +743,6 @@ function BrainCloudManager ()
                     console.error("Compression failed:", err);
                     console.log("Sending request without compression...");
 
-                    // TODO: yay or nay?
                     xmlhttp.send(bcm._jsonedQueue);
                 });
 
