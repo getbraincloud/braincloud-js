@@ -66,6 +66,23 @@ function BCPushNotifications() {
      * @param callback The method to be invoked when the server response is received
      */
     bc.pushNotification.registerPushNotificationDeviceToken = function(deviceType, deviceToken, callback) {
+        const STATUS_CODE = 400;
+
+        if (!deviceToken || deviceToken.trim().length === 0) {
+            const errorJson = JSON.stringify({
+                status: STATUS_CODE,
+                reason_code: bc.INVALID_DEVICE_TOKEN,
+                message: `Invalid device token: ${deviceToken}`
+            });
+            
+            // fire off the error if its there
+            if (callback) {
+				callback(errorJson);
+			}
+
+            return;
+        }
+    
         bc.brainCloudManager.sendRequest({
             service: bc.SERVICE_PUSH_NOTIFICATION,
             operation: bc.pushNotification.OPERATION_REGISTER,
