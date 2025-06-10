@@ -74,6 +74,8 @@ function BCPushNotifications() {
                 reason_code: bc.INVALID_DEVICE_TOKEN,
                 message: "Invalid device token: " + deviceToken
             });
+
+            bc.brainCloudManager.debugLog("Push notification token not registered - empty/null tokens are invalid");
             
             // fire off the error if its there
             if (callback) {
