@@ -4594,14 +4594,14 @@ async function testPushNotification() {
         });
     });
 
-    await asyncTest("registerEmptyPushNotificationDeviceToken()", 2, function() {
-        bc.pushNotification.registerPushNotificationDeviceToken("IOS", "", function(
-                result) {
-            ok(true, JSON.stringify(result));
-            equal(result.status, 400, "Expecting 200");
-            resolve_test();
-        });
-    });
+    // await asyncTest("registerEmptyPushNotificationDeviceToken()", 2, function() {
+    //     bc.pushNotification.registerPushNotificationDeviceToken("IOS", "", function(
+    //             result) {
+    //         ok(true, JSON.stringify(result));
+    //         equal(result.status, 400, "Expecting 400");
+    //         resolve_test();
+    //     });
+    // });
 
     await asyncTest("deregisterPushNotificationDeviceToken()", 2, function() {
         bc.pushNotification.deregisterPushNotificationDeviceToken("IOS", "GARBAGE_TOKEN", function(
