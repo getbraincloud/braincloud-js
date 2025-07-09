@@ -65,7 +65,7 @@ function BrainCloudManager ()
     bcm._fileUploadUrl = bcm._serverUrl + "/uploader";
     bcm._appVersion = "";
     bcm._debugEnabled = false;
-    bcm._compressionEnabled = false;
+    bcm._compressionEnabled = true;
 
     bcm._requestInProgress = false;
     bcm._bundleDelayActive = false;
