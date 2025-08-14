@@ -1891,15 +1891,6 @@ async function testGamification() {
                 true);
     });
 
-    await asyncTest("resetMilestones()", function() {
-        bc.gamification.resetMilestones(
-                [ milestoneId ],
-                function(result) {
-                    equal(result.status, 200, JSON.stringify(result));
-                    resolve_test();
-                });
-    });
-
     await asyncTest("readCompletedQuests()", function() {
         bc.gamification.readCompletedQuests(
                 function(result) {
@@ -2161,8 +2152,8 @@ async function testGlobalEntity() {
         });
     });
 
-    await asyncTest("updateEntityUpdateTimeToLive()", function() {
-        bc.globalEntity.updateEntityUpdateTimeToLive(
+    await asyncTest("updateEntityTimeToLive()", function() {
+        bc.globalEntity.updateEntityTimeToLive(
                 entityId, 100000, version, function(result) {
                     equal(result.status, 200, JSON.stringify(result));
                     version = result.data.version;
@@ -2315,7 +2306,7 @@ async function testGroupFile(){
 
     await asyncTest("moveUserToGroupFile()", 3, function() {
         var fileSize = fs.statSync("README.md").size;
-        bc.file.prepareFileUpload("TestFolder", "README.md", true, true, fileSize, result =>
+        bc.file.prepareUserUpload("TestFolder", "README.md", true, true, fileSize, result =>
         {
             equal(result.status, 200, "Expecting 200");
             if (result.status == 200)
@@ -4088,8 +4079,8 @@ async function testPlayerState() {
         return tearDownLogout();
     })) return;
 
-    await asyncTest("updateName()", function() {
-        bc.playerState.updateName("junit", function(
+    await asyncTest("updateUsername()", function() {
+        bc.playerState.updateUsername("junit", function(
                 result) {
             equal(result.status, 200, JSON.stringify(result));
             resolve_test();
@@ -4229,8 +4220,8 @@ async function testPlayerStatisticsEvent() {
     var eventId1 = "testEvent01";
     var eventId2 = "rewardCredits";
 
-    await asyncTest("triggerUserStatsEvent()", 2, function() {
-        bc.playerStatisticsEvent.triggerUserStatsEvent(
+    await asyncTest("triggerStatsEvent()", 2, function() {
+        bc.playerStatisticsEvent.triggerStatsEvent(
                 eventId1,
                 10,
                 function(result) {
@@ -4241,8 +4232,8 @@ async function testPlayerStatisticsEvent() {
     });
 
 
-    await asyncTest("triggerUserStatsEvents()", 2, function() {
-        bc.playerStatisticsEvent.triggerUserStatsEvents(
+    await asyncTest("triggerStatsEvents()", 2, function() {
+        bc.playerStatisticsEvent.triggerStatsEvents(
                 [
                     { "eventName" : eventId1, "eventMultiplier" : 10 },
                     { "eventName" : eventId2, "eventMultiplier" : 10 }
@@ -4266,7 +4257,7 @@ async function testPlayerStatisticsEvent() {
                 resolve_test();
                 bc.brainCloudClient.deregisterRewardCallback();
             })
-        bc.playerStatisticsEvent.triggerUserStatsEvents(
+        bc.playerStatisticsEvent.triggerStatsEvents(
                 [
                     { "eventName" : "incQuest1Stat", "eventMultiplier" : 1 },
                     { "eventName" : "incQuest2Stat", "eventMultiplier" : 1 }
@@ -4910,19 +4901,6 @@ async function testScript() {
         });
     });
 
-    await asyncTest("scheduleRunScriptUTC()", 2, function() {
-        var today = new Date();
-        var tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-
-        bc.script.scheduleRunScriptUTC(scriptName,
-                scriptData, tomorrow, function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
     await asyncTest("scheduleRunScriptMillisUTC()", 2, function() {
         var today = new Date();
         var tomorrow = new Date(today);
@@ -4930,21 +4908,6 @@ async function testScript() {
 
         bc.script.scheduleRunScriptMillisUTC(scriptName,
                 scriptData, tomorrow.getTime(), function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
-
-    await asyncTest("scheduleRunScriptUTC - TEST UTC UTILS()", 2, function() {
-        var today = new Date();
-        var tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        var _dateUTC = bc.timeUtils.UTCDateTimeToUTCMillis(tomorrow);
-        console.log("UTC of tomorrow: " + _dateUTC);
-        console.log("Date of tomorrow: " + bc.timeUtils.UTCMillisToUTCDateTime(_dateUTC));
-        bc.script.scheduleRunScriptUTC(scriptName,
-                scriptData, bc.timeUtils.UTCMillisToUTCDateTime(_dateUTC), function(result) {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
                     resolve_test();
@@ -5194,22 +5157,6 @@ async function testSocialLeaderboard() {
                 });
     });
 
-    await asyncTest("postScoreToDynamicLeaderboard()", 2, function() {
-        var today = new Date();
-        var tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-
-        bc.leaderboard.postScoreToDynamicLeaderboard(
-                "testDynamicJs", 1000, {
-                    "extra" : 123
-                },  bc.leaderboard.leaderboardType.HIGH_VALUE,
-                    bc.leaderboard.rotationType.DAILY, tomorrow,
-                3, function(result) {
-                    ok(true, JSON.stringify(result));
-                    equal(result.status, 200, "Expecting 200");
-                    resolve_test();
-                });
-    });
 
     await asyncTest("postScoreToDynamicLeaderboardUTC()", 2, function() {
         var today = new Date();
@@ -5253,12 +5200,12 @@ async function testSocialLeaderboard() {
         });
     });
 
-    await asyncTest("postScoreToDynamicLeaderboardDays()", 2, function() {
+    await asyncTest("postScoreToDynamicLeaderboardDaysUTC()", 2, function() {
         var today = new Date();
         var tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
-        bc.leaderboard.postScoreToDynamicLeaderboardDays(
+        bc.leaderboard.postScoreToDynamicLeaderboardDaysUTC(
                 "testDynamicJsDays", 1000, {
                     "extra" : 123
                 },  bc.leaderboard.leaderboardType.HIGH_VALUE, tomorrow,
@@ -5415,8 +5362,8 @@ async function testSocialLeaderboard() {
             });
     });
 
-    await asyncTest("postScoreToDynamicGroupLeaderboard())", 2, function() {
-        bc.leaderboard.postScoreToDynamicGroupLeaderboard(
+    await asyncTest("postScoreToDynamicGroupLeaderboardUTC())", 2, function() {
+        bc.leaderboard.postScoreToDynamicGroupLeaderboardUTC(
             groupLeaderboard,
             groupId,
             0,
@@ -5829,8 +5776,8 @@ async function testTournament() {
         });
     });
 
-    await asyncTest("postTournamentScore()", 2, function() {
-        bc.tournament.postTournamentScore(
+    await asyncTest("postTournamentScoreUTC()", 2, function() {
+        bc.tournament.postTournamentScoreUTC(
         _leaderboardId,
         200,
         { "test" : "test" },
@@ -5842,8 +5789,8 @@ async function testTournament() {
         });
     });
 
-    await asyncTest("postTournamentScoreWithResults()", 2, function() {
-        bc.tournament.postTournamentScoreWithResults(
+    await asyncTest("postTournamentScoreWithResultsUTC()", 2, function() {
+        bc.tournament.postTournamentScoreWithResultsUTC(
         _leaderboardId,
         200,
         { "test" : "test" },
@@ -6070,7 +6017,7 @@ async function testFile() {
     await asyncTest("uploadFile", 2, function()
     {
         var fileSize = fs.statSync("README.md").size;
-        bc.file.prepareFileUpload("test", "README.md", true, true, fileSize, result =>
+        bc.file.prepareUserUpload("test", "README.md", true, true, fileSize, result =>
         {
             equal(result.status, 200, "Expecting 200");
             if (result.status == 200)
@@ -7735,7 +7682,7 @@ async function testUserItems()
         });
     });
 
-    await asyncTest("GetUserInventoryPage()", 1, () =>
+    await asyncTest("GetUserItemsPage()", 1, () =>
     {
         var context = new Map();
 
@@ -7745,17 +7692,17 @@ async function testUserItems()
         context["searchCriteria"] = new Map().set("category", "sword");
         context["sortCriteria"] = new Map().set("createdAt", 1);
         context["sortCriteria"].set("updatedAt", -1);
-        bc.userItems.getUserInventoryPage(context, true, result =>
+        bc.userItems.getUserItemsPage(context, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
     });
 
-    await asyncTest("GetUserInventoryPageOffset()", 1, () =>
+    await asyncTest("GetUserItemsPageOffset()", 1, () =>
     {
         var context = "eyJzZWFyY2hDcml0ZXJpYSI6eyJnYW1lSWQiOiIyMDAwMSIsInBsYXllcklkIjoiZTZiN2Q2NTEtYWIxZC00MDllLTgwMjktOTNhZDcxYWI4OTRkIiwiZ2lmdGVkVG8iOm51bGx9LCJzb3J0Q3JpdGVyaWEiOnt9LCJwYWdpbmF0aW9uIjp7InJvd3NQZXJQYWdlIjoxMDAsInBhZ2VOdW1iZXIiOm51bGx9LCJvcHRpb25zIjpudWxsfQ";
-        bc.userItems.getUserInventoryPageOffset(context, 1, true, result =>
+        bc.userItems.getUserItemsPageOffset(context, 1, true, result =>
         {
             equal(result.status, 200, "Expecting 200");
             resolve_test();

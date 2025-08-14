@@ -37,17 +37,6 @@ function BCPlayerState() {
     bc.playerState.OPERATION_UPDATE_LANGUAGE_CODE = "UPDATE_LANGUAGE_CODE";
 
     /**
-     * @deprecated Use deleteUser instead - Will be removed after October 21 2021
-     */
-    bc.playerState.userPlayer = function(callback) {
-        bc.brainCloudManager.sendRequest({
-            service : bc.SERVICE_PLAYERSTATE,
-            operation : bc.playerState.OPERATION_FULL_PLAYER_RESET,
-            callback : callback
-        });
-    };
-
-    /**
      * Completely deletes the user record and all data fully owned
      * by the user. After calling this method, the player will need
      * to re-authenticate and create a new profile.
@@ -241,15 +230,6 @@ function BCPlayerState() {
             callback : callback
         });
     };
-
-    /**
-     * @deprecated Use updateUserName instead - Will be removed after October 21 2021
-     */
-    bc.playerState.updateName = function(name, callback) {
-        bc.playerState.updateUserName(name, callback);
-    };
-
-
 
     /**
      * Updates the "friend summary data" associated with the logged in user.

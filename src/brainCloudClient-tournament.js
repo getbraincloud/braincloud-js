@@ -215,26 +215,6 @@ function BCTournament() {
     };
 
     /**
-     * @deprecated use postTournamentScoreUTC instead. Will be removed on March 1 2022
-     */
-    bc.tournament.postTournamentScore = function(leaderboardId, score, data, roundStartedTime, callback) {
-        var message = {
-            leaderboardId : leaderboardId,
-            score : score,
-            roundStartedEpoch: roundStartedTime.getTime()
-        };
-
-        if(data) message.data = data;
-
-        bc.brainCloudManager.sendRequest({
-            service : bc.SERVICE_TOURNAMENT,
-            operation : bc.tournament.OPERATION_POST_TOURNAMENT_SCORE,
-            data : message,
-            callback : callback
-        });
-    };
-
-    /**
      * Post the users score to the leaderboard
      *
      * Service Name - tournament
@@ -258,39 +238,6 @@ function BCTournament() {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_TOURNAMENT,
             operation : bc.tournament.OPERATION_POST_TOURNAMENT_SCORE,
-            data : message,
-            callback : callback
-        });
-    };
-
-    /**
-     * @deprecated use postTournamentScoreWithResultsUTC instead. Will be removed on March 1 2022
-     */
-    bc.tournament.postTournamentScoreWithResults = function(
-        leaderboardId,
-        score,
-        data,
-        roundStartedTime,
-        sort,
-        beforeCount,
-        afterCount,
-        initialScore,
-        callback) {
-        var message = {
-            leaderboardId : leaderboardId,
-            score : score,
-            roundStartedEpoch: roundStartedTime.getTime(),
-            sort: sort,
-            beforeCount : beforeCount,
-            afterCount : afterCount,
-            initialScore : initialScore
-        };
-
-        if(data) message.data = data;
-
-        bc.brainCloudManager.sendRequest({
-            service : bc.SERVICE_TOURNAMENT,
-            operation : bc.tournament.OPERATION_POST_TOURNAMENT_SCORE_WITH_RESULTS,
             data : message,
             callback : callback
         });

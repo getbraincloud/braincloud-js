@@ -112,44 +112,6 @@ function BCCustomEntity() {
     };
 
     /**
-     * Retrieves first page of custom entities from the server based on the custom entity type and specified query context
-     *
-     * @param entityType
-     *              {string} The entity type as defined by the user
-     * @param rowsPerPage
-     *              {int}
-     * @param searchJson
-     *              {json} data to look for
-     * @param sortJson
-     *              {json} data to sort by
-     * @param doCount
-     *              {bool}
-     * @param callback
-     *              {function} The callback handler.
-     */
-
-	/**
-     * @deprecated Use getEntityPage() instead - Removal after October 21 2021
-     */
-    bc.customEntity.getPage = function(entityType, rowsPerPage, searchJson, sortJson, doCount, callback) {
-        var message = {
-            entityType : entityType,
-            rowsPerPage : rowsPerPage,
-            doCount : doCount
-        };
-
-        if(searchJson) message.searchJson = searchJson;
-        if(sortJson) message.sortJson = sortJson;
-
-        bc.brainCloudManager.sendRequest({
-            service : bc.SERVICE_CUSTOM_ENTITY,
-            operation : bc.customEntity.OPERATION_GET_PAGE,
-            data : message,
-            callback : callback
-        });
-    };
-
-    /**
     * @param context The json context for the page request.
     *                   See the portal appendix documentation for format.
     * @param entityType
@@ -164,37 +126,6 @@ function BCCustomEntity() {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_CUSTOM_ENTITY,
             operation : bc.customEntity.OPERATION_GET_ENTITY_PAGE,
-            data : message,
-            callback : callback
-        });
-    };
-
-    /**
-     * Creates new custom entity.
-     *
-     * @param entityType
-     *              {string} The entity type as defined by the user
-     * @param context
-     *              {string} context
-     * @param pageOffset
-     *              {int}
-     * @param callback
-     *              {function} The callback handler.
-     */
-
-     /**
-     * @deprecated Use getEntityPageOffset() instead - Removal after October 21 2021
-     */
-    bc.customEntity.getPageOffset = function(entityType, context, pageOffset, callback) {
-        var message = {
-            entityType : entityType,
-            context : context,
-            pageOffset : pageOffset
-        };
-
-        bc.brainCloudManager.sendRequest({
-            service : bc.SERVICE_CUSTOM_ENTITY,
-            operation : bc.customEntity.OPERATION_GET_PAGE_OFFSET,
             data : message,
             callback : callback
         });

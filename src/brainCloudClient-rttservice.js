@@ -37,13 +37,6 @@ function BCRTT() {
     }
 
     /**
-     * @deprecated Use isRTTEnabled instead. Will be removed on March 1 2022
-     */
-    bc.rttService.getRTTEnabled = function() {
-        return bc.brainCloudRttComms.isRTTEnabled();
-    }
-
-    /**
      * Returns true if RTT is enabled
      */
     bc.rttService.isRTTEnabled = function() {

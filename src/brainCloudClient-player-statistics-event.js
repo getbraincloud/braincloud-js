@@ -10,21 +10,6 @@ function BCPlayerStatisticsEvent() {
     bc.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE = "TRIGGER_MULTIPLE";
 
     /**
-     * @deprecated Use triggerStatsEvent instead - Removal September 1, 2021
-     */
-    bc.playerStatisticsEvent.triggerUserStatsEvent = function(eventName, eventMultiplier, callback) {
-        bc.brainCloudManager.sendRequest({
-            service: bc.SERVICE_PLAYER_STATISTICS_EVENT,
-            operation: bc.playerStatisticsEvent.OPERATION_TRIGGER,
-            data: {
-                eventName : eventName,
-                eventMultiplier : eventMultiplier
-            },
-            callback: callback
-        });
-    };
-
-    /**
      * Trigger an event server side that will increase the users statistics.
      * This may cause one or more awards to be sent back to the user -
      * could be achievements, experience, etc. Achievements will be sent by this
@@ -48,20 +33,6 @@ function BCPlayerStatisticsEvent() {
             data: {
                 eventName : eventName,
                 eventMultiplier : eventMultiplier
-            },
-            callback: callback
-        });
-    };
-
-    /**
-     * @deprecated Use triggerStatsEvents instead - Removal September 1, 2021
-     */
-    bc.playerStatisticsEvent.triggerUserStatsEvents = function(events, callback) {
-        bc.brainCloudManager.sendRequest({
-            service: bc.SERVICE_PLAYER_STATISTICS_EVENT,
-            operation: bc.playerStatisticsEvent.OPERATION_TRIGGER_MULTIPLE,
-            data: {
-                events : events
             },
             callback: callback
         });
