@@ -4080,7 +4080,7 @@ async function testPlayerState() {
     })) return;
 
     await asyncTest("updateUsername()", function() {
-        bc.playerState.updateUsername("junit", function(
+        bc.playerState.updateUserName("junit", function(
                 result) {
             equal(result.status, 200, JSON.stringify(result));
             resolve_test();
@@ -7081,6 +7081,7 @@ async function testRelay() {
     // Bad connect URL
     await asyncTest("connect() bad URL", 2, () =>
     {
+        console.log("sending connect request...")
         bc.relay.connect({
             ssl: false,
             host: "ws://192.168.1.0",
