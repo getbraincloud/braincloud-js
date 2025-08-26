@@ -7037,12 +7037,16 @@ async function testRTT()
 
                 equal(result.status, 200, "Expecting 200");
                 apiReturned = true;
-                clearTimeout(timeoutId);
-                    ok(true, "eventReceived");
-                    resolve_test();
+                
                 if (eventId)
                 {
+                    console.log("we got eventId")
+                    clearTimeout(timeoutId);
                     
+                    bc.event.deleteIncomingEvent(eventId, result => {
+                        ok(true, "eventReceived");
+                        resolve_test();
+                    })                    
                 }
             });
         });
