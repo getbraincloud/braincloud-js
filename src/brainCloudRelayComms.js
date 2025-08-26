@@ -238,9 +238,15 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
     }
 
     bcr.onSocketError = function(e) {
+        console.log("socket error")
+
         bcr.disconnect();
         if (bcr.connectCallback.failure) {
+            console.log("failure callback")
             bcr.connectCallback.failure("Relay error: " + e.toString());
+        }
+        else{
+            console.log("no failure callback?")
         }
     }
 
