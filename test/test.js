@@ -7090,6 +7090,7 @@ async function testRelay() {
             lobbyId: "invalid_lobbyId"
         }, result =>
         { // Impossible
+            console.log("Impossible result")
             ok(false, "Relay Connected - This shouldn't have worked");
             resolve_test();
         }, error =>

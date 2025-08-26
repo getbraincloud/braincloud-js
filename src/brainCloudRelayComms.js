@@ -139,6 +139,8 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
 //+     });
 //> END
 //> REMOVE IF K6
+
+        console.log("creating websocket...")
         bcr.socket = new WebSocket(uri);
         bcr.socket.addEventListener('error', bcr.onSocketError);
         bcr.socket.addEventListener('close', bcr.onSocketClose);
