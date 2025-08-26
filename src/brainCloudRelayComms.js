@@ -142,6 +142,7 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
 
         console.log("creating websocket...")
         bcr.socket = new WebSocket(uri);
+        console.log("ws created")
         bcr.socket.addEventListener('error', bcr.onSocketError);
         bcr.socket.addEventListener('close', bcr.onSocketClose);
         bcr.socket.addEventListener('open', bcr.onSocketOpen);
