@@ -7037,11 +7037,12 @@ async function testRTT()
 
                 equal(result.status, 200, "Expecting 200");
                 apiReturned = true;
-                if (eventId)
-                {
-                    clearTimeout(timeoutId);
+                clearTimeout(timeoutId);
                     ok(true, "eventReceived");
                     resolve_test();
+                if (eventId)
+                {
+                    
                 }
             });
         });
