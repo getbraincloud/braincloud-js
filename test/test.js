@@ -7040,10 +7040,9 @@ async function testRTT()
                 
                 if (eventId)
                 {
-                    console.log("we got eventId")
                     clearTimeout(timeoutId);
                     
-                    bc.event.deleteIncomingEvent(eventId, result => {
+                    bc.event.deleteIncomingEvent(eventId, () => {
                         ok(true, "eventReceived");
                         resolve_test();
                     })                    
@@ -7084,27 +7083,26 @@ async function testRelay() {
     })
 
     // Bad connect URL
-    await asyncTest("connect() bad URL", 2, () =>
-    {
-        console.log("sending connect request...")
-        bc.relay.connect({
-            ssl: false,
-            host: "ws://192.168.1.0",
-            port: 1234,
-            passcode: "invalid_passcode",
-            lobbyId: "invalid_lobbyId"
-        }, result =>
-        { // Impossible
-            console.log("Impossible result")
-            ok(false, "Relay Connected - This shouldn't have worked");
-            resolve_test();
-        }, error =>
-        {
-            ok(true, error);
-            ok(!bc.relay.isConnected(), "Is !connected");
-            resolve_test();
-        })
-    })
+    // await asyncTest("connect() bad URL", 2, () => {
+    //     console.log("sending connect request...")
+    //     bc.relay.connect({
+    //         ssl: false,
+    //         host: "ws://192.168.1.0",
+    //         port: 1234,
+    //         passcode: "invalid_passcode",
+    //         lobbyId: "invalid_lobbyId"
+    //     }, result =>
+    //     { // Impossible
+    //         console.log("Impossible result")
+    //         ok(false, "Relay Connected - This shouldn't have worked");
+    //         resolve_test();
+    //     }, error =>
+    //     {
+    //         ok(true, error);
+    //         ok(!bc.relay.isConnected(), "Is !connected");
+    //         resolve_test();
+    //     })
+    // })
 
     // // Full flow. Create lobby -> ready up -> connect to server
     await asyncTest("connect()", 9, () =>

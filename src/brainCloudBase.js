@@ -721,8 +721,6 @@ function BrainCloudManager ()
                     })
                         .then(function (response) {
                             var status = response.status;
-                            var encoding = response.headers.get("Content-Encoding");
-                            bcm.debugLog("Response Content-Encoding: " + encoding);
 
                             return response.arrayBuffer().then(function (buffer) {
                                 return { status: status, buffer: buffer }; 
