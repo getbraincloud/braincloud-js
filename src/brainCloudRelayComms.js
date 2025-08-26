@@ -245,11 +245,17 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
     }
 
     bcr.onSocketClose = function(e) {
+        console.log("socket close")
+        
         bcr.disconnect();
         if (bcr.connectCallback.failure) {
+            console.log("failure callback")
             if(!bcr.endMatchRequested){
                 bcr.connectCallback.failure("Relay Connection closed");
             }
+        }
+        else{
+            console.log("no failure callback?")
         }
     }
 
