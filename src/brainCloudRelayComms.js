@@ -140,9 +140,7 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
 //> END
 //> REMOVE IF K6
 
-        console.log("creating websocket...")
         bcr.socket = new WebSocket(uri);
-        console.log("ws created")
         bcr.socket.addEventListener('error', bcr.onSocketError);
         bcr.socket.addEventListener('close', bcr.onSocketClose);
         bcr.socket.addEventListener('open', bcr.onSocketOpen);
@@ -239,30 +237,18 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
     }
 
     bcr.onSocketError = function(e) {
-        console.log("socket error")
-
         bcr.disconnect();
         if (bcr.connectCallback.failure) {
-            console.log("failure callback")
             bcr.connectCallback.failure("Relay error: " + e.toString());
-        }
-        else{
-            console.log("no failure callback?")
         }
     }
 
     bcr.onSocketClose = function(e) {
-        console.log("socket close")
-        
         bcr.disconnect();
         if (bcr.connectCallback.failure) {
-            console.log("failure callback")
             if(!bcr.endMatchRequested){
                 bcr.connectCallback.failure("Relay Connection closed");
             }
-        }
-        else{
-            console.log("no failure callback?")
         }
     }
 
