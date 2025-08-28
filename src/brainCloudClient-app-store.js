@@ -25,7 +25,7 @@ function BCAppStore() {
      * @param {string} payload The payload string to cache.
      * @param {function} callback The function to be invoked when the server response is received.
      */
-    bc.appStore.cachePurchaseContext = function (storeId, iapId, payload, callback) {
+    bc.appStore.cachePurchasePayloadContext = function (storeId, iapId, payload, callback) {
         var data = {
             storeId: storeId,
             iapId: iapId,

@@ -4445,8 +4445,8 @@ async function testAppStore() {
         return tearDownLogout();
     })) return;
 
-    await asyncTest("cachePurchaseContext()", () => {
-        bc.appStore.cachePurchaseContext("_invalid_store_id_", "_invalid_iap_id_", "_invalid_payload_", response => {
+    await asyncTest("cachePurchasePayloadContext()", () => {
+        bc.appStore.cachePurchasePayloadContext("_invalid_store_id_", "_invalid_iap_id_", "_invalid_payload_", response => {
             equal(response.reason_code, bc.reasonCodes.INVALID_STORE_ID, " Expected INVALID_STORE_ID");
             resolve_test();
         });
