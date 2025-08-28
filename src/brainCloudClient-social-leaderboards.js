@@ -615,28 +615,6 @@ function BCSocialLeaderboard() {
     };
 
     /**
-     * @deprecated Use postScoreToDynamicLeaderboardUTC instead - Will be removed on March 1, 2022
-     */
-    bc.socialLeaderboard.postScoreToDynamicLeaderboard = function(leaderboardName, score,
-                                                                                data, leaderboardType, rotationType, rotationReset, retainedCount, callback ) {
-        bc.brainCloudManager
-            .sendRequest({
-                service : bc.SERVICE_LEADERBOARD,
-                operation : bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
-                data : {
-                    leaderboardId : leaderboardName,
-                    score : score,
-                    data : data,
-                    leaderboardType : leaderboardType,
-                    rotationType : rotationType,
-                    rotationResetTime : rotationReset.getTime().toFixed(0),
-                    retainedCount : retainedCount
-                },
-                callback : callback
-            });
-    };
-
-    /**
      * Post the players score to the given social leaderboard.
      * Pass leaderboard config data to dynamically create if necessary.
      * You can optionally send a user-defined json string of data
@@ -704,29 +682,6 @@ function BCSocialLeaderboard() {
             callback: callback
         })
     }
-
-    /**
-     *@deprecated Use postScoreToDynamicLeaderboardDaysUTC instead - Will be removed on March 1, 2022
-     */
-    bc.socialLeaderboard.postScoreToDynamicLeaderboardDays = function(leaderboardName, score,
-                                                                                    data, leaderboardType, rotationReset, retainedCount, numDaysToRotate, callback ) {
-        bc.brainCloudManager
-            .sendRequest({
-                service : bc.SERVICE_LEADERBOARD,
-                operation : bc.socialLeaderboard.OPERATION_POST_SCORE_DYNAMIC,
-                data : {
-                    leaderboardId : leaderboardName,
-                    score : score,
-                    data : data,
-                    leaderboardType : leaderboardType,
-                    rotationType : "DAYS",
-                    rotationResetTime : rotationReset.getTime().toFixed(0),
-                    retainedCount : retainedCount,
-                    numDaysToRotate : numDaysToRotate
-                },
-                callback : callback
-            });
-    };
 
     /**
      * Post the players score to the given social leaderboard.
@@ -1220,29 +1175,6 @@ function BCSocialLeaderboard() {
         bc.brainCloudManager.sendRequest({
             service : bc.SERVICE_LEADERBOARD,
             operation : bc.socialLeaderboard.OPERATION_GET_GROUP_LEADERBOARD_VIEW,
-            data : message,
-            callback : callback
-        });
-    }
-
-    /**
-     * @deprecated Use postScoreToDynamicGroupLeaderboardUTC instead - Will be removed on March 1 2022
-     */
-    bc.socialLeaderboard.postScoreToDynamicGroupLeaderboard = function(leaderboardId, groupId, score, data, leaderboardType, rotationType, rotationResetTime, retainedCount, callback) {
-        var message = {
-            leaderboardId : leaderboardId,
-            groupId : groupId,
-            score : score,
-            data : data,
-            leaderboardType : leaderboardType,
-            rotationType : rotationType,
-            rotationResetTime : rotationResetTime,
-            retainedCount : retainedCount
-        };
-
-        bc.brainCloudManager.sendRequest({
-            service : bc.SERVICE_LEADERBOARD,
-            operation : bc.socialLeaderboard.OPERATION_POST_SCORE_TO_DYNAMIC_GROUP_LEADERBOARD,
             data : message,
             callback : callback
         });

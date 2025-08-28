@@ -241,34 +241,6 @@ function BCGamification() {
     };
 
     /**
-     * @deprecated - Removal after October 21 2021
-     *
-     * Resets the specified milestones' statuses to LOCKED.
-     *
-     * Service Name - Gamification
-     * Service Operation - ResetMilestones
-     *
-     * @param milestoneIds Comma separate list of milestones to reset
-     * @param callback Method to be invoked when the server response is received.
-     */
-    bc.gamification.resetMilestones = function(milestones, callback, includeMetaData) {
-        var message = {};
-        message["milestones"] = milestones;
-
-        if (includeMetaData) {
-            message["includeMetaData"] = includeMetaData;
-        }
-
-        bc.brainCloudManager.sendRequest({
-            service: bc.gamification.SERVICE_GAMIFICATION,
-            operation: bc.gamification.OPERATION_RESET_MILESTONES,
-            data: message,
-            callback: callback
-        });
-    };
-
-
-    /**
      * Method retrieves all of the quests defined for the game.
      *
      * Service Name - Gamification

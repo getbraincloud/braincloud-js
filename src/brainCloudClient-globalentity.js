@@ -283,26 +283,6 @@ function BCGlobalEntity() {
 	};
 
 	/**
-     * @deprecated Use updateEntityTimeToLive() instead - Removal after March 1 2022
-	 */
-	bc.globalEntity.updateEntityUpdateTimeToLive = function(entityId,
-																		  timeToLive, version, callback) {
-		var message = {
-			entityId : entityId,
-			version : version,
-			timeToLive : timeToLive
-		};
-
-		bc.brainCloudManager
-			.sendRequest({
-				service : bc.SERVICE_GLOBAL_ENTITY,
-				operation : bc.globalEntity.OPERATION_UPDATE_TIME_TO_LIVE,
-				data : message,
-				callback : callback
-			});
-	};
-
-	/**
 	 * Method updates an existing entity's time to live on the server.
 	 *
 	 * Service Name - globalEntity

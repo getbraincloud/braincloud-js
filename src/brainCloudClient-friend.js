@@ -186,20 +186,6 @@ function BCFriend() {
 	};
 
 	/**
-     * @deprecated Use readFriendUserState() instead - Removal after March 1 2022
-	 */
-	bc.friend.readFriendPlayerState = function(friendId, callback) {
-		bc.brainCloudManager.sendRequest({
-			service: bc.SERVICE_FRIEND,
-			operation: bc.friend.OPERATION_READ_FRIEND_PLAYER_STATE,
-			data: {
-				friendId: friendId
-			},
-			callback: callback
-		});
-	};
-
-	/**
 	 * Read a friend's state.
      * If you are not friend with this user, you will get an error
      * with NOT_FRIENDS reason code.

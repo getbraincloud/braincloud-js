@@ -6,12 +6,39 @@ function BCAppStore() {
 
     bc.SERVICE_APP_STORE = "appStore";
 
-    bc.appStore.OPERATION_VERIFY_PURCHASE = "VERIFY_PURCHASE";
+    bc.appStore.OPERATION_CACHE_PURCHASE_PAYLOAD_CONTEXT = "CACHE_PURCHASE_PAYLOAD_CONTEXT";
+    bc.appStore.OPERATION_FINALIZE_PURCHASE = "FINALIZE_PURCHASE";
     bc.appStore.OPERATION_GET_ELIGIBLE_PROMOTIONS = "ELIGIBLE_PROMOTIONS";
     bc.appStore.OPERATION_GET_SALES_INVENTORY = "GET_INVENTORY";
-    bc.appStore.OPERATION_START_PURCHASE = "START_PURCHASE";
-    bc.appStore.OPERATION_FINALIZE_PURCHASE = "FINALIZE_PURCHASE";
     bc.appStore.OPERATION_REFRESH_PROMOTIONS = "REFRESH_PROMOTIONS";
+    bc.appStore.OPERATION_START_PURCHASE = "START_PURCHASE";
+    bc.appStore.OPERATION_VERIFY_PURCHASE = "VERIFY_PURCHASE";
+
+    /**
+     * Caches a payload context to retreive as fallback if the store API cannot provide the payload.
+     * 
+     * Service Name - AppStore
+     * Service Operation - CACHE_PURCHASE_PAYLOAD_CONTEXT
+     * 
+     * @param {string} storeId The store platform. Ex: "googlePlay".
+     * @param {string} iapId In-app product id.
+     * @param {string} payload The payload string to cache.
+     * @param {function} callback The function to be invoked when the server response is received.
+     */
+    bc.appStore.cachePurchasePayloadContext = function (storeId, iapId, payload, callback) {
+        var data = {
+            storeId: storeId,
+            iapId: iapId,
+            payload: payload
+        };
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_APP_STORE,
+            operation: bc.appStore.OPERATION_CACHE_PURCHASE_PAYLOAD_CONTEXT,
+            data: data,
+            callback: callback
+        });
+    };
 
     /**
     * Verifies that purchase was properly made at the store.

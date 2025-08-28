@@ -19,7 +19,7 @@ function authenticated(response) {
     console.log("Did get Authenticated to profileId:" + response.data.profileId);
     var shareable = true;
     var replaceIfExists = true;
-    _bc.brainCloudClient.file.prepareFileUpload("tests","dummyFile",shareable,replaceIfExists,)
+    _bc.brainCloudClient.file.prepareUserUpload("tests","dummyFile",shareable,replaceIfExists,)
 }
 _bc = new bc.BrainCloudWrapper("_mainWrapper");
 
@@ -95,7 +95,7 @@ The file upload works slightly different in this implementation if not used in t
 ```javascript
 var fs = require("fs")
 ... 
-_bc.brainCloudClient.file.prepareFileUpload("test2", fileName, shareable, replaceIfExists, fileSize, function (result) {
+_bc.brainCloudClient.file.prepareUserUpload("test2", fileName, shareable, replaceIfExists, fileSize, function (result) {
     if (result.status == 200) {
         var uploadId = result.data.fileDetails.uploadId;
         var xhr = new XMLHttpRequest4Upload();

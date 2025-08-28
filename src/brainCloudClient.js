@@ -384,13 +384,6 @@ function BrainCloudClient() {
     };
 
     /**
-     * @deprecated Use registerGlobalErrorCallback() instead - Removal after March 1 2022
-     */
-    bcc.setErrorCallback = function(errorCallback) {
-        bcc.brainCloudManager.setErrorCallback(errorCallback);
-    };
-
-    /**
      * Sets a callback handler for any error messages that come from brainCloud.
      * This will include any networking errors as well as requests from the client
      * which do not register a callback handler.
