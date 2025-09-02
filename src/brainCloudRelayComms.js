@@ -241,7 +241,7 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
             if (!bcr._pingInFlight) {
                 bcr.sendPing();
             }
-        }, bcr._pingIntervalMS);
+        }, bcr._pingIntervalSeconds);
     }
 
     bcr.onSocketError = function(e) {
