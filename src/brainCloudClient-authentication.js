@@ -52,7 +52,7 @@ function BCAuthentication() {
 	bc.authentication.AUTHENTICATION_TYPE_HANDOFF = "Handoff";
 	bc.authentication.AUTHENTICATION_TYPE_SETTOP_HANDOFF = "SettopHandoff";
 
-	bc.authentication.compressResponses = false;
+	bc.authentication.compressResponses = true;
 	bc.authentication.profileId = "";
 	bc.authentication.anonymousId = "";
     bc.authentication.previousAuthParams = {

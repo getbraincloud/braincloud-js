@@ -175,7 +175,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "5.7.0";
+    bcc.version = "5.8.0";
     bcc.countryCode;
     bcc.languageCode;
 
@@ -381,13 +381,6 @@ function BrainCloudClient() {
      */
     bcc.deregisterRewardCallback = function() {
         bcc.brainCloudManager.deregisterRewardCallback();
-    };
-
-    /**
-     * @deprecated Use registerGlobalErrorCallback() instead - Removal after March 1 2022
-     */
-    bcc.setErrorCallback = function(errorCallback) {
-        bcc.brainCloudManager.setErrorCallback(errorCallback);
     };
 
     /**

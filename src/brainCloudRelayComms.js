@@ -48,7 +48,7 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
     bcr._netId = bcr.INVALID_NET_ID; // My net Id
     bcr._systemCallback = null;
     bcr._relayCallback = null;
-    bcr._pingIntervalMS = 1000;
+    bcr._pingIntervalSeconds = 1;
     bcr._pingIntervalId = null;
     bcr._pingInFlight = false;
     bcr._pingTime = null;
@@ -139,6 +139,7 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
 //+     });
 //> END
 //> REMOVE IF K6
+
         bcr.socket = new WebSocket(uri);
         bcr.socket.addEventListener('error', bcr.onSocketError);
         bcr.socket.addEventListener('close', bcr.onSocketClose);
@@ -199,7 +200,15 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
     }
 
     bcr.setPingInterval = function(interval) {
-        bcr._pingIntervalMS = Math.max(1000, interval);
+        if(interval > 999){
+            bc.brainCloudManager.debugLog("Warning: setPingInterval value should be in seconds. Values greater than 999 are automatically converted to seconds.");
+
+            bcr._pingIntervalSeconds = interval / 1000;
+        }
+        else{
+            bcr._pingIntervalSeconds = interval;
+        }
+        
         if (bcr.isConnected) {
             bcr.stopPing();
             bcr.startPing();
@@ -232,7 +241,7 @@ var Buffer = require('buffer/').Buffer  // note: the trailing slash is important
             if (!bcr._pingInFlight) {
                 bcr.sendPing();
             }
-        }, bcr._pingIntervalMS);
+        }, bcr._pingIntervalSeconds);
     }
 
     bcr.onSocketError = function(e) {

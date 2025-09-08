@@ -40,22 +40,6 @@ function BCScript() {
     };
 
     /**
-     * @deprecated Use ScheduleRunScriptMillisUTC instead - Removal September 1, 2021
-     */
-    bc.script.scheduleRunScriptUTC = function(scriptName, scriptData, startDateInUTC, callback) {
-        bc.brainCloudManager.sendRequest({
-            service: bc.SERVICE_SCRIPT,
-            operation: bc.script.OPERATION_SCHEDULE_CLOUD_SCRIPT,
-            data: {
-                scriptName: scriptName,
-                scriptData: scriptData,
-                startDateUTC: startDateInUTC.getTime()
-            },
-            callback: callback
-        });
-    };
-
-    /**
      * Allows cloud script executions to be scheduled
      *
      * Service Name - Script
