@@ -1,3 +1,4 @@
+// Copyright 2025 bitHeads, Inc. All Rights Reserved.
 
 function BCItemCatalog() {
     var bc = this;
