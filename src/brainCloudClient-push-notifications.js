@@ -1,3 +1,4 @@
+// Copyright 2025 bitHeads, Inc. All Rights Reserved.
 
 function BCPushNotifications() {
     var bc = this;

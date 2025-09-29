@@ -1,3 +1,5 @@
+// Copyright 2025 bitHeads, Inc. All Rights Reserved.
+
 function BrainCloudRelayComms(_client) {
     var bcr = this;
 //> REMOVE IF K6

@@ -1,6 +1,7 @@
+// Copyright 2025 bitHeads, Inc. All Rights Reserved.
+
 function BCReasonCodes() {
     var bc = this;
-
     bc.reasonCodes = {};
     bc.reasonCodes.NO_REASON_CODE = 0;
     bc.reasonCodes.INVALID_NOTIFICATION = 20200;
@@ -73,8 +74,8 @@ function BCReasonCodes() {
     bc.reasonCodes.ENTITY_VERSION_MISMATCH = 40344;
     bc.reasonCodes.MISSING_RECORD = 40345;
     bc.reasonCodes.INSUFFICIENT_PERMISSIONS = 40346;
-    bc.reasonCodes.MISSING_IN_QUERY = 40347;
     bc.reasonCodes.INVALID_DATABASE_FIELD_NAME = 40347;
+    bc.reasonCodes.MISSING_IN_QUERY = 40347;
     bc.reasonCodes.RECORD_EXPIRED = 40348;
     bc.reasonCodes.INVALID_WHERE = 40349;
     bc.reasonCodes.S3_ERROR = 40350;
@@ -93,8 +94,8 @@ function BCReasonCodes() {
     bc.reasonCodes.MISSING_SCRIPT = 40363;
     bc.reasonCodes.SCRIPT_SECURITY_ERROR = 40364;
     bc.reasonCodes.SERVER_SESSION_EXPIRED = 40365;
-    bc.reasonCodes.STREAM_DOES_NOT_EXIT = 40366;
     bc.reasonCodes.STREAM_DOES_NOT_EXIST = 40366;
+    bc.reasonCodes.STREAM_DOES_NOT_EXIT = 40366;
     bc.reasonCodes.STREAM_ACCESS_ERROR = 40367;
     bc.reasonCodes.STREAM_COMPLETE = 40368;
     bc.reasonCodes.INVALID_STATISTIC_NAME = 40369;
@@ -644,8 +645,6 @@ function BCReasonCodes() {
     bc.reasonCodes.USER_EXPORT_ERROR = 600003;
     bc.reasonCodes.POST_SCORE_ON_BEHALF_OF_ERROR = 600004;
     bc.reasonCodes.INVALID_USER_STATUS = 600005;
-    bc.reasonCodes.SLACK_WEBHOOK_SEND_ERROR = 600006;
-    bc.reasonCodes.SLACK_NOT_ENABLED_FOR_APP = 600007;
     bc.reasonCodes.ERROR_AQUIRING_LOBBY_LOCK = 600008;
     bc.reasonCodes.ERROR_SETTING_NEW_LOBBY_OWNER = 600009;
     bc.reasonCodes.ERROR_SWITCHING_TEAMS = 600010;
@@ -699,6 +698,6 @@ function BCReasonCodes() {
     bc.reasonCodes.CLIENT_UPLOAD_FILE_TIMED_OUT = 90101;
     bc.reasonCodes.CLIENT_UPLOAD_FILE_UNKNOWN = 90102;
     bc.reasonCodes.CLIENT_DISABLED = 90200;
-}
-
+    bc.reasonCodes.SLACK_WEBHOOK_SEND_ERROR = 600006;
+    bc.reasonCodes.SLACK_NOT_ENABLED_FOR_APP = 600007;
 BCReasonCodes.apply(window.brainCloudClient = window.brainCloudClient || {});
