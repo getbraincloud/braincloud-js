@@ -7692,6 +7692,36 @@ async function testUserItems()
         });
     });
 
+    await asyncTest("AwardUserItemWithOptions()", () =>
+    {
+        var optionsJson = {
+            blockIfExceedItemMaxStackable: true
+        }
+        
+        bc.userItems.awardUserItemWithOptions("sword001", 5, true, optionsJson, result =>
+        {
+            equal(result.status, 200, "Expecting 200");
+           
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetItemsOnPromotion()", () => {
+        bc.userItems.getItemsOnPromotion("", true, true, result => {
+            equal(result.status, 200, "Expecting 200");
+
+            resolve_test();
+        });
+    });
+
+    await asyncTest("GetItemPromotionDetails()", () => {
+        bc.userItems.getItemPromotionDetails("sword001", "", true, true, result => {
+            equal(result.status, 200, "Expecting 200");
+
+            resolve_test();
+        })
+    });
+
     await asyncTest("GetUserItemsPage()", 1, () =>
     {
         var context = new Map();
@@ -7741,6 +7771,17 @@ async function testUserItems()
     {
         bc.userItems.purchaseUserItem("sword001", 1, null, true, result =>
         {
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("PurchaseUserItemWithOptions())", 1, () => {
+        var optionsJson = {
+            blockIfExceedItemMaxStackable: true
+        }
+
+        bc.userItems.purchaseUserItemWithOptions("sword001", 1, null, true, optionsJson, result => {
             equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
