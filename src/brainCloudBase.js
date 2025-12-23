@@ -42,6 +42,15 @@ function BrainCloudManager ()
 
     bcm.name = "BrainCloudManager";
 
+    bcm._useProxy = false;
+
+    bcm._proxyParams = {
+        proxyHost: "",
+        proxyJWT: "",
+        appName: "",
+        envName: ""
+    };
+
     bcm._sendQueue = [];
     bcm._inProgressQueue = [];
     bcm._abTestingId = -1;
@@ -101,6 +110,56 @@ function BrainCloudManager ()
             });
     };
 
+    bcm.setUseProxy = function(useProxy){
+        bcm._useProxy = useProxy;
+    }
+
+    bcm.setProxyParams = function(appName, envName){
+        bcm._proxyParams.appName = appName;
+        bcm._proxyParams.envName = envName;
+    }
+
+    bcm.setProxyHost = function(proxyHost){
+        bcm._proxyParams.proxyHost = proxyHost;
+    }
+
+    bcm.initProxySession = async function(){
+        const res = await fetch(`${bcm._proxyParams.proxyHost}/auth/bootstrap`);
+        const { token } = await res.json(); 
+
+        bcm._proxyParams.proxyJWT = token;
+    }
+
+    bcm.getAvailableProxyEnvs = async function(){
+        const res = await fetch(`${bcm._proxyParams.proxyHost}/bc/getEnvs/${bcm._proxyParams.appName}`);
+        const data = await res.json();
+
+        return data;
+    }
+
+    bcm.getAvailableProxyApps = async function(){
+        const res = await fetch(`${bcm._proxyParams.proxyHost}/bc/getApps`);
+
+        const data = await res.json();
+        return data;
+    }
+
+    bcm.signRequest = async function(payload){
+        const res = await fetch(`${bcm._proxyParams.proxyHost}/bc/sign`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${bcm._proxyParams.proxyJWT}`,
+                "Content-Type": "application/json",
+                "appName" : bcm._proxyParams.appName,
+                "envName" : bcm._proxyParams.envName
+            },
+            body: payload
+        });
+
+        const {sig} = await res.json();
+        return sig;
+    }
+
     bcm.initialize = function(appId, secret, appVersion)
     {
         bcm._appId = appId;
@@ -109,6 +168,11 @@ function BrainCloudManager ()
         bcm._secretMap[appId] = secret;
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
+
+        if(bcm._useProxy){
+            //init proxy session
+            bcm.initProxySession();
+        }
     };
 
     bcm.initializeWithApps = function(defaultAppId, secretMap, appVersion)
@@ -118,6 +182,10 @@ function BrainCloudManager ()
         bcm._secretMap = secretMap;
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
+        if(bcm._useProxy){
+            //init proxy session
+            bcm.initProxySession();
+        }
     };
 
     bcm.setServerUrl = function(serverUrl)
@@ -555,7 +623,13 @@ function BrainCloudManager ()
 
     bcm.setHeader = function(xhr)
     {
-        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        var sig = "";
+        if(bcm._useProxy){
+            sig = bcm.signRequest(bcm._jsonedQueue);
+        }else{
+            sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        }
+
         xhr.setRequestHeader('X-SIG', sig);
         xhr.setRequestHeader('X-APPID', bcm._appId);
     }
@@ -646,7 +720,7 @@ function BrainCloudManager ()
         }
     }
     
-    bcm.performQuery = function()
+    bcm.performQuery = async function()
     {
 //> REMOVE IF K6
         clearTimeout(bcm.xml_timeoutId);
@@ -704,7 +778,12 @@ function BrainCloudManager ()
 
         xmlhttp.open("POST", bcm._dispatcherUrl, true);
         xmlhttp.setRequestHeader("Content-type", "application/json");
-        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        var sig = "";
+        if(bcm._useProxy){
+            sig = bcm.signRequest(bcm._jsonedQueue);
+        }else {
+            sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        }
         xmlhttp.setRequestHeader("X-SIG", sig);
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
 

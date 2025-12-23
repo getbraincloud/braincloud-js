@@ -74,8 +74,6 @@ function BrainCloudWrapper(wrapperName) {
         bcw.timeUtils = bcw.brainCloudClient.timeUtils;
 
         bcw.brainCloudManager = bcw.brainCloudClient.brainCloudManager = bcw.brainCloudClient.brainCloudManager || {};
-
-
     } else {
         bcw.brainCloudManager = window.brainCloudManager = window.brainCloudManager || {};
         bcw.brainCloudClient = window.brainCloudClient = window.brainCloudClient || {};
@@ -194,6 +192,19 @@ function BrainCloudWrapper(wrapperName) {
         };
         bcw.brainCloudClient.initializeWithApps(defaultAppId, secretMap, appVersion);
     };
+
+    bcw.setUseProxy = function(useProxy){
+        bcw.brainCloudClient.brainCloudManager.setUseProxy(useProxy);
+    };
+
+    bcw.setProxyHost = function(proxyHost){
+        bcw.brainCloudClient.brainCloudManager.setProxyHost(proxyHost);
+    };
+
+    bcw.setProxyParams = function(appName, envName){
+        bcw.brainCloudClient.brainCloudManager.setProxyParams(appName, envName);
+    };
+
 
     bcw.getStoredAnonymousId = function() {
         var prefix = wrapperName === "" ? "" : wrapperName + ".";
