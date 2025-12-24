@@ -43,6 +43,7 @@ function BrainCloudManager ()
     bcm.name = "BrainCloudManager";
 
     bcm._useProxy = false;
+    bcm._proxyInitialized = false;
 
     bcm._proxyParams = {
         proxyHost: "",
@@ -126,19 +127,32 @@ function BrainCloudManager ()
     bcm.initProxySession = async function(){
         const res = await fetch(`${bcm._proxyParams.proxyHost}/auth/bootstrap`);
         const { token } = await res.json(); 
-
+        
         bcm._proxyParams.proxyJWT = token;
+        bcm._proxyInitialized = true;
     }
 
     bcm.getAvailableProxyEnvs = async function(){
-        const res = await fetch(`${bcm._proxyParams.proxyHost}/bc/getEnvs/${bcm._proxyParams.appName}`);
+        const res = await fetch(`${bcm._proxyParams.proxyHost}/bc/getEnvs/${bcm._proxyParams.appName}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${bcm._proxyParams.proxyJWT}`,
+                "Content-Type": "application/json"
+            }
+        });
         const data = await res.json();
 
         return data;
     }
 
     bcm.getAvailableProxyApps = async function(){
-        const res = await fetch(`${bcm._proxyParams.proxyHost}/bc/getApps`);
+        const res = await fetch(`${bcm._proxyParams.proxyHost}/bc/getApps`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${bcm._proxyParams.proxyJWT}`,
+                "Content-Type": "application/json"
+            }
+        });
 
         const data = await res.json();
         return data;
@@ -169,7 +183,7 @@ function BrainCloudManager ()
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
 
-        if(bcm._useProxy){
+        if(bcm._useProxy && !bcm._proxyInitialized){
             //init proxy session
             bcm.initProxySession();
         }
@@ -182,7 +196,7 @@ function BrainCloudManager ()
         bcm._secretMap = secretMap;
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
-        if(bcm._useProxy){
+        if(bcm._useProxy && !bcm._proxyInitialized){
             //init proxy session
             bcm.initProxySession();
         }
@@ -719,7 +733,7 @@ function BrainCloudManager ()
                 errorMessage);
         }
     }
-    
+
     bcm.performQuery = async function()
     {
 //> REMOVE IF K6
@@ -778,9 +792,10 @@ function BrainCloudManager ()
 
         xmlhttp.open("POST", bcm._dispatcherUrl, true);
         xmlhttp.setRequestHeader("Content-type", "application/json");
+        
         var sig = "";
         if(bcm._useProxy){
-            sig = bcm.signRequest(bcm._jsonedQueue);
+            sig = await bcm.signRequest(bcm._jsonedQueue);
         }else {
             sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
         }

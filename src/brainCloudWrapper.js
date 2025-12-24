@@ -205,6 +205,17 @@ function BrainCloudWrapper(wrapperName) {
         bcw.brainCloudClient.brainCloudManager.setProxyParams(appName, envName);
     };
 
+    bcw.getAvailableProxyEnvs = async function(){
+        return bcw.brainCloudClient.brainCloudManager.getAvailableProxyEnvs();
+    };
+
+    bcw.getAvailableProxyApps = async function(){
+        return bcw.brainCloudClient.brainCloudManager.getAvailableProxyApps();
+    };
+
+    bcw.initProxySession = async function(){
+        return bcw.brainCloudClient.brainCloudManager.initProxySession();
+    };
 
     bcw.getStoredAnonymousId = function() {
         var prefix = wrapperName === "" ? "" : wrapperName + ".";
