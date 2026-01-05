@@ -133,13 +133,25 @@ function BCUserItems() {
      * @param shopId                    The id identifying the store the item is from, if applicable.
      * @param includeDef                If true, the associated item definition info of the promotional items will be included in the response.
      * @param includePromotionDetails   If true, the promotion details of the eligible promotions will be included in the response.
+     * @param optionsJson               Optional support for specifying
+     *                                  'blockIfExceedItemMaxStackable' indicating how to process
+     *                                  the purchase if the defId is for a stackable item with a
+     *                                  max stackable quantity and the specified quantity being
+     *                                  purchased is too high. If true and the quantity is too
+     *                                  high, the call is blocked and an error is returned. If
+     *                                  false (default) and quantity is too high, the quantity is
+     *                                  adjusted to the allowed maximum and the quantity not
+     *                                  purchased is reported in response key 'itemsNotPurchased'
+     *                                  - unless the adjusted quantity would be 0, in which case
+     *                                  the call is blocked and an error is returned.
      * @param callback                  The function to be invoked when the server response is received. 
      */
-    bc.userItems.getItemsOnPromotion = function (shopId, includeDef, includePromotionDetails, callback) {
+    bc.userItems.getItemsOnPromotion = function (shopId, includeDef, includePromotionDetails, optionsJson, callback) {
         var message = {
             shopId: shopId,
             includeDef: includeDef,
-            includePromotionDetails: includePromotionDetails
+            includePromotionDetails: includePromotionDetails,
+            optionsJson: optionsJson
         };
 
         bc.brainCloudManager.sendRequest({

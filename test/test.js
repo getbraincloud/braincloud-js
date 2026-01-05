@@ -7707,7 +7707,11 @@ async function testUserItems()
     });
 
     await asyncTest("GetItemsOnPromotion()", () => {
-        bc.userItems.getItemsOnPromotion("", true, true, result => {
+        var optionsJson = {
+            blockIfExceedItemMaxStackable: true
+        }
+        
+        bc.userItems.getItemsOnPromotion("", true, true, optionsJson, result => {
             equal(result.status, 200, "Expecting 200");
 
             resolve_test();
