@@ -1,8 +1,7 @@
-// Copyright 2025 bitHeads, Inc. All Rights Reserved.
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
 
 function BCReasonCodes() {
     var bc = this;
-
     bc.reasonCodes = {};
     bc.reasonCodes.NO_REASON_CODE = 0;
     bc.reasonCodes.INVALID_NOTIFICATION = 20200;
@@ -526,6 +525,10 @@ function BCReasonCodes() {
     bc.reasonCodes.ITEM_IMAGE_EXISTS = 40792;
     bc.reasonCodes.INVALID_SEGMENT_ID_LIST = 40793;
     bc.reasonCodes.I3D_ERROR = 40794;
+    bc.reasonCodes.INVALID_START_TIME = 40795;
+    bc.reasonCodes.ITEM_TYPE_NOT_APPLICABLE = 40796;
+    bc.reasonCodes.ITEM_PURCHASE_LIST_PRICE_DISABLED = 40797;
+    bc.reasonCodes.BUNDLE_DEF_INVALID = 40798;
     bc.reasonCodes.REQUEST_FAILED = 40801;
     bc.reasonCodes.RESET_QUESTS_FAILED = 40802;
     bc.reasonCodes.RESET_ALL_QUESTS_AND_MILESTONES_FAILED = 40803;
@@ -548,6 +551,7 @@ function BCReasonCodes() {
     bc.reasonCodes.VERSION_MISMATCH = 40821;
     bc.reasonCodes.UNSUPPORTED_CRITERIA_FOR_SHARDED_COLLECTIONS = 40822;
     bc.reasonCodes.USER_RATE_LIMIT_EXCEEDED = 40823;
+    bc.reasonCodes.PROMOTION_CONFIG_INCOMPLETE = 40824;
     bc.reasonCodes.STEAM_ERROR = 40830;
     bc.reasonCodes.AZURE_AD_NOT_CONFIGURED = 40831;
     bc.reasonCodes.INVALID_LEADERBOARD_TOURNAMENT_SETTING = 40840;
@@ -701,6 +705,4 @@ function BCReasonCodes() {
     bc.reasonCodes.CLIENT_UPLOAD_FILE_TIMED_OUT = 90101;
     bc.reasonCodes.CLIENT_UPLOAD_FILE_UNKNOWN = 90102;
     bc.reasonCodes.CLIENT_DISABLED = 90200;
-}
-
 BCReasonCodes.apply(window.brainCloudClient = window.brainCloudClient || {});

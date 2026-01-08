@@ -1,4 +1,4 @@
-// Copyright 2025 bitHeads, Inc. All Rights Reserved.
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
 
 // User language
 if (typeof window === "undefined" || window === null) {
