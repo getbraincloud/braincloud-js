@@ -705,4 +705,5 @@ function BCReasonCodes() {
     bc.reasonCodes.CLIENT_UPLOAD_FILE_TIMED_OUT = 90101;
     bc.reasonCodes.CLIENT_UPLOAD_FILE_UNKNOWN = 90102;
     bc.reasonCodes.CLIENT_DISABLED = 90200;
+}
 BCReasonCodes.apply(window.brainCloudClient = window.brainCloudClient || {});
