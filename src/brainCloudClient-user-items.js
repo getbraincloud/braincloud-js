@@ -15,6 +15,7 @@ function BCUserItems() {
     bc.userItems.OPERATION_GET_USER_INVENTORY_PAGE_OFFSET = "GET_USER_ITEMS_PAGE_OFFSET";
     bc.userItems.OPERATION_GET_USER_ITEM = "GET_USER_ITEM";
     bc.userItems.OPERATION_GIVE_USER_ITEM_TO = "GIVE_USER_ITEM_TO";
+    bc.userItems.OPERATION_OPEN_BUNDLE = "OPEN_BUNDLE";
     bc.userItems.OPERATION_PUBLISH_USER_ITEM_TO_BLOCKCHAIN = "PUBLISH_USER_ITEM_TO_BLOCKCHAIN";
     bc.userItems.OPERATION_PURCHASE_USER_ITEM = "PURCHASE_USER_ITEM";
     bc.userItems.OPERATION_RECEIVE_USER_ITEM_FROM = "RECEIVE_USER_ITEM_FROM";
@@ -304,6 +305,57 @@ function BCUserItems() {
             callback : callback
         });
     };
+
+    /**
+     * Allows a quantity of a specified bundle user item to be opened. Response
+     * indicates any items and currency awards configured for the associated bundle
+     * user item's BUNDLE type item definition, plus any 'items' awarded and any
+     * 'currencies' awarded, along with the resulting currency balances. If
+     * includeItemDef is true, the associated item definition will be included in
+     * the response for any user items awarded and for the bundle user item being
+     * opened (if any quantity of the bundle user item remains), with language
+     * fields limited to the current or default language.
+     * 
+     * Service Name - User Items
+     * Service Operation - OPEN_BUNDLE
+     * 
+     * @param itemId        The unique id of the bundle user item.
+     * @param version       The version of the bundle user item being sold. Accepts -1
+     *                      if any version.
+     * @param quantity      The quantity of the bundle user item to open.
+     * @param includeDef    If true, the associated item definition will be included
+     *                      in the response for any user items awarded and if any
+     *                      quantity of the bundle user item remains.
+     * @param optionsJson   Optional support for specifying
+     *                      'blockIfExceedItemMaxStackable' indicating how to process
+     *                      awarding the bundle content items if the defId for any is
+     *                      for a stackable item with a max stackable quantity and the
+     *                      specified quantity to be awarded is too high. If true and
+     *                      the quantity is too high, the call is blocked and an error
+     *                      is returned. If false (default) and quantity is too high,
+     *                      the quantity is adjusted to the allowed maximum and the
+     *                      quantity not awarded is reported in response key
+     *                      'itemsNotAwarded' - unless the adjusted quantity would be
+     *                      0, in which case the call is blocked and an error is
+     *                      returned.
+     * @param callback      The function to be invoked when the server response is received.
+     */
+    bc.userItems.openBundle = function (itemId, version, quantity, includeDef, optionsJson, callback) {
+        var message = {
+            itemId: itemId,
+            version: version,
+            quantity: quantity,
+            includeDef: includeDef,
+            optionsJson: optionsJson
+        }
+
+        bc.brainCloudManager.sendRequest({
+            service: bc.SERVICE_USER_ITEMS,
+            operation: bc.userItems.OPERATION_OPEN_BUNDLE,
+            data: message,
+            callback: callback
+        });
+    }
 
     /**
      * Retrieves the identified user item from the server. 
