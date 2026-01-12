@@ -1,3 +1,5 @@
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
+
 // User language
 if (typeof window === "undefined" || window === null) {
     window = {}

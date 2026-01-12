@@ -1,3 +1,5 @@
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
+
 /**
  * The BrainCloudWrapper provides some convenience functionality to developers when they are
  * getting started with the authentication system.

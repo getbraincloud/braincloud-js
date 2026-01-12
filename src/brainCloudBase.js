@@ -1,3 +1,5 @@
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
+
 //> ADD IF K6
 //+ import crypto from 'k6/crypto';
 //+ import http from 'k6/http';

@@ -1,3 +1,4 @@
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
 
 function BCPlayerStatisticsEvent() {
     var bc = this;

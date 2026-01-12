@@ -1,3 +1,5 @@
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
+
 // if (typeof WebSocket === 'undefined') {
 //     try {
 //         WebSocket = require('ws');

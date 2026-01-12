@@ -1,6 +1,7 @@
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
+
 function BCReasonCodes() {
     var bc = this;
-
     bc.reasonCodes = {};
     bc.reasonCodes.NO_REASON_CODE = 0;
     bc.reasonCodes.INVALID_NOTIFICATION = 20200;
@@ -73,8 +74,8 @@ function BCReasonCodes() {
     bc.reasonCodes.ENTITY_VERSION_MISMATCH = 40344;
     bc.reasonCodes.MISSING_RECORD = 40345;
     bc.reasonCodes.INSUFFICIENT_PERMISSIONS = 40346;
-    bc.reasonCodes.MISSING_IN_QUERY = 40347;
     bc.reasonCodes.INVALID_DATABASE_FIELD_NAME = 40347;
+    bc.reasonCodes.MISSING_IN_QUERY = 40347;
     bc.reasonCodes.RECORD_EXPIRED = 40348;
     bc.reasonCodes.INVALID_WHERE = 40349;
     bc.reasonCodes.S3_ERROR = 40350;
@@ -93,6 +94,7 @@ function BCReasonCodes() {
     bc.reasonCodes.MISSING_SCRIPT = 40363;
     bc.reasonCodes.SCRIPT_SECURITY_ERROR = 40364;
     bc.reasonCodes.SERVER_SESSION_EXPIRED = 40365;
+    bc.reasonCodes.STREAM_DOES_NOT_EXIST = 40366;
     bc.reasonCodes.STREAM_DOES_NOT_EXIT = 40366;
     bc.reasonCodes.STREAM_ACCESS_ERROR = 40367;
     bc.reasonCodes.STREAM_COMPLETE = 40368;
@@ -371,6 +373,7 @@ function BCReasonCodes() {
     bc.reasonCodes.INVALID_TOURNAMENT_JOB_ID = 40641;
     bc.reasonCodes.LEADERBOARD_ROTATION_ERROR = 40642;
     bc.reasonCodes.CLOUD_COMPUTING_ERROR = 40643;
+    bc.reasonCodes.DOCKER_ERROR = 40644;
     bc.reasonCodes.ROOM_SERVER_HOST_NOT_FOUND = 40645;
     bc.reasonCodes.INVALID_ATTACHMENT_DATA = 40646;
     bc.reasonCodes.SCRIPT_PARSING_ERROR = 40647;
@@ -454,6 +457,7 @@ function BCReasonCodes() {
     bc.reasonCodes.UPLOLAD_IN_PROGRESS = 40724;
     bc.reasonCodes.REFRESH_IN_PROGRESS = 40725;
     bc.reasonCodes.REFRESH_INTERRUPTED = 40726;
+    bc.reasonCodes.GAMELIFT_ERROR = 40727;
     bc.reasonCodes.GAMELIFT_LAUNCH_ERROR = 40728;
     bc.reasonCodes.MAX_HOSTED_SERVERS_REACHED = 40729;
     bc.reasonCodes.DUPLICATE_PACKET_ID = 40730;
@@ -463,6 +467,9 @@ function BCReasonCodes() {
     bc.reasonCodes.PENDING_MEMBER_REQUEST_NOT_FOUND = 40734;
     bc.reasonCodes.EVENT_TO_PROFILE_IDS_SIZE_EXCEEDS_MAXIMUM = 40735;
     bc.reasonCodes.INVALID_CC_AND_BCC_EMAIL_ADDRESS = 40736;
+    bc.reasonCodes.ROOM_SERVER_RATE_LIMIT = 40737;
+    bc.reasonCodes.EDGEGAP_ERROR = 40738;
+    bc.reasonCodes.PORTAL_SESSION_EXPIRED = 40739;
     bc.reasonCodes.NO_FRIENDS_FOUND = 40740;
     bc.reasonCodes.PRODUCT_TRANSACTION_NOT_FOUND = 40741;
     bc.reasonCodes.ITEM_DEF_NOT_FOUND = 40742;
@@ -492,12 +499,36 @@ function BCReasonCodes() {
     bc.reasonCodes.REDEMPTION_CODE_BLOCKCHAIN_PROXY_ERROR = 40766;
     bc.reasonCodes.REDEMPTION_CODE_TYPE_NOT_ASYNC = 40767;
     bc.reasonCodes.REDEMPTION_CODE_ASYNC_PROCESSING_TIMEOUT = 40768;
+    bc.reasonCodes.CODE_TYPE_SCAN_CODE_MISMATCH_FOR_MULTI_USE_CODE = 40769;
     bc.reasonCodes.DUPLICATE_DIVISION_SET_CONFIG = 40770;
     bc.reasonCodes.DIVISION_SET_INSTANCE_LEADERBOARDS_STILL_EXIST = 40771;
     bc.reasonCodes.SINGLETON_ALREADY_EXISTS_FOR_USER = 40772;
     bc.reasonCodes.CUSTOM_ENTITY_INCREMENT_SINGLETON_DATA_ERROR = 40773;
     bc.reasonCodes.CUSTOM_ENTITY_COLLECTIONS_MAX_EXCEEDED = 40774;
+    bc.reasonCodes.REDEMPTION_CODE_TYPE_CODE_USE_ERROR = 40775;
+    bc.reasonCodes.MULTI_USE_CODE_REDEMPTION_ATTEMPTED_BEFORE_START = 40776;
+    bc.reasonCodes.MULTI_USE_CODE_REDEMPTION_ATTEMPTED_AFTER_END = 40777;
+    bc.reasonCodes.MULTI_USE_CODE_MAX_REDEMPTIONS_REACHED = 40778;
+    bc.reasonCodes.REDEMPTION_CODE_TYPE_MUST_BE_SINGLE_USE = 40779;
     bc.reasonCodes.IMPORT_PRECONDITION_ERROR = 40780;
+    bc.reasonCodes.INVALID_SCAN_CODE_LENGTH = 40781;
+    bc.reasonCodes.REDEMPTION_FAILED_MAX_RETRIES_FOR_USER = 40782;
+    bc.reasonCodes.SINGLE_USE_CODE_REDEMPTION_ATTEMPTED_OUTSIDE_TIMEFRAME = 40783;
+    bc.reasonCodes.PRODUCT_DELETE_ERROR = 40784;
+    bc.reasonCodes.INVALID_QUANTITY = 40785;
+    bc.reasonCodes.PRODUCT_NOT_FOUND = 40786;
+    bc.reasonCodes.PRODUCT_ALREADY_PURCHASED = 40787;
+    bc.reasonCodes.BAD_LOGIN_ATTEMPTS_MAX_EXCEEDED = 40788;
+    bc.reasonCodes.INVALID_SCRIPT_CONTEXT = 40789;
+    bc.reasonCodes.USER_BLOCKED = 40790;
+    bc.reasonCodes.NEWRELIC_ERROR = 40791;
+    bc.reasonCodes.ITEM_IMAGE_EXISTS = 40792;
+    bc.reasonCodes.INVALID_SEGMENT_ID_LIST = 40793;
+    bc.reasonCodes.I3D_ERROR = 40794;
+    bc.reasonCodes.INVALID_START_TIME = 40795;
+    bc.reasonCodes.ITEM_TYPE_NOT_APPLICABLE = 40796;
+    bc.reasonCodes.ITEM_PURCHASE_LIST_PRICE_DISABLED = 40797;
+    bc.reasonCodes.BUNDLE_DEF_INVALID = 40798;
     bc.reasonCodes.REQUEST_FAILED = 40801;
     bc.reasonCodes.RESET_QUESTS_FAILED = 40802;
     bc.reasonCodes.RESET_ALL_QUESTS_AND_MILESTONES_FAILED = 40803;
@@ -514,10 +545,15 @@ function BCReasonCodes() {
     bc.reasonCodes.QUEST_ADD_MILESTONE_ERROR = 40814;
     bc.reasonCodes.QUEST_DELETE_MILESTONE_ERROR = 40815;
     bc.reasonCodes.QUEST_REORDER_MILESTONES_ERROR = 40816;
+    bc.reasonCodes.MILESTONE_HAS_DEPENDENCIES = 40817;
+    bc.reasonCodes.ACHIEVEMENT_HAS_DEPENDENCIES = 40818;
     bc.reasonCodes.PROMOTION_NOT_FOUND = 40820;
     bc.reasonCodes.VERSION_MISMATCH = 40821;
     bc.reasonCodes.UNSUPPORTED_CRITERIA_FOR_SHARDED_COLLECTIONS = 40822;
+    bc.reasonCodes.USER_RATE_LIMIT_EXCEEDED = 40823;
+    bc.reasonCodes.PROMOTION_CONFIG_INCOMPLETE = 40824;
     bc.reasonCodes.STEAM_ERROR = 40830;
+    bc.reasonCodes.AZURE_AD_NOT_CONFIGURED = 40831;
     bc.reasonCodes.INVALID_LEADERBOARD_TOURNAMENT_SETTING = 40840;
     bc.reasonCodes.LEADERBOARD_EDIT_TOURNAMENT_SETTINGS_ERROR = 40841;
     bc.reasonCodes.LEADERBOARD_SCORES_EXIST = 40842;
@@ -525,6 +561,11 @@ function BCReasonCodes() {
     bc.reasonCodes.LEADERBOARD_DBVERSION_MISMATCH = 40844;
     bc.reasonCodes.LEADERBOARD_API_DOES_NOT_APPLY = 40845;
     bc.reasonCodes.LEADERBOARD_EXPIRED = 40846;
+    bc.reasonCodes.LEADERBOARD_DELETE_ERROR = 40847;
+    bc.reasonCodes.LEADERBOARD_CHANGES_IN_PROGRESS = 40848;
+    bc.reasonCodes.LEADERBOARD_ROTATION_EXIT_PROCESSING_ERROR = 40849;
+    bc.reasonCodes.LEADERBOARD_ENTRY_COUNTS_PROCESSING_ERROR = 40850;
+    bc.reasonCodes.LEADERBOARD_ENTRIES_COUNT_ALL_ERROR = 40851;
     bc.reasonCodes.MISSING_CONFIG = 40900;
     bc.reasonCodes.INVALID_SAML_RESP = 40901;
     bc.reasonCodes.MISSING_PAGE_NAME = 40902;
@@ -538,10 +579,16 @@ function BCReasonCodes() {
     bc.reasonCodes.SCRIPT_TIMEOUT_ERROR = 40910;
     bc.reasonCodes.SCRIPT_RHINO_ERROR = 40911;
     bc.reasonCodes.SCRIPT_JAVA_ERROR = 40912;
+    bc.reasonCodes.CONFIG_BACKUP_PREVIEW_ERROR = 40913;
     bc.reasonCodes.GROUP_FILE_EXISTS = 40950;
     bc.reasonCodes.OTHER_USER_ACL_REQUIRED = 40951;
     bc.reasonCodes.GROUP_MEMBER_ACCESS_INVALID = 40952;
     bc.reasonCodes.REUSED_PACKET_ID = 40953;
+    bc.reasonCodes.SEGMENT_REFRESH_RUNNING = 410000;
+    bc.reasonCodes.REFRESH_JOB_ALREADY_TRIGGERED = 410001;
+    bc.reasonCodes.ROOM_SERVER_LAUNCH_FAILURE = 41001;
+    bc.reasonCodes.ROOM_SERVER_UPDATE_LOCK_TIMEOUT = 41002;
+    bc.reasonCodes.ROOM_SERVER_CREATE_LOCK_TIMEOUT = 41003;
     bc.reasonCodes.NO_TWITTER_CONSUMER_KEY = 500001;
     bc.reasonCodes.NO_TWITTER_CONSUMER_SECRET = 500002;
     bc.reasonCodes.INVALID_CONFIGURATION = 500003;
@@ -555,6 +602,22 @@ function BCReasonCodes() {
     bc.reasonCodes.FACEBOOK_APPLICATION_TOKEN_REQUEST_ERROR = 500013;
     bc.reasonCodes.FACEBOOK_BAD_APPLICATION_TOKEN_SIGNATURE = 500014;
     bc.reasonCodes.UNSUPPORTED_SOCIAL_PLATFORM_CODE = 500020;
+    bc.reasonCodes.PLAYER_LAST_PURCHASED_AT_ERROR = 500021;
+    bc.reasonCodes.PRODUCT_TRANSACTIONS_SUMMARY_BY_DATE_AND_TYPE_ERROR = 500022;
+    bc.reasonCodes.PRODUCT_TRANSACTIONS_SUMMARY_BY_DATE_AND_ITEM_ERROR = 500023;
+    bc.reasonCodes.ITEM_PURCHASES_ANALYTICS_SUMMARY_ERROR = 500024;
+    bc.reasonCodes.PRODUCT_TRANSACTIONS_PROMOTION_SUMMARY_FOR_ITEM_ERROR = 500025;
+    bc.reasonCodes.PRODUCT_TRANSACTIONS_PROMOTION_SUMMARY_FOR_ITEM_DAYS_ERROR = 500026;
+    bc.reasonCodes.PRODUCT_TRANSACTIONS_SUMMARY_BY_ITEM_ERROR = 500027;
+    bc.reasonCodes.SCAN_PURCHASES_AND_TOTAL_REVENUE_ALL_TIME = 500028;
+    bc.reasonCodes.PRODUCT_TRANSACTIONS_STATS_BY_COUNTRY_ERROR = 500029;
+    bc.reasonCodes.USERS_BY_COUNTRY_STATS_ERROR = 500030;
+    bc.reasonCodes.USERS_BY_LANGUAGE_STATS_ERROR = 500031;
+    bc.reasonCodes.PRODUCT_TRANSACTIONS_SUMMARY_BY_APP_STORE_ERROR = 500032;
+    bc.reasonCodes.USERS_WITH_SINGLE_FIELD_PROJECTION_ERROR = 500033;
+    bc.reasonCodes.SCRIPT_USAGE_FOR_RANGE_ERROR = 500034;
+    bc.reasonCodes.PRODUCT_TRANSACTION_SPENDERS_BY_STORE = 500035;
+    bc.reasonCodes.REAL_AND_MOCK_PURCHASE_COUNTS_FOR_PRODUCT = 500036;
     bc.reasonCodes.MEMCACHED_TIMEOUT = 503000;
     bc.reasonCodes.NOT_TEAM_ADMIN = 550000;
     bc.reasonCodes.NO_TEAM_ACCESS = 550001;
@@ -581,6 +644,7 @@ function BCReasonCodes() {
     bc.reasonCodes.INVALID_PASSWORD_CONTENT = 550022;
     bc.reasonCodes.INVALID_APP_ACCESS = 550023;
     bc.reasonCodes.INVALID_TEAM_ID = 550024;
+    bc.reasonCodes.TEAM_APPS_CHART_STATS = 550025;
     bc.reasonCodes.MONGO_DB_EXCEPTION = 600001;
     bc.reasonCodes.CONCURRENT_LOCK_ERROR = 600002;
     bc.reasonCodes.USER_EXPORT_ERROR = 600003;
@@ -609,6 +673,9 @@ function BCReasonCodes() {
     bc.reasonCodes.PLAYSTATION_NETWORK_ERROR = 60200;
     bc.reasonCodes.EMAIL_CC_MAX_SIZE_EXCEEDED = 60201;
     bc.reasonCodes.EMAIL_BCC_MAX_SIZE_EXCEEDED = 60202;
+    bc.reasonCodes.INVALID_DATE_FORMAT = 60203;
+    bc.reasonCodes.TEAM_USAGE_REPORT_ERROR = 60204;
+    bc.reasonCodes.GLOBAL_PROPERTY_MAX_SIZE_EXCEEDED = 60205;
     bc.reasonCodes.RTT_LEFT_BY_CHOICE = 80000;
     bc.reasonCodes.LEFT_BY_CHOICE = 80000;
     bc.reasonCodes.RTT_EVICTED = 80001;
@@ -628,8 +695,6 @@ function BCReasonCodes() {
     bc.reasonCodes.RTT_BY_REQUEST = 80105;
     bc.reasonCodes.BY_REQUEST = 80105;
     bc.reasonCodes.ROOM_READY_TIMEOUT = 80106;
-    bc.reasonCodes.DOCKER_ERROR = 80107;
-    bc.reasonCodes.GAMELIFT_ERROR = 80108;
     bc.reasonCodes.NO_ROOM_SERVER_CONFIGURED = 80109;
     bc.reasonCodes.RTT_NO_LOBBIES_FOUND = 80200;
     bc.reasonCodes.NO_LOBBIES_FOUND = 80200;
@@ -641,5 +706,4 @@ function BCReasonCodes() {
     bc.reasonCodes.CLIENT_UPLOAD_FILE_UNKNOWN = 90102;
     bc.reasonCodes.CLIENT_DISABLED = 90200;
 }
-
 BCReasonCodes.apply(window.brainCloudClient = window.brainCloudClient || {});

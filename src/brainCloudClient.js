@@ -1,6 +1,8 @@
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
+
 //----------------------------------------------------
 // brainCloud client source code
-// Copyright 2016 bitHeads, inc.
+
 //----------------------------------------------------
 
 function BrainCloudClient() {
@@ -175,7 +177,7 @@ function BrainCloudClient() {
     }
 
 
-    bcc.version = "5.8.0";
+    bcc.version = "5.9.0";
     bcc.countryCode;
     bcc.languageCode;
 

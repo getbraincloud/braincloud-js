@@ -1,3 +1,4 @@
+// Copyright 2026 bitHeads, Inc. All Rights Reserved.
 
 function BCGlobalFile() {
     var bc = this;
