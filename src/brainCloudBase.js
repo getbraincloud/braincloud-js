@@ -68,6 +68,7 @@ function BrainCloudManager ()
     bcm._appVersion = "";
     bcm._debugEnabled = false;
     bcm._compressionEnabled = true;
+    bcm._compressionThreshold = 51200;
 
     bcm._requestInProgress = false;
     bcm._bundleDelayActive = false;
@@ -438,20 +439,19 @@ function BrainCloudManager ()
                     bcm._sessionId = "";
                     bcm.authentication.profileId = "";
                 }
-                else if (bcm._inProgressQueue[c].operation == "AUTHENTICATE")
-                {
+                else if (bcm._inProgressQueue[c].operation == "AUTHENTICATE") {
                     bcm._isAuthenticated = true;
-                    if (data.hasOwnProperty("playerSessionExpiry"))
-                    {
+                    if (data.hasOwnProperty("playerSessionExpiry")) {
                         bcm._idleTimeout = data.playerSessionExpiry * 0.85;
                     }
-                    else
-                    {
+                    else {
                         bcm._idleTimeout = 30;
                     }
-                    if(data.hasOwnProperty("maxKillCount"))
-                    {
+                    if (data.hasOwnProperty("maxKillCount")) {
                         bcm._killSwitchThreshold = data.maxKillCount;
+                    }
+                    if (data.hasOwnProperty("compressIfLarger")) {
+                        bcm._compressionThreshold = data.compressIfLarger;
                     }
                     bcm.resetErrorCache();
                     bcm.startHeartBeat();
@@ -708,7 +708,10 @@ function BrainCloudManager ()
         xmlhttp.setRequestHeader("X-SIG", sig);
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
 
-        if (bcm._compressionEnabled) {
+        // Used to check if request should be compressed
+        var requestSize = new TextEncoder().encode(bcm._jsonedQueue).length;
+
+        if (bcm._compressionEnabled && bcm._compressionThreshold >= 0 && requestSize >= bcm._compressionThreshold) {
             bcm.compressRequest(bcm._jsonedQueue)
                 .then(function (compressedData) {
                     fetch(bcm._dispatcherUrl, {
