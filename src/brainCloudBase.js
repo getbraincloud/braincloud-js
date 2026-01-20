@@ -87,10 +87,8 @@ function BrainCloudManager ()
     bcm._isInitialized = false;
     bcm._isAuthenticated = false;
 
-    bcm.compressRequest = function(requestToCompress) {    
-        var encodedData = new TextEncoder().encode(requestToCompress);
-    
-        var compressionStream = new Blob([encodedData]).stream().pipeThrough(new CompressionStream("gzip"));
+    bcm.compressRequest = function(requestToCompress) {        
+        var compressionStream = new Blob([requestToCompress]).stream().pipeThrough(new CompressionStream("gzip"));
     
         return new Response(compressionStream).blob()
             .then(function(compressedBlob) {
@@ -709,10 +707,11 @@ function BrainCloudManager ()
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
 
         // Used to check if request should be compressed
-        var requestSize = new TextEncoder().encode(bcm._jsonedQueue).length;
+        var encodedRequest = new TextEncoder().encode(bcm._jsonedQueue);
+        var requestSize = encodedRequest.length;
 
         if (bcm._compressionEnabled && bcm._compressionThreshold >= 0 && requestSize >= bcm._compressionThreshold) {
-            bcm.compressRequest(bcm._jsonedQueue)
+            bcm.compressRequest(encodedRequest)
                 .then(function (compressedData) {
                     fetch(bcm._dispatcherUrl, {
                         method: "POST",
