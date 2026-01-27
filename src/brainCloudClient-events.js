@@ -21,23 +21,23 @@ function BCEvents() {
 
 
 	/**
-	 * Sends an event to the designated player id with the attached json data.
-	 * Any events that have been sent to a player will show up in their
-	 * incoming event mailbox. If the in_recordLocally flag is set to true,
-	 * a copy of this event (with the exact same event id) will be stored
-	 * in the sending player's "sent" event mailbox.
-	 *
-	 * Note that the list of sent and incoming events for a player is returned
-	 * in the "ReadUserState" call (in the BrainCloudPlayer module).
-	 *
-	 * Service Name - Event
-	 * Service Operation - Send
-	 *
-	 * @param toProfileId The id of the user who is being sent the event
-	 * @param eventType The user-defined type of the event.
-	 * @param eventData The user-defined data for this event encoded in JSON.
-	 * @param callback The method to be invoked when the server response is received
-	 */
+		 * Sends an event to the designated user id with the attached json data.
+		 * Any events that have been sent to a user will show up in their
+		 * incoming event mailbox. If the recordLocally flag is set to true,
+		 * a copy of this event (with the exact same event id) will be stored
+		 * in the sending user's "sent" event mailbox.
+		 *
+		 * Note that the list of sent and incoming events for a user is returned
+		 * in the "ReadPlayerState" call (in the BrainCloudPlayer module).
+		 *
+		 * Service Name - event
+		 * Service Operation - SEND
+		 *
+		 * @param toProfileId The id of the user who is being sent the event
+		 * @param eventType The user-defined type of the event.
+		 * @param jsonEventData The user-defined data for this event encoded in JSON.
+		 * @param callback The method to be invoked when the server response is received
+		 */
 	bc.event.sendEvent = function(toProfileId, eventType, eventData, callback) {
 		var message = {
 			toId: toProfileId,
@@ -80,15 +80,15 @@ function BCEvents() {
 	};
 
 	/**
-	 * Updates an event in the player's incoming event mailbox.
-	 *
-	 * Service Name - Event
-	 * Service Operation - UpdateEventData
-	 *
-	 * @param evId The event id
-	 * @param eventData The user-defined data for this event encoded in JSON.
-	 * @param callback The method to be invoked when the server response is received
-	 */
+		 * Updates an event in the user's incoming event mailbox.
+		 *
+		 * Service Name - event
+		 * Service Operation - UPDATE_EVENT_DATA
+		 *
+		 * @param evId The event id
+		 * @param jsonEventData The user-defined data for this event encoded in JSON.
+		 * @param callback The method to be invoked when the server response is received
+		 */
 	bc.event.updateIncomingEventData = function(evId, eventData, callback) {
 		var message = {
 			evId: evId,
@@ -103,16 +103,16 @@ function BCEvents() {
 	};
 
 	/**
-	 * Updates an event in the player's incoming event mailbox.
-	 * Identical to updateIncomingEventData method, but will not return an error if the event does not exist
-	 *
-	 * Service Name - Event
-	 * Service Operation - UpdateEventData
-	 *
-	 * @param evId The event id
-	 * @param eventData The user-defined data for this event encoded in JSON.
-	 * @param callback The method to be invoked when the server response is received
-	 */
+		 * Updates an event in the user's incoming event mailbox.
+		 * Returns the same data as updateIncomingEventData, but returns null instead of an error if none exists.
+		 *
+		 * Service Name - event
+		 * Service Operation - UPDATE_EVENT_DATA
+		 *
+		 * @param evId The event id
+		 * @param jsonEventData The user-defined data for this event encoded in JSON.
+		 * @param callback The method to be invoked when the server response is received
+		 */
 	bc.event.updateIncomingEventDataIfExists = function(evId, eventData, callback) {
 		var message = {
 			evId: evId,
@@ -127,14 +127,14 @@ function BCEvents() {
 	};
 
 	/**
-	 * Delete an event out of the user's incoming mailbox.
-	 *
-	 * Service Name - Event
-	 * Service Operation - DeleteIncoming
-	 *
-	 * @param evId The event id
-	 * @param callback The method to be invoked when the server response is received
-	 */
+		 * Delete an event out of the user's incoming mailbox.
+		 *
+		 * Service Name - event
+		 * Service Operation - DELETE_INCOMING
+		 *
+		 * @param evId The event id
+		 * @param callback The method to be invoked when the server response is received
+		 */
 	bc.event.deleteIncomingEvent = function(evId, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_EVENT,
@@ -147,13 +147,13 @@ function BCEvents() {
 	};
 
 	/**
-	 * Get the events currently queued for the user.
-	 *
-	 * Service Name - Event
-	 * Service Operation - GetEvents
-	 *
-	 * @param callback The method to be invoked when the server response is received
-	 */
+		 * Get the events currently queued for the user.
+		 *
+		 * Service Name - event
+		 * Service Operation - GET_EVENTS
+		 *
+		 * @param callback The method to be invoked when the server response is received
+		 */
 	bc.event.getEvents = function(callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_EVENT,
@@ -164,14 +164,14 @@ function BCEvents() {
 	};
 
 	/**
-	 * Delete a list of events out of the user's incoming mailbox.
-	 *
-	 * Service Name - Event
-	 * Service Operation - DeleteIncomingEvents
-	 *
-	 * @param evIds Collection of event ids
-	 * @param callback The method to be invoked when the server response is received
-	 */
+		 * Delete a list of events out of the user's incoming mailbox.
+		 *
+		 * Service Name - event
+		 * Service Operation - DELETE_INCOMING_EVENTS
+		 *
+		 * @param eventIds Collection of event ids
+		 * @param callback The method to be invoked when the server response is received
+		 */
 	 bc.event.deleteIncomingEvents = function(evIds, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_EVENT,
@@ -206,14 +206,14 @@ function BCEvents() {
 	};
 
 	/**
-	 * Delete any events older than the given date out of the user's incoming mailbox.
-	 *
-	 * Service Name - Event
-	 * Service Operation - DeleteIncomingEventsOlderThan
-	 * 
-	 * @param dateMillis createdAt cut-off time whereby older events will be deleted
-	 * @param callback The method to be invoked when the server response is received
-	 */
+		 * Delete any events older than the given date out of the user's incoming mailbox.
+		 *
+		 * Service Name - event
+		 * Service Operation - DELETE_INCOMING_EVENTS_OLDER_THAN
+		 *
+		 * @param dateMillis createdAt cut-off time whereby older events will be deleted (In UTC since Epoch)
+		 * @param callback The method to be invoked when the server response is received
+		 */
 	 bc.event.deleteIncomingEventsOlderThan = function(dateMillis, callback) {
 		bc.brainCloudManager.sendRequest({
 			service: bc.SERVICE_EVENT,
