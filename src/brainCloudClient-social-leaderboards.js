@@ -889,7 +889,7 @@ function BCSocialLeaderboard () {
    * Post the group's score to the given social leaderboard, dynamically creating the group leaderboard if it does not exist yet.
    * To create new leaderboard, configJson must specify leaderboardType, rotationType, resetAt, and retainedCount, at a minimum, with support to optionally specify an expiry in minutes.
    *
-   * Service Name - Leaderboard
+   * Service Name - leaderboard
    * Service Operation - POST_GROUP_SCORE_DYNAMIC_USING_CONFIG
    *
    * @param leaderboard The leaderboard to post to

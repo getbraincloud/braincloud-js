@@ -457,7 +457,7 @@ function BCFriend () {
   /**
    * Get users online status
    *
-   * Service Name - Friend
+   * Service Name - friend
    * Service Operation - GET_USERS_ONLINE_STATUS
    *
    * @param profileIds Collection of profile IDs.

@@ -47,7 +47,7 @@ function BCRedemptionCodes () {
   /**
    * Retrieve the codes already redeemed by player.
    *
-   * Service Name - RedemptionCode
+   * Service Name - redemptionCode
    * Service Operation - GET_REDEEMED_CODES
    *
    * @param codeType Optional - The type of codes to retrieve. Returns all codes if left unspecified.

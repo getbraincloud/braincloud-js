@@ -77,8 +77,8 @@ function BCGlobalFile () {
   /**
    * Returns files at the current path.
    *
-   * Service Name - GlobalFileV3
-   * Service Operation - GetGlobalFileList
+   * Service Name - globalFileV3
+   * Service Operation - GET_GLOBAL_FILE_LIST
    *
    * @param folderPath The folder path to list files from
    * @param recurse Whether to recurse into subfolders

@@ -278,8 +278,8 @@ function BCChat () {
    * <content> must contain at least a "text" field for text-text messaging.
    * <version> must match the latest or pass -1 to bypass version check.
    *
-   * Service Name - Chat
-   * Service Operation - UpdateChatMessage
+   * Service Name - chat
+   * Service Operation - UPDATE_CHAT_MESSAGE
    *
    * @param channelId Channel id where the message to update is.
    * @param msgId Message id to update.

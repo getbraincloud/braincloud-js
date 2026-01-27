@@ -108,8 +108,8 @@ function BCProfanity () {
   /**
    * Checks supplied text for profanity and returns a list of bad wors.
    *
-   * Service Name - Profanity
-   * Service Operation - ProfanityIdentifyBadWords
+   * Service Name - profanity
+   * Service Operation - PROFANITY_IDENTIFY_BAD_WORDS
    *
    * @param text The text to check
    * @param languages Optional comma delimited list of two character language codes

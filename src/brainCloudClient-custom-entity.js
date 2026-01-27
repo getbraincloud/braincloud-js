@@ -404,8 +404,8 @@ function BCCustomEntity () {
   /**
    * Increments the specified fields, of the singleton owned by the user, by the specified amount within the custom entity data on the server.
    *
-   * Service Name - CustomEntity
-   * Service Operation - IncrementSingletonData
+   * Service Name - customEntity
+   * Service Operation - INCREMENT_SINGLETON_DATA
    *
    * @param entityType The type of custom entity being updated.
    * @param fieldsJson Specific fields, as JSON, within entity's custom data, with respective increment amount.

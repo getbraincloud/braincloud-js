@@ -56,8 +56,8 @@ function BCOneWayMatch () {
   /**
    * Completes a match
    *
-   * Service Name - OneWayMatch
-   * Service Operation - CompleteMatch
+   * Service Name - onewayMatch
+   * Service Operation - COMPLETE_MATCH
    *
    * @param playbackStreamId The playback stream id returned in the initial start match
    * @param callback The method to be invoked when the server response is received

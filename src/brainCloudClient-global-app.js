@@ -51,15 +51,15 @@ function BCGlobalApp () {
   }
 
   /**
-   * Returns a list of properties, identified by the categories provided.
-   * If a category from the list isn't found, it just isn't returned (no error).
-   *
-   * Service Name - GlobalApp
-   * Service Operation - READ_PROPERTIES_CATEGORIES
-   *
-   * @param categories Specifies which category to return
-   * @param callback The method to be invoked when the server response is received
-   */
+         * Returns a list of properties, identified by the categories provided.
+         * If a category from the list isn't found, it just isn't returned (no error).
+         *
+         * Service Name - globalApp
+         * Service Operation - READ_PROPERTIES_CATEGORIES
+         *
+         * @param categories Specifies which category to return
+         * @param callback The method to be invoked when the server response is received
+         */
   bc.globalApp.readPropertiesInCategories = function (categories, callback) {
     var message = {
       categories: categories

@@ -381,7 +381,7 @@ function BCPlayerState () {
   /**
    * Set timed status for a user
    *
-   * Service Name - PlayerState
+   * Service Name - playerState
    * Service Operation - SET_USER_STATUS
    *
    * @param statusName Updated email

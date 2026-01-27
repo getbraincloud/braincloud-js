@@ -229,6 +229,9 @@ function BCPresence () {
   /**
    * Updates the activity field of the caller's presence data.
    *
+   * Service Name - presence
+   * Service Operation - UPDATE_ACTIVITY
+   *
    * @param jsonActivity JSON string representing activity information.
    * @param callback Callback invoked when the server response is received.
    */

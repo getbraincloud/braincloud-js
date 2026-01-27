@@ -1117,7 +1117,7 @@ function BCIdentity () {
    *  Detach the Google identity from this profile.
    *
    * Service Name - identity
-   * Service Operation - Detach
+   * Service Operation - DETACH
    *
    * @param parseId The Parse id of the user
    * @param continueAnon Proceed even if the profile will revert to anonymous?

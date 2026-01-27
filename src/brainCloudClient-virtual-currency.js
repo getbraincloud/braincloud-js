@@ -127,8 +127,8 @@ function BCVirtualCurrency () {
   /**
    * Reset player's currency to zero
    *
-   * Service Name - VirtualCurrency
-   * Service Operation - ResetCurrency
+   * Service Name - virtualCurrency
+   * Service Operation - RESET_PLAYER_VC
    *
    * @param callback The method to be invoked when the server response is received
    */

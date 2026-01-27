@@ -701,7 +701,7 @@ function BCLobby () {
   /**
    * Retrieves visible lobby instances matching the given criteria using ping data.
    *
-   * Service Name - Lobby
+   * Service Name - lobby
    * Service Operation - GET_LOBBY_INSTANCES_WITH_PING_DATA
    *
    * @param lobbyType The type of lobby

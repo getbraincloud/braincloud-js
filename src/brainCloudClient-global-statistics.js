@@ -116,7 +116,7 @@ function BCGlobalStatistics () {
   /**
    * Apply statistics grammar to a partial set of statistics.
    *
-   * Service Name - GlobalStatistics
+   * Service Name - globalGameStatistics
    * Service Operation - PROCESS_STATISTICS
    *
    * @param jsonData The JSON format is as follows:

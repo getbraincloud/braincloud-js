@@ -402,8 +402,8 @@ function BCAsyncMatch () {
   /**
    * Marks the given match as abandoned. This call can send a notification message.
    *
-   * Service Name - AsyncMatch
-   * Service Operation - AbandonMatchWithSumamryData
+   * Service Name - asyncMatch
+   * Service Operation - ABANDON_MATCH_WITH_SUMMARY_DATA
    *
    * @param ownerId   Match owner identifier
    * @param matchId   Match identifier

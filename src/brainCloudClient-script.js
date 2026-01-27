@@ -213,7 +213,7 @@ function BCScript () {
    * Runs a script asynchronously from the context of a peer
    * This method does not wait for the script to complete before returning
    *
-   * Service Name - Script
+   * Service Name - script
    * Service Operation - RUN_PEER_SCRIPT_ASYNC
    *
    * @param scriptName The name of the script to be run

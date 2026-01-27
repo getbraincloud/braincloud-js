@@ -292,8 +292,8 @@ function BCGamification () {
   /**
    * Method returns quests for the given category.
    *
-   * Service Name - Gamification
-   * Service Operation - ReadQuestsByCategory
+   * Service Name - gamification
+   * Service Operation - READ_QUESTS_BY_CATEGORY
    *
    * @param category The quest category
    * @param includeMetaData   Whether to return meta data as well

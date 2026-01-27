@@ -215,8 +215,8 @@ function BCMessaging () {
   /**
    * Marks list of user messages as read on the server.
    *
-   * Service Name - Messaging
-   * Service Operation - MarkMessagesRead
+   * Service Name - messaging
+   * Service Operation - MARK_MESSAGES_READ
    *
    * @param msgbox The message box to mark as read.
    * @param msgIds Arrays of message ids to mark as read.

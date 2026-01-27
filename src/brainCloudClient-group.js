@@ -902,7 +902,7 @@ function BCGroup () {
   /**
    * Set a group's access conditions.
    *
-   * Service Name - Group
+   * Service Name - group
    * Service Operation - UPDATE_GROUP_ACL
    *
    * @param groupId ID of the group

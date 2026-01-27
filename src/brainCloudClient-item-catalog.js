@@ -60,7 +60,7 @@ function BCItemCatalog () {
    * context and specified page offset, with language fields limited to the
    * text for the current or default language.
    *
-   * Service Name - ItemCatalog
+   * Service Name - itemCatalog
    * Service Operation - GET_CATALOG_ITEMS_PAGE_OFFSET
    *
    * @param context The pagination context returned from a previous catalog page request

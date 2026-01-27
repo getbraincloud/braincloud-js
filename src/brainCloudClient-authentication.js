@@ -878,8 +878,8 @@ function BCAuthentication () {
   /**
    *  Advanced Universal ID password reset using templates
    *
-   * Service Name - Authenticate
-   * Operation - ResetUniversalIdPassword
+   * Service Name - authenticationV2
+   * Service Operation - RESET_UNIVERSAL_ID_PASSWORD_ADVANCED_WITH_EXPIRY
    *
    * @param appId the applicationId
    * @param universalId the universal Id in question

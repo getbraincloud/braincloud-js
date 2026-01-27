@@ -212,10 +212,8 @@ function BCFile () {
   }
 
   /**
-   * List user files from the given cloud path
+   * List all user files
    *
-   * @param cloudPath File path
-   * @param recurse Whether to recurse into sub-directories
    * @param callback The method to be invoked when the server response is received
    */
   bc.file.listUserFiles = function (cloudPath, recurse, callback) {

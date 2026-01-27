@@ -22,7 +22,7 @@ function BCAppStore () {
    * This payload will be used during the VerifyPurchase method to ensure the
    * user properly paid for the correct product before awarding them the IAP product.
    *
-   * Service Name - AppStore
+   * Service Name - appStore
    * Service Operation - CACHE_PURCHASE_PAYLOAD_CONTEXT
    *
    * @param storeId The store platform. Valid stores are:
