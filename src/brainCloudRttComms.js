@@ -340,11 +340,25 @@ function BrainCloudRttComms (m_client) {
       bcrtt._rttConnectionStatus == bcrtt.RTTConnectionStatus.CONNECTING
     ) {
       return
-    } else {
+    } 
+    else {
       bcrtt.connectCallback = {
         success: success,
         failure: failure
       }
+
+      if (!bcrtt.m_client.isAuthenticated()) { // TODO:  kill switch
+        if (bcrtt.connectCallback.failure) {
+          bcrtt.connectCallback.failure("Invalid Session - Must be authenticated before enabling RTT.")
+        }
+
+        if (bcrtt._debugEnabled) {
+          console.log("The user is not currently authenticated - cannot enable RTT.")
+        }
+
+        return
+      }
+
       bcrtt._rttConnectionStatus = bcrtt.RTTConnectionStatus.CONNECTING
 
       m_client.rttService.requestClientConnection(function (result) {
