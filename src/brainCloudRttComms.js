@@ -347,7 +347,7 @@ function BrainCloudRttComms (m_client) {
         failure: failure
       }
 
-      if (!bcrtt.m_client.isAuthenticated()) { // TODO:  kill switch
+      if (!bcrtt.m_client.isAuthenticated()) {
         if (bcrtt.connectCallback.failure) {
           bcrtt.connectCallback.failure("Invalid Session - Must be authenticated before enabling RTT.")
         }

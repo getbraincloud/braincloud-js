@@ -1367,9 +1367,6 @@ function BrainCloudWrapper (wrapperName) {
    */
   bcw.enableLongSession = function (longSessionEnabled) {
     bcw.brainCloudClient.brainCloudManager._longSessionEnabled = longSessionEnabled
-
-    console.log("Long Session Enabled = ")
-    console.log(bcw.brainCloudClient.brainCloudManager._longSessionEnabled)
   }
 
   /**
