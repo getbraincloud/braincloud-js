@@ -69,6 +69,7 @@ function BrainCloudManager ()
     bcm._debugEnabled = false;
     bcm._compressionEnabled = true;
     bcm._compressionThreshold = 51200;
+    bcm._longSessionEnabled = false;
 
     bcm._requestInProgress = false;
     bcm._bundleDelayActive = false;
@@ -493,6 +494,35 @@ function BrainCloudManager ()
                 var statusCode = messages[c].status;
                 var reasonCode = messages[c].reason_code;
 
+                // If the authenticated session has expired, and long session is enabled, attempt to re-authenticate and retry lost call(s)
+                if (reasonCode === 40303 && bcm._longSessionEnabled && bcm._inProgressQueue[c].operation !== "AUTHENTICATE" && bcm._isAuthenticated) {
+                    var expiredCall = bcm._inProgressQueue.slice(0)
+                    var queuedCalls = bcm._sendQueue.splice(0, bcm._sendQueue.length)
+
+                    bcm.stopHeartBeat()
+                    bcm._isAuthenticated = false
+                    bcm._sessionId = ""
+                    bcm.packetId = 0
+                    bcm._requestInProgress = false
+
+                    bcm.authentication.authenticateAnonymous(false, function (result) {
+                        if (result.status === 200) {
+                            bcm.debugLog("Long Session reconnect successful. Re-queuing expired calls . . .")
+                            
+                            bcm._sendQueue = expiredCall.concat(queuedCalls)
+                            bcm.processQueue()
+                        }
+                        else {
+                            bcm.debugLog("Long Session reconnect failed")
+
+                            _longSessionEnabled = false
+                        }
+                    })
+
+                    return
+                }
+                
+                // PLAYER_SESSION_EXPIRED, NO_SESSON, PLAYER_SESSION_LOGGED_OUT
                 if (reasonCode === 40303 ||
                     reasonCode === 40304 ||
                     reasonCode === 40356)
