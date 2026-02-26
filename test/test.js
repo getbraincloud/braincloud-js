@@ -6425,7 +6425,7 @@ async function testWrapper()
         })
     })
     
-    await asyncTest("LongSession", 1, function () {
+    await asyncTest("LongSession", 2, function () {
 
         // Create two wrappers. To test long session, PLAYER_SESSION_EXPIRED must be received.
         // A script will be called from one wrapper to cause the other wrapper's session to expire.
@@ -6449,6 +6449,17 @@ async function testWrapper()
         wrapper2.brainCloudClient.initializeWithApps(GAME_ID, secretMap2, GAME_VERSION)
         wrapper2.brainCloudClient.setServerUrl(SERVER_URL);
         wrapper2.brainCloudClient.authentication.clearSavedProfileId();
+
+        // Register a callback for when the long session re-authentication response is received
+        wrapper2.brainCloudClient.registerLongSessionCallback((result) => {
+            if (result.status === 200) {
+                console.log("Long Session Callback - SUCCESS");
+                ok(true, "Long Session Callback Success");
+            }
+            else {
+                console.log("Long Session Callback - FAILURE");
+            }
+        })
 
         // Authenticate both users
         wrapper1.authenticateUniversal("User-" + wrapper1.wrapperName, "Pass-" + wrapper1.wrapperName, true, user1Result => {

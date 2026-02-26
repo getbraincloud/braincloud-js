@@ -49,6 +49,7 @@ function BrainCloudManager ()
     bcm._packetId = 0;
     bcm._loader = null;
     bcm._eventCallback = null;
+    bcm._longSessionCallback = null;
     bcm._rewardCallback = null;
     bcm._errorCallback = null;
     bcm._jsonedQueue = "";
@@ -211,6 +212,14 @@ function BrainCloudManager ()
     bcm.deregisterEventCallback = function()
     {
         bcm._eventCallback = null;
+    };
+
+    bcm.registerLongSessionCallback = function (longSessionCallback) {
+        bcm._longSessionCallback = longSessionCallback;
+    };
+
+    bcm.deregisterLongSessionCallback = function() {
+        bcm._longSessionCallback = null;
     };
 
     bcm.registerRewardCallback = function(rewardCallback)
@@ -508,14 +517,20 @@ function BrainCloudManager ()
                     bcm.authentication.authenticateAnonymous(false, function (result) {
                         if (result.status === 200) {
                             bcm.debugLog("Long Session reconnect successful. Re-queuing expired calls . . .")
-                            
+
                             bcm._sendQueue = expiredCall.concat(queuedCalls)
                             bcm.processQueue()
+
+
                         }
                         else {
                             bcm.debugLog("Long Session reconnect failed")
 
                             _longSessionEnabled = false
+                        }
+
+                        if (bcm._longSessionCallback) {
+                            bcm._longSessionCallback(result);
                         }
                     })
 
