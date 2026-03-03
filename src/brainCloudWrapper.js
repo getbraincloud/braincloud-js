@@ -1362,6 +1362,14 @@ function BrainCloudWrapper (wrapperName) {
   }
 
   /**
+   * When enabled, automatically attempt to reconnect and retry server calls in the event of an expired session
+   * @param {boolean} longSessionEnabled Determines if long session should be enabled or not
+   */
+  bcw.enableLongSession = function (longSessionEnabled) {
+    bcw.brainCloudClient.brainCloudManager._longSessionEnabled = longSessionEnabled
+  }
+
+  /**
    * Reset Email password - Sends a password reset email to the specified address
    *
    * Service Name - Authenticate

@@ -6134,7 +6134,6 @@ async function testWrapper()
         });
     });
 
-
     await asyncTest("smartSwitchFromNoAuth()", 2, function() {
 
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
@@ -6166,7 +6165,6 @@ async function testWrapper()
 
     });
 
-
     await asyncTest("smartSwitchFromAnon()", 2, function() {
 
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
@@ -6196,7 +6194,6 @@ async function testWrapper()
             });
 
     });
-
 
     await asyncTest("smartSwitchFromAuth()", 2, function() {
 
@@ -6425,6 +6422,96 @@ async function testWrapper()
 
             equal(bc.getStoredProfileId() == "", true, "Profile ID WAS reset: " + bc.getStoredProfileId())
             resolve_test()
+        })
+    })
+    
+    await asyncTest("LongSession", 2, function () {
+
+        // Create two wrappers. To test long session, PLAYER_SESSION_EXPIRED must be received.
+        // A script will be called from one wrapper to cause the other wrapper's session to expire.
+        // Doing so from one wrapper would just result in PLAYER_SESSION_LOGGED_OUT instead of PLAYER_SESSION_EXPIRED
+        var wrapper1 = new BC.BrainCloudWrapper("JSWrapper1")
+        wrapper1.brainCloudClient.setDebugEnabled(true)
+        wrapper1.brainCloudClient.enableCompression(true)
+        var secretMap1 = {}
+        secretMap1[GAME_ID] = SECRET
+        secretMap1[CHILD_APP_ID] = CHILD_SECRET
+        wrapper1.brainCloudClient.initializeWithApps(GAME_ID, secretMap1, GAME_VERSION)
+        wrapper1.brainCloudClient.setServerUrl(SERVER_URL);
+        wrapper1.brainCloudClient.authentication.clearSavedProfileId();
+
+        var wrapper2 = new BC.BrainCloudWrapper("JSWrapper2")
+        wrapper2.brainCloudClient.setDebugEnabled(true)
+        wrapper2.brainCloudClient.enableCompression(true)
+        var secretMap2 = {}
+        secretMap2[GAME_ID] = SECRET
+        secretMap2[CHILD_APP_ID] = CHILD_SECRET
+        wrapper2.brainCloudClient.initializeWithApps(GAME_ID, secretMap2, GAME_VERSION)
+        wrapper2.brainCloudClient.setServerUrl(SERVER_URL);
+        wrapper2.brainCloudClient.authentication.clearSavedProfileId();
+
+        // Register a callback for when the long session re-authentication response is received
+        wrapper2.brainCloudClient.registerLongSessionCallback((result) => {
+            if (result.status === 200) {
+                console.log("Long Session Callback - SUCCESS");
+                ok(true, "Long Session Callback Success");
+            }
+            else {
+                console.log("Long Session Callback - FAILURE");
+            }
+        })
+
+        // Authenticate both users
+        wrapper1.authenticateUniversal("User-" + wrapper1.wrapperName, "Pass-" + wrapper1.wrapperName, true, user1Result => {
+            if (user1Result.status === 200) {
+
+                // Login secondary user
+                wrapper2.authenticateUniversal("User-" + wrapper2.wrapperName, "Pass-" + wrapper2.wrapperName, true, user2Result => {
+                    if (user2Result.status === 200) {
+
+                        console.log("Both users authenticated!")
+
+                        // Comment this out or set to false to verify test will fail w/o Long Session
+                        wrapper2.enableLongSession(true)
+
+                        // Save Profile and Session IDs so that the session can be ended with a Cloud Code Script
+                        var user2ProfileId = user2Result.data.profileId
+                        var user2SessionId = user2Result.data.sessionId
+                        var user2Data = {
+                            profileId: user2ProfileId,
+                            sessionId: user2SessionId
+                        }
+
+                        // Verify session is active
+                        wrapper2.identity.getIdentities(testResult => {
+
+                            // Force session expiry...
+                            wrapper1.script.runScript("LogoutSession", user2Data, result => {
+                                if (result.status === 200) {
+                                    console.log("script success")
+
+                                    // Verify session is expired... (this should not go through right away)
+                                    wrapper2.identity.getIdentities(testResult2 => {
+                                        console.log("Second get identities: " + JSON.stringify(testResult2))
+                                        equal(testResult2.status, 200, "Expected")
+                                        resolve_test()
+                                    })
+                                }
+                                else {
+                                    console.log("script failed")
+                                    resolve_test()
+                                }
+                            })
+                        })
+                    }
+                    else {
+                        resolve_test()
+                    }
+                })
+            }
+            else {
+                resolve_test()
+            }
         })
     })
 }
@@ -7060,6 +7147,29 @@ async function testRTT()
         bc.rttService.deregisterAllRTTCallbacks();
     }
 
+    bc.brainCloudClient.brainCloudRttComms.disableRTT()
+
+    await asyncTest("enableRTTNoAuth()", 1, () => {
+        bc.logout(false, logoutResult => {
+            if (logoutResult.status === 200) {
+                bc.rttService.enableRTT(result => {
+                    console.log(result);
+                    ok(false, "Should not be able to enable RTT")
+                    resolve_test();
+                }, error => {
+                    console.log(error);
+                    ok(true, error);
+                    resolve_test();
+                });
+            }
+            else {
+                ok(false, "Logout failed")
+                resolve_test()
+            }
+        })
+
+    });
+
     await tearDownLogout();
 }
 
@@ -7075,7 +7185,7 @@ async function testRelay() {
         return tearDownLogout();
     })) return;
 
-    // Bad connect parameters
+    //Bad connect parameters
     await asyncTest("connect() bad arguments", 1, () =>
     {
         bc.relay.connect({}, result =>
@@ -7227,6 +7337,76 @@ async function testRelay() {
         }, error =>
         {
             console.log(error);
+            ok(false, error);
+            resolve_test();
+        });
+    });
+
+    await asyncTest("connectNoAuth()", 2, () => {
+        // Force timeout after 5 mins
+        let timeoutId = setTimeout(() => {
+            ok(false, "Timed out");
+            resolve_test();
+        }, 5 * 60 * 1000)
+
+        let server = null
+        let ownerCxId = ""
+
+        bc.rttService.registerRTTLobbyCallback(result => {
+            console.log("RTTLobbyCallback.");
+
+            console.log(result)
+
+            if (result.operation === "DISBANDED") {
+                clearTimeout(timeoutId)
+                if (result.data.reason.code == bc.reasonCodes.RTT_ROOM_READY) {
+                    // Log out to verify Connect() does not attempt if unauthenticated
+                    bc.logout(false, () => {
+                        bc.relay.connect({
+                            ssl: false,
+                            host: server.connectData.address,
+                            port: server.connectData.ports.ws,
+                            passcode: server.passcode,
+                            lobbyId: server.lobbyId
+                        }, result => {
+                            console.log(result)
+                            ok(true, "logged out")
+                        }, error => {
+                            console.log("Relay Connect Error")
+                            ok(true, error);
+                            resolve_test();
+                        })
+                    }, error => {
+                        console.log("Log out failed")
+                        ok(false, error)
+                        resolve_test()
+                    })
+                }
+                else {
+                    ok(false, "DISBANDED without RTT_ROOM_READY")
+                    resolve_test()
+                }
+            }
+            else if (result.operation == "ROOM_ASSIGNED") {
+                bc.lobby.updateReady(result.data.lobbyId, true, {})
+            }
+            else if (result.operation == "MEMBER_JOIN") // || result.operation == "STARTING"
+            {
+                ownerCxId = result.data.lobby.ownerCxId
+                console.log("ownerCxId = " + ownerCxId)
+            }
+            else if (result.operation == "ROOM_READY") {
+                server = result.data
+            }
+        });
+
+        bc.rttService.enableRTT(result => {
+            console.log(result);
+            bc.lobby.findOrCreateLobby("READY_START_V2", 0, 1, { strategy: "ranged-absolute", alignment: "center", ranges: [1000] }, {}, null, {}, true, {}, "all", result => {
+                equal(result.status, 200, "Find or Create Lobby Success");
+            });
+        }, error => {
+            console.log("enableRTT error: " + error);
             ok(false, error);
             resolve_test();
         });

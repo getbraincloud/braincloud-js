@@ -232,7 +232,7 @@ function BrainCloudClient () {
     bcc.brainCloudRelayComms.brainCloudClient = bcc // Circular reference
   }
 
-  bcc.version = '5.9.0'
+  bcc.version = "5.9.0";
   bcc.countryCode
   bcc.languageCode
 
@@ -414,6 +414,21 @@ function BrainCloudClient () {
    */
   bcc.deregisterEventCallback = function () {
     bcc.brainCloudManager.deregisterEventCallback()
+  }
+
+  /**
+   * Registers a function to be invoked when a long session re-authentication is called.
+   * @param {function} longSessionCallback 
+   */
+  bcc.registerLongSessionCallback = function (longSessionCallback) {
+    bcc.brainCloudManager.registerLongSessionCallback(longSessionCallback);
+  }
+
+  /**
+   * Deregisters the function that would be invoked when a long session re-authentication is called.
+   */
+  bcc.deregisterLongSessionCallback = function () {
+    bcc.brainCloudManager.deregisterLongSessionCallback();
   }
 
   /**

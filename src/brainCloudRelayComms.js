@@ -124,6 +124,18 @@ function BrainCloudRelayComms (_client) {
       return
     }
 
+    if (!bcr.m_client.isAuthenticated()) {
+      if (bcr.connectCallback.failure) {
+        bcr.connectCallback.failure("Invalid Session - Must be authenticated before connecting to Relay Server.")
+      }
+
+      if (bcr._debugEnabled) {
+        console.log("The user is not currently authenticated - cannot connect to Relay Server.")
+      }
+
+      return
+    }
+
     // build url with auth as arguments
     var uri = (ssl ? 'wss://' : 'ws://') + host + ':' + port
 
