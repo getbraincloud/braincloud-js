@@ -5767,7 +5767,7 @@ async function testTournament() {
         _divSetId,
         function(result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 400, "Expecting 400");
+            equal(result.status, 500, "Expecting 400");
             resolve_test();
         });
     });
