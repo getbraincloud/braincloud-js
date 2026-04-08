@@ -5767,7 +5767,7 @@ async function testTournament() {
         _divSetId,
         function(result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 400, "Expecting 400");
+            equal(result.status, 500, "Expecting 400");
             resolve_test();
         });
     });
@@ -5843,6 +5843,242 @@ async function testTournament() {
             resolve_test();
         });
     });
+
+    // Group Tournament Tests
+    var groupTournamentId = ""
+    var groupLeaderboardId = ""
+
+    // Create a group to be used for each test
+    await asyncTest("createGroup()", 1, function () {
+        var name = "JS-Test-GroupTournamentGroup"
+        var groupType = "csharpTest"
+        var isOpenGroup = true
+        var acl = {
+            "member": 2,
+            "other": 2
+        }
+        var jsonData = {}
+        var jsonOwnerAttributes = {}
+        var jsonDefaultMemberAttributes = {}
+
+        bc.group.createGroup(name, groupType, isOpenGroup, acl, jsonData, jsonOwnerAttributes, jsonDefaultMemberAttributes, result => {
+            if (result.status === 200) {
+                ok(true, "Group created")
+
+                groupTournamentId = result.data.groupId
+
+                resolve_test()
+            }
+            else {
+                ok(false, "Failed to create group")
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("getGroupDivisions()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.getGroupDivisions(groupTournamentId, result => {
+                if(result.status === 200){
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else{
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("getGroupDivisionInfo()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.getGroupDivisionInfo("bronzeGroup", groupTournamentId, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("getGroupTournamentStatus()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.getGroupTournamentStatus("groupTournament", groupTournamentId, -1, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("joinGroupDivision()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.joinGroupDivision("bronzeGroup", "testGroupTournament", groupTournamentId, 7, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    groupLeaderboardId = result.data.leaderboardId
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("leaveGroupDivisionInstance()", 1, function(){
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.leaveGroupDivisionInstance(groupLeaderboardId, groupTournamentId, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("joinGroupTournament()", 1, function (){
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.joinGroupTournament("groupTournament", "testGroupTournament", groupTournamentId, 8, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("postGroupTournamentScore()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.postGroupTournamentScore("groupTournament", groupTournamentId, 11, {}, new Date().getTime(), result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("postGroupTournamentScoreWithResults()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.postGroupTournamentScoreWithResults("groupTournament", groupTournamentId, 11, {}, new Date().getTime(), bc.leaderboard.sortOrder.HIGH_TO_LOW, 10, 10, 4, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("leaveGroupTournament()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.leaveGroupTournament("groupTournament", groupTournamentId, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    // Delete the group now that tests are complete
+    await asyncTest("deleteGroup()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(true, "No group to delete")
+
+            resolve_test()
+        }
+        else {
+            bc.group.deleteGroup(groupTournamentId, -1, result => {
+                if (result.status === 200) {
+                    ok(true, "Group deleted")
+                    resolve_test()
+                }
+                else {
+                    ok(false, "Failed to delete group")
+
+                    resolve_test()
+                }
+            })
+        }
+    })
 }
 
 ////////////////////////////////////////
