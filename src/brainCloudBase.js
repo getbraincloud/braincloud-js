@@ -49,7 +49,7 @@ function BrainCloudManager ()
     bcm._packetId = 0;
     bcm._loader = null;
     bcm._eventCallback = null;
-    bcm._longSessionCallback = null;
+    bcm._autoReconnectCallback = null;
     bcm._rewardCallback = null;
     bcm._errorCallback = null;
     bcm._jsonedQueue = "";
@@ -70,7 +70,7 @@ function BrainCloudManager ()
     bcm._debugEnabled = false;
     bcm._compressionEnabled = true;
     bcm._compressionThreshold = 51200;
-    bcm._longSessionEnabled = false;
+    bcm._autoReconnectEnabled = false;
 
     bcm._requestInProgress = false;
     bcm._bundleDelayActive = false;
@@ -214,12 +214,12 @@ function BrainCloudManager ()
         bcm._eventCallback = null;
     };
 
-    bcm.registerLongSessionCallback = function (longSessionCallback) {
-        bcm._longSessionCallback = longSessionCallback;
+    bcm.registerAutoReconnectCallback = function (autoReconnectCallback) {
+        bcm._autoReconnectCallback = autoReconnectCallback;
     };
 
-    bcm.deregisterLongSessionCallback = function() {
-        bcm._longSessionCallback = null;
+    bcm.deregisterAutoReconnectCallback = function() {
+        bcm._autoReconnectCallback = null;
     };
 
     bcm.registerRewardCallback = function(rewardCallback)
@@ -504,7 +504,7 @@ function BrainCloudManager ()
                 var reasonCode = messages[c].reason_code;
 
                 // If the authenticated session has expired, and long session is enabled, attempt to re-authenticate and retry lost call(s)
-                if (reasonCode === 40303 && bcm._longSessionEnabled && bcm._inProgressQueue[c].operation !== "AUTHENTICATE" && bcm._isAuthenticated) {
+                if (reasonCode === 40303 && bcm._autoReconnectEnabled && bcm._inProgressQueue[c].operation !== "AUTHENTICATE" && bcm._isAuthenticated) {
                     var expiredCall = bcm._inProgressQueue.slice(0)
                     var queuedCalls = bcm._sendQueue.splice(0, bcm._sendQueue.length)
 
@@ -526,11 +526,11 @@ function BrainCloudManager ()
                         else {
                             bcm.debugLog("Long Session reconnect failed")
 
-                            _longSessionEnabled = false
+                            _autoReconnectEnabled = false
                         }
 
-                        if (bcm._longSessionCallback) {
-                            bcm._longSessionCallback(result);
+                        if (bcm._autoReconnectCallback) {
+                            bcm._autoReconnectCallback(result);
                         }
                     })
 

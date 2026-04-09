@@ -417,18 +417,18 @@ function BrainCloudClient () {
   }
 
   /**
-   * Registers a function to be invoked when a long session re-authentication is called.
-   * @param {function} longSessionCallback 
+   * Registers a function to be invoked when an auto reconnect re-authentication is called.
+   * @param {function} autoReconnectCallback 
    */
-  bcc.registerLongSessionCallback = function (longSessionCallback) {
-    bcc.brainCloudManager.registerLongSessionCallback(longSessionCallback);
+  bcc.registerAutoReconnectCallback = function (autoReconnectCallback) {
+    bcc.brainCloudManager.registerAutoReconnectCallback(autoReconnectCallback);
   }
 
   /**
    * Deregisters the function that would be invoked when a long session re-authentication is called.
    */
-  bcc.deregisterLongSessionCallback = function () {
-    bcc.brainCloudManager.deregisterLongSessionCallback();
+  bcc.deregisterAutoReconnectCallback = function () {
+    bcc.brainCloudManager.deregisterAutoReconnectCallback();
   }
 
   /**
