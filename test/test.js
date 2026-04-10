@@ -520,7 +520,7 @@ async function testPortalPreflightChecks()
                 {
                     if (result.status === 200)
                     {
-                        var currency = (result.data && result.data.currency) ? result.data.currency : {};
+                        var currency = (result.data && result.data.currencyMap) ? result.data.currencyMap : {};
                         if (!currency.hasOwnProperty("credits")) missing.push("virtual currency type: credits");
                     }
                     else
@@ -540,7 +540,7 @@ async function testPortalPreflightChecks()
                 {
                     if (result.status === 200)
                     {
-                        var props = (result.data && result.data.response) ? result.data.response : {};
+                        var props = (result.data) ? result.data : {};
                         ["prop1", "prop2", "prop3"].forEach(function(name)
                         {
                             if (!props.hasOwnProperty(name)) missing.push("global property: " + name);
