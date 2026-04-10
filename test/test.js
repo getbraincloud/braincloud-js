@@ -421,6 +421,228 @@ function greaterEq(actual, expected, log)
     else failed(actual + " < " + expected, log);
 }
 
+////////////////////////////////////////
+// Portal Preflight Check
+// Runs first to verify all required portal configurations exist.
+// A failure here means the environment is missing portal setup —
+// fix those before investigating other test failures.
+////////////////////////////////////////
+async function testPortalPreflightChecks()
+{
+    if (!module("Portal Preflight Check", () =>
+    {
+        return setUpWithAuthenticate();
+    }, () =>
+    {
+        return tearDownLogout();
+    })) return;
+
+    await asyncTest("all required portal items exist", 1, function()
+    {
+        var missing = [];
+
+        var checkApi = function(makeCall)
+        {
+            return new Promise(function(resolve)
+            {
+                makeCall(function(result) { resolve(result.status === 200); });
+            });
+        };
+
+        var checkAchievements = function()
+        {
+            return new Promise(function(resolve)
+            {
+                bc.gamification.readAchievements(false, function(result)
+                {
+                    if (result.status === 200)
+                    {
+                        var achs = (result.data && result.data.achievements) ? result.data.achievements : [];
+                        var ids = achs.map(function(a) { return a.id; });
+                        if (ids.indexOf("testAchievements01") === -1) missing.push("achievement: testAchievements01");
+                        if (ids.indexOf("testAchievements02") === -1) missing.push("achievement: testAchievements02");
+                    }
+                    else
+                    {
+                        missing.push("achievement: testAchievements01");
+                        missing.push("achievement: testAchievements02");
+                    }
+                    resolve();
+                });
+            });
+        };
+
+        var checkMilestones = function()
+        {
+            return new Promise(function(resolve)
+            {
+                bc.gamification.readMilestonesByCategory("Experience", false, function(result)
+                {
+                    if (result.status === 200)
+                    {
+                        var list = (result.data && result.data.milestones) ? result.data.milestones : [];
+                        if (list.length === 0) missing.push("milestone category: Experience (no milestones defined)");
+                    }
+                    else
+                    {
+                        missing.push("milestone category: Experience");
+                    }
+                    resolve();
+                });
+            });
+        };
+
+        var checkQuests = function()
+        {
+            return new Promise(function(resolve)
+            {
+                bc.gamification.readQuestsByCategory("Experience", false, function(result)
+                {
+                    if (result.status === 200)
+                    {
+                        var list = (result.data && result.data.quests) ? result.data.quests : [];
+                        if (list.length === 0) missing.push("quest category: Experience (no quests defined)");
+                    }
+                    else
+                    {
+                        missing.push("quest category: Experience");
+                    }
+                    resolve();
+                });
+            });
+        };
+
+        var checkCurrency = function()
+        {
+            return new Promise(function(resolve)
+            {
+                bc.virtualCurrency.getCurrency(null, function(result)
+                {
+                    if (result.status === 200)
+                    {
+                        var currency = (result.data && result.data.currency) ? result.data.currency : {};
+                        if (!currency.hasOwnProperty("credits")) missing.push("virtual currency type: credits");
+                    }
+                    else
+                    {
+                        missing.push("virtual currency type: credits");
+                    }
+                    resolve();
+                });
+            });
+        };
+
+        var checkProps = function()
+        {
+            return new Promise(function(resolve)
+            {
+                bc.globalApp.readSelectedProperties(["prop1", "prop2", "prop3"], function(result)
+                {
+                    if (result.status === 200)
+                    {
+                        var props = (result.data && result.data.response) ? result.data.response : {};
+                        ["prop1", "prop2", "prop3"].forEach(function(name)
+                        {
+                            if (!props.hasOwnProperty(name)) missing.push("global property: " + name);
+                        });
+                    }
+                    else
+                    {
+                        missing.push("global properties: prop1, prop2, prop3");
+                    }
+                    resolve();
+                });
+            });
+        };
+
+        // Build sequential check chain
+        var checks = [];
+
+        // Leaderboards
+        ["testLeaderboard", "testSocialLeaderboard", "testTournamentLeaderboard", "groupLeaderboardConfig"].forEach(function(lbId)
+        {
+            checks.push(function()
+            {
+                return checkApi(function(cb)
+                {
+                    bc.leaderboard.getGlobalLeaderboardEntryCount(lbId, cb);
+                }).then(function(succeeded) { if (!succeeded) missing.push("leaderboard: " + lbId); });
+            });
+        });
+
+        // Item catalog
+        ["sword001", "equipmentBundle"].forEach(function(itemId)
+        {
+            checks.push(function()
+            {
+                return checkApi(function(cb)
+                {
+                    bc.itemCatalog.getCatalogItemDefinition(itemId, cb);
+                }).then(function(succeeded) { if (!succeeded) missing.push("catalog item: " + itemId); });
+            });
+        });
+
+        // Global properties
+        checks.push(checkProps);
+
+        // Achievements
+        checks.push(checkAchievements);
+
+        // Milestones & Quests
+        checks.push(checkMilestones);
+        checks.push(checkQuests);
+
+        // Virtual currency
+        checks.push(checkCurrency);
+
+        // Custom entity type: athletes
+        checks.push(function()
+        {
+            return checkApi(function(cb)
+            {
+                bc.customEntity.getEntityPage("athletes",
+                    "{\"pagination\":{\"rowsPerPage\":1,\"pageNumber\":1},\"searchCriteria\":{}}",
+                    cb);
+            }).then(function(succeeded) { if (!succeeded) missing.push("custom entity type: athletes"); });
+        });
+
+        // Tournament division set: testDivSet
+        checks.push(function()
+        {
+            return checkApi(function(cb)
+            {
+                bc.tournament.getDivisionInfo("testDivSet", cb);
+            }).then(function(succeeded) { if (!succeeded) missing.push("tournament division set: testDivSet"); });
+        });
+
+        // Lobby type: MATCH_UNRANKED
+        checks.push(function()
+        {
+            return checkApi(function(cb)
+            {
+                bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], cb);
+            }).then(function(succeeded) { if (!succeeded) missing.push("lobby type: MATCH_UNRANKED"); });
+        });
+
+        // Run all checks sequentially then report
+        checks.reduce(function(chain, check) { return chain.then(check); }, Promise.resolve())
+            .then(function()
+            {
+                if (missing.length > 0)
+                {
+                    ok(false, "PORTAL PREFLIGHT CHECK FAILED - the following items are not configured on the portal:\n" +
+                        missing.map(function(item) { return "  - " + item; }).join("\n") +
+                        "\n\nSet these up in the portal before running the full test suite.");
+                }
+                else
+                {
+                    ok(true, "All required portal items are configured");
+                }
+                resolve_test();
+            });
+    });
+}
+
 async function testKillSwitch()
 {
     if (!module("Test Misc", () =>
@@ -4246,16 +4468,17 @@ async function testPlayerStatisticsEvent() {
     });
 
 
-    await asyncTest("rewardHandlerTriggerStatisticsEvents()", 3, function() {
-        bc.playerState.resetUser();
-
+    await asyncTest("rewardHandlerTriggerStatisticsEvents()", 4, function() {
         var rewardCallbackCount = 0;
         bc.brainCloudClient.registerRewardCallback(function(rewardsJson)
             {
                 ++rewardCallbackCount;
                 ok(true, JSON.stringify(rewardsJson));
-                resolve_test();
                 bc.brainCloudClient.deregisterRewardCallback();
+                bc.playerState.resetUser(function(resetResult) {
+                    equal(resetResult.status, 200, JSON.stringify(resetResult));
+                    resolve_test();
+                });
             })
         bc.playerStatisticsEvent.triggerStatsEvents(
                 [
@@ -4266,7 +4489,6 @@ async function testPlayerStatisticsEvent() {
                     ok(true, JSON.stringify(result));
                     equal(result.status, 200, "Expecting 200");
                 });
-
     });
 }
 
@@ -8336,6 +8558,7 @@ async function testBlockchain(){
 
 async function run_tests()
 {
+    await testPortalPreflightChecks();
     await testKillSwitch();
     await testAsyncMatch();
     await testAuthentication();
