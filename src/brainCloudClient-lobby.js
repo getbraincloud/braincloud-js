@@ -725,6 +725,10 @@ function BCLobby () {
     )
   }
 
+  bc.lobby.getPingData = function () {
+    return pingData || {}
+  }
+
   bc.lobby.pingRegions = function (callback) {
     // Now we have the region ping data, we can start pinging each region and its defined target, if its a PING type.
     pingData = {}
