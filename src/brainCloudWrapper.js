@@ -1363,10 +1363,10 @@ function BrainCloudWrapper (wrapperName) {
 
   /**
    * When enabled, automatically attempt to reconnect and retry server calls in the event of an expired session
-   * @param {boolean} longSessionEnabled Determines if long session should be enabled or not
+   * @param {boolean} autoReconnectEnabled Determines if long session should be enabled or not
    */
-  bcw.enableLongSession = function (longSessionEnabled) {
-    bcw.brainCloudClient.brainCloudManager._longSessionEnabled = longSessionEnabled
+  bcw.enableAutoReconnect = function (autoReconnectEnabled) {
+    bcw.brainCloudClient.brainCloudManager._autoReconnectEnabled = autoReconnectEnabled
   }
 
   /**

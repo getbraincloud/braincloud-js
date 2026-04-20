@@ -6661,7 +6661,7 @@ async function testWrapper()
         })
     })
     
-    await asyncTest("LongSession", 2, function () {
+    await asyncTest("AutoReconnect", 2, function () {
 
         // Create two wrappers. To test long session, PLAYER_SESSION_EXPIRED must be received.
         // A script will be called from one wrapper to cause the other wrapper's session to expire.
@@ -6687,7 +6687,7 @@ async function testWrapper()
         wrapper2.brainCloudClient.authentication.clearSavedProfileId();
 
         // Register a callback for when the long session re-authentication response is received
-        wrapper2.brainCloudClient.registerLongSessionCallback((result) => {
+        wrapper2.brainCloudClient.registerAutoReconnectCallback((result) => {
             if (result.status === 200) {
                 console.log("Long Session Callback - SUCCESS");
                 ok(true, "Long Session Callback Success");
@@ -6708,7 +6708,7 @@ async function testWrapper()
                         console.log("Both users authenticated!")
 
                         // Comment this out or set to false to verify test will fail w/o Long Session
-                        wrapper2.enableLongSession(true)
+                        wrapper2.enableAutoReconnect(true)
 
                         // Save Profile and Session IDs so that the session can be ended with a Cloud Code Script
                         var user2ProfileId = user2Result.data.profileId
