@@ -8,7 +8,9 @@ function BCLobby () {
   bc.SERVICE_LOBBY = 'lobby'
 
   bc.lobby.OPERATION_CREATE_LOBBY = 'CREATE_LOBBY'
+  bc.lobby.OPERATION_CREATE_LOBBY_WITH_CONFIG = 'CREATE_LOBBY_WITH_CONFIG'
   bc.lobby.OPERATION_CREATE_LOBBY_WITH_PING_DATA = 'CREATE_LOBBY_WITH_PING_DATA'
+  bc.lobby.OPERATION_CREATE_LOBBY_WITH_CONFIG_AND_PING_DATA = 'CREATE_LOBBY_WITH_CONFIG_AND_PING_DATA'
   bc.lobby.OPERATION_FIND_LOBBY = 'FIND_LOBBY'
   bc.lobby.OPERATION_FIND_LOBBY_WITH_PING_DATA = 'FIND_LOBBY_WITH_PING_DATA'
   bc.lobby.OPERATION_FIND_OR_CREATE_LOBBY = 'FIND_OR_CREATE_LOBBY'
@@ -50,7 +52,7 @@ function BCLobby () {
    * @param isReady Initial ready state of this user
    * @param extraJson Initial extra data for this user
    * @param teamCode Preferred team code, or empty for auto assignment
-   * @param jsonSettings Configuration data for the lobby
+   * @param settings Configuration data for the lobby
    * @param callback The method to be invoked when the server response is received
    */
   bc.lobby.createLobby = function (
@@ -82,6 +84,52 @@ function BCLobby () {
   }
 
   /**
+   * Creates a new lobby.
+   *
+   * Service Name - lobby
+   * Service Operation - CREATE_LOBBY_WITH_CONFIG
+   *
+   * @param lobbyType The type of lobby to create
+   * @param rating The skill rating used for matchmaking
+   * @param otherUserCxIds Other users to add to the lobby
+   * @param isReady Initial ready state of this user
+   * @param extraJson Initial extra data for this user
+   * @param teamCode Preferred team code, or empty for auto assignment
+   * @param settings Configuration data for the lobby
+   * @param configOverrides Configuration data for the lobby
+   * @param callback The method to be invoked when the server response is received
+   */
+  bc.lobby.createLobbyWithConfig = function (
+    lobbyType,
+    rating,
+    otherUserCxIds,
+    isReady,
+    extraJson,
+    teamCode,
+    settings,
+    configOverrides,
+    callback
+  ) {
+    var data = {
+      lobbyType: lobbyType,
+      rating: rating,
+      otherUserCxIds: otherUserCxIds,
+      isReady: isReady,
+      extraJson: extraJson,
+      teamCode: teamCode,
+      settings: settings,
+      configOverrides: configOverrides
+    }
+
+    bc.brainCloudManager.sendRequest({
+      service: bc.SERVICE_LOBBY,
+      operation: bc.lobby.OPERATION_CREATE_LOBBY_WITH_CONFIG,
+      data: data,
+      callback: callback
+    })
+  }
+
+  /**
    * Creates a new lobby using collected ping data to select the best region.
    *
    * Service Name - Lobby
@@ -93,7 +141,7 @@ function BCLobby () {
    * @param isReady Initial ready state of this user
    * @param extraJson Initial extra data for this user
    * @param teamCode Preferred team code, or empty for auto assignment
-   * @param jsonSettings Configuration data for the lobby
+   * @param settings Configuration data for the lobby
    * @param callback The method to be invoked when the server response is received
    */
   bc.lobby.createLobbyWithPingData = function (
@@ -119,6 +167,51 @@ function BCLobby () {
     attachPingDataAndSend(
       data,
       bc.lobby.OPERATION_CREATE_LOBBY_WITH_PING_DATA,
+      callback
+    )
+  }
+
+  /**
+   * Creates a new lobby with server config overrides. Uses attached ping data to resolve best location.
+   *
+   * Service Name - lobby
+   * Service Operation - CREATE_LOBBY_WITH_CONFIG_AND_PING_DATA
+   *
+   * @param lobbyType The type of lobby to create
+   * @param rating The skill rating used for matchmaking
+   * @param otherUserCxIds Other users to add to the lobby
+   * @param isReady Initial ready state of this user
+   * @param extraJson Initial extra data for this user
+   * @param teamCode Preferred team code, or empty for auto assignment
+   * @param settings Configuration data for the lobby
+   * @param configOverrides Configuration data for the lobby
+   * @param callback The method to be invoked when the server response is received
+   */
+  bc.lobby.createLobbyWithConfigAndPingData = function (
+    lobbyType,
+    rating,
+    otherUserCxIds,
+    isReady,
+    extraJson,
+    teamCode,
+    settings,
+    configOverrides,
+    callback
+  ) {
+    var data = {
+      lobbyType: lobbyType,
+      rating: rating,
+      otherUserCxIds: otherUserCxIds,
+      isReady: isReady,
+      extraJson: extraJson,
+      teamCode: teamCode,
+      settings: settings,
+      configOverrides: configOverrides
+    }
+
+    attachPingDataAndSend(
+      data,
+      bc.lobby.OPERATION_CREATE_LOBBY_WITH_CONFIG_AND_PING_DATA,
       callback
     )
   }
@@ -232,7 +325,7 @@ function BCLobby () {
    * @param jsonAlgo Matchmaking algorithm configuration
    * @param jsonFilter Matchmaking filter criteria
    * @param otherUserCxIds Other users to include in the lobby
-   * @param jsonSettings Configuration data for the lobby
+   * @param settings Configuration data for the lobby
    * @param isReady Initial ready state of this user
    * @param extraJson Initial extra data for this user
    * @param teamCode Preferred team code, or empty for auto assignment
@@ -284,7 +377,7 @@ function BCLobby () {
    * @param jsonAlgo Matchmaking algorithm configuration
    * @param jsonFilter Matchmaking filter criteria
    * @param otherUserCxIds Other users to include in the lobby
-   * @param jsonSettings Configuration data for the lobby
+   * @param settings Configuration data for the lobby
    * @param isReady Initial ready state of this user
    * @param extraJson Initial extra data for this user
    * @param teamCode Preferred team code, or empty for auto assignment
@@ -588,7 +681,7 @@ function BCLobby () {
    * Service Operation - UpdateSettings
    *
    * @param lobbyId The lobby identifier
-   * @param jsonSettings Updated lobby settings
+   * @param settings Updated lobby settings
    * @param callback The method to be invoked when the server response is received
    */
   bc.lobby.updateSettings = function (lobbyId, settings, callback) {
