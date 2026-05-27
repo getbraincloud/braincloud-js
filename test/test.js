@@ -7682,6 +7682,23 @@ async function testLobby() {
         });
     });
 
+    await asyncTest("createLobbyWithConfig()", 1, () =>
+    {
+        var configOverrides = {
+            teams: [
+                { code: "reserved", minUsers: 0, maxUsers: 1, autoAssign: false },
+                { code: "all", minUsers: 6, maxUsers: 6, autoAssign: true }
+            ]
+        };
+
+        bc.lobby.createLobbyWithConfig("MATCH_UNRANKED", 0, null, true, {}, "all", {}, configOverrides, result =>
+        {
+            console.log("LobbyTest createLobbyWithConfig() callback rcv");
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
     await asyncTest("findOrCreateLobby()", 1, () =>
     {
         bc.lobby.findOrCreateLobby("MATCH_UNRANKED", 0, 1, {strategy:"ranged-absolute",alignment:"center",ranges:[1000]}, {}, null, {},  true, {}, "all", result =>
@@ -7873,7 +7890,7 @@ async function testLobby() {
     });
 
     // Call all the <>WithPingData functions and make sure they go through braincloud
-    await asyncTest("WithPingData()", 6, () =>
+    await asyncTest("WithPingData()", 7, () =>
     {
         bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
         {
@@ -7893,7 +7910,17 @@ async function testLobby() {
                             bc.lobby.createLobbyWithPingData("MATCH_UNRANKED", 0, null, true, {}, "all", {}, result =>
                             {
                                 equal(result.status, 200, "Expecting 200");
-                                resolve_test();
+                                var configOverrides = {
+                                    teams: [
+                                        { code: "reserved", minUsers: 0, maxUsers: 1, autoAssign: false },
+                                        { code: "all", minUsers: 6, maxUsers: 6, autoAssign: true }
+                                    ]
+                                };
+                                bc.lobby.createLobbyWithConfigAndPingData("MATCH_UNRANKED", 0, null, true, {}, "all", {}, configOverrides, result =>
+                                {
+                                    equal(result.status, 200, "Expecting 200");
+                                    resolve_test();
+                                });
                             });
                         });
                     });
@@ -8334,6 +8361,29 @@ async function testBlockchain(){
   });
 }
 
+////////////////////////////////////////
+// Campaign tests
+////////////////////////////////////////
+async function testCampaign(){
+  if(!module("Campaign", () =>
+  {
+      return setUpWithAuthenticate();
+  }, () =>
+  {
+    return tearDownLogout();
+  })) return;
+
+  await asyncTest("getMyCampaigns()", function() {
+    bc.campaign.getMyCampaigns(
+      {},
+      function(result) {
+        equal(result.status, 200, "Expecting 200");
+        resolve_test();
+      }
+    );
+  });
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -8376,6 +8426,7 @@ async function run_tests()
     await testCustomEntity();
     await testGlobalFile();
     await testBlockchain();
+    await testCampaign();
 
     await testRTT();
     await testComms();

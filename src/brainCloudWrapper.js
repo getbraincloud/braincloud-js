@@ -71,6 +71,7 @@ function BrainCloudWrapper (wrapperName) {
     bcw.userItems = bcw.brainCloudClient.userItems
     bcw.customEntity = bcw.brainCloudClient.customEntity
     bcw.blockchain = bcw.brainCloudClient.blockchain
+    bcw.campaign = bcw.brainCloudClient.campaign
     bcw.timeUtils = bcw.brainCloudClient.timeUtils
 
     bcw.brainCloudManager = bcw.brainCloudClient.brainCloudManager =

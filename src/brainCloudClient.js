@@ -58,6 +58,7 @@ function BrainCloudClient () {
     BCGlobalFile.apply(bcc)
     BCCustomEntity.apply(bcc)
     BCBlockchain.apply(bcc)
+    BCCampaign.apply(bcc)
 
     BCTimeUtils.apply(bcc)
 
@@ -110,6 +111,7 @@ function BrainCloudClient () {
     bcc.brainCloudManager.userItems = bcc.userItems
     bcc.brainCloudManager.customEntity = bcc.customEntity
     bcc.brainCloudManager.blockchain = bcc.blockchain
+    bcc.brainCloudManager.campaign = bcc.campaign
     bcc.brainCloudManager.timeUtils = bcc.timeUtils
 
     bcc.brainCloudRttComms.rtt = bcc.rtt
@@ -223,6 +225,8 @@ function BrainCloudClient () {
       bcc.brainCloudClient.customEntity || {}
     bcc.brainCloudManager.blockchain = bcc.brainCloudClient.blockchain =
       bcc.brainCloudClient.blockchain || {}
+    bcc.brainCloudManager.campaign = bcc.brainCloudClient.campaign =
+      bcc.brainCloudClient.campaign || {}
     bcc.brainCloudManager.timeUtils = bcc.brainCloudClient.timeUtils =
       bcc.brainCloudClient.timeUtils || {}
 
