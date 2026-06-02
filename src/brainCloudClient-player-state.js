@@ -361,7 +361,7 @@ function BCPlayerState () {
   /**
    * Get user status
    *
-   * Service Name - PlayerState
+   * Service Name - playerState
    * Service Operation - GET_USER_STATUS
    *
    * @param statusName Updated email

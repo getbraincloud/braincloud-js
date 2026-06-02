@@ -60,8 +60,8 @@ function BCProfanity () {
   /**
    * Replaces the characters of profanity text with a passed character(s).
    *
-   * Service Name - Profanity
-   * Service Operation - ProfanityReplaceText
+   * Service Name - profanity
+   * Service Operation - PROFANITY_REPLACE_TEXT
    *
    * @param text The text to check
    * @param replaceSymbol The text to replace individual characters of profanity text with

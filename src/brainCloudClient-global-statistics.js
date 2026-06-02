@@ -93,7 +93,7 @@ function BCGlobalStatistics () {
   /**
    * Method retrieves the global statistics for the given category.
    *
-   * Service Name - GlobalStatistics
+   * Service Name - globalGameStatistics
    * Service Operation - READ_FOR_CATEGORY
    *
    * @param category The global statistics category

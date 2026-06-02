@@ -765,7 +765,7 @@ function BCAuthentication () {
   /**
    * Resets Universal ID password
    *
-   * Service Name - Authenticate
+   * Service Name - authenticationV2
    * Operation - ResetUniversalIdPassword
    *
    * @param appId the applicationId

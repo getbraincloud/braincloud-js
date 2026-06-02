@@ -13,7 +13,7 @@ function BCRedemptionCodes () {
   /**
    * Redeem a code.
    *
-   * Service Name - RedemptionCode
+   * Service Name - redemptionCode
    * Service Operation - REDEEM_CODE
    *
    * @param scanCode The code to redeem

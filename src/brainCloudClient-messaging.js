@@ -187,8 +187,8 @@ function BCMessaging () {
   /**
    * Sends a simple message to specified list of users.
    *
-   * Service Name - Messaging
-   * Service Operation - SendMessageSimple
+   * Service Name - messaging
+   * Service Operation - SEND_MESSAGE_SIMPLE
    *
    * @param toProfileIds The list of profile ids to send the message to.
    * @param messageText The message text you are sending

@@ -297,7 +297,7 @@ function BCTournament () {
    * Any entry fees will be automatically collected.
    *
    * Service Name - tournament
-   * Service Operation - JOIN_TOURNAMENT
+   * Service Operation - JOTOURNAMENT
    *
    * @param leaderboardId The leaderboard for the tournament
    * @param tournamentCode Tournament to join

@@ -179,8 +179,8 @@ function BCPlayerStatistics () {
    * is simply a set and will not reward the user if their level changes
    * as a result.
    *
-   * Service Name - PlayerStatistics
-   * Service Operation - SetXpPoints
+   * Service Name - playerStatistics
+   * Service Operation - SET_XPPOINTS
    *
    * @param xpValue The amount to set the the user's experience to
    * @param callback The method to be invoked when the server response is received

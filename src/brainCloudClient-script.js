@@ -186,7 +186,7 @@ function BCScript () {
   /**
    * Runs a script from the context of a peer
    *
-   * Service Name - Script
+   * Service Name - script
    * Service Operation - RUN_PEER_SCRIPT
    *
    * @param scriptName The name of the script to be run

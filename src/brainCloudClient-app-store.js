@@ -247,7 +247,7 @@ function BCAppStore () {
   /**
    * Returns up-to-date eligible 'promotions' for the user and a 'promotionsRefreshed' flag indicating whether the user's promotion info required refreshing.
    *
-   * Service Name - AppStore
+   * Service Name - appStore
    * Service Operation - REFRESH_PROMOTIONS
    * @param callback The method to be invoked when the server response is received
    */

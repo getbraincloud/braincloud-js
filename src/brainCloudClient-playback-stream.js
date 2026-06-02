@@ -179,8 +179,8 @@ function BCPlaybackStream () {
   /**
    * Gets recent stream summaries for target player
    *
-   * Service Name - PlaybackStream
-   * Service Operation - GetRecentStreamsForTargetPlayer
+   * Service Name - playbackStream
+   * Service Operation - GET_RECENT_STREAMS_FOR_TARGET_PLAYER
    *
    * @param targetPlayerId The player that was target of the stream
    * @param maxNumStreams The max number of streams to query

@@ -38,7 +38,7 @@ function BCItemCatalog () {
    * Retrieve a page of catalog items from the server, with language fields
    * limited to the text for the current or default language.
    *
-   * Service Name - ItemCatalog
+   * Service Name - itemCatalog
    * Service Operation - GET_CATALOG_ITEMS_PAGE
    *
    * @param context The pagination context returned from a previous catalog page request

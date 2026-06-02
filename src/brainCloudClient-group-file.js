@@ -218,6 +218,8 @@ function BCGroupFile () {
    * Service Name GroupFile
    * Service Operation UpdateFileInfo
    *
+   * Service Name - groupFile
+   * Service Operation - UPDATE_FILE_INFO
    * @param groupId ID of the group
    * @param fileId ID of the file
    * @param version Target version of the file

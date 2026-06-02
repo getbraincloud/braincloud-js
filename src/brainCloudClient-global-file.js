@@ -57,8 +57,8 @@ function BCGlobalFile () {
   /**
    * Returns the CDN of the specified file.
    *
-   * Service Name - GlobalFileV3
-   * Service Operation - GetGlobalCDNUrl
+   * Service Name - globalFileV3
+   * Service Operation - GET_GLOBAL_CDN_URL
    *
    * @param fileId The fileId of the global file
    * @param callback The method to be invoked when the server response is received

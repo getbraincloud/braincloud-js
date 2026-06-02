@@ -370,8 +370,8 @@ function BCAsyncMatch () {
   /**
    * Marks the given match as complete. This call can send a notification message.
    *
-   * Service Name - AsyncMatch
-   * Service Operation - CompleteMatchWithSumamryData
+   * Service Name - asyncMatch
+   * Service Operation - COMPLETE_MATCH_WITH_SUMMARY_DATA
    *
    * @param ownerId   Match owner identifier
    * @param matchId   Match identifier

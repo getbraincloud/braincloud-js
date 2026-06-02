@@ -29,6 +29,8 @@ function BCPushNotifications () {
   /**
    * Deregisters all device tokens currently registered to the user.
    *
+   * Service Name - pushNotification
+   * Service Operation - DEREGISTER_ALL
    * @param callback The method to be invoked when the server response is received
    */
   bc.pushNotification.deregisterAllPushNotificationDeviceTokens = function (

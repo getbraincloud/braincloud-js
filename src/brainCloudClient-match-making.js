@@ -353,8 +353,8 @@ function BCMatchMaking () {
   /**
    * Disables Match Making for the Player
    *
-   * Service Name - MatchMaking
-   * Service Operation - EnableMatchMaking
+   * Service Name - matchMaking
+   * Service Operation - ENABLE_FOR_MATCH
    *
    * @param callback The method to be invoked when the server response is received
    */

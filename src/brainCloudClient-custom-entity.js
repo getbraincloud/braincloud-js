@@ -505,8 +505,8 @@ function BCCustomEntity () {
   /**
    * Increments fields on the specified custom entity owned by the user on the server.
    *
-   * Service Name - CustomEntity
-   * Service Operation - IncrementData
+   * Service Name - customEntity
+   * Service Operation - INCREMENT_DATA
    *
    * @param entityType The entity type as defined by the user
    * @param entityId The entity id as defined by the system

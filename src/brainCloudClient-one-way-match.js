@@ -36,8 +36,8 @@ function BCOneWayMatch () {
   /**
    * Cancels a match
    *
-   * Service Name - OneWayMatch
-   * Service Operation - CancelMatch
+   * Service Name - onewayMatch
+   * Service Operation - CANCEL_MATCH
    *
    * @param playbackStreamId The playback stream id returned in the start match
    * @param callback The method to be invoked when the server response is received

@@ -37,8 +37,8 @@ function BCS3Handler () {
   /**
    * Retrieves the details of custom files stored on the server
    *
-   * Service Name - S3Handling
-   * Service Operation - GetFileList
+   * Service Name - s3Handling
+   * Service Operation - GET_FILE_LIST
    *
    * @param category  Category of files to retrieve
    * @param callback  Instance of IServerCallback to call when the server response is receieved

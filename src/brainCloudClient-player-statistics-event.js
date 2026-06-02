@@ -20,8 +20,8 @@ function BCPlayerStatisticsEvent () {
    * This mechanism supersedes the PlayerStatisticsService API methods,
    * which only update raw statistics without triggering rewards.
    *
-   * Service Name - PlayerStatisticsEvent
-   * Service Operation - Trigger
+   * Service Name - playerStatisticsEvent
+   * Service Operation - TRIGGER
    *
    * @param eventName Name of the statistics event to trigger.
    * @param eventMultiplier Optional multiplier to apply to the event.

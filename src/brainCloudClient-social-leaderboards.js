@@ -970,7 +970,7 @@ function BCSocialLeaderboard () {
    * Retrieve the social leaderboard for a group by its version.
    *
    * Service Name - leaderboard
-   * Service Operation - GET_PLAYERS_SOCIAL_LEADERBOARD_BY_VERSION
+   * Service Operation - GET_GROUP_SOCIAL_LEADERBOARD
    *
    * @param leaderboardId The leaderboard to retrieve
    * @param groupId The ID of the group

@@ -445,8 +445,8 @@ function BCGamification () {
   /**
    *  Method returns quests with a complex percentage.
    *
-   * Service Name - Gamification
-   * Service Operation - ReadQuestsWithComplexPercentage
+   * Service Name - gamification
+   * Service Operation - READ_QUESTS_WITH_COMPLEX_PERCENTAGE
    *
    * @param includeMetaData   Whether to return meta data as well
    * @param callback Method to be invoked when the server response is received.

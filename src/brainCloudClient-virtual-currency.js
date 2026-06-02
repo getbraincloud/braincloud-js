@@ -64,8 +64,8 @@ function BCVirtualCurrency () {
   /**
    * Retrieve the peer user's currency account. Optional parameter: `vcId` (if retrieving a specific currency).
    *
-   * Service Name - VirtualCurrency
-   * Service Operation - GetPeerCurrency
+   * Service Name - virtualCurrency
+   * Service Operation - GET_PEER_VC
    *
    * @param vcId Optional currency id to retrieve (pass NULL to get all currencies)
    * @param peerCode The peer code identifying the other user

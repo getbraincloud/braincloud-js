@@ -15,6 +15,8 @@ function BCDataStream () {
   /**
    * Creates custom data stream page event
    *
+   * Service Name - dataStream
+   * Service Operation - CUSTOM_PAGE_EVENT
    * @param eventName Name of event
    * @param eventProperties Properties of event
    * @param callback The method to be invoked when the server response is received

@@ -1092,7 +1092,7 @@ function BCIdentity () {
    * current profile.
    *
    * Service Name - identity
-   * Service Operation - Merge
+   * Service Operation - MERGE
    *
    * @param parseId The Parse id of the user
    * @param authenticationToken The validated token from Parse

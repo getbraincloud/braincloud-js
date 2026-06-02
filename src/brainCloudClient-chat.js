@@ -244,8 +244,8 @@ function BCChat () {
   /**
    * Send a chat message with text only
    *
-   * Service Name - Chat
-   * Service Operation - PostChatMessage
+   * Service Name - chat
+   * Service Operation - POST_CHAT_MESSAGE
    *
    * @param channelId Channel id to post message to.
    * @param text The text message.

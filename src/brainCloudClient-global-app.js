@@ -31,7 +31,7 @@ function BCGlobalApp () {
    * Returns a list of properties, identified by the property names provided.
    * If a property from the list isn't found, it just isn't returned (no error).
    *
-   * Service Name - GlobalApp
+   * Service Name - globalApp
    * Service Operation - READ_SELECTED_PROPERTIES
    *
    * @param propertyNames Specifies which properties to return

@@ -952,7 +952,7 @@ function BCGroup () {
   /**
    * Update the acl settings for a group entity, enforcing ownership.
    *
-   * Service Name - Group
+   * Service Name - group
    * Service Operation - UPDATE_GROUP_ENTITY_ACL
    *
    * @param groupId The id of the group

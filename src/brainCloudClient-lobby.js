@@ -770,7 +770,7 @@ function BCLobby () {
   /**
    * Retrieves visible lobby instances matching the given criteria.
    *
-   * Service Name - Lobby
+   * Service Name - lobby
    * Service Operation - GET_LOBBY_INSTANCES
    *
    * @param lobbyType The type of lobby

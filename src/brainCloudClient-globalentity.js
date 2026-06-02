@@ -353,7 +353,7 @@ function BCGlobalEntity () {
    * Method to retrieve previous or next pages after having called the GetPage method.
    *
    * Service Name - globalEntity
-   * Service Operation - GET_PAGE_OFFSET
+   * Service Operation - GET_PAGE_BY_OFFSET
    *
    * @param context The context string returned from the server from a
    *      previous call to GetPage or GetPageOffset

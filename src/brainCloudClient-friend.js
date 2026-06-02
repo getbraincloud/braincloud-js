@@ -417,7 +417,7 @@ function BCFriend () {
   /**
    * Unlinks the current user and the specified users as brainCloud friends.
    *
-   * Service Name - Friend
+   * Service Name - friend
    * Service Operation - REMOVE_FRIENDS
    *
    * @param profileIds Collection of profile IDs.

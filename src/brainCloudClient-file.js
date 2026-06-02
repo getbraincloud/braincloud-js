@@ -285,6 +285,8 @@ function BCFile () {
   /**
    * Returns the CDN url for a file object
    *
+   * Service Name - file
+   * Service Operation - GET_CDN_URL
    * @param cloudPath File path
    * @param cloudFileName File name
    * @param callback The method to be invoked when the server response is received
