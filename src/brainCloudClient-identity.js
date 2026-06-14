@@ -58,7 +58,7 @@ function BCIdentity () {
     google: 'Google',
     googleOpenId: 'GoogleOpenId',
     twitter: 'Twitter',
-    twitter: 'Apple',
+    apple: 'Apple',
     parse: 'Parse',
     external: 'External',
     unknown: 'UNKNOWN'

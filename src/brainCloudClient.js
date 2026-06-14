@@ -269,14 +269,17 @@ function BrainCloudClient () {
   }
 
   /**
-   * Method initializes the BrainCloudClient. Automatically passes in current serverURL
-   * as https://api.braincloudservers.com/dispatcherv2
+   * Method initializes the BrainCloudClient.
    *
-   * @param secretKey The secret key for your game
    * @param appId The app id
-   * @param appVersion The version
+   * @param secret The secret key for your app
+   * @param appVersion The app version
+   * @param serverUrl Optional. The brainCloud server URL to target, e.g.
+   *   "https://api.braincloudservers.com/dispatcherv2". When omitted, the default
+   *   production server URL is used; pass this to target another environment instead of
+   *   calling setServerUrl() separately.
    */
-  bcc.initialize = function (appId, secret, appVersion) {
+  bcc.initialize = function (appId, secret, appVersion, serverUrl) {
     bcc.resetCommunication()
     function isBlank (str) {
       return !str || /^\s*$/.test(str)
@@ -294,6 +297,12 @@ function BrainCloudClient () {
     bcc.appVersion = appVersion
 
     bcc.brainCloudManager.initialize(appId, secret, appVersion)
+
+    // Optional explicit server URL (e.g. for a non-production cluster). When omitted, the
+    // default production server URL set by brainCloudManager.initialize is kept.
+    if (!isBlank(serverUrl)) {
+      bcc.setServerUrl(serverUrl)
+    }
   }
 
   bcc.initializeWithApps = function (defaultAppId, secretMap, appVersion) {

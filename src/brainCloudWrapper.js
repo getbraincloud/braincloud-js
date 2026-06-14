@@ -185,25 +185,24 @@ function BrainCloudWrapper (wrapperName) {
   /**
    * Method initializes the BrainCloudClient.
    *
-   * @param serverURL The url to the brainCloud server
-   * @param secretKey The secret key for your app
    * @param appId The app id
-   * @param version The app version
-   * @param companyName The company name used in the keychain for storing anonymous and profile ids.
-   * You are free to pick anything you want.
-   * @param appName The app name used in the keychain for storing anonymous and profile ids.
-   * You are free to pick anything you want.
+   * @param secret The secret key for your app
+   * @param appVersion The app version
+   * @param serverUrl Optional. The brainCloud server URL to target, e.g.
+   *   "https://api.braincloudservers.com/dispatcherv2". When omitted, the default
+   *   production server URL is used; pass this to target another environment instead of
+   *   calling brainCloudClient.setServerUrl() separately.
    */
 
-  bcw.initialize = function (appId, secret, appVersion) {
+  bcw.initialize = function (appId, secret, appVersion, serverUrl) {
     bcw.initializeParams = {
       appId: appId,
       secretKey: secret,
       appVersion: appVersion,
-      serverUrl: '',
+      serverUrl: serverUrl || '',
       secretMap: null
     }
-    bcw.brainCloudClient.initialize(appId, secret, appVersion)
+    bcw.brainCloudClient.initialize(appId, secret, appVersion, serverUrl)
   }
 
   bcw.initializeWithApps = function (defaultAppId, secretMap, appVersion) {
