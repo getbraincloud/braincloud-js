@@ -37,8 +37,11 @@ Outputs (git-ignored, generated):
 <script>
   var bc = new BrainCloudWrapper("myApp");
   bc.initialize(appId, appSecret, appVersion);
-  // initialize() targets production by default; for any other cluster set the server URL:
-  bc.brainCloudClient.setServerUrl("https://api.braincloudservers.com/dispatcherv2");
+  // initialize() targets production by default; to target another cluster, pass the server
+  // URL as the optional 4th argument (preferred):
+  // bc.initialize(appId, appSecret, appVersion, "https://api.braincloudservers.com/dispatcherv2");
+  // ...or set it explicitly after initialize():
+  // bc.brainCloudClient.setServerUrl("https://api.braincloudservers.com/dispatcherv2");
   bc.authenticateAnonymous(function (r) { console.log(r.status); });
 </script>
 ```

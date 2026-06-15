@@ -305,7 +305,18 @@ function BrainCloudClient () {
     }
   }
 
-  bcc.initializeWithApps = function (defaultAppId, secretMap, appVersion) {
+  /**
+   * Method initializes the BrainCloudClient with multiple app/secret pairs.
+   *
+   * @param defaultAppId The app id to use by default
+   * @param secretMap A map of app ids to secret keys
+   * @param appVersion The app version
+   * @param serverUrl Optional. The brainCloud server URL to target, e.g.
+   *   "https://api.braincloudservers.com/dispatcherv2". When omitted, the default
+   *   production server URL is used; pass this to target another environment instead of
+   *   calling setServerUrl() separately.
+   */
+  bcc.initializeWithApps = function (defaultAppId, secretMap, appVersion, serverUrl) {
     bcc.resetCommunication()
     function isBlank (str) {
       return !str || /^\s*$/.test(str)
@@ -330,6 +341,12 @@ function BrainCloudClient () {
       secretMap,
       appVersion
     )
+
+    // Optional explicit server URL (e.g. for a non-production cluster). When omitted, the
+    // default production server URL set by brainCloudManager.initializeWithApps is kept.
+    if (!isBlank(serverUrl)) {
+      bcc.setServerUrl(serverUrl)
+    }
   }
 
   /**

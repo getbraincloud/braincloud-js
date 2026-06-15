@@ -189,10 +189,8 @@ function initializeClient()
     var secretMap = {};
     secretMap[GAME_ID] = SECRET;
     secretMap[CHILD_APP_ID] = CHILD_SECRET;
-    bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
+    bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION, SERVER_URL);
 
-    // point to internal (default is prod)
-    bc.brainCloudClient.setServerUrl(SERVER_URL);
 
     bc.brainCloudClient.authentication.clearSavedProfileId();
 }
@@ -3271,9 +3269,7 @@ async function testGroup() {
 async function testIdentity() {
     bc.brainCloudClient.setDebugEnabled(true)
 
-    bc.initialize(GAME_ID, SECRET, GAME_VERSION)
-
-    bc.brainCloudClient.setServerUrl(SERVER_URL)
+    bc.initialize(GAME_ID, SECRET, GAME_VERSION, SERVER_URL)
 
     var today = new Date()
     var time = today.getTime()
@@ -6354,11 +6350,7 @@ async function testWrapper()
     bc.brainCloudClient.setDebugEnabled(true);
 
     //initialize with our game id, secret and game version
-    bc.initialize(GAME_ID, SECRET, GAME_VERSION);
-
-    // point to internal (default is prod)
-    bc.brainCloudClient.setServerUrl(SERVER_URL);
-
+    bc.initialize(GAME_ID, SECRET, GAME_VERSION, SERVER_URL);
 
     await asyncTest("authenticateAnonymous()", 2, function() {
         bc.resetStoredProfileId();
@@ -6672,8 +6664,7 @@ async function testWrapper()
         var secretMap1 = {}
         secretMap1[GAME_ID] = SECRET
         secretMap1[CHILD_APP_ID] = CHILD_SECRET
-        wrapper1.brainCloudClient.initializeWithApps(GAME_ID, secretMap1, GAME_VERSION)
-        wrapper1.brainCloudClient.setServerUrl(SERVER_URL);
+        wrapper1.brainCloudClient.initializeWithApps(GAME_ID, secretMap1, GAME_VERSION, SERVER_URL)
         wrapper1.brainCloudClient.authentication.clearSavedProfileId();
 
         var wrapper2 = new BC.BrainCloudWrapper("JSWrapper2")
@@ -6682,8 +6673,7 @@ async function testWrapper()
         var secretMap2 = {}
         secretMap2[GAME_ID] = SECRET
         secretMap2[CHILD_APP_ID] = CHILD_SECRET
-        wrapper2.brainCloudClient.initializeWithApps(GAME_ID, secretMap2, GAME_VERSION)
-        wrapper2.brainCloudClient.setServerUrl(SERVER_URL);
+        wrapper2.brainCloudClient.initializeWithApps(GAME_ID, secretMap2, GAME_VERSION, SERVER_URL)
         wrapper2.brainCloudClient.authentication.clearSavedProfileId();
 
         // Register a callback for when the long session re-authentication response is received
