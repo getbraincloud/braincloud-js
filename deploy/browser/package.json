@@ -1,0 +1,15 @@
+{
+  "name": "braincloud-browser-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Builds a self-contained browser bundle of the brainCloud JS client (single <script>, no shims).",
+  "scripts": {
+    "build": "./build.sh"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "crypto-js": "^4.2.0",
+    "esbuild": "^0.24.0",
+    "get-user-locale": "^1.4.0"
+  }
+}
