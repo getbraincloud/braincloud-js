@@ -49,6 +49,7 @@ function BrainCloudManager ()
     bcm._packetId = 0;
     bcm._loader = null;
     bcm._eventCallback = null;
+    bcm._autoReconnectCallback = null;
     bcm._rewardCallback = null;
     bcm._errorCallback = null;
     bcm._jsonedQueue = "";
@@ -68,6 +69,8 @@ function BrainCloudManager ()
     bcm._appVersion = "";
     bcm._debugEnabled = false;
     bcm._compressionEnabled = true;
+    bcm._compressionThreshold = 51200;
+    bcm._autoReconnectEnabled = false;
 
     bcm._requestInProgress = false;
     bcm._bundleDelayActive = false;
@@ -86,10 +89,8 @@ function BrainCloudManager ()
     bcm._isInitialized = false;
     bcm._isAuthenticated = false;
 
-    bcm.compressRequest = function(requestToCompress) {    
-        var encodedData = new TextEncoder().encode(requestToCompress);
-    
-        var compressionStream = new Blob([encodedData]).stream().pipeThrough(new CompressionStream("gzip"));
+    bcm.compressRequest = function(requestToCompress) {        
+        var compressionStream = new Blob([requestToCompress]).stream().pipeThrough(new CompressionStream("gzip"));
     
         return new Response(compressionStream).blob()
             .then(function(compressedBlob) {
@@ -211,6 +212,14 @@ function BrainCloudManager ()
     bcm.deregisterEventCallback = function()
     {
         bcm._eventCallback = null;
+    };
+
+    bcm.registerAutoReconnectCallback = function (autoReconnectCallback) {
+        bcm._autoReconnectCallback = autoReconnectCallback;
+    };
+
+    bcm.deregisterAutoReconnectCallback = function() {
+        bcm._autoReconnectCallback = null;
     };
 
     bcm.registerRewardCallback = function(rewardCallback)
@@ -438,20 +447,19 @@ function BrainCloudManager ()
                     bcm._sessionId = "";
                     bcm.authentication.profileId = "";
                 }
-                else if (bcm._inProgressQueue[c].operation == "AUTHENTICATE")
-                {
+                else if (bcm._inProgressQueue[c].operation == "AUTHENTICATE") {
                     bcm._isAuthenticated = true;
-                    if (data.hasOwnProperty("playerSessionExpiry"))
-                    {
+                    if (data.hasOwnProperty("playerSessionExpiry")) {
                         bcm._idleTimeout = data.playerSessionExpiry * 0.85;
                     }
-                    else
-                    {
+                    else {
                         bcm._idleTimeout = 30;
                     }
-                    if(data.hasOwnProperty("maxKillCount"))
-                    {
+                    if (data.hasOwnProperty("maxKillCount")) {
                         bcm._killSwitchThreshold = data.maxKillCount;
+                    }
+                    if (data.hasOwnProperty("compressIfLarger")) {
+                        bcm._compressionThreshold = data.compressIfLarger;
                     }
                     bcm.resetErrorCache();
                     bcm.startHeartBeat();
@@ -495,6 +503,41 @@ function BrainCloudManager ()
                 var statusCode = messages[c].status;
                 var reasonCode = messages[c].reason_code;
 
+                // If the authenticated session has expired, and long session is enabled, attempt to re-authenticate and retry lost call(s)
+                if (reasonCode === 40303 && bcm._autoReconnectEnabled && bcm._inProgressQueue[c].operation !== "AUTHENTICATE" && bcm._isAuthenticated) {
+                    var expiredCall = bcm._inProgressQueue.slice(0)
+                    var queuedCalls = bcm._sendQueue.splice(0, bcm._sendQueue.length)
+
+                    bcm.stopHeartBeat()
+                    bcm._isAuthenticated = false
+                    bcm._sessionId = ""
+                    bcm.packetId = 0
+                    bcm._requestInProgress = false
+
+                    bcm.authentication.authenticateAnonymous(false, function (result) {
+                        if (result.status === 200) {
+                            bcm.debugLog("Long Session reconnect successful. Re-queuing expired calls . . .")
+
+                            bcm._sendQueue = expiredCall.concat(queuedCalls)
+                            bcm.processQueue()
+
+
+                        }
+                        else {
+                            bcm.debugLog("Long Session reconnect failed")
+
+                            _autoReconnectEnabled = false
+                        }
+
+                        if (bcm._autoReconnectCallback) {
+                            bcm._autoReconnectCallback(result);
+                        }
+                    })
+
+                    return
+                }
+                
+                // PLAYER_SESSION_EXPIRED, NO_SESSON, PLAYER_SESSION_LOGGED_OUT
                 if (reasonCode === 40303 ||
                     reasonCode === 40304 ||
                     reasonCode === 40356)
@@ -708,8 +751,12 @@ function BrainCloudManager ()
         xmlhttp.setRequestHeader("X-SIG", sig);
         xmlhttp.setRequestHeader('X-APPID', bcm._appId);
 
-        if (bcm._compressionEnabled) {
-            bcm.compressRequest(bcm._jsonedQueue)
+        // Used to check if request should be compressed
+        var encodedRequest = new TextEncoder().encode(bcm._jsonedQueue);
+        var requestSize = encodedRequest.length;
+
+        if (bcm._compressionEnabled && bcm._compressionThreshold >= 0 && requestSize >= bcm._compressionThreshold) {
+            bcm.compressRequest(encodedRequest)
                 .then(function (compressedData) {
                     fetch(bcm._dispatcherUrl, {
                         method: "POST",

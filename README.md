@@ -82,6 +82,11 @@ _bc.initialize(_appId, _secret, _appVersion);
 ```
 Your _appId, _secret, is set on the brainCloud dashboard. Under Design | Core App Info > Application IDs
 
+`initialize()` targets the brainCloud production servers by default. To target a different environment, pass the optional 4th `serverUrl` argument:
+```js
+_bc.initialize(_appId, _secret, _appVersion, "https://api.braincloudservers.com/dispatcherv2");
+```
+
 ![wrapper](/Screenshots/bc-ids.png?raw=true)
 
 _wrapperName prefixes saved operations that the wrapper will make. Use a _wrapperName if you plan on having multiple instances of brainCloud running.

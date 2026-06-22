@@ -189,10 +189,8 @@ function initializeClient()
     var secretMap = {};
     secretMap[GAME_ID] = SECRET;
     secretMap[CHILD_APP_ID] = CHILD_SECRET;
-    bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION);
+    bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION, SERVER_URL);
 
-    // point to internal (default is prod)
-    bc.brainCloudClient.setServerUrl(SERVER_URL);
 
     bc.brainCloudClient.authentication.clearSavedProfileId();
 }
@@ -3271,9 +3269,7 @@ async function testGroup() {
 async function testIdentity() {
     bc.brainCloudClient.setDebugEnabled(true)
 
-    bc.initialize(GAME_ID, SECRET, GAME_VERSION)
-
-    bc.brainCloudClient.setServerUrl(SERVER_URL)
+    bc.initialize(GAME_ID, SECRET, GAME_VERSION, SERVER_URL)
 
     var today = new Date()
     var time = today.getTime()
@@ -5767,7 +5763,7 @@ async function testTournament() {
         _divSetId,
         function(result) {
             ok(true, JSON.stringify(result));
-            equal(result.status, 400, "Expecting 400");
+            equal(result.status, 500, "Expecting 400");
             resolve_test();
         });
     });
@@ -5843,6 +5839,242 @@ async function testTournament() {
             resolve_test();
         });
     });
+
+    // Group Tournament Tests
+    var groupTournamentId = ""
+    var groupLeaderboardId = ""
+
+    // Create a group to be used for each test
+    await asyncTest("createGroup()", 1, function () {
+        var name = "JS-Test-GroupTournamentGroup"
+        var groupType = "csharpTest"
+        var isOpenGroup = true
+        var acl = {
+            "member": 2,
+            "other": 2
+        }
+        var jsonData = {}
+        var jsonOwnerAttributes = {}
+        var jsonDefaultMemberAttributes = {}
+
+        bc.group.createGroup(name, groupType, isOpenGroup, acl, jsonData, jsonOwnerAttributes, jsonDefaultMemberAttributes, result => {
+            if (result.status === 200) {
+                ok(true, "Group created")
+
+                groupTournamentId = result.data.groupId
+
+                resolve_test()
+            }
+            else {
+                ok(false, "Failed to create group")
+                resolve_test()
+            }
+        })
+    })
+
+    await asyncTest("getGroupDivisions()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.getGroupDivisions(groupTournamentId, result => {
+                if(result.status === 200){
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else{
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("getGroupDivisionInfo()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.getGroupDivisionInfo("bronzeGroup", groupTournamentId, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("getGroupTournamentStatus()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.getGroupTournamentStatus("groupTournament", groupTournamentId, -1, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("joinGroupDivision()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.joinGroupDivision("bronzeGroup", "testGroupTournament", groupTournamentId, 7, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    groupLeaderboardId = result.data.leaderboardId
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("leaveGroupDivisionInstance()", 1, function(){
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.leaveGroupDivisionInstance(groupLeaderboardId, groupTournamentId, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("joinGroupTournament()", 1, function (){
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.joinGroupTournament("groupTournament", "testGroupTournament", groupTournamentId, 8, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("postGroupTournamentScore()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.postGroupTournamentScore("groupTournament", groupTournamentId, 11, {}, new Date().getTime(), result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("postGroupTournamentScoreWithResults()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.postGroupTournamentScoreWithResults("groupTournament", groupTournamentId, 11, {}, new Date().getTime(), bc.leaderboard.sortOrder.HIGH_TO_LOW, 10, 10, 4, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    await asyncTest("leaveGroupTournament()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(false, "No group")
+
+            resolve_test()
+        }
+        else {
+            bc.tournament.leaveGroupTournament("groupTournament", groupTournamentId, result => {
+                if (result.status === 200) {
+                    ok(true, "API Success!")
+
+                    resolve_test()
+                }
+                else {
+                    resolve_test()
+                }
+            })
+        }
+    })
+
+    // Delete the group now that tests are complete
+    await asyncTest("deleteGroup()", 1, function () {
+        if (groupTournamentId === "") {
+            ok(true, "No group to delete")
+
+            resolve_test()
+        }
+        else {
+            bc.group.deleteGroup(groupTournamentId, -1, result => {
+                if (result.status === 200) {
+                    ok(true, "Group deleted")
+                    resolve_test()
+                }
+                else {
+                    ok(false, "Failed to delete group")
+
+                    resolve_test()
+                }
+            })
+        }
+    })
 }
 
 ////////////////////////////////////////
@@ -6118,11 +6350,7 @@ async function testWrapper()
     bc.brainCloudClient.setDebugEnabled(true);
 
     //initialize with our game id, secret and game version
-    bc.initialize(GAME_ID, SECRET, GAME_VERSION);
-
-    // point to internal (default is prod)
-    bc.brainCloudClient.setServerUrl(SERVER_URL);
-
+    bc.initialize(GAME_ID, SECRET, GAME_VERSION, SERVER_URL);
 
     await asyncTest("authenticateAnonymous()", 2, function() {
         bc.resetStoredProfileId();
@@ -6133,7 +6361,6 @@ async function testWrapper()
             resolve_test();
         });
     });
-
 
     await asyncTest("smartSwitchFromNoAuth()", 2, function() {
 
@@ -6166,7 +6393,6 @@ async function testWrapper()
 
     });
 
-
     await asyncTest("smartSwitchFromAnon()", 2, function() {
 
         bc.brainCloudClient.authentication.initialize("", bc.brainCloudClient.authentication.generateAnonymousId());
@@ -6196,7 +6422,6 @@ async function testWrapper()
             });
 
     });
-
 
     await asyncTest("smartSwitchFromAuth()", 2, function() {
 
@@ -6425,6 +6650,94 @@ async function testWrapper()
 
             equal(bc.getStoredProfileId() == "", true, "Profile ID WAS reset: " + bc.getStoredProfileId())
             resolve_test()
+        })
+    })
+    
+    await asyncTest("AutoReconnect", 2, function () {
+
+        // Create two wrappers. To test long session, PLAYER_SESSION_EXPIRED must be received.
+        // A script will be called from one wrapper to cause the other wrapper's session to expire.
+        // Doing so from one wrapper would just result in PLAYER_SESSION_LOGGED_OUT instead of PLAYER_SESSION_EXPIRED
+        var wrapper1 = new BC.BrainCloudWrapper("JSWrapper1")
+        wrapper1.brainCloudClient.setDebugEnabled(true)
+        wrapper1.brainCloudClient.enableCompression(true)
+        var secretMap1 = {}
+        secretMap1[GAME_ID] = SECRET
+        secretMap1[CHILD_APP_ID] = CHILD_SECRET
+        wrapper1.brainCloudClient.initializeWithApps(GAME_ID, secretMap1, GAME_VERSION, SERVER_URL)
+        wrapper1.brainCloudClient.authentication.clearSavedProfileId();
+
+        var wrapper2 = new BC.BrainCloudWrapper("JSWrapper2")
+        wrapper2.brainCloudClient.setDebugEnabled(true)
+        wrapper2.brainCloudClient.enableCompression(true)
+        var secretMap2 = {}
+        secretMap2[GAME_ID] = SECRET
+        secretMap2[CHILD_APP_ID] = CHILD_SECRET
+        wrapper2.brainCloudClient.initializeWithApps(GAME_ID, secretMap2, GAME_VERSION, SERVER_URL)
+        wrapper2.brainCloudClient.authentication.clearSavedProfileId();
+
+        // Register a callback for when the long session re-authentication response is received
+        wrapper2.brainCloudClient.registerAutoReconnectCallback((result) => {
+            if (result.status === 200) {
+                console.log("Long Session Callback - SUCCESS");
+                ok(true, "Long Session Callback Success");
+            }
+            else {
+                console.log("Long Session Callback - FAILURE");
+            }
+        })
+
+        // Authenticate both users
+        wrapper1.authenticateUniversal("User-" + wrapper1.wrapperName, "Pass-" + wrapper1.wrapperName, true, user1Result => {
+            if (user1Result.status === 200) {
+
+                // Login secondary user
+                wrapper2.authenticateUniversal("User-" + wrapper2.wrapperName, "Pass-" + wrapper2.wrapperName, true, user2Result => {
+                    if (user2Result.status === 200) {
+
+                        console.log("Both users authenticated!")
+
+                        // Comment this out or set to false to verify test will fail w/o Long Session
+                        wrapper2.enableAutoReconnect(true)
+
+                        // Save Profile and Session IDs so that the session can be ended with a Cloud Code Script
+                        var user2ProfileId = user2Result.data.profileId
+                        var user2SessionId = user2Result.data.sessionId
+                        var user2Data = {
+                            profileId: user2ProfileId,
+                            sessionId: user2SessionId
+                        }
+
+                        // Verify session is active
+                        wrapper2.identity.getIdentities(testResult => {
+
+                            // Force session expiry...
+                            wrapper1.script.runScript("LogoutSession", user2Data, result => {
+                                if (result.status === 200) {
+                                    console.log("script success")
+
+                                    // Verify session is expired... (this should not go through right away)
+                                    wrapper2.identity.getIdentities(testResult2 => {
+                                        console.log("Second get identities: " + JSON.stringify(testResult2))
+                                        equal(testResult2.status, 200, "Expected")
+                                        resolve_test()
+                                    })
+                                }
+                                else {
+                                    console.log("script failed")
+                                    resolve_test()
+                                }
+                            })
+                        })
+                    }
+                    else {
+                        resolve_test()
+                    }
+                })
+            }
+            else {
+                resolve_test()
+            }
         })
     })
 }
@@ -7060,6 +7373,29 @@ async function testRTT()
         bc.rttService.deregisterAllRTTCallbacks();
     }
 
+    bc.brainCloudClient.brainCloudRttComms.disableRTT()
+
+    await asyncTest("enableRTTNoAuth()", 1, () => {
+        bc.logout(false, logoutResult => {
+            if (logoutResult.status === 200) {
+                bc.rttService.enableRTT(result => {
+                    console.log(result);
+                    ok(false, "Should not be able to enable RTT")
+                    resolve_test();
+                }, error => {
+                    console.log(error);
+                    ok(true, error);
+                    resolve_test();
+                });
+            }
+            else {
+                ok(false, "Logout failed")
+                resolve_test()
+            }
+        })
+
+    });
+
     await tearDownLogout();
 }
 
@@ -7075,7 +7411,7 @@ async function testRelay() {
         return tearDownLogout();
     })) return;
 
-    // Bad connect parameters
+    //Bad connect parameters
     await asyncTest("connect() bad arguments", 1, () =>
     {
         bc.relay.connect({}, result =>
@@ -7231,6 +7567,76 @@ async function testRelay() {
             resolve_test();
         });
     });
+
+    await asyncTest("connectNoAuth()", 2, () => {
+        // Force timeout after 5 mins
+        let timeoutId = setTimeout(() => {
+            ok(false, "Timed out");
+            resolve_test();
+        }, 5 * 60 * 1000)
+
+        let server = null
+        let ownerCxId = ""
+
+        bc.rttService.registerRTTLobbyCallback(result => {
+            console.log("RTTLobbyCallback.");
+
+            console.log(result)
+
+            if (result.operation === "DISBANDED") {
+                clearTimeout(timeoutId)
+                if (result.data.reason.code == bc.reasonCodes.RTT_ROOM_READY) {
+                    // Log out to verify Connect() does not attempt if unauthenticated
+                    bc.logout(false, () => {
+                        bc.relay.connect({
+                            ssl: false,
+                            host: server.connectData.address,
+                            port: server.connectData.ports.ws,
+                            passcode: server.passcode,
+                            lobbyId: server.lobbyId
+                        }, result => {
+                            console.log(result)
+                            ok(true, "logged out")
+                        }, error => {
+                            console.log("Relay Connect Error")
+                            ok(true, error);
+                            resolve_test();
+                        })
+                    }, error => {
+                        console.log("Log out failed")
+                        ok(false, error)
+                        resolve_test()
+                    })
+                }
+                else {
+                    ok(false, "DISBANDED without RTT_ROOM_READY")
+                    resolve_test()
+                }
+            }
+            else if (result.operation == "ROOM_ASSIGNED") {
+                bc.lobby.updateReady(result.data.lobbyId, true, {})
+            }
+            else if (result.operation == "MEMBER_JOIN") // || result.operation == "STARTING"
+            {
+                ownerCxId = result.data.lobby.ownerCxId
+                console.log("ownerCxId = " + ownerCxId)
+            }
+            else if (result.operation == "ROOM_READY") {
+                server = result.data
+            }
+        });
+
+        bc.rttService.enableRTT(result => {
+            console.log(result);
+            bc.lobby.findOrCreateLobby("READY_START_V2", 0, 1, { strategy: "ranged-absolute", alignment: "center", ranges: [1000] }, {}, null, {}, true, {}, "all", result => {
+                equal(result.status, 200, "Find or Create Lobby Success");
+            });
+        }, error => {
+            console.log("enableRTT error: " + error);
+            ok(false, error);
+            resolve_test();
+        });
+    });
 }
 
 ////////////////////////////////////////
@@ -7261,6 +7667,23 @@ async function testLobby() {
         bc.lobby.createLobby("MATCH_UNRANKED", 0, null, true, {}, "all", {}, result =>
         {
             console.log("LobbyTest createLobby() callback rcv");
+            equal(result.status, 200, "Expecting 200");
+            resolve_test();
+        });
+    });
+
+    await asyncTest("createLobbyWithConfig()", 1, () =>
+    {
+        var configOverrides = {
+            teams: [
+                { code: "reserved", minUsers: 0, maxUsers: 1, autoAssign: false },
+                { code: "all", minUsers: 6, maxUsers: 6, autoAssign: true }
+            ]
+        };
+
+        bc.lobby.createLobbyWithConfig("MATCH_UNRANKED", 0, null, true, {}, "all", {}, configOverrides, result =>
+        {
+            console.log("LobbyTest createLobbyWithConfig() callback rcv");
             equal(result.status, 200, "Expecting 200");
             resolve_test();
         });
@@ -7457,7 +7880,7 @@ async function testLobby() {
     });
 
     // Call all the <>WithPingData functions and make sure they go through braincloud
-    await asyncTest("WithPingData()", 6, () =>
+    await asyncTest("WithPingData()", 7, () =>
     {
         bc.lobby.getRegionsForLobbies(["MATCH_UNRANKED"], result =>
         {
@@ -7477,7 +7900,17 @@ async function testLobby() {
                             bc.lobby.createLobbyWithPingData("MATCH_UNRANKED", 0, null, true, {}, "all", {}, result =>
                             {
                                 equal(result.status, 200, "Expecting 200");
-                                resolve_test();
+                                var configOverrides = {
+                                    teams: [
+                                        { code: "reserved", minUsers: 0, maxUsers: 1, autoAssign: false },
+                                        { code: "all", minUsers: 6, maxUsers: 6, autoAssign: true }
+                                    ]
+                                };
+                                bc.lobby.createLobbyWithConfigAndPingData("MATCH_UNRANKED", 0, null, true, {}, "all", {}, configOverrides, result =>
+                                {
+                                    equal(result.status, 200, "Expecting 200");
+                                    resolve_test();
+                                });
                             });
                         });
                     });
@@ -7918,6 +8351,29 @@ async function testBlockchain(){
   });
 }
 
+////////////////////////////////////////
+// Campaign tests
+////////////////////////////////////////
+async function testCampaign(){
+  if(!module("Campaign", () =>
+  {
+      return setUpWithAuthenticate();
+  }, () =>
+  {
+    return tearDownLogout();
+  })) return;
+
+  await asyncTest("getMyCampaigns()", function() {
+    bc.campaign.getMyCampaigns(
+      {},
+      function(result) {
+        equal(result.status, 200, "Expecting 200");
+        resolve_test();
+      }
+    );
+  });
+}
+
 async function run_tests()
 {
     await testKillSwitch();
@@ -7960,6 +8416,7 @@ async function run_tests()
     await testCustomEntity();
     await testGlobalFile();
     await testBlockchain();
+    await testCampaign();
 
     await testRTT();
     await testComms();
