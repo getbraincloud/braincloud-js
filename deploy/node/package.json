@@ -1,5 +1,5 @@
 {
-  "name": "braincloud",
+  "name": "@braincloud/client",
   "version": "6.0.0",
   "description": " brainCloud client for NodeJS",
   "main": "index.js",
@@ -64,5 +64,8 @@
     "package.json",
     "lib/*",
     "README.md"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

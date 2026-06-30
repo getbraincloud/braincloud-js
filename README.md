@@ -29,11 +29,11 @@ LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
 os = require('os');
 var configDir = os.homedir() + "/.bciot";
 localStorage = new LocalStorage(configDir);
-const BC = require('braincloud');
+const BC = require('@braincloud/client');
 ```
 
 And make sure to have the following NPM dependencies installed:
-* braincloud
+* @braincloud/client
 * node-localstorage
 * ws
 * xmlhttprequest

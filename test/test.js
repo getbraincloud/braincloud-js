@@ -27,7 +27,7 @@ localStorage = new LocalStorage(configDir);
 
 // Proceed normally.
 const fs = require('fs');
-const BC = require('braincloud');
+const BC = require('@braincloud/client');
 
 console.log("--- Running JS unit tests ---");
 

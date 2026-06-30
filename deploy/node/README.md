@@ -3,9 +3,9 @@
 ## Installation
 
 ```bash
-yarn add braincloud
+yarn add @braincloud/client
 # or
-npm install braincloud
+npm install @braincloud/client
 ```
 
 NOTE: peer dependency of ***@react-native-community/async-storage*** is only needed when used within a React-Native application, see below.
@@ -13,7 +13,7 @@ NOTE: peer dependency of ***@react-native-community/async-storage*** is only nee
 ## Usage 
 
 ```javascript
-var bc = require("braincloud")
+var bc = require("@braincloud/client")
 
 function authenticated(response) {
     console.log("Did get Authenticated to profileId:" + response.data.profileId);
@@ -36,7 +36,7 @@ _bc.authenticateAnonymous(authenticated);
 **React-Native Usage**
 
 ```javascript
-import { BrainCloudWrapper } from 'braincloud';
+import { BrainCloudWrapper } from '@braincloud/client';
 
 _bc = new bc.BrainCloudWrapper("_myApp");
 
@@ -77,11 +77,11 @@ LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
 os = require('os');
 var configDir = os.homedir() + "/.bciot";
 localStorage = new LocalStorage(configDir);
-const BC = require('braincloud');
+const BC = require('@braincloud/client');
 ```
 
 And make sure to have the following NPM dependencies installed:
-* braincloud
+* @braincloud/client
 * node-localstorage
 * ws
 * xmlhttprequest
