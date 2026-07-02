@@ -1,5 +1,9 @@
 # brainCloud NodeJS client
 
+> **Package renamed.** This package now ships as **`@braincloud/client`** (the `@braincloud` npm scope). The old unscoped **[`braincloud`](https://www.npmjs.com/package/braincloud)** package is **deprecated** — switch your dependency to `@braincloud/client`. The API is unchanged; only the package name moved.
+>
+> **Doing server-to-server (S2S) work?** Use the companion package **[`@braincloud/s2s`](https://www.npmjs.com/package/@braincloud/s2s)** (formerly `brainclouds2s`) instead of this client library.
+
 ## Installation
 
 ```bash

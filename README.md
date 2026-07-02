@@ -43,7 +43,8 @@ And make sure to have the following NPM dependencies installed:
 Package | Description
  ---- | ----
 [**brainCloudClient_js_.zip**](https://github.com/getbraincloud/braincloud-js/releases) | 	JavaScript for web
-[**braincloud-node**](https://www.npmjs.com/package/braincloud) | 	NPM package for Node
+[**@braincloud/client**](https://www.npmjs.com/package/@braincloud/client) | 	NPM package for Node (formerly the unscoped `braincloud` package, now deprecated)
+[**@braincloud/s2s**](https://www.npmjs.com/package/@braincloud/s2s) | 	NPM package for server-to-server (S2S) integrations (formerly `brainclouds2s`)
 
 
 
