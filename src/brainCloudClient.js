@@ -236,7 +236,7 @@ function BrainCloudClient () {
     bcc.brainCloudRelayComms.brainCloudClient = bcc // Circular reference
   }
 
-  bcc.version = "6.0.0";
+  bcc.version = "6.0.1";
   bcc.countryCode
   bcc.languageCode
 
