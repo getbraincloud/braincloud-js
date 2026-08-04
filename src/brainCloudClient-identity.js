@@ -461,10 +461,9 @@ function BCIdentity () {
    *
    */
   bc.identity.attachGameCenterIdentity = function (gameCenterId, callback) {
-    bc.identity.detachIdentity(
+    bc.identity.attachIdentity(
       gameCenterId,
-      '',
-      authenticationToken,
+      null,
       bc.authentication.AUTHENTICATION_TYPE_GAME_CENTER,
       callback
     )
@@ -480,10 +479,9 @@ function BCIdentity () {
    * @param callback The method to be invoked when the server response is received
    */
   bc.identity.mergeGameCenterIdentity = function (gameCenterId, callback) {
-    bc.identity.detachIdentity(
+    bc.identity.mergeIdentity(
       gameCenterId,
-      '',
-      authenticationToken,
+      null,
       bc.authentication.AUTHENTICATION_TYPE_GAME_CENTER,
       callback
     )

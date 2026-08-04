@@ -717,39 +717,81 @@ function BrainCloudManager ()
         xmlhttp.requestId = ++bcm._requestId;
 
 //> REMOVE IF K6
-        xmlhttp.ontimeout_bc = function()
+        var requestId = bcm._requestId;   // already bumped above
+        var controller = new AbortController();
+        var hasTimedOut = false;
+
+        bcm.xml_timeoutId = setTimeout(function ()
         {
-            if (xmlhttp.readyState < 4)
-            {
-                xmlhttp.hasTimedOut = true;
-                xmlhttp.abort();
-                xmlhttp.hasTimedOut = null;
+            hasTimedOut = true;
+            controller.abort();
+            bcm.xml_timeoutId = null;
 
-                bcm.xml_timeoutId = null;
+            bcm.debugLog("timeout", false);
+            bcm.retry();
+        }, bcm._packetTimeouts[0] * 1000);
 
-                bcm.debugLog("timeout", false);
-                bcm.retry();
-            }
-        }
-
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.hasTimedOut || xmlhttp.requestId != bcm._requestId) {
-                return;
-            }
-
-            if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-
-                bcm.handleResponse(xmlhttp.status, JSON.parse(xmlhttp.responseText))
-            }
+        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        var baseHeaders = {
+            "Content-Type": "application/json",
+            "X-SIG": sig,
+            "X-APPID": bcm._appId
         };
 
-        bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
+        function dispatch(body, extraHeaders)
+        {
+            var headers = extraHeaders
+                ? Object.assign({}, baseHeaders, extraHeaders)
+                : baseHeaders;
 
-        xmlhttp.open("POST", bcm._dispatcherUrl, true);
-        xmlhttp.setRequestHeader("Content-type", "application/json");
-        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
-        xmlhttp.setRequestHeader("X-SIG", sig);
-        xmlhttp.setRequestHeader('X-APPID', bcm._appId);
+            fetch(bcm._dispatcherUrl, {
+                method: "POST",
+                headers: headers,
+                body: body,
+                signal: controller.signal
+            })
+                .then(function (response)
+                {
+                    var status = response.status;
+                    return response.arrayBuffer().then(function (buffer)
+                    {
+                        return { status: status, buffer: buffer };
+                    });
+                })
+                .then(function (result)
+                {
+                    if (requestId != bcm._requestId) return;   // superseded by a retry/newer call
+
+                    var jsonString = new TextDecoder().decode(result.buffer);
+                    var responseJSON;
+                    try
+                    {
+                        responseJSON = JSON.parse(jsonString);
+                    }
+                    catch (e)
+                    {
+                        bcm.debugLog("Failed to parse response: " + jsonString, true);
+                        clearTimeout(bcm.xml_timeoutId);
+                        bcm.xml_timeoutId = null;
+                        bcm._requestInProgress = false;
+                        bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, 0,
+                            "Invalid (non-JSON) response from server");
+                        return;
+                    }
+
+                    bcm.handleResponse(result.status, responseJSON);
+                })
+                .catch(function (error)
+                {
+                    if (requestId != bcm._requestId) return;   // superseded
+                    if (hasTimedOut) return;                    // retry() already fired from the timeout branch
+
+                    clearTimeout(bcm.xml_timeoutId);
+                    bcm.xml_timeoutId = null;
+                    bcm.debugLog("Network error: " + error, true);
+                    bcm.retry();
+                });
+        }
 
         // Used to check if request should be compressed
         var encodedRequest = new TextEncoder().encode(bcm._jsonedQueue);
@@ -758,46 +800,20 @@ function BrainCloudManager ()
         if (bcm._compressionEnabled && bcm._compressionThreshold >= 0 && requestSize >= bcm._compressionThreshold) {
             bcm.compressRequest(encodedRequest)
                 .then(function (compressedData) {
-                    fetch(bcm._dispatcherUrl, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-SIG": sig,
-                            "X-APPID": bcm._appId,
-                            "Content-Encoding": "gzip"
-                        },
-                        body: compressedData
-                    })
-                        .then(function (response) {
-                            var status = response.status;
-
-                            return response.arrayBuffer().then(function (buffer) {
-                                return { status: status, buffer: buffer }; 
-                            });
-                        })
-                        .then(function (result) {
-                            var responseStatus = result.status;
-                            var jsonString = new TextDecoder().decode(result.buffer);
-                            var responseJSON = JSON.parse(jsonString);
-
-                            bcm.handleResponse(responseStatus, responseJSON)
-                        })
-                        .catch(function (error) {
-                            console.error(error);
-                        });
+                    dispatch(compressedData, { "Content-Encoding": "gzip" });
                 })
                 .catch(function (err) {
                     console.error("Compression failed:", err);
                     console.log("Sending request without compression...");
 
-                    xmlhttp.send(bcm._jsonedQueue);
+                    dispatch(bcm._jsonedQueue);
                 });
 
         }
         else{
-            xmlhttp.send(bcm._jsonedQueue);
+            dispatch(bcm._jsonedQueue);
         }
-        
+
 //> END
 
         // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
