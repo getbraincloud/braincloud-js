@@ -409,7 +409,10 @@ function BrainCloudManager ()
 
             if (bcm._inProgressQueue[c] != null && bcm._errorCallback && messages[c].status != 200)
             {
-                bcm._errorCallback(messages[c]);
+                bcm._errorCallback(Object.assign({}, messages[c], {
+                    service: bcm._inProgressQueue[c].service,
+                    operation: bcm._inProgressQueue[c].operation
+                }));
             }
 
             if (bcm._inProgressQueue[c] == null) return; //comms was reset
@@ -626,12 +629,8 @@ function BrainCloudManager ()
         {
             bcm.debugLog("Failed after " + bcm._retry + " retries.", true);
 
-            if ((bcm._errorCallback != undefined) &&
-                (typeof bcm._errorCallback == 'function'))
-            {
-                bcm._errorCallback(errorThrown);
-            }
-
+            // Global error callback is invoked per queued call via handleSuccessResponse,
+            // triggered below by fakeErrorResponse (which includes service/operation).
             bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, bcm.reasonCodes.CLIENT_NETWORK_ERROR_TIMEOUT, "Request timed out");
 
             bcm._requestInProgress = false;
@@ -679,10 +678,8 @@ function BrainCloudManager ()
             var errorMessage = response;
             bcm.debugLog("Failed", true);
 
-            if ((bcm._errorCallback != undefined) &&
-                (typeof bcm._errorCallback == 'function')) {
-                bcm._errorCallback(errorMessage);
-            }
+            // Global error callback is invoked per queued call via handleSuccessResponse,
+            // triggered below by fakeErrorResponse (which includes service/operation).
             if (!errorMessage || errorMessage == "") errorMessage = "Unknown error. Did you lose internet connection?";
             bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, reasonCode,
                 errorMessage);
@@ -884,7 +881,10 @@ function BrainCloudManager ()
 //+         if ((bcm._errorCallback != undefined) &&
 //+             (typeof bcm._errorCallback == 'function'))
 //+         {
-//+             bcm._errorCallback(errorMessage, res);
+//+             bcm._errorCallback(Object.assign({}, errorResponse, {
+//+                 service: bcm._inProgressQueue[0] && bcm._inProgressQueue[0].service,
+//+                 operation: bcm._inProgressQueue[0] && bcm._inProgressQueue[0].operation
+//+             }), res);
 //+         }
 //+     }
 //> END
