@@ -481,7 +481,8 @@ function BrainCloudClient () {
   /**
    * Registers a callback that is invoked for all errors generated
    *
-   * @param globalErrorCallback The global error callback handler.
+   * @param globalErrorCallback The global error callback handler, invoked with
+   * an error object containing service, operation, status, reason_code and status_message.
    */
   bcc.registerGlobalErrorCallback = function (errorCallback) {
     bcc.brainCloudManager.setErrorCallback(errorCallback)
