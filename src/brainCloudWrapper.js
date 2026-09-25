@@ -460,7 +460,7 @@ function BrainCloudWrapper (wrapperName) {
   }
 
   /**
-   * Authenticate the user using a google userid(email address) and google authentication token.
+   * Authenticate the user using their Apple account and identityToken.
    *
    * Service Name - Authenticate
    * Service Operation - Authenticate
@@ -481,6 +481,35 @@ function BrainCloudWrapper (wrapperName) {
     bcw.brainCloudClient.authentication.authenticateApple(
       appleUserId,
       identityToken,
+      forceCreate,
+      function (result) {
+        bcw._authResponseHandler(responseHandler, result)
+      }
+    )
+  }
+
+  /**
+   * Authenticate the user using an epicAccountId and their authIdToken.
+   *
+   * Service Name - Authenticate
+   * Service Operation - Authenticate
+   *
+   * @param epicAccountId LocalUserId retrieved from the EOS AuthInterface's Login method.
+   * @param authIdToken IdToken string from the EOS AuthInterface's CopyIdToken method.
+   * @param forceCreate Should a new profile be created for this user if the account does not exist?
+   * @param callback The method to be invoked when the server response is received
+   */
+  bcw.authenticateEpicGames = function (
+    epicAccountId,
+    authIdToken,
+    forceCreate,
+    responseHandler
+  ) {
+    bcw._initializeIdentity(false)
+
+    bcw.brainCloudClient.authentication.authenticateEpicGames(
+      epicAccountId,
+      authIdToken,
       forceCreate,
       function (result) {
         bcw._authResponseHandler(responseHandler, result)
@@ -945,6 +974,90 @@ function BrainCloudWrapper (wrapperName) {
     authenticationCallback = function () {
       bcw.brainCloudClient.authentication.authenticateGameCenter(
         gameCenterId,
+        forceCreate,
+        function (result) {
+          bcw._authResponseHandler(responseHandler, result)
+        }
+      )
+    }
+
+    bcw.brainCloudClient.identity.getIdentities(
+      getIdentitiesCallback(authenticationCallback)
+    )
+  }
+
+  /**
+   * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
+   * In event the current session was previously an anonymous account, the smart switch will delete that profile.
+   * Use this function to keep a clean designflow from anonymous to signed profiles
+   *
+   * Authenticate the user using their Apple account and identityToken.
+   *
+   * Service Name - Authenticate
+   * Service Operation - Authenticate
+   *
+   * @param appleUserId This can be the user id OR the email of the user for the account
+   * @param identityToken The token confirming the user's identity
+   * @param forceCreate Should a new profile be created for this user if the account does not exist?
+   * @param callback The method to be invoked when the server response is received
+   *
+   * @returns   performs the success callback on success, failure callback on failure
+   *
+   */
+  bcw.smartSwitchAuthenticateApple = function (
+    appleUserId,
+    identityToken,
+    forceCreate,
+    responseHandler
+  ) {
+    bcw._initializeIdentity(false)
+
+    authenticationCallback = function () {
+      bcw.brainCloudClient.authentication.authenticateApple(
+        appleUserId,
+        identityToken,
+        forceCreate,
+        function (result) {
+          bcw._authResponseHandler(responseHandler, result)
+        }
+      )
+    }
+
+    bcw.brainCloudClient.identity.getIdentities(
+      getIdentitiesCallback(authenticationCallback)
+    )
+  }
+
+  /**
+   * Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
+   * In event the current session was previously an anonymous account, the smart switch will delete that profile.
+   * Use this function to keep a clean designflow from anonymous to signed profiles
+   *
+   * Authenticate the user using an epicAccountId and their authIdToken.
+   *
+   * Service Name - Authenticate
+   * Service Operation - Authenticate
+   *
+   * @param epicAccountId LocalUserId retrieved from the EOS AuthInterface's Login method.
+   * @param authIdToken IdToken string from the EOS AuthInterface's CopyIdToken method.
+   * @param forceCreate Should a new profile be created for this user if the account does not exist?
+   * @param callback The method to be invoked when the server response is received
+   *
+   * @returns   performs the success callback on success, failure callback on failure
+   *
+   */
+  bcw.smartSwitchAuthenticateEpicGames = function (
+    epicAccountId,
+    authIdToken,
+    forceCreate,
+    responseHandler
+  ) {
+    bcw._initializeIdentity(false)
+
+    authenticationCallback = function () {
+      bcw.brainCloudClient.authentication.authenticateEpicGames(
+        epicAccountId,
+        authIdToken,
         forceCreate,
         function (result) {
           bcw._authResponseHandler(responseHandler, result)

@@ -54,6 +54,48 @@ async function testAuthentication() {
             });
     });
 
+    await asyncTest("authenticateApple() with invalid token", 2, function () {
+        setup.bc.brainCloudClient.authentication.initialize("", setup.bc.brainCloudClient.authentication.generateAnonymousId());
+
+        setup.bc.brainCloudClient.authentication.authenticateApple(
+            "invalidAppleUserId",
+            "invalidIdentityToken",
+            true,
+            function (result) {
+                equal(result.status, setup.bc.statusCodes.FORBIDDEN, JSON.stringify(result));
+                equal(result.reason_code, setup.bc.reasonCodes.TOKEN_DOES_NOT_MATCH_USER, JSON.stringify(result));
+                resolveTest();
+            });
+    });
+
+    await asyncTest("authenticateGoogle() with invalid token", 2, function () {
+        setup.bc.brainCloudClient.authentication.initialize("", setup.bc.brainCloudClient.authentication.generateAnonymousId());
+
+        setup.bc.brainCloudClient.authentication.authenticateGoogle(
+            "invalidGoogleUserId",
+            "invalidServerAuthCode",
+            true,
+            function (result) {
+                equal(result.status, setup.bc.statusCodes.FORBIDDEN, JSON.stringify(result));
+                equal(result.reason_code, setup.bc.reasonCodes.TOKEN_DOES_NOT_MATCH_USER, JSON.stringify(result));
+                resolveTest();
+            });
+    });
+
+    await asyncTest("authenticateEpicGames() with invalid token", 2, function () {
+        setup.bc.brainCloudClient.authentication.initialize("", setup.bc.brainCloudClient.authentication.generateAnonymousId());
+
+        setup.bc.brainCloudClient.authentication.authenticateEpicGames(
+            "invalidEpicAccountId",
+            "invalidAuthIdToken",
+            true,
+            function (result) {
+                equal(result.status, setup.bc.statusCodes.FORBIDDEN, JSON.stringify(result));
+                equal(result.reason_code, setup.bc.reasonCodes.TOKEN_DOES_NOT_MATCH_USER, JSON.stringify(result));
+                resolveTest();
+            });
+    });
+
     // Ultra only works on internal, internala, internalg and ultra.
     // We use the server URL to detect (Kind of hacky, but also better than having to add extra flags to all tests in all languages + not forgetting those flags in Jenkins, etc.)
     if (SERVER_URL.includes("api-internal.braincloudservers.com") ||
