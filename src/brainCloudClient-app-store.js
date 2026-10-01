@@ -33,6 +33,7 @@ function BCAppStore () {
    * - windows
    * - windowsPhone
    * - googlePlay
+   * - metaHorizon
    * - epicGames
    * - xsolla
    * @param iapId The IAP product id as configured on brainCloud
@@ -73,6 +74,7 @@ function BCAppStore () {
    * - windows
    * - windowsPhone
    * - googlePlay
+   * - metaHorizon
    * - epicGames
    * - xsolla
    * @param jsonReceiptData The specific store data required
@@ -126,6 +128,7 @@ function BCAppStore () {
    * - windows
    * - windowsPhone
    * - googlePlay
+   * - metaHorizon
    * - epicGames
    * - xsolla
    * @param userCurrency The currency type to retrieve the sales inventory for.
@@ -155,6 +158,7 @@ function BCAppStore () {
    * - windows
    * - windowsPhone
    * - googlePlay
+   * - metaHorizon
    * - epicGames
    * - xsolla
    * @param userCurrency The currency type to retrieve the sales inventory for.
