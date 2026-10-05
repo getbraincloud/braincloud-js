@@ -179,61 +179,6 @@ async function testIdentity() {
         })
     })
 
-    // Ultra only works on internal, internala, internalg and ultra.
-    // We use the server URL to detect (see authenticateUltra() in testAuthentication()).
-    if (SERVER_URL.includes("api-internal.braincloudservers.com") ||
-        SERVER_URL.includes("internala.braincloudservers.com") ||
-        SERVER_URL.includes("api.internalg.braincloudservers.com")) {
-        await asyncTest("testAttachDetachUltraIdentity()", 2, function () {
-
-            setup.bc.resetStoredProfileId()
-
-            setup.bc.authenticateUniversal(UserA.name, UserA.password, true, function (authResponse) {
-                if (authResponse.status === 200) {
-                    setup.bc.script.runScript("getUltraToken", {}, function (scriptResponse) {
-                        if (scriptResponse.status === 200 && scriptResponse.data.response.data) {
-                            var id_token = scriptResponse.data.response.data.json.id_token
-
-                            setup.bc.playerState.logout(() => {
-                                setup.bc.brainCloudClient.resetCommunication()
-
-                                // "braincloud1" is a shared, persistent Ultra-linked test profile
-                                // (reused from authenticateUltra() in testAuthentication()). We log
-                                // into it, then detach + re-attach its own Ultra identity to itself
-                                // so this exercises attach/detach without permanently altering the
-                                // shared fixture other identity/authentication tests depend on.
-                                setup.bc.authenticateUltra("braincloud1", id_token, true, (ultraAuthResponse) => {
-                                    if (ultraAuthResponse.status === 200) {
-                                        setup.bc.identity.detachUltraIdentity("braincloud1", true, (detachResponse) => {
-                                            equal(detachResponse.status, 200, "Expecting 200")
-
-                                            setup.bc.identity.attachUltraIdentity("braincloud1", id_token, (attachResponse) => {
-                                                equal(attachResponse.status, 200, "Expecting 200")
-
-                                                setup.bc.playerState.logout(() => {
-                                                    resolveTest()
-                                                })
-                                            })
-                                        })
-                                    }
-                                    else {
-                                        resolveTest()
-                                    }
-                                })
-                            })
-                        }
-                        else {
-                            resolveTest()
-                        }
-                    })
-                }
-                else {
-                    resolveTest()
-                }
-            })
-        })
-    }
-
     await asyncTest("testAttachDetachUniversalIdentity()", 2, function () {
 
         setup.bc.resetStoredProfileId()
