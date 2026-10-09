@@ -236,7 +236,7 @@ function BrainCloudClient () {
     bcc.brainCloudRelayComms.brainCloudClient = bcc // Circular reference
   }
 
-  bcc.version = "6.0.1";
+  bcc.version = "6.1.0";
   bcc.countryCode
   bcc.languageCode
 
@@ -272,7 +272,7 @@ function BrainCloudClient () {
    * Method initializes the BrainCloudClient.
    *
    * @param appId The app id
-   * @param secret The secret key for your app
+   * @param secret The secret key for your app, or an app profile function
    * @param appVersion The app version
    * @param serverUrl Optional. The brainCloud server URL to target, e.g.
    *   "https://api.braincloudservers.com/dispatcherv2". When omitted, the default
@@ -286,7 +286,7 @@ function BrainCloudClient () {
     }
 
     var error = null
-    if (isBlank(secret)) error = 'secret was null or empty'
+    if (typeof secret !== 'function' && isBlank(secret)) error = 'secret was null or empty'
     else if (isBlank(appId)) error = 'appId was null or empty'
     else if (isBlank(appVersion)) error = 'appVersion was null or empty'
     if (error != null) {
@@ -326,7 +326,7 @@ function BrainCloudClient () {
     var secret = secretMap[appId]
 
     var error = null
-    if (isBlank(secret)) error = 'secret was null or empty'
+    if (typeof secret !== 'function' && isBlank(secret)) error = 'secret was null or empty'
     else if (isBlank(appId)) error = 'appId was null or empty'
     else if (isBlank(appVersion)) error = 'appVersion was null or empty'
     if (error != null) {
@@ -378,6 +378,16 @@ function BrainCloudClient () {
    */
   bcc.getAppId = function () {
     return bcc.brainCloudManager.getAppId()
+  }
+
+  /**
+   * True if a response passed to a callback succeeded (status 200).
+   *
+   * @param result The response object passed to the callback.
+   * @return {boolean}
+   */
+  bcc.isSuccess = function (result) {
+    return result != null && result.status === bcc.statusCodes.OK
   }
 
   /**

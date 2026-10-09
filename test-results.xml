@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites time="9.583">
+  <testsuite name="Authentication" tests="20" failures="0" errors="0" time="0">
+    <testcase classname="Authentication" name="authenticateAnonymous()" time="0"/>
+    <testcase classname="Authentication" name="authenticateUniversal()" time="0"/>
+    <testcase classname="Authentication" name="authenticateEmailPassword()" time="0"/>
+    <testcase classname="Authentication" name="authenticateAdvanced()" time="0"/>
+    <testcase classname="Authentication" name="authenticateApple() with invalid token" time="0"/>
+    <testcase classname="Authentication" name="authenticateGoogle() with invalid token" time="0"/>
+    <testcase classname="Authentication" name="authenticateEpicGames() with invalid token" time="0"/>
+    <testcase classname="Authentication" name="resetEmailPassword()" time="0"/>
+    <testcase classname="Authentication" name="resetEmailPasswordWithExpiry()" time="0"/>
+    <testcase classname="Authentication" name="resetEmailPasswordAdvanced()" time="0"/>
+    <testcase classname="Authentication" name="resetEmailPasswordAdvancedWithExpiry()" time="0"/>
+    <testcase classname="Authentication" name="resetUniversalIdPassword()" time="0"/>
+    <testcase classname="Authentication" name="resetUniversalIdPasswordAdvanced()" time="0"/>
+    <testcase classname="Authentication" name="resetUniversalIdPasswordWithExpiry()" time="0"/>
+    <testcase classname="Authentication" name="resetUniversalIdPasswordAdvancedWithExpiry()" time="0"/>
+    <testcase classname="Authentication" name="getServerVersion()" time="0"/>
+    <testcase classname="Authentication" name="noSession_resetUniversalIdPassword()" time="0"/>
+    <testcase classname="Authentication" name="authenticateHandoff()" time="0"/>
+    <testcase classname="Authentication" name="authenticateSettopHandoff()" time="0"/>
+    <testcase classname="Authentication" name="authManualRedirect()" time="0"/>
+  </testsuite>
+</testsuites>

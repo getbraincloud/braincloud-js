@@ -83,6 +83,11 @@ function BrainCloudWrapper (wrapperName) {
       window.brainCloudClient || {}
   }
 
+  /** True if a response passed to a callback succeeded (status 200). */
+  bcw.isSuccess = function (result) {
+    return bcw.brainCloudClient.isSuccess(result)
+  }
+
   ///////////////////////////////////////////////////////////////////////////
   // private members/methods
   ///////////////////////////////////////////////////////////////////////////
@@ -92,10 +97,30 @@ function BrainCloudWrapper (wrapperName) {
   bcw._alwaysAllowProfileSwitch = true
   bcw.initializeParams = {
     appId: '',
-    secretKey: '',
     appVersion: '',
     serverUrl: '',
-    secretMap: null
+    appMap: false
+  }
+
+  var configHintShown = false
+  var SETUP_DOCS = 'https://github.com/getbraincloud/braincloud-js#getting-started'
+
+  // Only while developing: localhost, file:// pages, or Node outside NODE_ENV=production.
+  function isDevelopment () {
+    if (typeof location !== 'undefined' && location.hostname !== undefined) {
+      return /^(localhost|127\.0\.0\.1|\[::1\]|)$/.test(location.hostname)
+    }
+    return typeof process === 'undefined' || !process.env || process.env.NODE_ENV !== 'production'
+  }
+
+  // One-time tip to use braincloud.config.js.
+  function showConfigHint () {
+    if (configHintShown || !isDevelopment()) return
+    configHintShown = true
+    var msg = 'brainCloud: keep the app secret out of your code. Run `npx @braincloud/client setup`, ' +
+      'import braincloud.config.js and call init(). ' + SETUP_DOCS
+    if (typeof document !== 'undefined') console.warn('%c' + msg, 'color:#29a8e0;font-weight:bold')
+    else console.warn(msg)
   }
 
   bcw._initializeIdentity = function (isAnonymousAuth) {
@@ -140,23 +165,12 @@ function BrainCloudWrapper (wrapperName) {
         : bcw.initializeParams.serverUrl
       var newAppId = result.redirect_appid ? result.redirect_appid : null
 
-      // re-initialize the client with our app info
-      if (bcw.initializeParams.secretMap == null) {
-        if (newAppId != null) bcw.initializeParams.appId = newAppId
-        bcw.brainCloudClient.initialize(
-          bcw.initializeParams.appId,
-          bcw.initializeParams.secretKey,
-          bcw.initializeParams.appVersion,
-          bcw.initializeParams.serverUrl
-        )
-      } else {
-        // For initialize with apps, we ignore the new app id
-        bcw.brainCloudClient.initializeWithApps(
-          bcw.initializeParams.appId,
-          bcw.initializeParams.secretMap,
-          bcw.initializeParams.appVersion,
-          bcw.initializeParams.serverUrl
-        )
+      // re-point at the redirect, keeping app profiles (initialize with apps ignores the new app id)
+      if (!bcw.initializeParams.appMap && newAppId != null) bcw.initializeParams.appId = newAppId
+      bcw.brainCloudClient.resetCommunication()
+      bcw.brainCloudClient.brainCloudManager.reinitialize(bcw.initializeParams.appId)
+      if (bcw.initializeParams.serverUrl) {
+        bcw.brainCloudClient.setServerUrl(bcw.initializeParams.serverUrl)
       }
 
       bcw._initializeIdentity(true)
@@ -186,7 +200,7 @@ function BrainCloudWrapper (wrapperName) {
    * Method initializes the BrainCloudClient.
    *
    * @param appId The app id
-   * @param secret The secret key for your app
+   * @param secret The secret key for your app, or an app profile function
    * @param appVersion The app version
    * @param serverUrl Optional. The brainCloud server URL to target, e.g.
    *   "https://api.braincloudservers.com/dispatcherv2". When omitted, the default
@@ -197,12 +211,38 @@ function BrainCloudWrapper (wrapperName) {
   bcw.initialize = function (appId, secret, appVersion, serverUrl) {
     bcw.initializeParams = {
       appId: appId,
-      secretKey: secret,
       appVersion: appVersion,
       serverUrl: serverUrl || '',
-      secretMap: null
+      appMap: false
     }
+    if (typeof secret !== 'function') showConfigHint()
     bcw.brainCloudClient.initialize(appId, secret, appVersion, serverUrl)
+    childAppIds = []
+  }
+
+  /**
+   * Initializes from braincloud.config.js (`npx @braincloud/client setup`). Import it first.
+   *
+   * @return false if no config is loaded
+   */
+  bcw.init = function () {
+    var root = typeof globalThis !== 'undefined' ? globalThis
+      : typeof window !== 'undefined' ? window
+        : typeof global !== 'undefined' ? global : {}
+    var tag = typeof Symbol === 'function' && Symbol['for'] ? Symbol['for']('braincloud.config') : '__braincloudConfig'
+    var cfg = root[tag]
+    if (!cfg || typeof cfg.appProfile !== 'function') {
+      console.log('ERROR | brainCloud init(): no braincloud.config.js loaded. Run `npx @braincloud/client setup` and import it. ' + SETUP_DOCS)
+      return false
+    }
+    // Child apps in the config: load them too so switchToChildProfile can sign.
+    if (cfg.appProfiles && Object.keys(cfg.appProfiles).length > 1) {
+      bcw.initializeWithApps(cfg.appId, cfg.appProfiles, cfg.appVersion, cfg.serverUrl)
+      if (cfg.childAppIds) childAppIds = cfg.childAppIds.slice()
+    } else {
+      bcw.initialize(cfg.appId, cfg.appProfile, cfg.appVersion, cfg.serverUrl)
+    }
+    return true
   }
 
   /**
@@ -219,12 +259,23 @@ function BrainCloudWrapper (wrapperName) {
   bcw.initializeWithApps = function (defaultAppId, secretMap, appVersion, serverUrl) {
     bcw.initializeParams = {
       appId: defaultAppId,
-      secretKey: '',
       appVersion: appVersion,
       serverUrl: serverUrl || '',
-      secretMap: secretMap
+      appMap: true
     }
     bcw.brainCloudClient.initializeWithApps(defaultAppId, secretMap, appVersion, serverUrl)
+    // Manual maps: object key order, so numeric ids come back sorted.
+    childAppIds = Object.keys(secretMap || {}).filter(function (id) { return id !== defaultAppId })
+  }
+
+  var childAppIds = []
+
+  /**
+   * Child app ids from the last init, in the order shown in the brainCloud setup panel (index 0 = first child).
+   * Pass one to identity.switchToChildProfile. Empty when no child apps are configured.
+   */
+  bcw.getChildAppIdList = function () {
+    return childAppIds.slice()
   }
 
   bcw.getStoredAnonymousId = function () {
@@ -1664,9 +1715,7 @@ function BrainCloudWrapper (wrapperName) {
       sessionId: bcw.brainCloudClient.brainCloudManager._sessionId,
       packetId: bcw.brainCloudClient.brainCloudManager._packetId++
     })
-    var sig = CryptoJS.MD5(
-      messages + bcw.brainCloudClient.brainCloudManager._secret
-    )
+    var sig = bcw.brainCloudClient.brainCloudManager._signRequest(messages)
     bcw.brainCloudClient.brainCloudManager._packetId++
 
     fetch(bcw.brainCloudClient.brainCloudManager._dispatcherUrl, {
@@ -1715,9 +1764,7 @@ function BrainCloudWrapper (wrapperName) {
       sessionId: bcw.brainCloudClient.brainCloudManager._sessionId,
       packetId: bcw.brainCloudClient.brainCloudManager._packetId++
     })
-    var sig = CryptoJS.MD5(
-      messages + bcw.brainCloudClient.brainCloudManager._secret
-    )
+    var sig = bcw.brainCloudClient.brainCloudManager._signRequest(messages)
     bcw.brainCloudClient.brainCloudManager._packetId++
 
     fetch(bcw.brainCloudClient.brainCloudManager._dispatcherUrl, {

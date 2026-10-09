@@ -52,7 +52,8 @@ Package | Description
 
 Here are a few common errors that you may see on your first attempt to connect to brainCloud.
 
-- **App id not set**: Verify you've set up the app id and app secret correctly in the `initialize()` method.
+- **No braincloud.config.js loaded**: Run `npx @braincloud/client setup` and import the generated file before `init()`.
+- **App id not set**: If you initialize with the app ID and secret, check they're set correctly in `initialize()`.
 - **Platform not enabled**: Verify you've enabled your platform on the portal.
 
 If you're still having issues, log into the portal and give us a shout through the help system (bottom right icon with the question mark and chat bubble).
@@ -75,15 +76,31 @@ It is recommended to use the wrapper by default.
 
 ![wrapper](/Screenshots/bc-wrapper.png?raw=true)
 
-## How do I initialize brainCloud?
-If using the wrapper use the following code.
+## Getting started
+
+### With setup (recommended)
+Keeps the app secret out of your code.
+
+1. Install: `npm install @braincloud/client`
+2. Generate your app config: `npx @braincloud/client setup`. Log in, pick your team and app (or create one). It writes `braincloud.config.js` and gitignores it.
+3. Import it and initialize:
 ```js
+import './braincloud.config.js'
+
 _bc = new BrainCloudWrapper(); // optionally pass in a _wrapperName
+_bc.init();
+```
+
+Using the browser bundle instead of npm? Run `npx @braincloud/client setup` in your project folder (needs Node.js 18+), then load `braincloud.config.js` with its own `<script>` tag before calling `init()`. Run setup again to switch apps.
+
+**Parent apps:** add the child apps your client switches to in the setup panel. `init()` loads them too, and `getChildAppIdList()` returns their ids (in panel order) for `identity.switchToChildProfile`.
+
+### With the app ID and secret
+```js
+_bc = new BrainCloudWrapper();
 _bc.initialize(_appId, _secret, _appVersion);
 ```
-Your _appId, _secret, is set on the brainCloud dashboard. Under Design | Core App Info > Application IDs
-
-`initialize()` targets the brainCloud production servers by default. To target a different environment, pass the optional 4th `serverUrl` argument:
+Your app ID and secret are in the portal under **Design | Core App Info > Application IDs**. To target another environment, pass the optional 4th `serverUrl` argument:
 ```js
 _bc.initialize(_appId, _secret, _appVersion, "https://api.braincloudservers.com/dispatcherv2");
 ```
@@ -95,7 +112,7 @@ _wrapperName prefixes saved operations that the wrapper will make. Use a _wrappe
 
 ----------------
 
-#### Newly upgraded?
+#### Existing apps and _wrapperName
 If your app is already live, you should **NOT** specify the _wrapperName - otherwise the library will look in the wrong location for your user's stored anonymousID and profileID information. Only add a name if you intend to alter the save data.
 
 ---------------
@@ -104,6 +121,26 @@ If your app is already live, you should **NOT** specify the _wrapperName - other
 _appVersion is the current version of our app. Having an _appVersion less than your minimum app version on brainCloud will prevent the user from accessing the service until they update their app to the lastest version you have provided them.
 
 ![wrapper](/Screenshots/bc-minVersions.png?raw=true)
+
+### Upgrading to setup (6.1.0+)
+
+Already calling `initialize(appId, secret, ...)`? It still works. To move to setup:
+
+1. Update to `@braincloud/client` 6.1.0 or later.
+2. Run `npx @braincloud/client setup` and pick the same app and server you use today.
+3. Replace your init code:
+   ```javascript
+   // before
+   _bc.initialize(appId, secret, '1.0.0')
+   _bc.brainCloudClient.setServerUrl(url)
+
+   // after
+   import './braincloud.config.js'
+   _bc.init()
+   ```
+4. Delete the hard-coded app ID and secret (ids files, `.env` entries).
+
+The server URL and app version now come from the config. Read them back with `getAppId()`, `getAppVersion()` and `brainCloudManager.getDispatcherUrl()`. Using `initializeWithApps` for child apps? Add the children in the setup panel and call `init()` instead.
 
 ## How do I authenticate a user with brainCloud?
 The simplest form of authenticating with brainCloud Wrapper is an Anonymous Authentication.

@@ -61,8 +61,8 @@ function BrainCloudManager ()
     bcm._requestId = 0; // This is not like packet id. We need this to make sure we don't trigger events on XMLHttpRequest responses if we already moved on. Had issues with retrying and losing internet
 
     bcm._appId = "";
-    bcm._secret = "";
-    bcm._secretMap = {};
+    // App profile (signer) per app id.
+    bcm._appProfiles = {};
     bcm._serverUrl = "https://api.braincloudservers.com";
     bcm._dispatcherUrl = bcm._serverUrl + "/dispatcherv2";
     bcm._fileUploadUrl = bcm._serverUrl + "/uploader";
@@ -102,12 +102,12 @@ function BrainCloudManager ()
             });
     };
 
+    // secret can be an app profile function.
     bcm.initialize = function(appId, secret, appVersion)
     {
         bcm._appId = appId;
-        bcm._secret = secret;
-        bcm._secretMap = {};
-        bcm._secretMap[appId] = secret;
+        bcm._appProfiles = {};
+        bcm._appProfiles[appId] = brainCloudAppProfile(secret);
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
     };
@@ -115,10 +115,35 @@ function BrainCloudManager ()
     bcm.initializeWithApps = function(defaultAppId, secretMap, appVersion)
     {
         bcm._appId = defaultAppId;
-        bcm._secret = secretMap[defaultAppId];
-        bcm._secretMap = secretMap;
+        bcm._appProfiles = {};
+        for (var id in secretMap)
+        {
+            if (Object.prototype.hasOwnProperty.call(secretMap, id))
+            {
+                bcm._appProfiles[id] = brainCloudAppProfile(secretMap[id]);
+            }
+        }
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
+    };
+
+    // Manual redirect: keep profiles; a single app carries its profile to the new id.
+    bcm.reinitialize = function(appId)
+    {
+        var ids = Object.keys(bcm._appProfiles);
+        if (!bcm._appProfiles[appId] && ids.length === 1)
+        {
+            bcm._appProfiles[appId] = bcm._appProfiles[ids[0]];
+        }
+        bcm._appId = appId;
+        bcm._isInitialized = true;
+    };
+
+    // Unknown app signs with "MISSING" so the server rejects it as usual.
+    bcm._signRequest = function(body)
+    {
+        var profile = bcm._appProfiles[bcm._appId] || brainCloudAppProfile("MISSING");
+        return profile(body);
     };
 
     bcm.setServerUrl = function(serverUrl)
@@ -174,14 +199,16 @@ function BrainCloudManager ()
         bcm._sessionId = sessionId;
     };
 
+    // Deprecated: the secret isn't kept as text anymore.
     bcm.getSecret = function()
     {
-        return bcm._secret;
+        console.warn("brainCloud: getSecret() is no longer supported and returns an empty string.");
+        return "";
     };
 
     bcm.setSecret = function(secret)
     {
-        bcm._secret = secret;
+        bcm._appProfiles[bcm._appId] = brainCloudAppProfile(secret);
     };
 
     bcm.getAppVersion = function()
@@ -438,7 +465,6 @@ function BrainCloudManager ()
                     if (data.switchToAppId)
                     {
                         bcm._appId = data.switchToAppId;
-                        bcm._secret = bcm._secretMap[data.switchToAppId];
                     }
                 }
 
@@ -601,7 +627,7 @@ function BrainCloudManager ()
 
     bcm.setHeader = function(xhr)
     {
-        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        var sig = bcm._signRequest(bcm._jsonedQueue);
         xhr.setRequestHeader('X-SIG', sig);
         xhr.setRequestHeader('X-APPID', bcm._appId);
     }
@@ -728,7 +754,7 @@ function BrainCloudManager ()
             bcm.retry();
         }, bcm._packetTimeouts[0] * 1000);
 
-        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        var sig = bcm._signRequest(bcm._jsonedQueue);
         var baseHeaders = {
             "Content-Type": "application/json",
             "X-SIG": sig,
@@ -815,7 +841,7 @@ function BrainCloudManager ()
 
         // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
 //> ADD IF K6
-//+     let sig = CryptoJS.md5(bcm._jsonedQueue + bcm._secret, 'hex');
+//+     let sig = bcm._signRequest(bcm._jsonedQueue);
 //+     let _jsonedQueue = JSON.parse(bcm._jsonedQueue);
 //+     let params = {
 //+         cookies: { my_cookie: _jsonedQueue.messages[0].service+"."+_jsonedQueue.messages[0].operation },

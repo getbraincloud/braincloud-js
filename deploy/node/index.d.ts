@@ -24,6 +24,8 @@ declare namespace braincloud {
    */
   class BrainCloudClient {
     constructor(wrapperName?: string);
+    /** True if a response passed to a callback succeeded (status 200). */
+    isSuccess(result: any): boolean;
     [key: string]: any;
   }
 
@@ -35,6 +37,14 @@ declare namespace braincloud {
     constructor(wrapperName?: string);
     /** The underlying client instance. */
     brainCloudClient: BrainCloudClient;
+    /** Initializes from braincloud.config.js (`npx @braincloud/client setup`). Import it first. */
+    init(): boolean;
+    /** Child app ids from the last init, in setup-panel order (index 0 = first child). */
+    getChildAppIdList(): string[];
+    /** True if a response passed to a callback succeeded (status 200). */
+    isSuccess(result: any): boolean;
+    /** secret can be the app secret or an app profile function. */
+    initialize(appId: string, secret: string | ((body: string) => string), appVersion: string, serverUrl?: string): void;
     [key: string]: any;
   }
 

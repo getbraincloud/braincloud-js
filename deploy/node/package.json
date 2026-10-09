@@ -1,6 +1,6 @@
 {
   "name": "@braincloud/client",
-  "version": "6.0.1",
+  "version": "6.1.0",
   "description": " brainCloud client for NodeJS",
   "main": "index.js",
   "types": "index.d.ts",
@@ -65,9 +65,13 @@
     "react-native.js",
     "package.json",
     "lib/*",
+    "bin/*",
     "README.md"
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "bin": {
+    "braincloud": "bin/braincloud.js"
   }
 }
