@@ -12,6 +12,8 @@ function BCAppStore () {
   bc.appStore.OPERATION_FINALIZE_PURCHASE = 'FINALIZE_PURCHASE'
   bc.appStore.OPERATION_GET_ELIGIBLE_PROMOTIONS = 'ELIGIBLE_PROMOTIONS'
   bc.appStore.OPERATION_GET_SALES_INVENTORY = 'GET_INVENTORY'
+  bc.appStore.OPERATION_GET_STORE_INFO = 'GET_STORE_INFO'
+  bc.appStore.OPERATION_GET_USER_TOKEN = 'GET_USER_TOKEN'
   bc.appStore.OPERATION_REFRESH_PROMOTIONS = 'REFRESH_PROMOTIONS'
   bc.appStore.OPERATION_START_PURCHASE = 'START_PURCHASE'
   bc.appStore.OPERATION_VERIFY_PURCHASE = 'VERIFY_PURCHASE'
@@ -255,6 +257,51 @@ function BCAppStore () {
     bc.brainCloudManager.sendRequest({
       service: bc.SERVICE_APP_STORE,
       operation: bc.appStore.OPERATION_REFRESH_PROMOTIONS,
+      data: message,
+      callback: callback
+    })
+  }
+  /**
+   * Returns the store's client-side configuration for the given store.
+   *
+   * Service Name - appStore
+   * Service Operation - GET_STORE_INFO
+   *
+   * @param storeId The store platform. Valid stores are:
+   * - xsolla
+   * @param callback The method to be invoked when the server response is received
+   */
+  bc.appStore.getStoreInfo = function (storeId, callback) {
+    var message = {
+      storeId: storeId
+    }
+
+    bc.brainCloudManager.sendRequest({
+      service: bc.SERVICE_APP_STORE,
+      operation: bc.appStore.OPERATION_GET_STORE_INFO,
+      data: message,
+      callback: callback
+    })
+  }
+
+  /**
+   * Returns a store user token (JWT) for the current user, generated server-side.
+   *
+   * Service Name - appStore
+   * Service Operation - GET_USER_TOKEN
+   *
+   * @param storeId The store platform. Valid stores are:
+   * - xsolla
+   * @param callback The method to be invoked when the server response is received
+   */
+  bc.appStore.getUserToken = function (storeId, callback) {
+    var message = {
+      storeId: storeId
+    }
+
+    bc.brainCloudManager.sendRequest({
+      service: bc.SERVICE_APP_STORE,
+      operation: bc.appStore.OPERATION_GET_USER_TOKEN,
       data: message,
       callback: callback
     })
