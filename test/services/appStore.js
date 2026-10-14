@@ -85,6 +85,43 @@ async function testAppStore() {
             resolveTest();
         });
     });
+    await asyncTest("getStoreInfo()", 1, () =>
+    {
+        setup.bc.appStore.getStoreInfo("xsolla", result =>
+        {
+            equal(result.status, 200, "Expected 200");
+            resolveTest();
+        });
+    });
+
+    await asyncTest("getStoreInfo() invalid store", 2, () =>
+    {
+        setup.bc.appStore.getStoreInfo("_invalid_store_id_", result =>
+        {
+            equal(result.status, setup.bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, setup.bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolveTest();
+        });
+    });
+
+    await asyncTest("getUserToken()", 1, () =>
+    {
+        setup.bc.appStore.getUserToken("xsolla", result =>
+        {
+            equal(result.status, 200, "Expected 200");
+            resolveTest();
+        });
+    });
+
+    await asyncTest("getUserToken() invalid store", 2, () =>
+    {
+        setup.bc.appStore.getUserToken("_invalid_store_id_", result =>
+        {
+            equal(result.status, setup.bc.statusCodes.BAD_REQUEST, "Expected BAD_REQUEST");
+            equal(result.reason_code, setup.bc.reasonCodes.INVALID_STORE_ID, "Expected INVALID_STORE_ID");
+            resolveTest();
+        });
+    });
 }
 
 module.exports = testAppStore
