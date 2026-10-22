@@ -161,17 +161,20 @@ function BrainCloudRelayComms (_client) {
   bcr.disconnect = function () {
     bcr.stopPing()
 
-    if (!bcr.endMatchRequested) {
-      if (bcr.socket) {
-        //> REMOVE IF K6
-        bcr.socket.removeEventListener('error', bcr.onSocketError)
-        bcr.socket.removeEventListener('close', bcr.onSocketClose)
-        bcr.socket.removeEventListener('open', bcr.onSocketOpen)
-        bcr.socket.removeEventListener('message', bcr.onSocketMessage)
-        //> END
-        bcr.socket.close()
-        bcr.socket = null
-      }
+    // Always close+drop the socket, even when endMatchRequested — that flag only exists to
+    // suppress onSocketClose's failure callback for this deliberate disconnect. Skipping the
+    // close here used to leak the old socket (still with its listeners attached) past the next
+    // round's connect(), so a late close event from it could fire the NEW round's
+    // connectCallback.failure and kick that client for no reason.
+    if (bcr.socket) {
+      //> REMOVE IF K6
+      bcr.socket.removeEventListener('error', bcr.onSocketError)
+      bcr.socket.removeEventListener('close', bcr.onSocketClose)
+      bcr.socket.removeEventListener('open', bcr.onSocketOpen)
+      bcr.socket.removeEventListener('message', bcr.onSocketMessage)
+      //> END
+      bcr.socket.close()
+      bcr.socket = null
     }
 
     bcr.isConnected = false
