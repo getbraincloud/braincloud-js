@@ -2,6 +2,11 @@
 
 function BrainCloudRelayComms (_client) {
   var bcr = this
+
+  // monotonic when available, so device clock changes can't skew ping
+  function monotonicNowMs () {
+    return typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now() : Date.now()
+  }
   //> REMOVE IF K6
 
   // TODO:  verify that this is unneeded
@@ -430,7 +435,7 @@ function BrainCloudRelayComms (_client) {
       console.log('RELAY SEND PING: ' + bcr.ping)
     }
     bcr._pingInFlight = true
-    bcr._pingTime = new Date().getTime()
+    bcr._pingTime = monotonicNowMs()
 
     //> ADD IF K6
     //+     var buffer = new Uint8Array(5);
@@ -502,7 +507,7 @@ function BrainCloudRelayComms (_client) {
     } else if (controlByte == bcr.RS2CL_PONG) {
       if (bcr._pingInFlight) {
         bcr._pingInFlight = false
-        bcr.ping = Math.min(999, new Date().getTime() - bcr._pingTime)
+        bcr.ping = Math.min(999, monotonicNowMs() - bcr._pingTime)
       }
       if (bcr._debugEnabled) {
         console.log('RELAY RECV PONG: ' + bcr.ping)
