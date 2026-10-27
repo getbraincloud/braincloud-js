@@ -47,11 +47,10 @@ function BCAuthentication () {
   bc.authentication.AUTHENTICATION_TYPE_FACEBOOK = 'Facebook'
   bc.authentication.AUTHENTICATION_TYPE_FACEBOOK_LIMITED = 'FacebookLimited'
   bc.authentication.AUTHENTICATION_TYPE_APPLE = 'Apple'
+  bc.authentication.AUTHENTICATION_TYPE_EPIC_GAMES = 'EpicGames'
   bc.authentication.AUTHENTICATION_TYPE_GOOGLE = 'Google'
   bc.authentication.AUTHENTICATION_TYPE_GOOGLE_OPEN_ID = 'GoogleOpenId'
-  bc.authentication.AUTHENTICATION_TYPE_APPLE = 'Apple'
   bc.authentication.AUTHENTICATION_TYPE_ULTRA = 'Ultra'
-
   bc.authentication.AUTHENTICATION_TYPE_UNIVERSAL = 'Universal'
   bc.authentication.AUTHENTICATION_TYPE_GAME_CENTER = 'GameCenter'
   bc.authentication.AUTHENTICATION_TYPE_STEAM = 'Steam'
@@ -262,34 +261,6 @@ function BCAuthentication () {
   }
 
   /**
-   * Authenticate the user using a google userid(email address) and google authentication token.
-   *
-   * Service Name - Authenticate
-   * Service Operation - Authenticate
-   *
-   * @param appleUserId  String of the apple accounts user Id OR email
-   * @param identityToken  The authentication token confirming users identity
-   * @param forceCreate Should a new profile be created for this user if the account does not exist?
-   * @param callback The method to be invoked when the server response is received
-   */
-  bc.authentication.authenticateApple = function (
-    appleId,
-    appleToken,
-    forceCreate,
-    responseHandler
-  ) {
-    bc.authentication.authenticate(
-      appleId,
-      appleToken,
-      bc.authentication.AUTHENTICATION_TYPE_APPLE,
-      null,
-      forceCreate,
-      null,
-      responseHandler
-    )
-  }
-
-  /**
    * Authenticate the user using their Game Center id
    *
    * Service Name - Authenticate
@@ -316,7 +287,7 @@ function BCAuthentication () {
   }
 
   /**
-   * Authenticate the user using a google user id (email address) and google authentication token.
+   * Authenticate the user using their Apple account and identityToken.
    *
    * Service Name - authenticationV2
    * Service Operation - AUTHENTICATE
@@ -324,7 +295,7 @@ function BCAuthentication () {
    * @param appleUserId {string} - This can be the user id OR the email of the user for the account
    * @param identityToken {string} - The token confirming the user's identity
    * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
-   * If set to false, you need to handle errors in the case of new users.
+   *                                If set to false, you need to handle errors in the case of new users.
    * @param responseHandler {function} - The user callback method
    */
   bc.authentication.authenticateApple = function (
@@ -337,6 +308,35 @@ function BCAuthentication () {
       appleUserId,
       identityToken,
       bc.authentication.AUTHENTICATION_TYPE_APPLE,
+      null,
+      forceCreate,
+      null,
+      responseHandler
+    )
+  }
+
+  /**
+   * Authenticate the user using an epicAccountId and their authIdToken.
+   *
+   * Service Name - authenticationV2
+   * Service Operation - AUTHENTICATE
+   *
+   * @param epicAccountId {string} - LocalUserId retrieved from the EOS AuthInterface's Login method.
+   * @param authIdToken {string} - IdToken string from the EOS AuthInterface's CopyIdToken method.
+   * @param forceCreate {boolean} - Should a new profile be created for this user if the account does not exist?
+   *                                If set to false, you need to handle errors in the case of new users.
+   * @param responseHandler {function} - The user callback method
+   */
+  bc.authentication.authenticateEpicGames = function (
+    epicAccountId,
+    authIdToken,
+    forceCreate,
+    responseHandler
+  ) {
+    bc.authentication.authenticate(
+      epicAccountId,
+      authIdToken,
+      bc.authentication.AUTHENTICATION_TYPE_EPIC_GAMES,
       null,
       forceCreate,
       null,

@@ -462,6 +462,10 @@ function BCCustomEntity () {
       timeToLive: timeToLive
     }
 
+    if (acl) {
+      message['acl'] = acl
+    }
+
     bc.brainCloudManager.sendRequest({
       service: bc.SERVICE_CUSTOM_ENTITY,
       operation: bc.customEntity.OPERATION_UPDATE_SINGLETON,

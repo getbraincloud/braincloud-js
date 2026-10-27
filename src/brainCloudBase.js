@@ -61,8 +61,8 @@ function BrainCloudManager ()
     bcm._requestId = 0; // This is not like packet id. We need this to make sure we don't trigger events on XMLHttpRequest responses if we already moved on. Had issues with retrying and losing internet
 
     bcm._appId = "";
-    bcm._secret = "";
-    bcm._secretMap = {};
+    // App profile (signer) per app id.
+    bcm._appProfiles = {};
     bcm._serverUrl = "https://api.braincloudservers.com";
     bcm._dispatcherUrl = bcm._serverUrl + "/dispatcherv2";
     bcm._fileUploadUrl = bcm._serverUrl + "/uploader";
@@ -102,12 +102,12 @@ function BrainCloudManager ()
             });
     };
 
+    // secret can be an app profile function.
     bcm.initialize = function(appId, secret, appVersion)
     {
         bcm._appId = appId;
-        bcm._secret = secret;
-        bcm._secretMap = {};
-        bcm._secretMap[appId] = secret;
+        bcm._appProfiles = {};
+        bcm._appProfiles[appId] = brainCloudAppProfile(secret);
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
     };
@@ -115,10 +115,35 @@ function BrainCloudManager ()
     bcm.initializeWithApps = function(defaultAppId, secretMap, appVersion)
     {
         bcm._appId = defaultAppId;
-        bcm._secret = secretMap[defaultAppId];
-        bcm._secretMap = secretMap;
+        bcm._appProfiles = {};
+        for (var id in secretMap)
+        {
+            if (Object.prototype.hasOwnProperty.call(secretMap, id))
+            {
+                bcm._appProfiles[id] = brainCloudAppProfile(secretMap[id]);
+            }
+        }
         bcm._appVersion = appVersion;
         bcm._isInitialized = true;
+    };
+
+    // Manual redirect: keep profiles; a single app carries its profile to the new id.
+    bcm.reinitialize = function(appId)
+    {
+        var ids = Object.keys(bcm._appProfiles);
+        if (!bcm._appProfiles[appId] && ids.length === 1)
+        {
+            bcm._appProfiles[appId] = bcm._appProfiles[ids[0]];
+        }
+        bcm._appId = appId;
+        bcm._isInitialized = true;
+    };
+
+    // Unknown app signs with "MISSING" so the server rejects it as usual.
+    bcm._signRequest = function(body)
+    {
+        var profile = bcm._appProfiles[bcm._appId] || brainCloudAppProfile("MISSING");
+        return profile(body);
     };
 
     bcm.setServerUrl = function(serverUrl)
@@ -174,14 +199,16 @@ function BrainCloudManager ()
         bcm._sessionId = sessionId;
     };
 
+    // Deprecated: the secret isn't kept as text anymore.
     bcm.getSecret = function()
     {
-        return bcm._secret;
+        console.warn("brainCloud: getSecret() is no longer supported and returns an empty string.");
+        return "";
     };
 
     bcm.setSecret = function(secret)
     {
-        bcm._secret = secret;
+        bcm._appProfiles[bcm._appId] = brainCloudAppProfile(secret);
     };
 
     bcm.getAppVersion = function()
@@ -409,7 +436,10 @@ function BrainCloudManager ()
 
             if (bcm._inProgressQueue[c] != null && bcm._errorCallback && messages[c].status != 200)
             {
-                bcm._errorCallback(messages[c]);
+                bcm._errorCallback(Object.assign({}, messages[c], {
+                    service: bcm._inProgressQueue[c].service,
+                    operation: bcm._inProgressQueue[c].operation
+                }));
             }
 
             if (bcm._inProgressQueue[c] == null) return; //comms was reset
@@ -435,7 +465,6 @@ function BrainCloudManager ()
                     if (data.switchToAppId)
                     {
                         bcm._appId = data.switchToAppId;
-                        bcm._secret = bcm._secretMap[data.switchToAppId];
                     }
                 }
 
@@ -598,7 +627,7 @@ function BrainCloudManager ()
 
     bcm.setHeader = function(xhr)
     {
-        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
+        var sig = bcm._signRequest(bcm._jsonedQueue);
         xhr.setRequestHeader('X-SIG', sig);
         xhr.setRequestHeader('X-APPID', bcm._appId);
     }
@@ -626,12 +655,8 @@ function BrainCloudManager ()
         {
             bcm.debugLog("Failed after " + bcm._retry + " retries.", true);
 
-            if ((bcm._errorCallback != undefined) &&
-                (typeof bcm._errorCallback == 'function'))
-            {
-                bcm._errorCallback(errorThrown);
-            }
-
+            // Global error callback is invoked per queued call via handleSuccessResponse,
+            // triggered below by fakeErrorResponse (which includes service/operation).
             bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, bcm.reasonCodes.CLIENT_NETWORK_ERROR_TIMEOUT, "Request timed out");
 
             bcm._requestInProgress = false;
@@ -679,10 +704,8 @@ function BrainCloudManager ()
             var errorMessage = response;
             bcm.debugLog("Failed", true);
 
-            if ((bcm._errorCallback != undefined) &&
-                (typeof bcm._errorCallback == 'function')) {
-                bcm._errorCallback(errorMessage);
-            }
+            // Global error callback is invoked per queued call via handleSuccessResponse,
+            // triggered below by fakeErrorResponse (which includes service/operation).
             if (!errorMessage || errorMessage == "") errorMessage = "Unknown error. Did you lose internet connection?";
             bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, reasonCode,
                 errorMessage);
@@ -717,39 +740,81 @@ function BrainCloudManager ()
         xmlhttp.requestId = ++bcm._requestId;
 
 //> REMOVE IF K6
-        xmlhttp.ontimeout_bc = function()
+        var requestId = bcm._requestId;   // already bumped above
+        var controller = new AbortController();
+        var hasTimedOut = false;
+
+        bcm.xml_timeoutId = setTimeout(function ()
         {
-            if (xmlhttp.readyState < 4)
-            {
-                xmlhttp.hasTimedOut = true;
-                xmlhttp.abort();
-                xmlhttp.hasTimedOut = null;
+            hasTimedOut = true;
+            controller.abort();
+            bcm.xml_timeoutId = null;
 
-                bcm.xml_timeoutId = null;
+            bcm.debugLog("timeout", false);
+            bcm.retry();
+        }, bcm._packetTimeouts[0] * 1000);
 
-                bcm.debugLog("timeout", false);
-                bcm.retry();
-            }
-        }
-
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.hasTimedOut || xmlhttp.requestId != bcm._requestId) {
-                return;
-            }
-
-            if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-
-                bcm.handleResponse(xmlhttp.status, JSON.parse(xmlhttp.responseText))
-            }
+        var sig = bcm._signRequest(bcm._jsonedQueue);
+        var baseHeaders = {
+            "Content-Type": "application/json",
+            "X-SIG": sig,
+            "X-APPID": bcm._appId
         };
 
-        bcm.xml_timeoutId = setTimeout(xmlhttp.ontimeout_bc, bcm._packetTimeouts[0] * 1000);
+        function dispatch(body, extraHeaders)
+        {
+            var headers = extraHeaders
+                ? Object.assign({}, baseHeaders, extraHeaders)
+                : baseHeaders;
 
-        xmlhttp.open("POST", bcm._dispatcherUrl, true);
-        xmlhttp.setRequestHeader("Content-type", "application/json");
-        var sig = CryptoJS.MD5(bcm._jsonedQueue + bcm._secret);
-        xmlhttp.setRequestHeader("X-SIG", sig);
-        xmlhttp.setRequestHeader('X-APPID', bcm._appId);
+            fetch(bcm._dispatcherUrl, {
+                method: "POST",
+                headers: headers,
+                body: body,
+                signal: controller.signal
+            })
+                .then(function (response)
+                {
+                    var status = response.status;
+                    return response.arrayBuffer().then(function (buffer)
+                    {
+                        return { status: status, buffer: buffer };
+                    });
+                })
+                .then(function (result)
+                {
+                    if (requestId != bcm._requestId) return;   // superseded by a retry/newer call
+
+                    var jsonString = new TextDecoder().decode(result.buffer);
+                    var responseJSON;
+                    try
+                    {
+                        responseJSON = JSON.parse(jsonString);
+                    }
+                    catch (e)
+                    {
+                        bcm.debugLog("Failed to parse response: " + jsonString, true);
+                        clearTimeout(bcm.xml_timeoutId);
+                        bcm.xml_timeoutId = null;
+                        bcm._requestInProgress = false;
+                        bcm.fakeErrorResponse(bcm.statusCodes.CLIENT_NETWORK_ERROR, 0,
+                            "Invalid (non-JSON) response from server");
+                        return;
+                    }
+
+                    bcm.handleResponse(result.status, responseJSON);
+                })
+                .catch(function (error)
+                {
+                    if (requestId != bcm._requestId) return;   // superseded
+                    if (hasTimedOut) return;                    // retry() already fired from the timeout branch
+
+                    clearTimeout(bcm.xml_timeoutId);
+                    bcm.xml_timeoutId = null;
+                    bcm.debugLog("Network error: " + error, true);
+                    bcm.retry();
+                });
+        }
 
         // Used to check if request should be compressed
         var encodedRequest = new TextEncoder().encode(bcm._jsonedQueue);
@@ -758,51 +823,25 @@ function BrainCloudManager ()
         if (bcm._compressionEnabled && bcm._compressionThreshold >= 0 && requestSize >= bcm._compressionThreshold) {
             bcm.compressRequest(encodedRequest)
                 .then(function (compressedData) {
-                    fetch(bcm._dispatcherUrl, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-SIG": sig,
-                            "X-APPID": bcm._appId,
-                            "Content-Encoding": "gzip"
-                        },
-                        body: compressedData
-                    })
-                        .then(function (response) {
-                            var status = response.status;
-
-                            return response.arrayBuffer().then(function (buffer) {
-                                return { status: status, buffer: buffer }; 
-                            });
-                        })
-                        .then(function (result) {
-                            var responseStatus = result.status;
-                            var jsonString = new TextDecoder().decode(result.buffer);
-                            var responseJSON = JSON.parse(jsonString);
-
-                            bcm.handleResponse(responseStatus, responseJSON)
-                        })
-                        .catch(function (error) {
-                            console.error(error);
-                        });
+                    dispatch(compressedData, { "Content-Encoding": "gzip" });
                 })
                 .catch(function (err) {
                     console.error("Compression failed:", err);
                     console.log("Sending request without compression...");
 
-                    xmlhttp.send(bcm._jsonedQueue);
+                    dispatch(bcm._jsonedQueue);
                 });
 
         }
         else{
-            xmlhttp.send(bcm._jsonedQueue);
+            dispatch(bcm._jsonedQueue);
         }
-        
+
 //> END
 
         // Set a timeout. Some implementation doesn't implement the XMLHttpRequest timeout and ontimeout (Including nodejs and chrome!)
 //> ADD IF K6
-//+     let sig = CryptoJS.md5(bcm._jsonedQueue + bcm._secret, 'hex');
+//+     let sig = bcm._signRequest(bcm._jsonedQueue);
 //+     let _jsonedQueue = JSON.parse(bcm._jsonedQueue);
 //+     let params = {
 //+         cookies: { my_cookie: _jsonedQueue.messages[0].service+"."+_jsonedQueue.messages[0].operation },
@@ -868,7 +907,10 @@ function BrainCloudManager ()
 //+         if ((bcm._errorCallback != undefined) &&
 //+             (typeof bcm._errorCallback == 'function'))
 //+         {
-//+             bcm._errorCallback(errorMessage, res);
+//+             bcm._errorCallback(Object.assign({}, errorResponse, {
+//+                 service: bcm._inProgressQueue[0] && bcm._inProgressQueue[0].service,
+//+                 operation: bcm._inProgressQueue[0] && bcm._inProgressQueue[0].operation
+//+             }), res);
 //+         }
 //+     }
 //> END

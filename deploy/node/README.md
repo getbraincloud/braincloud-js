@@ -7,57 +7,68 @@
 ## Installation
 
 ```bash
-yarn add @braincloud/client
-# or
 npm install @braincloud/client
 ```
 
 NOTE: peer dependency of ***@react-native-community/async-storage*** is only needed when used within a React-Native application, see below.
 
-## Usage 
+## Getting started
 
-```javascript
-var bc = require("@braincloud/client")
+### Set up your app
 
-function authenticated(response) {
-    console.log("Did get Authenticated to profileId:" + response.data.profileId);
-    var shareable = true;
-    var replaceIfExists = true;
-    _bc.brainCloudClient.file.prepareUserUpload("tests","dummyFile",shareable,replaceIfExists,)
-}
-_bc = new bc.BrainCloudWrapper("_mainWrapper");
+Generate your app config instead of putting the app secret in your code:
 
-secret = "aaaaaaaa-bbbb-0000-cccc-111111111111";
-appId = "00000";
-
-console.log("Initializing brainCloud");
-_bc.initialize(appId, secret, "1.0.0");
-
-console.log("Authenticating anonymously to brainCloud");
-_bc.authenticateAnonymous(authenticated);
+```bash
+npx @braincloud/client setup
 ```
 
-**React-Native Usage**
+Log in with your brainCloud account and pick your team and app (or create one). It writes `braincloud.config.js` (in `src/` if you have one) and adds it to `.gitignore`.
+
+### Usage
 
 ```javascript
-import { BrainCloudWrapper } from '@braincloud/client';
+import { BrainCloudWrapper } from '@braincloud/client'
+import './braincloud.config.js'
 
-_bc = new bc.BrainCloudWrapper("_myApp");
+const _bc = new BrainCloudWrapper('_mainWrapper')
+_bc.init()
 
-secret = "aaaaaaaa-bbbb-0000-cccc-111111111111";
-appId = "00000";
-
-console.log("Initializing brainCloud");
-_bc.initialize(appId, secret, "1.0.0");
-
-console.log("Authenticating anonymously to brainCloud");
- _bc.authenticateAnonymous(function (response) {
-     if (response.status === 200) {
-         console.log("Did get Authenticated to profileId:" + response.data.profileId);
-     }
-});
-
+_bc.authenticateAnonymous(function (response) {
+    if (_bc.isSuccess(response)) {
+        console.log('Authenticated, profileId: ' + response.data.profileId)
+    }
+})
 ```
+
+In Node, `require('./braincloud.config.js')` works the same way.
+
+**Without setup**, initialize with your app ID and secret (in the portal under **Design | Core App Info > Application IDs**):
+
+```javascript
+_bc.initialize(appId, secret, '1.0.0')
+```
+
+## Upgrading to setup (6.1.0+)
+
+Already calling `initialize(appId, secret, ...)`? It still works. To move to setup:
+
+1. Update to `@braincloud/client` 6.1.0 or later.
+2. Run `npx @braincloud/client setup` and pick the same app and server you use today.
+3. Replace your init code:
+   ```javascript
+   // before
+   _bc.initialize(appId, secret, '1.0.0')
+   _bc.brainCloudClient.setServerUrl(url)
+
+   // after
+   import './braincloud.config.js'
+   _bc.init()
+   ```
+4. Delete the hard-coded app ID and secret (ids files, `.env` entries).
+
+The server URL and app version now come from the config. Read them back with `getAppId()`, `getAppVersion()` and `brainCloudManager.getDispatcherUrl()`. Using `initializeWithApps` for child apps? Add the children in the setup panel and call `init()` instead.
+
+**React-Native:** same as above; `BrainCloudWrapper` uses AsyncStorage for its saved IDs.
 See  https://github.com/react-native-community/react-native-async-storage for additional information on AsyncStorage.
 
 ## Running in nodejs without web interface (nodejs server)
@@ -100,7 +111,7 @@ The file upload works slightly different in this implementation if not used in t
 var fs = require("fs")
 ... 
 _bc.brainCloudClient.file.prepareUserUpload("test2", fileName, shareable, replaceIfExists, fileSize, function (result) {
-    if (result.status == 200) {
+    if (_bc.isSuccess(result)) {
         var uploadId = result.data.fileDetails.uploadId;
         var xhr = new XMLHttpRequest4Upload();
         file2 = fs.createReadStream("./someFile.ext");

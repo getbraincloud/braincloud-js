@@ -2,6 +2,11 @@
 
 function BrainCloudRelayComms (_client) {
   var bcr = this
+
+  // monotonic when available, so device clock changes can't skew ping
+  function monotonicNowMs () {
+    return typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now() : Date.now()
+  }
   //> REMOVE IF K6
 
   // TODO:  verify that this is unneeded
@@ -161,17 +166,20 @@ function BrainCloudRelayComms (_client) {
   bcr.disconnect = function () {
     bcr.stopPing()
 
-    if (!bcr.endMatchRequested) {
-      if (bcr.socket) {
-        //> REMOVE IF K6
-        bcr.socket.removeEventListener('error', bcr.onSocketError)
-        bcr.socket.removeEventListener('close', bcr.onSocketClose)
-        bcr.socket.removeEventListener('open', bcr.onSocketOpen)
-        bcr.socket.removeEventListener('message', bcr.onSocketMessage)
-        //> END
-        bcr.socket.close()
-        bcr.socket = null
-      }
+    // Always close+drop the socket, even when endMatchRequested — that flag only exists to
+    // suppress onSocketClose's failure callback for this deliberate disconnect. Skipping the
+    // close here used to leak the old socket (still with its listeners attached) past the next
+    // round's connect(), so a late close event from it could fire the NEW round's
+    // connectCallback.failure and kick that client for no reason.
+    if (bcr.socket) {
+      //> REMOVE IF K6
+      bcr.socket.removeEventListener('error', bcr.onSocketError)
+      bcr.socket.removeEventListener('close', bcr.onSocketClose)
+      bcr.socket.removeEventListener('open', bcr.onSocketOpen)
+      bcr.socket.removeEventListener('message', bcr.onSocketMessage)
+      //> END
+      bcr.socket.close()
+      bcr.socket = null
     }
 
     bcr.isConnected = false
@@ -427,7 +435,7 @@ function BrainCloudRelayComms (_client) {
       console.log('RELAY SEND PING: ' + bcr.ping)
     }
     bcr._pingInFlight = true
-    bcr._pingTime = new Date().getTime()
+    bcr._pingTime = monotonicNowMs()
 
     //> ADD IF K6
     //+     var buffer = new Uint8Array(5);
@@ -499,7 +507,7 @@ function BrainCloudRelayComms (_client) {
     } else if (controlByte == bcr.RS2CL_PONG) {
       if (bcr._pingInFlight) {
         bcr._pingInFlight = false
-        bcr.ping = Math.min(999, new Date().getTime() - bcr._pingTime)
+        bcr.ping = Math.min(999, monotonicNowMs() - bcr._pingTime)
       }
       if (bcr._debugEnabled) {
         console.log('RELAY RECV PONG: ' + bcr.ping)
