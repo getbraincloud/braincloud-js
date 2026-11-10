@@ -14,7 +14,8 @@ async function testGroupFile(){
         return tearDownLogout();
     })) return;
 
-    var groupId = "a7ff751c-3251-407a-b2fd-2bd1e9bca64a";
+    // Created per run so the test doesn't depend on a group that only exists in one env's app.
+    var groupId = "";
     var tempFilename = "testfile-js.txt";
     var groupFileId = "";
     var movedFilename = "moved-testfile-js.txt";
@@ -68,11 +69,15 @@ async function testGroupFile(){
         });
 
         function testMoveUserToGroupFile() {
-            console.log("Joining group...");
+            console.log("Creating test group...");
 
-            setup.bc.group.joinGroup(groupId, result => {
-                var status = result.status;
-                console.log(status + " : " + JSON.stringify(result, null, 2));
+            setup.bc.group.createGroup("test", "test", false, null, null, null, null, result => {
+                if (result.status != 200) {
+                    ok(false, "Failed to create test group: " + result.status_message);
+                    resolveTest();
+                    return;
+                }
+                groupId = result.data.groupId;
 
                 console.log("moveUserToGroupFile");
                 setup.bc.groupFile.moveUserToGroupFile(
@@ -84,7 +89,7 @@ async function testGroupFile(){
                     acl,
                     true,
                     function (result) {
-                        groupFileId = result.data.fileDetails.fileId;
+                        groupFileId = result.data && result.data.fileDetails ? result.data.fileDetails.fileId : "";
                         if (groupFileId == "") {
                             ok(false, "Group File ID not saved correctly");
                         }
@@ -291,20 +296,20 @@ async function testGroupFile(){
                     ok(false, result.status_message);
                 }
 
-                leaveGroup();
+                deleteGroup();
             }
         )
     });
 
-    // If the user does not leave the group, the group will fill up and cause errors
-    function leaveGroup(){
-        setup.bc.group.leaveGroup(groupId, function(result){
+    // Deleting the per-run group also removes its files.
+    function deleteGroup(){
+        setup.bc.group.deleteGroup(groupId, -1, function(result){
             if(result.status == 200){
-                ok(true, "Test user left group");
+                ok(true, "Test group deleted");
                 resolveTest();
             }
             else{
-                ok(false, "Test user failed to leave group");
+                ok(false, "Failed to delete test group");
                 resolveTest();
             }
         })

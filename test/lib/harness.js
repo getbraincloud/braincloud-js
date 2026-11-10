@@ -75,10 +75,22 @@ var resolve_test;
 var sub_testCount = 0;
 var sub_testPass = 0;
 
+// Longer than the slowest legitimate wait (relay room launch, 5 min).
+const TEST_TIMEOUT_MS = 10 * 60 * 1000;
+
 function resolveTest(...args)
 {
     if (resolve_test) resolve_test(...args);
 }
+
+// A throw inside a server callback would otherwise kill node and drop every later test.
+process.on("uncaughtException", e =>
+{
+    console.log(e);
+    if (!resolve_test) process.exit(-1);
+    failed("uncaught exception", ": " + (e && e.message));
+    resolveTest();
+});
 
 function testModule(name, beforeFn, afterFn)
 {
@@ -127,6 +139,7 @@ async function asyncTest(name, expected, testFn)
     {
         sub_testPass = 0;
 
+        let timeoutId;
         try
         {
             await function()
@@ -134,6 +147,12 @@ async function asyncTest(name, expected, testFn)
                 return new Promise(resolve =>
                 {
                     resolve_test = resolve;
+                    // Fail a test whose callback never fires instead of hanging the run.
+                    timeoutId = setTimeout(() =>
+                    {
+                        failed("timed out", " after " + (TEST_TIMEOUT_MS / 1000) + "s");
+                        resolve();
+                    }, TEST_TIMEOUT_MS);
                     testFn();
                 });
             }();
@@ -143,6 +162,8 @@ async function asyncTest(name, expected, testFn)
             console.log(e);
             resolve_test();
         }
+        clearTimeout(timeoutId);
+        resolve_test = null;
 
         var test_result = {
             name: name,
