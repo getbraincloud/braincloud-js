@@ -34,6 +34,7 @@ var REDIRECT_APP_ID = "";
 
 function loadIDs()
 {
+    if (!fs.existsSync('ids.txt')) return;
     let buffer = fs.readFileSync('ids.txt');
     let lines = buffer.toString().split("\n");
     let ids = lines.reduce((ids, line) =>
@@ -69,16 +70,50 @@ function loadIDs()
 
     console.log("ids.txt:");
     console.log("  GAME_ID: " + GAME_ID);
-    console.log("  SECRET: " + SECRET);
     console.log("  GAME_VERSION: " + GAME_VERSION);
     console.log("  SERVER_URL: " + SERVER_URL);
     console.log("  PARENT_LEVEL_NAME: " + PARENT_LEVEL_NAME);
     console.log("  CHILD_APP_ID: " + CHILD_APP_ID);
-    console.log("  CHILD_SECRET: " + CHILD_SECRET);
     console.log("  PEER_NAME: " + PEER_NAME);
     console.log("  REDIRECT_APP_ID: " + REDIRECT_APP_ID);
 }
 loadIDs();
+
+// braincloud.config.js from the setup tool (run it in this folder). It supplies the app + child ids and
+// signing profiles, so ids.txt only needs the non-secret test values.
+var FROM_CONFIG = fs.existsSync('braincloud.config.js');
+if (FROM_CONFIG) loadConfig();
+
+function loadConfig()
+{
+    require(require('path').resolve('braincloud.config.js'));
+    var cfg = globalThis[typeof Symbol === 'function' && Symbol['for'] ? Symbol['for']('braincloud.config') : '__braincloudConfig'];
+    if (!cfg || typeof cfg.appProfile !== 'function' || (typeof cfg.ready === 'function' && !cfg.ready())) {
+        console.log("ERROR: braincloud.config.js is present but could not be read. Run the setup tool again for this env.");
+        process.exit(1);
+    }
+    var profiles = cfg.appProfiles || {};
+    // Child app = index 0 in the setup panel's child list.
+    var childIds = cfg.childAppIds || Object.keys(profiles).filter(id => id !== String(cfg.appId));
+
+    GAME_ID = String(cfg.appId);
+    SECRET = cfg.appProfile;
+    GAME_VERSION = cfg.appVersion || GAME_VERSION;
+    SERVER_URL = (cfg.serverUrl || SERVER_URL).replace("/dispatcherv2", "");
+    CHILD_APP_ID = childIds.length > 0 ? String(childIds[0]) : "";
+    CHILD_SECRET = CHILD_APP_ID ? profiles[CHILD_APP_ID] : "";
+
+    // Non-secret fixtures on the unit-test apps; the redirect app only exists on internal.
+    PARENT_LEVEL_NAME = "Master";
+    PEER_NAME = "peerapp";
+    REDIRECT_APP_ID = { "20001": "25176" }[GAME_ID] || "";
+
+    console.log("braincloud.config.js:");
+    console.log("  GAME_ID: " + GAME_ID);
+    console.log("  GAME_VERSION: " + GAME_VERSION);
+    console.log("  SERVER_URL: " + SERVER_URL);
+    console.log("  CHILD_APP_ID: " + (CHILD_APP_ID || "(none - add a child app in setup)"));
+}
 
 var bc = new BC.BrainCloudWrapper("PlayerOne");
 
@@ -94,11 +129,19 @@ function initializeClient()
     bc.brainCloudClient.setDebugEnabled(true);
     bc.brainCloudClient.enableCompression(true);
 
-    //initialize with our game id, secret and game version
-    var secretMap = {};
-    secretMap[GAME_ID] = SECRET;
-    secretMap[CHILD_APP_ID] = CHILD_SECRET;
-    bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION, SERVER_URL);
+    if (FROM_CONFIG) {
+        // Don't let the ids file hide a config that should have read.
+        if (!bc.init()) {
+            console.log("ERROR: braincloud.config.js is present but did not initialize. Run the setup tool again for this env.");
+            process.exit(1);
+        }
+    } else {
+        //initialize with our game id, secret and game version
+        var secretMap = {};
+        secretMap[GAME_ID] = SECRET;
+        secretMap[CHILD_APP_ID] = CHILD_SECRET;
+        bc.brainCloudClient.initializeWithApps(GAME_ID, secretMap, GAME_VERSION, SERVER_URL);
+    }
 
 
     bc.brainCloudClient.authentication.clearSavedProfileId();

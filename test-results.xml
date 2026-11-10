@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites time="149.842">
+  <testsuite name="Test Misc" tests="1" failures="0" errors="0" time="0">
+    <testcase classname="Test Misc" name="testKillSwitch()" time="0"/>
+  </testsuite>
+  <testsuite name="Async Match" tests="14" failures="0" errors="0" time="0">
+    <testcase classname="Async Match" name="createMatch()" time="0"/>
+    <testcase classname="Async Match" name="updateMatchSummaryData()" time="0"/>
+    <testcase classname="Async Match" name="updateMatchStateCurrentTurn" time="0"/>
+    <testcase classname="Async Match" name="submitTurn()" time="0"/>
+    <testcase classname="Async Match" name="abandonMatch()" time="0"/>
+    <testcase classname="Async Match" name="deleteMatch()" time="0"/>
+    <testcase classname="Async Match" name="createMatchWithInitialTurn()" time="0"/>
+    <testcase classname="Async Match" name="readMatch()" time="0"/>
+    <testcase classname="Async Match" name="readMatchHistory()" time="0"/>
+    <testcase classname="Async Match" name="completeMatch()" time="0"/>
+    <testcase classname="Async Match" name="findMatches()" time="0"/>
+    <testcase classname="Async Match" name="findCompleteMatches()" time="0"/>
+    <testcase classname="Async Match" name="CompleteMatchWithSummaryData()" time="0"/>
+    <testcase classname="Async Match" name="AbandonMatchWithSummaryData()" time="0"/>
+  </testsuite>
+  <testsuite name="Authentication" tests="20" failures="1" errors="0" time="0">
+    <testcase classname="Authentication" name="authenticateAnonymous()" time="0"/>
+    <testcase classname="Authentication" name="authenticateUniversal()" time="0"/>
+    <testcase classname="Authentication" name="authenticateEmailPassword()" time="0"/>
+    <testcase classname="Authentication" name="authenticateAdvanced()" time="0"/>
+    <testcase classname="Authentication" name="authenticateApple() with invalid token" time="0"/>
+    <testcase classname="Authentication" name="authenticateGoogle() with invalid token" time="0"/>
+    <testcase classname="Authentication" name="authenticateEpicGames() with invalid token" time="0"/>
+    <testcase classname="Authentication" name="resetEmailPassword()" time="0"/>
+    <testcase classname="Authentication" name="resetEmailPasswordWithExpiry()" time="0"/>
+    <testcase classname="Authentication" name="resetEmailPasswordAdvanced()" time="0"/>
+    <testcase classname="Authentication" name="resetEmailPasswordAdvancedWithExpiry()" time="0"/>
+    <testcase classname="Authentication" name="resetUniversalIdPassword()" time="0"/>
+    <testcase classname="Authentication" name="resetUniversalIdPasswordAdvanced()" time="0"/>
+    <testcase classname="Authentication" name="resetUniversalIdPasswordWithExpiry()" time="0"/>
+    <testcase classname="Authentication" name="resetUniversalIdPasswordAdvancedWithExpiry()" time="0"/>
+    <testcase classname="Authentication" name="getServerVersion()" time="0"/>
+    <testcase classname="Authentication" name="noSession_resetUniversalIdPassword()" time="0"/>
+    <testcase classname="Authentication" name="authenticateHandoff()" time="0"/>
+    <testcase classname="Authentication" name="authenticateSettopHandoff()" time="0"/>
+    <testcase classname="Authentication" name="authManualRedirect()" time="0">
+      <failure message="Authentication : authManualRedirect() [failed] (200 != 202)Expecting 202">Failed assertions:
+Authentication : authManualRedirect() [failed] (200 != 202)Expecting 202
+Authentication : authManualRedirect() [failed] (undefined != 40308)Expecting 40308
+
+--- Test Output ---
+ERROR | Failed to initialize brainCloud - appId was null or empty
+SendRequest: {&quot;service&quot;:&quot;authenticationV2&quot;,&quot;operation&quot;:&quot;AUTHENTICATE&quot;,&quot;data&quot;:{&quot;gameId&quot;:&quot;12011&quot;,&quot;externalId&quot;:&quot;9bf482ea-515a-45bd-b709-9aafe1660cd0&quot;,&quot;releasePlatform&quot;:&quot;WEB&quot;,&quot;gameVersion&quot;:&quot;1.0.0&quot;,&quot;clientLibVersion&quot;:&quot;6.1.0&quot;,&quot;authenticationToken&quot;:&quot;&quot;,&quot;authenticationType&quot;:&quot;Anonymous&quot;,&quot;forceCreate&quot;:true,&quot;compressResponses&quot;:true,&quot;anonymousId&quot;:&quot;9bf482ea-515a-45bd-b709-9aafe1660cd0&quot;,&quot;profileId&quot;:&quot;&quot;,&quot;timeZoneOffset&quot;:-5,&quot;languageCode&quot;:&quot;en&quot;,&quot;countryCode&quot;:&quot;US&quot;,&quot;clientLib&quot;:&quot;js&quot;}}
+Response Status: 200
+Response: {&quot;packetId&quot;:0,&quot;responses&quot;:[{&quot;data&quot;:{&quot;abTestingId&quot;:33,&quot;lastLogin&quot;:1794330910966,&quot;server_time&quot;:1794330911060,&quot;refundCount&quot;:0,&quot;logouts&quot;:0,&quot;timeZoneOffset&quot;:-5,&quot;experiencePoints&quot;:1,&quot;maxBundleMsgs&quot;:10,&quot;createdAt&quot;:1794330910957,&quot;parentProfileId&quot;:null,&quot;emailAddress&quot;:null,&quot;experienceLevel&quot;:1,&quot;countryCode&quot;:&quot;US&quot;,&quot;vcClaimed&quot;:0,&quot;currency&quot;:{&quot;test&quot;:{&quot;consumed&quot;:0,&quot;balance&quot;:0,&quot;purchased&quot;:0,&quot;awarded&quot;:0,&quot;revoked&quot;:0},&quot;credits&quot;:{&quot;consumed&quot;:0,&quot;balance&quot;:0,&quot;purchased&quot;:0,&quot;awarded&quot;:0,&quot;revoked&quot;:0}},&quot;id&quot;:&quot;60f83f51-81f0-4a7f-8304-af2364e8e218&quot;,&quot;compressIfLarger&quot;:0,&quot;amountSpent&quot;:0,&quot;retention&quot;:{&quot;d00&quot;:true},&quot;lastRefundedAt&quot;:null,&quot;previousLogin&quot;:null,&quot;playerName&quot;:&quot;&quot;,&quot;pictureUrl&quot;:null,&quot;incoming_events&quot;:[],&quot;failedRedemptionsTotal&quot;:0,&quot;sessionId&quot;:&quot;ka3mhik6qdlh1qvmdmf3lrd09p&quot;,&quot;languageCode&quot;:&quot;en&quot;,&quot;vcPurchased&quot;:0,&quot;isTester&quot;:false,&quot;summaryFriendData&quot;:null,&quot;loginCount&quot;:1,&quot;emailVerified&quot;:true,&quot;xpCapped&quot;:false,&quot;profileId&quot;:&quot;60f83f51-81f0-4a7f-8304-af2364e8e218&quot;,&quot;newUser&quot;:&quot;true&quot;,&quot;allTimeSecs&quot;:0,&quot;playerSessionExpiry&quot;:300,&quot;lastPurchasedAt&quot;:null,&quot;sent_events&quot;:[],&quot;maxKillCount&quot;:11,&quot;rewards&quot;:{&quot;experiencePoints&quot;:1,&quot;rewardDetails&quot;:{&quot;quests&quot;:[{&quot;questId&quot;:&quot;Quest&quot;,&quot;rewards&quot;:{}}],&quot;xp&quot;:{&quot;experienceLevels&quot;:[{&quot;reward&quot;:{&quot;experiencePoints&quot;:1,&quot;achievement&quot;:&quot;testAchievement01&quot;},&quot;level&quot;:1,&quot;rewards&quot;:{&quot;experiencePoints&quot;:1,&quot;achievement&quot;:&quot;testAchievement01&quot;}}],&quot;experiencePoints&quot;:1},&quot;milestones&quot;:[{&quot;questId&quot;:null,&quot;milestoneId&quot;:&quot;1&quot;,&quot;rewards&quot;:{}},{&quot;questId&quot;:null,&quot;milestoneId&quot;:&quot;2&quot;,&quot;rewards&quot;:{}},{&quot;questId&quot;:&quot;Quest&quot;,&quot;milestoneId&quot;:&quot;1808&quot;,&quot;rewards&quot;:{}},{&quot;questId&quot;:null,&quot;milestoneId&quot;:&quot;1806&quot;,&quot;rewards&quot;:{}},{&quot;questId&quot;:null,&quot;milestoneId&quot;:&quot;1805&quot;,&quot;rewards&quot;:{}}]},&quot;xpCapped&quot;:false,&quot;currency&quot;:{},&quot;experienceLevel&quot;:1,&quot;rewards&quot;:{&quot;experienceLevels&quot;:[1],&quot;playerAchievements&quot;:[&quot;testAchievement01&quot;],&quot;experiencePoints&quot;:1,&quot;milestonesAchieved&quot;:[&quot;1&quot;,&quot;2&quot;,&quot;1808&quot;,&quot;1806&quot;,&quot;1805&quot;],&quot;questsCompleted&quot;:[&quot;Quest&quot;]}},&quot;statistics&quot;:{&quot;wins&quot;:0,&quot;highestScore&quot;:0,&quot;losses&quot;:0,&quot;gamesWon&quot;:0,&quot;Lose&quot;:0,&quot;gamesLost&quot;:0,&quot;score&quot;:0,&quot;GAMES_PLAYED&quot;:0,&quot;stat2&quot;:0,&quot;gamesPlayed&quot;:0,&quot;TestStat&quot;:0,&quot;currency&quot;:0,&quot;TestStat2&quot;:0,&quot;Win&quot;:0}},&quot;status&quot;:200}]}
+Response(200): {&quot;data&quot;:{&quot;abTestingId&quot;:33,&quot;lastLogin&quot;:1794330910966,&quot;server_time&quot;:1794330911060,&quot;refundCount&quot;:0,&quot;logouts&quot;:0,&quot;timeZoneOffset&quot;:-5,&quot;experiencePoints&quot;:1,&quot;maxBundleMsgs&quot;:10,&quot;createdAt&quot;:1794330910957,&quot;parentProfileId&quot;:null,&quot;emailAddress&quot;:null,&quot;experienceLevel&quot;:1,&quot;countryCode&quot;:&quot;US&quot;,&quot;vcClaimed&quot;:0,&quot;currency&quot;:{&quot;test&quot;:{&quot;consumed&quot;:0,&quot;balance&quot;:0,&quot;purchased&quot;:0,&quot;awarded&quot;:0,&quot;revoked&quot;:0},&quot;credits&quot;:{&quot;consumed&quot;:0,&quot;balance&quot;:0,&quot;purchased&quot;:0,&quot;awarded&quot;:0,&quot;revoked&quot;:0}},&quot;id&quot;:&quot;60f83f51-81f0-4a7f-8304-af2364e8e218&quot;,&quot;compressIfLarger&quot;:0,&quot;amountSpent&quot;:0,&quot;retention&quot;:{&quot;d00&quot;:true},&quot;lastRefundedAt&quot;:null,&quot;previousLogin&quot;:null,&quot;playerName&quot;:&quot;&quot;,&quot;pictureUrl&quot;:null,&quot;incoming_events&quot;:[],&quot;failedRedemptionsTotal&quot;:0,&quot;sessionId&quot;:&quot;ka3mhik6qdlh1qvmdmf3lrd09p&quot;,&quot;languageCode&quot;:&quot;en&quot;,&quot;vcPurchased&quot;:0,&quot;isTester&quot;:false,&quot;summaryFriendData&quot;:null,&quot;loginCount&quot;:1,&quot;emailVerified&quot;:true,&quot;xpCapped&quot;:false,&quot;profileId&quot;:&quot;60f83f51-81f0-4a7f-8304-af2364e8e218&quot;,&quot;newUser&quot;:&quot;true&quot;,&quot;allTimeSecs&quot;:0,&quot;playerSessionExpiry&quot;:300,&quot;lastPurchasedAt&quot;:null,&quot;sent_events&quot;:[],&quot;maxKillCount&quot;:11,&quot;rewards&quot;:{&quot;experiencePoints&quot;:1,&quot;rewardDetails&quot;:{&quot;quests&quot;:[{&quot;questId&quot;:&quot;Quest&quot;,&quot;rewards&quot;:{}}],&quot;xp&quot;:{&quot;experienceLevels&quot;:[{&quot;reward&quot;:{&quot;experiencePoints&quot;:1,&quot;achievement&quot;:&quot;testAchievement01&quot;},&quot;level&quot;:1,&quot;rewards&quot;:{&quot;experiencePoints&quot;:1,&quot;achievement&quot;:&quot;testAchievement01&quot;}}],&quot;experiencePoints&quot;:1},&quot;milestones&quot;:[{&quot;questId&quot;:null,&quot;milestoneId&quot;:&quot;1&quot;,&quot;rewards&quot;:{}},{&quot;questId&quot;:null,&quot;milestoneId&quot;:&quot;2&quot;,&quot;rewards&quot;:{}},{&quot;questId&quot;:&quot;Quest&quot;,&quot;milestoneId&quot;:&quot;1808&quot;,&quot;rewards&quot;:{}},{&quot;questId&quot;:null,&quot;milestoneId&quot;:&quot;1806&quot;,&quot;rewards&quot;:{}},{&quot;questId&quot;:null,&quot;milestoneId&quot;:&quot;1805&quot;,&quot;rewards&quot;:{}}]},&quot;xpCapped&quot;:false,&quot;currency&quot;:{},&quot;experienceLevel&quot;:1,&quot;rewards&quot;:{&quot;experienceLevels&quot;:[1],&quot;playerAchievements&quot;:[&quot;testAchievement01&quot;],&quot;experiencePoints&quot;:1,&quot;milestonesAchieved&quot;:[&quot;1&quot;,&quot;2&quot;,&quot;1808&quot;,&quot;1806&quot;,&quot;1805&quot;],&quot;questsCompleted&quot;:[&quot;Quest&quot;]}},&quot;statistics&quot;:{&quot;wins&quot;:0,&quot;highestScore&quot;:0,&quot;losses&quot;:0,&quot;gamesWon&quot;:0,&quot;Lose&quot;:0,&quot;gamesLost&quot;:0,&quot;score&quot;:0,&quot;GAMES_PLAYED&quot;:0,&quot;stat2&quot;:0,&quot;gamesPlayed&quot;:0,&quot;TestStat&quot;:0,&quot;currency&quot;:0,&quot;TestStat2&quot;:0,&quot;Win&quot;:0}},&quot;status&quot;:200}
+Authentication : authManualRedirect() [failed] (200 != 202)Expecting 202
+Authentication : authManualRedirect() [failed] (undefined != 40308)Expecting 40308
+Authentication : authManualRedirect() [FAILED] (0 != 2)
+SendRequest: {&quot;service&quot;:&quot;playerState&quot;,&quot;operation&quot;:&quot;LOGOUT&quot;}
+Response Status: 200
+Response: {&quot;packetId&quot;:1,&quot;responses&quot;:[{&quot;data&quot;:null,&quot;status&quot;:200}],&quot;events&quot;:[]}
+Response(200): {&quot;data&quot;:null,&quot;status&quot;:200}</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="DataStream" tests="4" failures="0" errors="0" time="0">
+    <testcase classname="DataStream" name="customPageEvent()" time="0"/>
+    <testcase classname="DataStream" name="customScreenEvent()" time="0"/>
+    <testcase classname="DataStream" name="customTrackEvent()" time="0"/>
+    <testcase classname="DataStream" name="submitCrashReport()" time="0"/>
+  </testsuite>
+  <testsuite name="Entity" tests="15" failures="0" errors="0" time="0">
+    <testcase classname="Entity" name="createEntity()" time="0"/>
+    <testcase classname="Entity" name="getEntity()" time="0"/>
+    <testcase classname="Entity" name="getEntitiesByType()" time="0"/>
+    <testcase classname="Entity" name="updateEntity()" time="0"/>
+    <testcase classname="Entity" name="updateSingleton()" time="0"/>
+    <testcase classname="Entity" name="getSingleton()" time="0"/>
+    <testcase classname="Entity" name="deleteSingleton()" time="0"/>
+    <testcase classname="Entity" name="updateSharedEntity()" time="0"/>
+    <testcase classname="Entity" name="incrementUserEntityData()" time="0"/>
+    <testcase classname="Entity" name="incrementSharedUserEntityData()" time="0"/>
+    <testcase classname="Entity" name="deleteEntity()" time="0"/>
+    <testcase classname="Entity" name="getList()" time="0"/>
+    <testcase classname="Entity" name="getListCount()" time="0"/>
+    <testcase classname="Entity" name="getPage()" time="0"/>
+    <testcase classname="Entity" name="getPageOffset()" time="0"/>
+  </testsuite>
+  <testsuite name="Event" tests="12" failures="0" errors="0" time="0">
+    <testcase classname="Event" name="updateIncomingEventDataIfExistsFalse()" time="0"/>
+    <testcase classname="Event" name="sendEvent()" time="0"/>
+    <testcase classname="Event" name="sendEventToProfiles()" time="0"/>
+    <testcase classname="Event" name="updateIncomingEventData()" time="0"/>
+    <testcase classname="Event" name="updateIncomingEventDataIfExistsTrue()" time="0"/>
+    <testcase classname="Event" name="deleteIncomingEvent()" time="0"/>
+    <testcase classname="Event" name="getEvents()" time="0"/>
+    <testcase classname="Event" name="sendEvent() to B" time="0"/>
+    <testcase classname="Event" name="deleteIncomingEvents()" time="0"/>
+    <testcase classname="Event" name="deleteIncomingEventsByTypeOlderThan()" time="0"/>
+    <testcase classname="Event" name="deleteIncomingEventsOlderThan()" time="0"/>
+    <testcase classname="Event" name="userB recv event()" time="0"/>
+  </testsuite>
+  <testsuite name="Friend" tests="17" failures="0" errors="0" time="0">
+    <testcase classname="Friend" name="getProfileInfoForCredential()" time="0"/>
+    <testcase classname="Friend" name="getProfileInfoForCredentialIfExists()" time="0"/>
+    <testcase classname="Friend" name="getProfileInfoForExternalAuthId()" time="0"/>
+    <testcase classname="Friend" name="getProfileInfoForExternalAuthIdIfExists()" time="0"/>
+    <testcase classname="Friend" name="getExternalIdForProfileId()" time="0"/>
+    <testcase classname="Friend" name="getSummaryDataForProfileId()" time="0"/>
+    <testcase classname="Friend" name="findUsersByExactName()" time="0"/>
+    <testcase classname="Friend" name="findUsersBySubstrName()" time="0"/>
+    <testcase classname="Friend" name="addFriends()" time="0"/>
+    <testcase classname="Friend" name="addFriendsFromPlatform()" time="0"/>
+    <testcase classname="Friend" name="listFriends()" time="0"/>
+    <testcase classname="Friend" name="getMySocialInfo()" time="0"/>
+    <testcase classname="Friend" name="removeFriends()" time="0"/>
+    <testcase classname="Friend" name="getUsersOnlineStatus()" time="0"/>
+    <testcase classname="Friend" name="findUsersByUniversalIdStartingWith()" time="0"/>
+    <testcase classname="Friend" name="findUsersByNameStartingWith()" time="0"/>
+    <testcase classname="Friend" name="findUserByExactUniversalId()" time="0"/>
+  </testsuite>
+  <testsuite name="Gamification" tests="17" failures="0" errors="0" time="0">
+    <testcase classname="Gamification" name="awardAchievements()" time="0"/>
+    <testcase classname="Gamification" name="readAchievedAchievements()" time="0"/>
+    <testcase classname="Gamification" name="readAchievements()" time="0"/>
+    <testcase classname="Gamification" name="readCompletedMilestones()" time="0"/>
+    <testcase classname="Gamification" name="readInProgressMilestones()" time="0"/>
+    <testcase classname="Gamification" name="readMilestonesByCategory()" time="0"/>
+    <testcase classname="Gamification" name="readCompletedQuests()" time="0"/>
+    <testcase classname="Gamification" name="readNotStartedQuests()" time="0"/>
+    <testcase classname="Gamification" name="readInProgressQuests()" time="0"/>
+    <testcase classname="Gamification" name="readQuests()" time="0"/>
+    <testcase classname="Gamification" name="readQuestsByCategory()" time="0"/>
+    <testcase classname="Gamification" name="readQuestsWithBasicPercentage()" time="0"/>
+    <testcase classname="Gamification" name="readQuestsWithComplexPercentage()" time="0"/>
+    <testcase classname="Gamification" name="readQuestsWithStatus()" time="0"/>
+    <testcase classname="Gamification" name="readXPLevelsMetaData()" time="0"/>
+    <testcase classname="Gamification" name="readAllGamification()" time="0"/>
+    <testcase classname="Gamification" name="readMilestones()" time="0"/>
+  </testsuite>
+  <testsuite name="GlobalApp" tests="3" failures="0" errors="0" time="0">
+    <testcase classname="GlobalApp" name="readProperties()" time="0"/>
+    <testcase classname="GlobalApp" name="readSelectedProperties()" time="0"/>
+    <testcase classname="GlobalApp" name="readPropertiesInCategories()" time="0"/>
+  </testsuite>
+  <testsuite name="GlobalStatistics" tests="5" failures="0" errors="0" time="0">
+    <testcase classname="GlobalStatistics" name="incrementGlobalStats()" time="0"/>
+    <testcase classname="GlobalStatistics" name="readAllGlobalStats()" time="0"/>
+    <testcase classname="GlobalStatistics" name="readGlobalStatsSubset()" time="0"/>
+    <testcase classname="GlobalStatistics" name="readGlobalStatsForCategory()" time="0"/>
+    <testcase classname="GlobalStatistics" name="processStatistics()" time="0"/>
+  </testsuite>
+  <testsuite name="GlobalEntity" tests="17" failures="0" errors="0" time="0">
+    <testcase classname="GlobalEntity" name="createEntity()" time="0"/>
+    <testcase classname="GlobalEntity" name="updateEntity()" time="0"/>
+    <testcase classname="GlobalEntity" name="incrementGlobalEntityData()" time="0"/>
+    <testcase classname="GlobalEntity" name="updateEntityAcl()" time="0"/>
+    <testcase classname="GlobalEntity" name="updateEntityTimeToLive()" time="0"/>
+    <testcase classname="GlobalEntity" name="readEntity()" time="0"/>
+    <testcase classname="GlobalEntity" name="deleteEntity()" time="0"/>
+    <testcase classname="GlobalEntity" name="createEntityWithIndexedId()" time="0"/>
+    <testcase classname="GlobalEntity" name="getList()" time="0"/>
+    <testcase classname="GlobalEntity" name="getListByIndexedId()" time="0"/>
+    <testcase classname="GlobalEntity" name="getListCount()" time="0"/>
+    <testcase classname="GlobalEntity" name="updateEntityIndexedId()" time="0"/>
+    <testcase classname="GlobalEntity" name="updateEntityOwnerAndAcl()" time="0"/>
+    <testcase classname="GlobalEntity" name="makeSystemEntity()" time="0"/>
+    <testcase classname="GlobalEntity" name="deleteEntity()" time="0"/>
+    <testcase classname="GlobalEntity" name="getPage()" time="0"/>
+    <testcase classname="GlobalEntity" name="getPageOffset()" time="0"/>
+  </testsuite>
+  <testsuite name="GroupFile" tests="1" failures="1" errors="0" time="0">
+    <testcase classname="GroupFile" name="moveUserToGroupFile()" time="0">
+      <failure message="Test did not complete">
+--- Test Output ---
+SendRequest: {&quot;service&quot;:&quot;authenticationV2&quot;,&quot;operation&quot;:&quot;AUTHENTICATE&quot;,&quot;data&quot;:{&quot;gameId&quot;:&quot;12011&quot;,&quot;externalId&quot;:&quot;UserA-15098297&quot;,&quot;releasePlatform&quot;:&quot;WEB&quot;,&quot;gameVersion&quot;:&quot;1.0.0&quot;,&quot;clientLibVersion&quot;:&quot;6.1.0&quot;,&quot;authenticationToken&quot;:&quot;UserA-15098297&quot;,&quot;authenticationType&quot;:&quot;Universal&quot;,&quot;forceCreate&quot;:true,&quot;compressResponses&quot;:true,&quot;anonymousId&quot;:&quot;&quot;,&quot;profileId&quot;:&quot;&quot;,&quot;timeZoneOffset&quot;:-5,&quot;languageCode&quot;:&quot;en&quot;,&quot;countryCode&quot;:&quot;US&quot;,&quot;clientLib&quot;:&quot;js&quot;}}
+Response Status: 200
+Response: {&quot;packetId&quot;:0,&quot;responses&quot;:[{&quot;data&quot;:{&quot;abTestingId&quot;:54,&quot;lastLogin&quot;:1794330938498,&quot;server_time&quot;:1794330938549,&quot;refundCount&quot;:0,&quot;logouts&quot;:108,&quot;timeZoneOffset&quot;:-5,&quot;experiencePoints&quot;:1,&quot;maxBundleMsgs&quot;:10,&quot;createdAt&quot;:1794330896135,&quot;parentProfileId&quot;:null,&quot;emailAddress&quot;:&quot;userc-5899023@test.getbraincloud.com&quot;,&quot;experienceLevel&quot;:1,&quot;countryCode&quot;:&quot;US&quot;,&quot;vcClaimed&quot;:0,&quot;currency&quot;:{&quot;test&quot;:{&quot;consumed&quot;:0,&quot;balance&quot;:0,&quot;purchased&quot;:0,&quot;awarded&quot;:0,&quot;revoked&quot;:0},&quot;credits&quot;:{&quot;consumed&quot;:0,&quot;balance&quot;:0,&quot;purchased&quot;:0,&quot;awarded&quot;:0,&quot;revoked&quot;:0}},&quot;id&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;compressIfLarger&quot;:0,&quot;amountSpent&quot;:0,&quot;retention&quot;:{&quot;d00&quot;:true},&quot;lastRefundedAt&quot;:null,&quot;previousLogin&quot;:1794330938195,&quot;playerName&quot;:&quot;&quot;,&quot;pictureUrl&quot;:null,&quot;incoming_events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}],&quot;failedRedemptionsTotal&quot;:0,&quot;sessionId&quot;:&quot;o59fmfekoh24u2oifnms8e090g&quot;,&quot;languageCode&quot;:&quot;en&quot;,&quot;vcPurchased&quot;:0,&quot;isTester&quot;:false,&quot;summaryFriendData&quot;:null,&quot;loginCount&quot;:110,&quot;emailVerified&quot;:true,&quot;xpCapped&quot;:false,&quot;profileId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;newUser&quot;:&quot;false&quot;,&quot;allTimeSecs&quot;:0,&quot;playerSessionExpiry&quot;:300,&quot;lastPurchasedAt&quot;:null,&quot;sent_events&quot;:[],&quot;maxKillCount&quot;:11,&quot;rewards&quot;:{&quot;rewardDetails&quot;:{},&quot;currency&quot;:{},&quot;rewards&quot;:{}},&quot;statistics&quot;:{&quot;wins&quot;:0,&quot;highestScore&quot;:0,&quot;losses&quot;:0,&quot;gamesWon&quot;:0,&quot;Lose&quot;:0,&quot;gamesLost&quot;:0,&quot;score&quot;:0,&quot;GAMES_PLAYED&quot;:0,&quot;stat2&quot;:0,&quot;gamesPlayed&quot;:0,&quot;TestStat&quot;:0,&quot;currency&quot;:0,&quot;TestStat2&quot;:0,&quot;Win&quot;:0}},&quot;status&quot;:200}]}
+Response(200): {&quot;data&quot;:{&quot;abTestingId&quot;:54,&quot;lastLogin&quot;:1794330938498,&quot;server_time&quot;:1794330938549,&quot;refundCount&quot;:0,&quot;logouts&quot;:108,&quot;timeZoneOffset&quot;:-5,&quot;experiencePoints&quot;:1,&quot;maxBundleMsgs&quot;:10,&quot;createdAt&quot;:1794330896135,&quot;parentProfileId&quot;:null,&quot;emailAddress&quot;:&quot;userc-5899023@test.getbraincloud.com&quot;,&quot;experienceLevel&quot;:1,&quot;countryCode&quot;:&quot;US&quot;,&quot;vcClaimed&quot;:0,&quot;currency&quot;:{&quot;test&quot;:{&quot;consumed&quot;:0,&quot;balance&quot;:0,&quot;purchased&quot;:0,&quot;awarded&quot;:0,&quot;revoked&quot;:0},&quot;credits&quot;:{&quot;consumed&quot;:0,&quot;balance&quot;:0,&quot;purchased&quot;:0,&quot;awarded&quot;:0,&quot;revoked&quot;:0}},&quot;id&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;compressIfLarger&quot;:0,&quot;amountSpent&quot;:0,&quot;retention&quot;:{&quot;d00&quot;:true},&quot;lastRefundedAt&quot;:null,&quot;previousLogin&quot;:1794330938195,&quot;playerName&quot;:&quot;&quot;,&quot;pictureUrl&quot;:null,&quot;incoming_events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}],&quot;failedRedemptionsTotal&quot;:0,&quot;sessionId&quot;:&quot;o59fmfekoh24u2oifnms8e090g&quot;,&quot;languageCode&quot;:&quot;en&quot;,&quot;vcPurchased&quot;:0,&quot;isTester&quot;:false,&quot;summaryFriendData&quot;:null,&quot;loginCount&quot;:110,&quot;emailVerified&quot;:true,&quot;xpCapped&quot;:false,&quot;profileId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;newUser&quot;:&quot;false&quot;,&quot;allTimeSecs&quot;:0,&quot;playerSessionExpiry&quot;:300,&quot;lastPurchasedAt&quot;:null,&quot;sent_events&quot;:[],&quot;maxKillCount&quot;:11,&quot;rewards&quot;:{&quot;rewardDetails&quot;:{},&quot;currency&quot;:{},&quot;rewards&quot;:{}},&quot;statistics&quot;:{&quot;wins&quot;:0,&quot;highestScore&quot;:0,&quot;losses&quot;:0,&quot;gamesWon&quot;:0,&quot;Lose&quot;:0,&quot;gamesLost&quot;:0,&quot;score&quot;:0,&quot;GAMES_PLAYED&quot;:0,&quot;stat2&quot;:0,&quot;gamesPlayed&quot;:0,&quot;TestStat&quot;:0,&quot;currency&quot;:0,&quot;TestStat2&quot;:0,&quot;Win&quot;:0}},&quot;status&quot;:200}
+SendRequest: {&quot;service&quot;:&quot;file&quot;,&quot;operation&quot;:&quot;PREPARE_USER_UPLOAD&quot;,&quot;data&quot;:{&quot;cloudPath&quot;:&quot;TestFolder&quot;,&quot;cloudFilename&quot;:&quot;README.md&quot;,&quot;shareable&quot;:true,&quot;replaceIfExists&quot;:true,&quot;fileSize&quot;:52}}
+Response Status: 200
+Response: {&quot;packetId&quot;:1,&quot;responses&quot;:[{&quot;data&quot;:{&quot;fileDetails&quot;:{&quot;gameId&quot;:&quot;12011&quot;,&quot;shareable&quot;:true,&quot;uploadId&quot;:&quot;4819dc98-901c-4938-9783-96ed19783d60&quot;,&quot;replaceIfExists&quot;:true,&quot;cloudPath&quot;:&quot;TestFolder&quot;,&quot;expiresAt&quot;:1794935738603,&quot;createdAt&quot;:1794330938603,&quot;fileSize&quot;:52,&quot;profileId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;cloudLocation&quot;:&quot;bc/g/12011/u/9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846/f/TestFolder/README.md&quot;,&quot;localPath&quot;:null,&quot;cloudFilename&quot;:&quot;README.md&quot;,&quot;fileType&quot;:&quot;User&quot;,&quot;updatedAt&quot;:1794330938603}},&quot;status&quot;:200}],&quot;events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}]}
+Response(200): {&quot;data&quot;:{&quot;fileDetails&quot;:{&quot;gameId&quot;:&quot;12011&quot;,&quot;shareable&quot;:true,&quot;uploadId&quot;:&quot;4819dc98-901c-4938-9783-96ed19783d60&quot;,&quot;replaceIfExists&quot;:true,&quot;cloudPath&quot;:&quot;TestFolder&quot;,&quot;expiresAt&quot;:1794935738603,&quot;createdAt&quot;:1794330938603,&quot;fileSize&quot;:52,&quot;profileId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;cloudLocation&quot;:&quot;bc/g/12011/u/9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846/f/TestFolder/README.md&quot;,&quot;localPath&quot;:null,&quot;cloudFilename&quot;:&quot;README.md&quot;,&quot;fileType&quot;:&quot;User&quot;,&quot;updatedAt&quot;:1794330938603}},&quot;status&quot;:200}
+GroupFile : moveUserToGroupFile() [OK] (200 == 200)Expecting 200
+(node:73381) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+GroupFile : moveUserToGroupFile() [OK] (true)Done file upload
+Joining group...
+SendRequest: {&quot;service&quot;:&quot;group&quot;,&quot;operation&quot;:&quot;JOIN_GROUP&quot;,&quot;data&quot;:{&quot;groupId&quot;:&quot;a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;}}
+Response Status: 200
+Response: {&quot;packetId&quot;:2,&quot;responses&quot;:[{&quot;status_message&quot;:&quot;Processing exception (message): Join group error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}],&quot;events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}]}
+Response(400): {&quot;status_message&quot;:&quot;Processing exception (message): Join group error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}
+STATUSCodes: 900
+400 : {
+  &quot;status_message&quot;: &quot;Processing exception (message): Join group error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,
+  &quot;reason_code&quot;: 40345,
+  &quot;status&quot;: 400
+}
+moveUserToGroupFile
+SendRequest: {&quot;service&quot;:&quot;groupFile&quot;,&quot;operation&quot;:&quot;MOVE_USER_TO_GROUP_FILE&quot;,&quot;data&quot;:{&quot;userCloudPath&quot;:&quot;TestFolder/&quot;,&quot;userCloudFilename&quot;:&quot;README.md&quot;,&quot;groupId&quot;:&quot;a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;groupTreeId&quot;:&quot;&quot;,&quot;groupFilename&quot;:&quot;testfile-js.txt&quot;,&quot;groupFileAcl&quot;:{&quot;other&quot;:0,&quot;member&quot;:2},&quot;overwriteIfPresent&quot;:true}}
+Response Status: 200
+Response: {&quot;packetId&quot;:3,&quot;responses&quot;:[{&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}],&quot;events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}]}
+STATUSCodes: 900
+Retry # 1
+Retrying right away
+Response(400): {&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}
+Network error: TypeError: Cannot read properties of undefined (reading 'fileDetails')
+Response Status: 200
+Response: {&quot;packetId&quot;:3,&quot;responses&quot;:[{&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}],&quot;events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}]}
+STATUSCodes: 900
+Response(400): {&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}
+Network error: TypeError: Cannot read properties of undefined (reading 'fileDetails')
+Retry # 2
+Waiting for 20 sec...
+Response Status: 200
+Response: {&quot;packetId&quot;:3,&quot;responses&quot;:[{&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}],&quot;events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}]}
+STATUSCodes: 900
+Retry # 3
+Waiting for 35 sec...
+Response(400): {&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}
+Network error: TypeError: Cannot read properties of undefined (reading 'fileDetails')
+Response Status: 200
+Response: {&quot;packetId&quot;:3,&quot;responses&quot;:[{&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}],&quot;events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}]}
+STATUSCodes: 900
+Retry # 4
+Waiting for 50 sec...
+Response(400): {&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}
+Network error: TypeError: Cannot read properties of undefined (reading 'fileDetails')
+Response Status: 200
+Response: {&quot;packetId&quot;:3,&quot;responses&quot;:[{&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}],&quot;events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}]}
+STATUSCodes: 900
+Retry # 5
+Waiting for undefined sec...
+Response(400): {&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}
+Network error: TypeError: Cannot read properties of undefined (reading 'fileDetails')
+(node:73381) TimeoutNaNWarning: NaN is not a number.
+Timeout duration was set to 1.
+Response Status: 200
+Response: {&quot;packetId&quot;:3,&quot;responses&quot;:[{&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}],&quot;events&quot;:[{&quot;gameId&quot;:&quot;12011&quot;,&quot;eventData&quot;:null,&quot;createdAt&quot;:1794330917449,&quot;eventId&quot;:null,&quot;fromPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;toPlayerId&quot;:&quot;9c9d4946-ec5f-4f0c-b1ff-577bd7d9b846&quot;,&quot;eventType&quot;:&quot;test&quot;,&quot;evId&quot;:&quot;6af35125ed95fa29aa8c142c&quot;}]}
+STATUSCodes: 900
+STATUSCodes: 900
+Response(400): {&quot;status_message&quot;:&quot;Processing exception (message): Move user to group file error: Group not found: a7ff751c-3251-407a-b2fd-2bd1e9bca64a&quot;,&quot;reason_code&quot;:40345,&quot;status&quot;:400}
+Network error: TypeError: Cannot read properties of undefined (reading 'fileDetails')
+Failed after 5 retries.
+Response(900): {&quot;status&quot;:900,&quot;reason_code&quot;:90001,&quot;status_message&quot;:&quot;Request timed out&quot;,&quot;severity&quot;:&quot;ERROR&quot;}
+/Users/stevemrjones/braincloud-client-master/repositories/js/test/services/groupFile.js:87
+                        groupFileId = result.data.fileDetails.fileId;
+                                                  ^
+
+TypeError: Cannot read properties of undefined (reading 'fileDetails')
+    at /Users/stevemrjones/braincloud-client-master/repositories/js/test/services/groupFile.js:87:51
+    at BrainCloudManager.bcm.handleSuccessResponse (/Users/stevemrjones/braincloud-client-master/repositories/js/deploy/node/lib/brainCloudClient.concat.js:653:17)
+    at BrainCloudManager.bcm.fakeErrorResponse (/Users/stevemrjones/braincloud-client-master/repositories/js/deploy/node/lib/brainCloudClient.concat.js:685:13)
+    at BrainCloudManager.bcm.retry (/Users/stevemrjones/braincloud-client-master/repositories/js/deploy/node/lib/brainCloudClient.concat.js:723:17)
+    at /Users/stevemrjones/braincloud-client-master/repositories/js/deploy/node/lib/brainCloudClient.concat.js:878:25
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+Node.js v23.11.0
+</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

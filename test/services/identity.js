@@ -5,7 +5,7 @@ const { UserA, UserB, UserC, password, GAME_ID, SECRET, GAME_VERSION, SERVER_URL
 async function testIdentity() {
     setup.bc.brainCloudClient.setDebugEnabled(true)
 
-    setup.bc.initialize(GAME_ID, SECRET, GAME_VERSION, SERVER_URL)
+    initializeClient();
 
     var today = new Date()
     var time = today.getTime()
