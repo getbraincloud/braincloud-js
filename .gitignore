@@ -4,3 +4,8 @@ ids_prod.txt
 node_modules/
 
 \.idea/
+test/braincloud.config.js
+test/[a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].js
+*test-results.xml
+# brainCloud app config (generated)
+/test/afd776df.js

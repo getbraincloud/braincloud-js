@@ -10,8 +10,7 @@ async function testWrapper()
     // we want to log debug messages
     setup.bc.brainCloudClient.setDebugEnabled(true);
 
-    //initialize with our game id, secret and game version
-    setup.bc.initialize(GAME_ID, SECRET, GAME_VERSION, SERVER_URL);
+    initializeClient();
 
     await asyncTest("authenticateAnonymous()", 2, function() {
         setup.bc.resetStoredProfileId();

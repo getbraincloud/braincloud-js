@@ -19,11 +19,17 @@ XMLHttpRequest.DONE = 4;
 // Set up WebSocket.
 WebSocket = require('ws');
 
-// Set up LocalStorage.
-LocalStorage = require('node-localstorage/LocalStorage').LocalStorage;
-os = require('os');
-var configDir = os.homedir() + "/.bciot";
-localStorage = new LocalStorage(configDir);
+// Set up LocalStorage. In memory: an on-disk store under the home dir is shared between runs, and on
+// Windows its atomic rename can fail with EPERM and crash the run.
+var storage = new Map();
+localStorage = {
+    getItem: key => storage.has(key) ? storage.get(key) : null,
+    setItem: (key, value) => { storage.set(key, String(value)); },
+    removeItem: key => { storage.delete(key); },
+    clear: () => { storage.clear(); },
+    key: i => Array.from(storage.keys())[i] ?? null,
+    get length() { return storage.size; }
+};
 
 // Proceed normally.
 console.log("--- Running JS unit tests ---");

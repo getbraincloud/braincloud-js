@@ -235,6 +235,10 @@ function BrainCloudWrapper (wrapperName) {
       console.log('ERROR | brainCloud init(): no braincloud.config.js loaded. Run `npx @braincloud/client setup` and import it. ' + SETUP_DOCS)
       return false
     }
+    if (typeof cfg.ready === 'function' && !cfg.ready()) {
+      console.log('ERROR | brainCloud init(): braincloud.config.js could not be read. Re-run `npx @braincloud/client setup`. ' + SETUP_DOCS)
+      return false
+    }
     // Child apps in the config: load them too so switchToChildProfile can sign.
     if (cfg.appProfiles && Object.keys(cfg.appProfiles).length > 1) {
       bcw.initializeWithApps(cfg.appId, cfg.appProfiles, cfg.appVersion, cfg.serverUrl)
