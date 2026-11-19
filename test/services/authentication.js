@@ -269,7 +269,8 @@ async function testAuthentication() {
             });
     });
 
-    await asyncTest("authManualRedirect()", 2, function () {
+    // Needs an app set up to redirect; only some envs have one.
+    if (REDIRECT_APP_ID) await asyncTest("authManualRedirect()", 2, function () {
         setup.bc.initialize(REDIRECT_APP_ID, SECRET, GAME_VERSION);
         setup.bc.brainCloudClient.authentication.initialize("", setup.bc.brainCloudClient.authentication.generateAnonymousId());
 
