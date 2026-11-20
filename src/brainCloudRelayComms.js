@@ -120,7 +120,10 @@ function BrainCloudRelayComms (_client) {
       lobbyId: lobbyId
     }
 
-    if (!host || !port || !passcode || !lobbyId) {
+    // A full URL (connectData.secureUrl) is used as given; port is ignored.
+    var isUrl = typeof host === 'string' && /^wss?:\/\//i.test(host)
+
+    if (!host || (!port && !isUrl) || !passcode || !lobbyId) {
       setTimeout(function () {
         if (bcr.connectCallback.failure) {
           bcr.connectCallback.failure('Invalid arguments')
@@ -142,7 +145,7 @@ function BrainCloudRelayComms (_client) {
     }
 
     // build url with auth as arguments
-    var uri = (ssl ? 'wss://' : 'ws://') + host + ':' + port
+    var uri = isUrl ? host : (ssl ? 'wss://' : 'ws://') + host + ':' + port
 
     //> ADD IF K6
     //+     var res = ws.connect(uri, {}, function (socket) {
