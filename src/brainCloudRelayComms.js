@@ -121,7 +121,7 @@ function BrainCloudRelayComms (_client) {
     }
 
     // A full URL (connectData.secureUrl) is used as given; port is ignored.
-    var isUrl = !!host && host.indexOf('://') !== -1
+    var isUrl = typeof host === 'string' && /^wss?:\/\//i.test(host)
 
     if (!host || (!port && !isUrl) || !passcode || !lobbyId) {
       setTimeout(function () {
